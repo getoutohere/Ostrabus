@@ -1,0 +1,111 @@
+{
+    "generation":  7,
+    "epoch":  65632077340.029655,
+    "capturedUtc":  "2026-11-06T16:10:08.0861330Z",
+    "inspectionMs":  7.8449,
+    "data":  {
+                 "id":  "OKLG",
+                 "name":  "K-Leg: Port Azikiwe",
+                 "loadState":  "Shallow",
+                 "destroyed":  false,
+                 "isAI":  false,
+                 "interiorGravityG":  0.00061202977105906593,
+                 "needsGravityInitialization":  false,
+                 "storedShallowFuelKg":  0,
+                 "storedShallowCapacityKg":  0,
+                 "storedShallowMassKg":  144023.784590123,
+                 "fuelIsCurrent":  true,
+                 "fuelNote":  "Raw stored fields. Full/Edit ship values may be stale; no canister scan or fallback capacity calculation performed.",
+                 "aiPauseTimer":  65627567639.0449,
+                 "aiDockingExpire":  0,
+                 "scanTarget":  null,
+                 "combatTarget":  null,
+                 "navigation":  {
+                                    "scanTargetShipId":  null,
+                                    "stationKeepingTargetShipId":  null,
+                                    "combatTargetShipId":  null,
+                                    "targetRegId":  null,
+                                    "targetData":  null,
+                                    "situationTarget":  null,
+                                    "currentMotion":  {
+                                                          "positionAU":  {
+                                                                             "x":  1.6499471698872663,
+                                                                             "y":  -1.4252443503024028
+                                                                         },
+                                                          "velocityAUPerSecond":  {
+                                                                                      "x":  1.3900074091743875E-07,
+                                                                                      "y":  4.6518588314725662E-08
+                                                                                  },
+                                                          "rcsAccelerationRaw":  {
+                                                                                     "x":  0,
+                                                                                     "y":  0
+                                                                                 },
+                                                          "inputAccelerationRaw":  {
+                                                                                       "x":  0,
+                                                                                       "y":  0
+                                                                                   },
+                                                          "rotationalVelocity":  0,
+                                                          "rotationRadians":  0,
+                                                          "isBodyOrbit":  true,
+                                                          "isRegion":  true,
+                                                          "bodyOrbitLocked":  false,
+                                                          "orbitLocked":  false,
+                                                          "ignoreGravity":  false,
+                                                          "grounded":  true,
+                                                          "orbitBody":  "OKLG",
+                                                          "closestBody":  "1036 Ganymed",
+                                                          "greatestGravityBody":  "1036 Ganymed",
+                                                          "bodyOffsetShipId":  "OKLG"
+                                                      },
+                                    "motionRelativeToScanTarget":  null,
+                                    "currentNavPlan":  null,
+                                    "vorbNavigationGuard":  null,
+                                    "propulsion":  {
+                                                       "rcsFuelIsCurrent":  true,
+                                                       "rcsFuelKg":  0,
+                                                       "rcsCapacityKg":  0,
+                                                       "rcsFuelPercent":  null,
+                                                       "materializedRcsThrusterObjects":  0,
+                                                       "rcsDistributionCount":  0,
+                                                       "rcsCount":  0,
+                                                       "fuelEfficiencyMod":  1,
+                                                       "shallowFusionFuelRaw":  0,
+                                                       "fusionFuelIsCurrent":  true,
+                                                       "fusionThrustMaxRaw":  0,
+                                                       "fusionPelletMaxRaw":  0,
+                                                       "fusionReactorRunning":  false,
+                                                       "torchDriveThrusting":  false,
+                                                       "savedTorchDriveFlag":  false,
+                                                       "note":  "Raw stored/runtime fields only. Materialized thruster count may be incomplete for shallow ships. No canister scan, fuel calculation, trigger evaluation, or thrust command is performed."
+                                                   },
+                                    "lowFuelPolicy":  {
+                                                          "tankFractionThreshold":  0.25,
+                                                          "remainingDeltaVMaxSpeedMultiplier":  4,
+                                                          "evaluated":  false,
+                                                          "note":  "Game thresholds only. LowFuel was not called because it may scan fuel canisters for full/edit ships."
+                                                      }
+                                },
+                 "position":  {
+                                  "xAU":  1.6499471698872663,
+                                  "yAU":  -1.4252443503024028,
+                                  "vxAUPerSecond":  1.3900074091743875E-07,
+                                  "vyAUPerSecond":  4.6518588314725662E-08,
+                                  "note":  "Stored coordinates; inspection does not call UpdateTime or project positions."
+                              },
+                 "relativeToSelectedCrew":  {
+                                                "referenceShipId":  "O-GXD",
+                                                "centerDistanceKm":  81.835150653499639,
+                                                "dxKm":  19.453695959953304,
+                                                "dyKm":  79.489279755063066,
+                                                "bearingDegreesFromPositiveX":  76.248100592351079,
+                                                "relativeVxKmPerSecond":  -0.000688142734596371,
+                                                "relativeVyKmPerSecond":  -0.003191396560288638,
+                                                "note":  "Approximate from stored centers; may differ from MFD collision-surface distance and projected positions."
+                                            },
+                 "savedDockLinks":  [
+
+                                    ],
+                 "savedDockLinksTruncated":  false,
+                 "savedDockLinksNote":  "Saved representation; may be stale for Full/Edit ships."
+             }
+}

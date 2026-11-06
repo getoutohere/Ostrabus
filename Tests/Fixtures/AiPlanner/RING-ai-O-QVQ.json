@@ -1,0 +1,628 @@
+{
+    "generation":  7,
+    "epoch":  65632077340.029655,
+    "capturedUtc":  "2026-11-06T16:10:36.5036336Z",
+    "inspectionMs":  0.2209,
+    "data":  {
+                 "registered":  true,
+                 "region":  "OKLG",
+                 "homeStation":  "OKLG",
+                 "activeCommand":  "FlyTo",
+                 "aiPauseTimer":  0,
+                 "aiDockingExpire":  "-Infinity",
+                 "navigation":  {
+                                    "scanTargetShipId":  "OKLG",
+                                    "stationKeepingTargetShipId":  null,
+                                    "combatTargetShipId":  null,
+                                    "targetRegId":  "OKLG",
+                                    "targetData":  null,
+                                    "situationTarget":  {
+                                                            "positionAU":  {
+                                                                               "x":  1.64141519907597,
+                                                                               "y":  -1.42808688038902
+                                                                           },
+                                                            "velocityAUPerSecond":  {
+                                                                                        "x":  1.39413614874684E-07,
+                                                                                        "y":  4.62093925346352E-08
+                                                                                    },
+                                                            "rcsAccelerationRaw":  {
+                                                                                       "x":  0,
+                                                                                       "y":  0
+                                                                                   },
+                                                            "inputAccelerationRaw":  {
+                                                                                         "x":  0,
+                                                                                         "y":  0
+                                                                                     },
+                                                            "rotationalVelocity":  0,
+                                                            "rotationRadians":  0,
+                                                            "isBodyOrbit":  true,
+                                                            "isRegion":  true,
+                                                            "bodyOrbitLocked":  false,
+                                                            "orbitLocked":  false,
+                                                            "ignoreGravity":  false,
+                                                            "grounded":  true,
+                                                            "orbitBody":  null,
+                                                            "closestBody":  null,
+                                                            "greatestGravityBody":  null,
+                                                            "bodyOffsetShipId":  null
+                                                        },
+                                    "currentMotion":  {
+                                                          "positionAU":  {
+                                                                             "x":  1.649743910501132,
+                                                                             "y":  -1.4253262441043497
+                                                                         },
+                                                          "velocityAUPerSecond":  {
+                                                                                      "x":  1.35794189745403E-07,
+                                                                                      "y":  4.50097146072033E-08
+                                                                                  },
+                                                          "rcsAccelerationRaw":  {
+                                                                                     "x":  0,
+                                                                                     "y":  0
+                                                                                 },
+                                                          "inputAccelerationRaw":  {
+                                                                                       "x":  0,
+                                                                                       "y":  0
+                                                                                   },
+                                                          "rotationalVelocity":  0,
+                                                          "rotationRadians":  1.8908560276031494,
+                                                          "isBodyOrbit":  false,
+                                                          "isRegion":  false,
+                                                          "bodyOrbitLocked":  false,
+                                                          "orbitLocked":  false,
+                                                          "ignoreGravity":  false,
+                                                          "grounded":  false,
+                                                          "orbitBody":  null,
+                                                          "closestBody":  null,
+                                                          "greatestGravityBody":  null,
+                                                          "bodyOffsetShipId":  "Sol"
+                                                      },
+                                    "motionRelativeToScanTarget":  {
+                                                                       "targetShipId":  "OKLG",
+                                                                       "centerDistanceKm":  32782.410869517313,
+                                                                       "relativeVelocityKmPerSecond":  {
+                                                                                                           "x":  -0.47969322762713745,
+                                                                                                           "y":  -0.22572429380055944
+                                                                                                       },
+                                                                       "rangeRateKmPerSecond":  0.52929279078338276,
+                                                                       "positiveRangeRateMeansSeparating":  true,
+                                                                       "note":  "Computed from stored ship and scan-target coordinates and velocities without calling UpdateTime; it may be stale if either ShipSitu has not advanced to the current epoch."
+                                                                   },
+                                    "currentNavPlan":  {
+                                                           "pointCount":  86,
+                                                           "points":  [
+                                                                          {
+                                                                              "index":  0,
+                                                                              "arrivalEpoch":  65632017553.7654,
+                                                                              "secondsUntilArrival":  -59786.264251708984,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524582922,
+                                                                                                 "y":  -1.4280172191817
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39376210885448E-07,
+                                                                                                          "y":  4.62235968050311E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  1,
+                                                                              "arrivalEpoch":  65632017553.7675,
+                                                                              "secondsUntilArrival":  -59786.262153625488,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524612246,
+                                                                                                 "y":  -1.42801721908445
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39376584925341E-07,
+                                                                                                          "y":  4.62234547623272E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  2,
+                                                                              "arrivalEpoch":  65632017553.7696,
+                                                                              "secondsUntilArrival":  -59786.260055541992,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524641569,
+                                                                                                 "y":  -1.4280172189872
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39376958965233E-07,
+                                                                                                          "y":  4.62233127196232E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  3,
+                                                                              "arrivalEpoch":  65632017553.7717,
+                                                                              "secondsUntilArrival":  -59786.257957458496,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524670893,
+                                                                                                 "y":  -1.42801721888995
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39377333005126E-07,
+                                                                                                          "y":  4.62231706769193E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  4,
+                                                                              "arrivalEpoch":  65632017553.7738,
+                                                                              "secondsUntilArrival":  -59786.255851745605,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524700217,
+                                                                                                 "y":  -1.4280172187927
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39377707045018E-07,
+                                                                                                          "y":  4.62230286342153E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  5,
+                                                                              "arrivalEpoch":  65632017553.7759,
+                                                                              "secondsUntilArrival":  -59786.253753662109,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524729541,
+                                                                                                 "y":  -1.42801721869545
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.3937808108491E-07,
+                                                                                                          "y":  4.62228865915113E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  6,
+                                                                              "arrivalEpoch":  65632017553.778,
+                                                                              "secondsUntilArrival":  -59786.251655578613,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524758865,
+                                                                                                 "y":  -1.4280172185982
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39378455124803E-07,
+                                                                                                          "y":  4.62227445488074E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  7,
+                                                                              "arrivalEpoch":  65632017553.7801,
+                                                                              "secondsUntilArrival":  -59786.249557495117,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.6416252478819,
+                                                                                                 "y":  -1.42801721850096
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39378829164695E-07,
+                                                                                                          "y":  4.62226025061034E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  8,
+                                                                              "arrivalEpoch":  65632017553.7822,
+                                                                              "secondsUntilArrival":  -59786.247451782227,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524817514,
+                                                                                                 "y":  -1.42801721840371
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39379203204587E-07,
+                                                                                                          "y":  4.62224604633995E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  9,
+                                                                              "arrivalEpoch":  65632017553.7843,
+                                                                              "secondsUntilArrival":  -59786.24535369873,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524846838,
+                                                                                                 "y":  -1.42801721830646
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.3937957724448E-07,
+                                                                                                          "y":  4.62223184206955E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  10,
+                                                                              "arrivalEpoch":  65632017553.7864,
+                                                                              "secondsUntilArrival":  -59786.243255615234,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162524876163,
+                                                                                                 "y":  -1.42801721820921
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39379951284372E-07,
+                                                                                                          "y":  4.62221763779915E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.75695800794,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  11,
+                                                                              "arrivalEpoch":  65632017553.8075,
+                                                                              "secondsUntilArrival":  -59786.222152709961,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162525169411,
+                                                                                                 "y":  -1.42801721723675
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39383691683295E-07,
+                                                                                                          "y":  4.6220755950952E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.73008528809,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  12,
+                                                                              "arrivalEpoch":  65632017553.8285,
+                                                                              "secondsUntilArrival":  -59786.201156616211,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162525462667,
+                                                                                                 "y":  -1.42801721626431
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39387432082219E-07,
+                                                                                                          "y":  4.62193355239124E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.70321256823,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  13,
+                                                                              "arrivalEpoch":  65632017553.8495,
+                                                                              "secondsUntilArrival":  -59786.180152893066,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162525755932,
+                                                                                                 "y":  -1.42801721529191
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39391172481143E-07,
+                                                                                                          "y":  4.62179150968728E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.67633984837,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  14,
+                                                                              "arrivalEpoch":  65632017553.8706,
+                                                                              "secondsUntilArrival":  -59786.159057617188,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162526049204,
+                                                                                                 "y":  -1.42801721431954
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.39394912880066E-07,
+                                                                                                          "y":  4.62164946698332E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.64946712851,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          },
+                                                                          {
+                                                                              "index":  15,
+                                                                              "arrivalEpoch":  65632017553.8916,
+                                                                              "secondsUntilArrival":  -59786.138053894043,
+                                                                              "positionAU":  {
+                                                                                                 "x":  1.64162526342484,
+                                                                                                 "y":  -1.42801721334719
+                                                                                             },
+                                                                              "velocityAUPerSecond":  {
+                                                                                                          "x":  1.3939865327899E-07,
+                                                                                                          "y":  4.62150742427936E-08
+                                                                                                      },
+                                                                              "fuelLevelRaw":  1071.62259440865,
+                                                                              "torchCycleRaw":  0,
+                                                                              "torchFuelLevelRaw":  0,
+                                                                              "torchDecelerationRequired":  false
+                                                                          }
+                                                                      ],
+                                                           "pointsTruncated":  true,
+                                                           "activeSegmentState":  "betweenPoints",
+                                                           "activeSegmentSearchComplete":  true,
+                                                           "activeSegment":  {
+                                                                                 "previous":  {
+                                                                                                  "index":  47,
+                                                                                                  "arrivalEpoch":  65632017574.0266,
+                                                                                                  "secondsUntilArrival":  -59766.003051757813,
+                                                                                                  "positionAU":  {
+                                                                                                                     "x":  1.64162803423096,
+                                                                                                                     "y":  -1.42801629494815
+                                                                                                                 },
+                                                                                                  "velocityAUPerSecond":  {
+                                                                                                                              "x":  1.35794189745403E-07,
+                                                                                                                              "y":  4.50097146072033E-08
+                                                                                                                          },
+                                                                                                  "rcsAccelerationRaw":  {
+                                                                                                                             "x":  -1.805123966969191E-10,
+                                                                                                                             "y":  -5.9831799237297645E-11
+                                                                                                                         },
+                                                                                                  "inputAccelerationRaw":  {
+                                                                                                                               "x":  0,
+                                                                                                                               "y":  0
+                                                                                                                           },
+                                                                                                  "isBodyOrbit":  false,
+                                                                                                  "bodyOrbitLocked":  false,
+                                                                                                  "orbitBody":  null,
+                                                                                                  "fuelLevelRaw":  1045.90480548834,
+                                                                                                  "torchCycleRaw":  0,
+                                                                                                  "torchFuelLevelRaw":  0,
+                                                                                                  "torchDecelerationRequired":  false
+                                                                                              },
+                                                                                 "next":  {
+                                                                                              "index":  48,
+                                                                                              "arrivalEpoch":  1.02594760496623E+20,
+                                                                                              "secondsUntilArrival":  1.0259476043099092E+20,
+                                                                                              "positionAU":  {
+                                                                                                                 "x":  13931772364851.7,
+                                                                                                                 "y":  4617760887191.84
+                                                                                                             },
+                                                                                              "velocityAUPerSecond":  {
+                                                                                                                          "x":  1.35794189745403E-07,
+                                                                                                                          "y":  4.50097146072033E-08
+                                                                                                                      },
+                                                                                              "rcsAccelerationRaw":  {
+                                                                                                                         "x":  0,
+                                                                                                                         "y":  0
+                                                                                                                     },
+                                                                                              "inputAccelerationRaw":  {
+                                                                                                                           "x":  0,
+                                                                                                                           "y":  0
+                                                                                                                       },
+                                                                                              "isBodyOrbit":  false,
+                                                                                              "bodyOrbitLocked":  false,
+                                                                                              "orbitBody":  null,
+                                                                                              "fuelLevelRaw":  1045.90480548834,
+                                                                                              "torchCycleRaw":  0,
+                                                                                              "torchFuelLevelRaw":  0,
+                                                                                              "torchDecelerationRequired":  false
+                                                                                          },
+                                                                                 "progress":  5.8254439896039945E-16
+                                                                             },
+                                                           "destination":  {
+                                                                               "index":  85,
+                                                                               "arrivalEpoch":  1.02594760437554E+21,
+                                                                               "secondsUntilArrival":  1.0259476043099079E+21,
+                                                                               "positionAU":  {
+                                                                                                  "x":  139317723648503,
+                                                                                                  "y":  46177608871931.3
+                                                                                              },
+                                                                               "velocityAUPerSecond":  {
+                                                                                                           "x":  1.39413614874684E-07,
+                                                                                                           "y":  4.62093925346352E-08
+                                                                                                       },
+                                                                               "rcsAccelerationRaw":  {
+                                                                                                          "x":  1.805123966969191E-10,
+                                                                                                          "y":  5.9831799237297645E-11
+                                                                                                      },
+                                                                               "inputAccelerationRaw":  {
+                                                                                                            "x":  0,
+                                                                                                            "y":  0
+                                                                                                        },
+                                                                               "isBodyOrbit":  false,
+                                                                               "bodyOrbitLocked":  false,
+                                                                               "orbitBody":  null,
+                                                                               "fuelLevelRaw":  1020.29450744746,
+                                                                               "torchCycleRaw":  0,
+                                                                               "torchFuelLevelRaw":  0,
+                                                                               "torchDecelerationRequired":  false
+                                                                           },
+                                                           "isTorching":  false,
+                                                           "inAtmosphere":  false,
+                                                           "lastAdvanceEpoch":  65632077340.029655,
+                                                           "lastPlanEpoch":  65632077340.029655,
+                                                           "flowMultiplierPlot":  0,
+                                                           "note":  "Stored navigation plan; it is not recalculated. activeSegment is selected from stored arrival epochs, matching the game\u0027s waypoint-pair search. lastAdvanceEpoch is the game\u0027s fEpochLast field; lastPlanEpoch is retained as a legacy alias and does not mean the route was replanned. Arrival and fuel values are raw NavData points."
+                                                       },
+                                    "vorbNavigationGuard":  null,
+                                    "propulsion":  {
+                                                       "rcsFuelIsCurrent":  true,
+                                                       "rcsFuelKg":  1045.92163085951,
+                                                       "rcsCapacityKg":  1124.04704207288,
+                                                       "rcsFuelPercent":  93.049631528828442,
+                                                       "materializedRcsThrusterObjects":  0,
+                                                       "rcsDistributionCount":  3,
+                                                       "rcsCount":  2,
+                                                       "fuelEfficiencyMod":  1,
+                                                       "shallowFusionFuelRaw":  0,
+                                                       "fusionFuelIsCurrent":  true,
+                                                       "fusionThrustMaxRaw":  0,
+                                                       "fusionPelletMaxRaw":  1,
+                                                       "fusionReactorRunning":  false,
+                                                       "torchDriveThrusting":  false,
+                                                       "savedTorchDriveFlag":  false,
+                                                       "note":  "Raw stored/runtime fields only. Materialized thruster count may be incomplete for shallow ships. No canister scan, fuel calculation, trigger evaluation, or thrust command is performed."
+                                                   },
+                                    "lowFuelPolicy":  {
+                                                          "tankFractionThreshold":  0.25,
+                                                          "remainingDeltaVMaxSpeedMultiplier":  4,
+                                                          "evaluated":  false,
+                                                          "note":  "Game thresholds only. LowFuel was not called because it may scan fuel canisters for full/edit ships."
+                                                      }
+                                },
+                 "commands":  {
+                                  "chain":  [
+                                                {
+                                                    "type":  "FlyTo",
+                                                    "activeName":  "FlyTo",
+                                                    "saveData":  [
+                                                                     "3.81306408669978E-09"
+                                                                 ],
+                                                    "saveDataTruncated":  false,
+                                                    "pathCommandType":  "FlyToPath",
+                                                    "manualCommandType":  "FlyToManual"
+                                                },
+                                                {
+                                                    "type":  "FlyToPath",
+                                                    "activeName":  "FlyToPath",
+                                                    "saveData":  [
+                                                                     "3.81306408669978E-09"
+                                                                 ],
+                                                    "saveDataTruncated":  false
+                                                }
+                                            ],
+                                  "chainTruncated":  true
+                              },
+                 "haulerRecovery":  null,
+                 "combat":  {
+                                "aiType":  "Scav",
+                                "captain":  {
+                                                "id":  "Diepreye Adetunji Woods",
+                                                "name":  "Diepreye Adetunji Woods",
+                                                "alive":  true,
+                                                "destroyed":  false,
+                                                "shipId":  "O-QVQ",
+                                                "factions":  {
+                                                                 "items":  [
+                                                                               "MSUZ",
+                                                                               "MSUZCiv",
+                                                                               "Diepreye Adetunji Woods"
+                                                                           ],
+                                                                 "count":  3,
+                                                                 "truncated":  false
+                                                             }
+                                            },
+                                "affiliations":  {
+                                                     "ownerId":  "OKLGScav",
+                                                     "shipFactions":  [
+
+                                                                      ],
+                                                     "shipFactionCount":  0,
+                                                     "shipFactionsTruncated":  false,
+                                                     "shipCOFactions":  {
+                                                                            "items":  [
+
+                                                                                      ],
+                                                                            "count":  0,
+                                                                            "truncated":  false
+                                                                        },
+                                                     "note":  "Ship, ship CO, and AI captain affiliations are distinct. No faction score or reputation calculation is executed."
+                                                 },
+                                "combatTarget":  null,
+                                "combatTargetAffiliations":  null,
+                                "activeCommandType":  "FlyTo",
+                                "activeReactionType":  null,
+                                "comeHereStepType":  null,
+                                "blackboardSource":  "AIShip",
+                                "blackboard":  {
+                                                   "fields":  {
+                                                                  "InCombat":  {
+                                                                                   "present":  true,
+                                                                                   "value":  false
+                                                                               },
+                                                                  "Enemies":  {
+                                                                                  "present":  true,
+                                                                                  "value":  {
+                                                                                                "items":  [
+
+                                                                                                          ],
+                                                                                                "count":  0,
+                                                                                                "truncated":  false
+                                                                                            }
+                                                                              },
+                                                                  "Combatants":  {
+                                                                                     "present":  false,
+                                                                                     "value":  null
+                                                                                 },
+                                                                  "ClosestEnemy":  {
+                                                                                       "present":  false,
+                                                                                       "value":  null
+                                                                                   },
+                                                                  "SurrenderedTo":  {
+                                                                                        "present":  false,
+                                                                                        "value":  null
+                                                                                    },
+                                                                  "SurrenderedToUs":  {
+                                                                                          "present":  false,
+                                                                                          "value":  null
+                                                                                      },
+                                                                  "EnagementProfile":  {
+                                                                                           "present":  false,
+                                                                                           "value":  null
+                                                                                       },
+                                                                  "EnagementRange":  {
+                                                                                         "present":  false,
+                                                                                         "value":  null
+                                                                                     },
+                                                                  "DodgeTarget":  {
+                                                                                      "present":  false,
+                                                                                      "value":  null
+                                                                                  },
+                                                                  "TripFuelPrediction":  {
+                                                                                             "present":  true,
+                                                                                             "value":  "253944\u002652.2901184152254"
+                                                                                         },
+                                                                  "NeedsRepairs":  {
+                                                                                       "present":  false,
+                                                                                       "value":  null
+                                                                                   },
+                                                                  "RejectedPaths":  {
+                                                                                        "present":  false,
+                                                                                        "value":  null
+                                                                                    },
+                                                                  "ShipboardAction.ReturnHome":  {
+                                                                                                     "present":  false,
+                                                                                                     "value":  null
+                                                                                                 },
+                                                                  "ShipboardAction.ReturnRouteQueued":  {
+                                                                                                            "present":  false,
+                                                                                                            "value":  null
+                                                                                                        },
+                                                                  "CeresNavigation.ReturnRouteQueued":  {
+                                                                                                            "present":  false,
+                                                                                                            "value":  null
+                                                                                                        }
+                                                              },
+                                                   "totalKeyCount":  5,
+                                                   "note":  "Only allowlisted keys are read. EnagementProfile/EnagementRange preserve the game\u0027s spelling. Missing differs from false/empty; state may be stale."
+                                               },
+                                "note":  "Stored AI state, not proof of current firing. No RunCommand, CanExecute, GetCaptain, or trigger checks are called."
+                            }
+             }
+}

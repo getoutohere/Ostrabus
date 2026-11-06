@@ -1,0 +1,131 @@
+{
+    "generation":  15,
+    "epoch":  65631764416.3972,
+    "capturedUtc":  "2026-11-05T00:23:25.1158921Z",
+    "inspectionMs":  0.1265,
+    "data":  {
+                 "ship":  {
+                              "id":  "O-D5GM",
+                              "name":  "VORB Hauler 94",
+                              "loadState":  "Shallow",
+                              "destroyed":  false,
+                              "classification":  "Default",
+                              "damageState":  "Used",
+                              "isAI":  true,
+                              "transponder":  "O-D5GM",
+                              "transponderAntenna":  true,
+                              "hiddenFromSystem":  true,
+                              "position":  {
+                                               "xAU":  0.718078392891371,
+                                               "yAU":  -0.0793517304756221,
+                                               "vxAUPerSecond":  2.61839495105352E-08,
+                                               "vyAUPerSecond":  2.12499120316707E-07,
+                                               "note":  "Stored coordinates; inspection does not call UpdateTime or project positions."
+                                           }
+                          },
+                 "relativeToSelectedCrew":  {
+                                                "referenceShipId":  "O-GXD",
+                                                "centerDistanceKm":  156.35235516137362,
+                                                "dxKm":  -7.8509753468123975,
+                                                "dyKm":  156.15511887418887,
+                                                "bearingDegreesFromPositiveX":  92.878223343144555,
+                                                "relativeVxKmPerSecond":  0.004523487704915328,
+                                                "relativeVyKmPerSecond":  0.082888024537003641,
+                                                "note":  "Approximate from stored centers; may differ from MFD collision-surface distance and projected positions."
+                                            },
+                 "hasComms":  true,
+                 "shipCO":  {
+                                "id":  "CO-O-D5GM",
+                                "name":  "CO-O-D5GM",
+                                "shipId":  "O-D5GM",
+                                "alive":  true,
+                                "destroyed":  false
+                            },
+                 "crewProfileCount":  0,
+                 "crew":  [
+
+                          ],
+                 "crewTruncated":  false,
+                 "targetLog":  {
+                                   "ownerShipId":  "O-D5GM",
+                                   "peerShipId":  "O-GXD",
+                                   "totalLogEntries":  4,
+                                   "items":  [
+                                                 {
+                                                     "sender":  "O-D5GM",
+                                                     "receiver":  "O-GXD",
+                                                     "availableTime":  65631735130.4,
+                                                     "availableNow":  true,
+                                                     "read":  true,
+                                                     "text":  "Response: ",
+                                                     "interaction":  "SHIPDataRequestStatusAllow",
+                                                     "title":  "Status transmitted",
+                                                     "replyIds":  [
+
+                                                                  ],
+                                                     "replyIdsTruncated":  false
+                                                 },
+                                                 {
+                                                     "sender":  "O-GXD",
+                                                     "receiver":  "O-D5GM",
+                                                     "availableTime":  65631735129.3997,
+                                                     "availableNow":  true,
+                                                     "read":  true,
+                                                     "text":  "O-D5GM report status!",
+                                                     "interaction":  "SHIPDataRequestStatus",
+                                                     "title":  "Ship status",
+                                                     "replyIds":  [
+                                                                      "SHIPDataRequestStatusAllow",
+                                                                      "SHIPDataRequestStatusDerelictDeny",
+                                                                      "SHIPDataRequestDeny"
+                                                                  ],
+                                                     "replyIdsTruncated":  false
+                                                 },
+                                                 {
+                                                     "sender":  "O-D5GM",
+                                                     "receiver":  "O-GXD",
+                                                     "availableTime":  65631735129.4378,
+                                                     "availableNow":  true,
+                                                     "read":  true,
+                                                     "text":  "O-D5GM accepts the hail and opens a channel to O-GXD.",
+                                                     "interaction":  "SHIPHailAllow",
+                                                     "title":  "Hail Allow",
+                                                     "replyIds":  [
+
+                                                                  ],
+                                                     "replyIdsTruncated":  false
+                                                 },
+                                                 {
+                                                     "sender":  "O-GXD",
+                                                     "receiver":  "O-D5GM",
+                                                     "availableTime":  65631735128.423,
+                                                     "availableNow":  true,
+                                                     "read":  true,
+                                                     "text":  "O-GXD hails VORB Hauler 94.",
+                                                     "interaction":  "SHIPHailNeutral",
+                                                     "title":  "Hail Them",
+                                                     "replyIds":  [
+                                                                      "SHIPHailAllowList",
+                                                                      "SHIPHailDeny"
+                                                                  ],
+                                                     "replyIdsTruncated":  false
+                                                 }
+                                             ],
+                                   "scanned":  4,
+                                   "nextOffset":  null,
+                                   "order":  "Newest stored entry first. Offset counts raw log entries, not conversation matches."
+                               },
+                 "selectedCrewShipLog":  {
+                                             "ownerShipId":  "O-GXD",
+                                             "peerShipId":  "O-D5GM",
+                                             "totalLogEntries":  529,
+                                             "items":  [
+
+                                                       ],
+                                             "scanned":  25,
+                                             "nextOffset":  25,
+                                             "order":  "Newest stored entry first. Offset counts raw log entries, not conversation matches."
+                                         },
+                 "note":  "Raw crew/profile references and message logs only. No captain selection, interaction eligibility, replies, or status requests are executed."
+             }
+}

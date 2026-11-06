@@ -1,0 +1,207 @@
+[
+  {
+    "aItems": [
+      {
+        "strName": "ItmWallWindow1x1Loose",
+        "fX": 120.0,
+        "fY": 27.0,
+        "fRotation": 0.0,
+        "strID": "13731798-c6ad-4508-8fdd-4b26496b1d00"
+      },
+      {
+        "strName": "ItmFloorAERO07Loose",
+        "fX": 113.5,
+        "fY": 14.5,
+        "fRotation": 0.0,
+        "strID": "17babb0a-cdc5-486b-ba62-0c79392cbb34",
+        "strParentID": "d3d8da7c-a6c8-45c1-886f-3504df11e03c"
+      },
+      {
+        "strName": "ItmCrate01",
+        "fX": 113.5,
+        "fY": 14.5,
+        "fRotation": 0.0,
+        "strID": "d3d8da7c-a6c8-45c1-886f-3504df11e03c",
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUILocks",
+              "strFriendlyName",
+              "Crate Lock",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              null,
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null,
+              "strBrand",
+              "RAKOW",
+              "strBrandSub",
+              "Flight Cases",
+              "strMSLock",
+              "ItmCrate01Lock",
+              "strMSUnlock",
+              "ItmCrate01",
+              "strPIN",
+              "3010"
+            ]
+          }
+        ]
+      }
+    ],
+    "aCOs": [
+      {
+        "strID": "13731798-c6ad-4508-8fdd-4b26496b1d00",
+        "strCODef": "ItmWallWindow1x1Loose",
+        "bAlive": true,
+        "aConds": [
+          "IsDestructable=1.0x1",
+          "StatDismantleProgressMax=1.0x110",
+          "IsSolid=1.0x1",
+          "IsCumbersome=1.0x1",
+          "IsWall=1.0x1",
+          "IsWallWindow1x1=1.0x1",
+          "StatBasePrice=1.0x330",
+          "StatDamageMax=1.0x7",
+          "StatInstallProgressMax=1.0x600",
+          "StatUninstallProgressMax=1.0x600",
+          "StatMass=1.0x10",
+          "IsAeroParts=1.0x1",
+          "IsCategoryHull=1.0x1",
+          "StatRepairProgressMax=1.0x1000",
+          "IsDamageable=1.0x1",
+          "StatDamage=1.0x1.80202784264675E-05",
+          "StatUninstallProgress=1.0x100"
+        ],
+        "fEpoch": 65631974277.2547,
+        "fEpochRate": 1.0,
+        "fEpochDelta": 0.0,
+        "strCondID": "ItmWallWindow1x1Loose2b0fcca1-33cd-4d8e-93b7-b22adfb3bad7",
+        "inventoryX": 2,
+        "inventoryY": 3,
+        "nEmergReason": 0,
+        "fDGasTemp": 0.0,
+        "fLastICOUpdate": 65631974197.3372,
+        "nDestTile": 0,
+        "strIdleAnim": "Idle",
+        "dictRememberScores": {
+          "StatUninstallProgress": 100.0,
+          "StatDamage": -1.25
+        },
+        "strIMGPreview": "tiles/ItmWallWindow1x1Loose",
+        "strFriendlyName": "Window Angled Wall (Loose)",
+        "strRegIDLast": "O-GXD",
+        "fMSRedamageAmount": 0.0
+      },
+      {
+        "strID": "17babb0a-cdc5-486b-ba62-0c79392cbb34",
+        "strCODef": "ItmFloorAERO07Loose",
+        "bAlive": true,
+        "aConds": [
+          "IsDestructable=1.0x1",
+          "StatDismantleProgressMax=1.0x110",
+          "IsStacking=1.0x4",
+          "IsFloorGrate=1.0x1",
+          "IsSolid=1.0x1",
+          "StatBasePrice=1.0x95",
+          "StatDamageMax=1.0x10",
+          "StatInstallProgressMax=1.0x250",
+          "StatUninstallProgressMax=1.0x200",
+          "StatDamage=1.0x2.66782095239213E-05",
+          "IsCategoryHull=1.0x1",
+          "StatRepairProgressMax=1.0x1000",
+          "IsDamageable=1.0x1",
+          "IsTSDO=1.0x1",
+          "IsPlastic=1.0x1",
+          "IsTypeG=1.0x1",
+          "StatUninstallProgress=1.0x100",
+          "IsInContainer=1.0x1"
+        ],
+        "fEpoch": 65631974277.2547,
+        "fEpochRate": 1.0,
+        "fEpochDelta": 0.0,
+        "strCondID": "ItmFloorGrate01Loosea491f633-d186-40fa-a9b9-948eda34227f",
+        "inventoryX": 2,
+        "inventoryY": 2,
+        "nEmergReason": 0,
+        "fDGasTemp": 0.0,
+        "fLastICOUpdate": 65631974197.3372,
+        "nDestTile": 0,
+        "strIdleAnim": "Idle",
+        "dictRememberScores": {
+          "StatUninstallProgress": 100.0
+        },
+        "aStack": [
+          "e9f08b59-3f69-4647-989a-9dd7d248de9e",
+          "1f2eafde-74b2-4349-ba8f-3defa22186c1",
+          "7cc1ff55-ccbd-4876-adc3-e795ae236a34",
+          "b9b9cf4a-8ade-4436-a29c-b19365b32b22"
+        ],
+        "strIMGPreview": "tiles/FloorGrate10/ItmFloorGrate10JLoose",
+        "strFriendlyName": "Floor G (Loose): Testudo \"Aero-Grip\"",
+        "strRegIDLast": "O-GXD",
+        "fMSRedamageAmount": 0.0
+      },
+      {
+        "strID": "d3d8da7c-a6c8-45c1-886f-3504df11e03c",
+        "strCODef": "ItmCrate01",
+        "bAlive": true,
+        "aConds": [
+          "IsDestructable=1.0x1",
+          "StatDismantleProgressMax=1.0x20",
+          "IsCrate=1.0x1",
+          "IsContainer=1.0x1",
+          "IsOversized=1.0x1",
+          "IsLockPIN=1.0x1",
+          "IsRigid=1.0x1",
+          "IsShipSpecialItem=1.0x1",
+          "IsSolid=1.0x1",
+          "IsRakow=1.0x1",
+          "IsWaterproof=1.0x1",
+          "StatBasePrice=1.0x338",
+          "StatDamageMax=1.0x10",
+          "StatDebugProgressMax=1.0x877",
+          "IsCategoryTools=1.0x1",
+          "StatInstallProgressMax=1.0x1000",
+          "StatUninstallProgressMax=1.0x1000",
+          "StatRepairProgressMax=1.0x1000",
+          "IsDamageable=1.0x1",
+          "StatDamage=1.0x1.77804698462171E-05",
+          "StatMass=1.0x3"
+        ],
+        "fEpoch": 65631974277.2547,
+        "fEpochRate": 1.0,
+        "fEpochDelta": 0.0,
+        "strCondID": "ItmCrate01d3d8da7c-a6c8-45c1-886f-3504df11e03c",
+        "inventoryX": 0,
+        "inventoryY": 0,
+        "nEmergReason": 0,
+        "fDGasTemp": 0.0,
+        "fLastICOUpdate": 65631974197.3372,
+        "nDestTile": 0,
+        "strIdleAnim": "Idle",
+        "dictRecentlyTried": {
+          "Ayden KellyGUILocksAllow": 65631752790.6282
+        },
+        "dictRememberScores": {
+          "IsWieldedR": -4.875
+        },
+        "aRememberIAs": [
+          "UNSLOTWieldDefaultR",
+          "UNSLOTWieldDefaultR",
+          "SLOTWieldDefaultR",
+          "SLOTWieldDefaultR",
+          "GUILocksAllow"
+        ],
+        "strIMGPreview": "ItmCrate01",
+        "strFriendlyName": "Rakow Smart Crate",
+        "strRegIDLast": "O-GXD",
+        "fMSRedamageAmount": 0.0
+      }
+    ]
+  }
+]

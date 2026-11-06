@@ -1,0 +1,73 @@
+{
+    "generation":  15,
+    "epoch":  65631764416.3972,
+    "capturedUtc":  "2026-11-05T00:23:25.0678843Z",
+    "inspectionMs":  1.4291,
+    "data":  {
+                 "ship":  {
+                              "id":  "O-APJH",
+                              "name":  "VORB Hauler 24",
+                              "loadState":  "Shallow",
+                              "destroyed":  false,
+                              "classification":  "Default",
+                              "damageState":  "Used",
+                              "isAI":  true,
+                              "transponder":  "O-APJH",
+                              "transponderAntenna":  true,
+                              "hiddenFromSystem":  true,
+                              "position":  {
+                                               "xAU":  0.718078840226501,
+                                               "yAU":  -0.0793514681998092,
+                                               "vxAUPerSecond":  2.64450009501295E-08,
+                                               "vyAUPerSecond":  2.1249448422677E-07,
+                                               "note":  "Stored coordinates; inspection does not call UpdateTime or project positions."
+                                           }
+                          },
+                 "relativeToSelectedCrew":  {
+                                                "referenceShipId":  "O-GXD",
+                                                "centerDistanceKm":  204.12458548667689,
+                                                "dxKm":  59.069407597878438,
+                                                "dyKm":  195.39102202031538,
+                                                "bearingDegreesFromPositiveX":  73.1792071961977,
+                                                "relativeVxKmPerSecond":  0.043576227211392031,
+                                                "relativeVyKmPerSecond":  0.08219447535405261,
+                                                "note":  "Approximate from stored centers; may differ from MFD collision-surface distance and projected positions."
+                                            },
+                 "hasComms":  true,
+                 "shipCO":  {
+                                "id":  "CO-O-APJH",
+                                "name":  "CO-O-APJH",
+                                "shipId":  "O-APJH",
+                                "alive":  true,
+                                "destroyed":  false
+                            },
+                 "crewProfileCount":  0,
+                 "crew":  [
+
+                          ],
+                 "crewTruncated":  false,
+                 "targetLog":  {
+                                   "ownerShipId":  "O-APJH",
+                                   "peerShipId":  "O-GXD",
+                                   "totalLogEntries":  4,
+                                   "items":  [
+
+                                             ],
+                                   "scanned":  0,
+                                   "nextOffset":  0,
+                                   "order":  "Newest stored entry first. Offset counts raw log entries, not conversation matches."
+                               },
+                 "selectedCrewShipLog":  {
+                                             "ownerShipId":  "O-GXD",
+                                             "peerShipId":  "O-APJH",
+                                             "totalLogEntries":  529,
+                                             "items":  [
+
+                                                       ],
+                                             "scanned":  0,
+                                             "nextOffset":  0,
+                                             "order":  "Newest stored entry first. Offset counts raw log entries, not conversation matches."
+                                         },
+                 "note":  "Raw crew/profile references and message logs only. No captain selection, interaction eligibility, replies, or status requests are executed."
+             }
+}

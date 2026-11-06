@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <GameDir Condition="'$(GameDir)' == '' and '$(OSTRANAUTS_DIR)' != ''">$(OSTRANAUTS_DIR)</GameDir>
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildProgramFiles32)/Steam/steamapps/common/Ostranauts</GameDir>
+    <Game>$(GameDir)</Game>
+    <Managed>$(GameDir)/Ostranauts_Data/Managed</Managed>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'Ostrabus'">
+    <Compile Include="$(MSBuildThisFileDirectory)Build/InstallationPaths.cs" Link="InstallationPaths.cs" />
+  </ItemGroup>
+</Project>

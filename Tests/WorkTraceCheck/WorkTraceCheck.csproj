@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Diagnostics/WorkTrace.cs" Link="WorkTrace.cs" />
+    <Compile Include="../../Inspection/SnapshotJson.cs" Link="SnapshotJson.cs" />
+    <Compile Include="../../Inspection/InspectionLog.cs" Link="InspectionLog.cs" />
+    <Compile Include="../../Optimizations/LoadProfiling.cs" Link="LoadProfiling.cs" />
+    <Compile Include="../../Optimizations/LoadProfilingHooks.cs" Link="LoadProfilingHooks.cs" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Game)/Ostranauts_Data/Managed/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Game)/Ostranauts_Data/Managed/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(Game)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

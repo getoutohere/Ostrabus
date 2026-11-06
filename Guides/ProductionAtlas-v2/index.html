@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An offline production-chain explorer for Ostranauts. Find stations your cargo can supply and follow the resulting goods.">
+  <title>Production Atlas v2 · Ostranauts</title>
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="theme.css">
+  <script defer src="data.js"></script>
+  <script defer src="engine.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="index.html" aria-label="Production Atlas home"><span class="brand-mark" aria-hidden="true">↗</span><span>PRODUCTION ATLAS<small>OSTRANAUTS / FIELD GUIDE 02 / SHIPMENTS</small></span></a>
+    <div class="header-right"><span class="offline"><i></i> Fully offline</span><button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" title="Toggle Ostranauts dark mode"><span aria-hidden="true">◐</span> <span>Ostranauts dark mode</span></button><button class="text-button" id="about-button" type="button">How to read this <span aria-hidden="true">↗</span></button></div>
+  </header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">MATERIALS IN. POSSIBILITIES OUT.</p><h1>Trace your cargo.</h1><p class="intro-copy">Size your first shipment, then follow every batch it could produce.</p></div>
+      <div class="intro-note"><span class="note-index">19</span><span>station profiles<br><strong>one connected economy</strong></span></div>
+    </section>
+    <section class="controls" aria-label="Starting point">
+      <div class="control-field station-field"><label for="station-select">01 / DEPARTURE STATION</label><select id="station-select"></select></div>
+      <div class="control-field cargo-field"><label for="cargo-select">02 / STARTING CARGO</label><select id="cargo-select"></select></div>
+      <fieldset class="mode-field"><legend>03 / SUPPLY BASIS</legend><div class="segmented"><label><input type="radio" name="basis" value="surplus" checked><span>Net surplus</span></label><label><input type="radio" name="basis" value="gross"><span>All output</span></label></div></fieldset>
+      <button class="icon-button reset" id="reset-button" type="button" title="Reset the chain">↺ <span>Reset chain</span></button>
+    </section>
+    <section class="shipment-controls" aria-label="Initial shipment">
+      <div><p class="eyebrow">04 / INITIAL SHIPMENT</p><div class="segmented"><label><input type="radio" name="shipment-mode" value="pods" checked><span>Cargo pods</span></label><label><input type="radio" name="shipment-mode" value="units"><span>Total units</span></label></div></div>
+      <div class="control-field"><label for="shipment-amount" id="amount-label">PODS / 1,000 KG EACH</label><input id="shipment-amount" type="number" min="1" max="1000000" step="1" value="1" inputmode="numeric" aria-describedby="shipment-summary"></div>
+      <div class="control-field"><label for="unit-mass">INITIAL CARGO / KG PER UNIT</label><input id="unit-mass" type="number" min="0.000001" step="any" aria-describedby="mass-note"></div>
+      <div id="shipment-summary" role="status"></div>
+      <p id="mass-note">Category mass is an offline estimate from installed item definitions. Adjust it if your cargo differs. Pods must support the cargo’s required specifications.</p>
+    </section>
+    <div class="supply-line" id="supply-line"></div>
+    <details class="departure-recipes" id="departure-recipes"><summary>What does this port need to make this cargo?</summary><div id="departure-recipe-content"></div></details>
+    <section class="chain-bar" aria-label="Your explored chain"><div class="chain-label">YOUR CHAIN</div><nav id="breadcrumbs" aria-label="Chain steps"></nav><button class="text-button" id="export-button" type="button">Save notes ↓</button></section>
+    <div class="workspace">
+      <aside class="destinations" aria-labelledby="destinations-heading">
+        <div class="panel-heading"><div><p class="eyebrow">WHERE IT CAN GO</p><h2 id="destinations-heading">Production links <span id="destination-count"></span></h2></div></div>
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="destination-search" type="search" placeholder="Find a station or output…" aria-label="Filter destination stations or products"></label>
+        <div class="destination-options"><select id="region-select" aria-label="Destination region"><option value="">All regions</option></select><label class="checkbox"><input id="include-sinks" type="checkbox"> Include consumption</label></div>
+        <p class="list-hint">Ordered by output variety, then cargo use. These are possibilities, not prices.</p>
+        <div id="destination-list" class="destination-list"></div>
+      </aside>
+      <section class="main-panel" aria-label="Production flow">
+        <div class="flow-heading"><div><p class="eyebrow">FOLLOW THE MATERIAL</p><h2 id="flow-heading">A delivery is a beginning.</h2></div><span class="diagram-tag">CONDITIONAL FLOW</span></div>
+        <div class="flow-legend"><span><i class="legend-dot cargo-dot"></i> Your cargo</span><span><i class="legend-dot output-dot"></i> Possible output</span><span class="legend-caption">Select an output to inspect the recipe.</span></div>
+        <div id="flow" class="flow" aria-label="Selected cargo production diagram"></div>
+        <div class="recipe-detail" id="recipe-detail"></div>
+        <div class="method-note"><span aria-hidden="true">ⓘ</span><p><strong>Potential, not a promise.</strong> Every branch assumes its other inputs and free storage are available. Branches share your cargo; their outputs cannot simply be added together. No live stock, prices, travel times, or profit predictions.</p></div>
+      </section>
+    </div>
+    <footer><span>OSTRANAUTS / PRODUCTION ATLAS</span><span>Installed data · <span id="snapshot-date"></span> · no connection required</span><a href="../../STATION-PRODUCTION-CHAINS.md">Full recipe reference ↗</a></footer>
+    <p class="sr-only" aria-live="polite" id="announcement"></p>
+  </main>
+  <dialog id="about-dialog" aria-labelledby="about-title"><button id="close-about" class="dialog-close" type="button" aria-label="Close explanation">×</button><p class="eyebrow">READ THE MAP</p><h2 id="about-title">Follow a supply chain,<br>not a price signal.</h2><p>Start at a station and choose a good it can produce. The left column shows other stations with recipes that consume that good. Choose a station, then an output branch to see the exact recipe and any co-inputs.</p><p><strong>Continue with this output</strong> carries the full calculated output quantity into the next leg. Use the chain breadcrumbs to go back. You are exploring one alternative at a time, not allocating cargo across every branch.</p><dl><dt>Net surplus</dt><dd>Gross production minus all local recipe consumption at their full configured rates. This is a theoretical balance, not actual inventory.</dd><dt>All output</dt><dd>Includes goods produced locally even if local recipes would consume them. Exporting these may compete with local production.</dd><dt>Shipment batches</dt><dd>Only whole recipe cycles run. All resulting output carries forward; leftovers remain at the receiving port. Configured cycle rates determine processing time, not a limit on total output. Other ingredients are supplied separately, and storage is cleared as needed. Times exclude travel and game scheduling delays.</dd><dt>Cargo capacity</dt><dd>Each pod holds 1,000 kg. Whole units are packed per pod using an estimated category mass; the initial mass is editable. Onward pod counts cover output only, excluding co-inputs and leftovers. Larger outputs are never silently discarded: use more capacity or multiple trips.</dd><dt>Knock-on effects</dt><dd>Later legs show what the newly produced goods could enable elsewhere. They do not include existing production at the receiving station or prove a profitable route.</dd></dl><p>The mislabeled OKLG HVAC recipe is excluded from routes and production balances.</p><p class="dialog-fine">Snapshot: 19 cargo-market profiles and 239 modeled recipe attachments, 6 November 2026. Source hashes and modeling details are in the bundled README and full recipe reference. No game files are read by this app, and no runtime connection is attempted.</p></dialog>
+  <noscript><p class="noscript">Enable JavaScript to explore the production chains. Everything runs locally.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,9 @@
+[
+  {
+    "strName": "Ostrabus Settings Strings",
+    "aValues": [
+      "GUI_PDA_BUTTON_TEMPLATE_SETTINGS_TITLE", "Mod Settings",
+      "GUI_PDA_BUTTON_TEMPLATE_SETTINGS", "Control the mod's work, orbital simulation and crew options."
+    ]
+  }
+]

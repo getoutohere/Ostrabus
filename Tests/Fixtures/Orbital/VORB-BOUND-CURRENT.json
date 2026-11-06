@@ -1,0 +1,348 @@
+{
+    "generation":  7,
+    "epoch":  65631763596.798096,
+    "capturedUtc":  "2026-11-04T21:22:36.5199611Z",
+    "inspectionMs":  0.4742,
+    "data":  {
+                 "session":  2,
+                 "frame":  127512,
+                 "paused":  false,
+                 "playerShipId":  "O-GXD",
+                 "characterShipId":  "O-GXD",
+                 "watchedShipId":  "M-5N4",
+                 "recordingLeaseSeconds":  60,
+                 "maximumDisplaySamplesPerRealSecond":  20,
+                 "ships":  [
+                               {
+                                   "id":  "O-GXD",
+                                   "name":  "Stellar Magnificence",
+                                   "loadState":  "Full",
+                                   "destroyed":  false,
+                                   "motion":  {
+                                                  "id":  "O-GXD",
+                                                  "captureEpoch":  65631763596.798096,
+                                                  "xAU":  0.71805936733695008,
+                                                  "yAU":  -0.07952647969901766,
+                                                  "vxAUPerSecond":  2.038560209527418E-08,
+                                                  "vyAUPerSecond":  2.1208050964005576E-07,
+                                                  "referenceBodyId":  "VORB",
+                                                  "bodyOrbitLocked":  true,
+                                                  "orbitLocked":  false,
+                                                  "isBodyOrbit":  false,
+                                                  "bodyOffsetXAU":  0,
+                                                  "bodyOffsetYAU":  0,
+                                                  "rcsAcceleration":  {
+                                                                          "x":  0,
+                                                                          "y":  0
+                                                                      },
+                                                  "inputAcceleration":  {
+                                                                            "x":  0,
+                                                                            "y":  0
+                                                                        },
+                                                  "externalAcceleration":  {
+                                                                               "x":  0,
+                                                                               "y":  0
+                                                                           },
+                                                  "referenceBody":  {
+                                                                        "id":  "VORB",
+                                                                        "parentId":  "Venus",
+                                                                        "xAU":  0.71805936733695008,
+                                                                        "yAU":  -0.07952647969901766,
+                                                                        "vxAUPerSecond":  2.038560209527418E-08,
+                                                                        "vyAUPerSecond":  2.1208050964005576E-07,
+                                                                        "positionCalculationEpoch":  65631763596.798096,
+                                                                        "velocityCalculationEpoch":  65631763595.9668,
+                                                                        "periapsisAU":  4.345E-05,
+                                                                        "apoapsisAU":  0.000116,
+                                                                        "majorAxisAU":  0.00015945,
+                                                                        "minorAxisAU":  0.000141988731947292,
+                                                                        "eccentricity":  0.455001567889621,
+                                                                        "angleDegrees":  0,
+                                                                        "periodSeconds":  14470.310399692,
+                                                                        "phaseSeconds":  0,
+                                                                        "massKg":  100000,
+                                                                        "radiusAU":  6.68458706417963E-09,
+                                                                        "direction":  1
+                                                                    }
+                                              },
+                                   "scanTargetId":  "VORB",
+                                   "stationKeepingTargetId":  null
+                               },
+                               {
+                                   "id":  "VORB",
+                                   "name":  "Venus Orbital",
+                                   "loadState":  "Full",
+                                   "destroyed":  false,
+                                   "motion":  {
+                                                  "id":  "VORB",
+                                                  "captureEpoch":  65631763596.798096,
+                                                  "xAU":  0.71805936733695008,
+                                                  "yAU":  -0.07952647969901766,
+                                                  "vxAUPerSecond":  2.038560209527418E-08,
+                                                  "vyAUPerSecond":  2.1208050964005576E-07,
+                                                  "referenceBodyId":  "VORB",
+                                                  "bodyOrbitLocked":  false,
+                                                  "orbitLocked":  false,
+                                                  "isBodyOrbit":  true,
+                                                  "bodyOffsetXAU":  0,
+                                                  "bodyOffsetYAU":  0,
+                                                  "rcsAcceleration":  {
+                                                                          "x":  0,
+                                                                          "y":  0
+                                                                      },
+                                                  "inputAcceleration":  {
+                                                                            "x":  0,
+                                                                            "y":  0
+                                                                        },
+                                                  "externalAcceleration":  {
+                                                                               "x":  0,
+                                                                               "y":  0
+                                                                           },
+                                                  "referenceBody":  {
+                                                                        "id":  "VORB",
+                                                                        "parentId":  "Venus",
+                                                                        "xAU":  0.71805936733695008,
+                                                                        "yAU":  -0.07952647969901766,
+                                                                        "vxAUPerSecond":  2.038560209527418E-08,
+                                                                        "vyAUPerSecond":  2.1208050964005576E-07,
+                                                                        "positionCalculationEpoch":  65631763596.798096,
+                                                                        "velocityCalculationEpoch":  65631763595.9668,
+                                                                        "periapsisAU":  4.345E-05,
+                                                                        "apoapsisAU":  0.000116,
+                                                                        "majorAxisAU":  0.00015945,
+                                                                        "minorAxisAU":  0.000141988731947292,
+                                                                        "eccentricity":  0.455001567889621,
+                                                                        "angleDegrees":  0,
+                                                                        "periodSeconds":  14470.310399692,
+                                                                        "phaseSeconds":  0,
+                                                                        "massKg":  100000,
+                                                                        "radiusAU":  6.68458706417963E-09,
+                                                                        "direction":  1
+                                                                    }
+                                              },
+                                   "scanTargetId":  null,
+                                   "stationKeepingTargetId":  null
+                               },
+                               {
+                                   "id":  "VORB|Aux",
+                                   "name":  "Venus Orbital: Auxiliary Docking Port",
+                                   "loadState":  "Shallow",
+                                   "destroyed":  false,
+                                   "motion":  {
+                                                  "id":  "VORB|Aux",
+                                                  "captureEpoch":  65631763596.798096,
+                                                  "xAU":  0.71805936733695008,
+                                                  "yAU":  -0.07952647969901766,
+                                                  "vxAUPerSecond":  2.038560209527418E-08,
+                                                  "vyAUPerSecond":  2.1208050964005576E-07,
+                                                  "referenceBodyId":  "VORB|Aux",
+                                                  "bodyOrbitLocked":  false,
+                                                  "orbitLocked":  false,
+                                                  "isBodyOrbit":  true,
+                                                  "bodyOffsetXAU":  0,
+                                                  "bodyOffsetYAU":  0,
+                                                  "rcsAcceleration":  {
+                                                                          "x":  0,
+                                                                          "y":  0
+                                                                      },
+                                                  "inputAcceleration":  {
+                                                                            "x":  0,
+                                                                            "y":  0
+                                                                        },
+                                                  "externalAcceleration":  {
+                                                                               "x":  0,
+                                                                               "y":  0
+                                                                           },
+                                                  "referenceBody":  {
+                                                                        "id":  "VORB|Aux",
+                                                                        "parentId":  "Venus",
+                                                                        "xAU":  0.71805936733695008,
+                                                                        "yAU":  -0.07952647969901766,
+                                                                        "vxAUPerSecond":  2.038560209527418E-08,
+                                                                        "vyAUPerSecond":  2.1208050964005576E-07,
+                                                                        "positionCalculationEpoch":  65631763596.798096,
+                                                                        "velocityCalculationEpoch":  65631763595.9668,
+                                                                        "periapsisAU":  4.345E-05,
+                                                                        "apoapsisAU":  0.000116,
+                                                                        "majorAxisAU":  0.00015945,
+                                                                        "minorAxisAU":  0.000141988731947292,
+                                                                        "eccentricity":  0.455001567889621,
+                                                                        "angleDegrees":  0,
+                                                                        "periodSeconds":  14470.310399692,
+                                                                        "phaseSeconds":  0,
+                                                                        "massKg":  100000,
+                                                                        "radiusAU":  6.68458706417963E-09,
+                                                                        "direction":  1
+                                                                    }
+                                              },
+                                   "scanTargetId":  null,
+                                   "stationKeepingTargetId":  null
+                               },
+                               {
+                                   "id":  "M-5N4",
+                                   "name":  "Some Assembly Required",
+                                   "loadState":  "Shallow",
+                                   "destroyed":  false,
+                                   "motion":  {
+                                                  "id":  "M-5N4",
+                                                  "captureEpoch":  65631763596.798096,
+                                                  "xAU":  0.718058332358424,
+                                                  "yAU":  -0.079522116404723481,
+                                                  "vxAUPerSecond":  1.9729157550261936E-08,
+                                                  "vyAUPerSecond":  2.126022509481686E-07,
+                                                  "referenceBodyId":  "Venus",
+                                                  "bodyOrbitLocked":  false,
+                                                  "orbitLocked":  false,
+                                                  "isBodyOrbit":  false,
+                                                  "bodyOffsetXAU":  -2.83534774436767E-07,
+                                                  "bodyOffsetYAU":  5.9246795654222E-07,
+                                                  "rcsAcceleration":  {
+                                                                          "x":  0,
+                                                                          "y":  0
+                                                                      },
+                                                  "inputAcceleration":  {
+                                                                            "x":  0,
+                                                                            "y":  0
+                                                                        },
+                                                  "externalAcceleration":  {
+                                                                               "x":  0,
+                                                                               "y":  0
+                                                                           },
+                                                  "referenceBody":  {
+                                                                        "id":  "Venus",
+                                                                        "parentId":  "Sol",
+                                                                        "xAU":  0.71817432442718432,
+                                                                        "yAU":  -0.079537925337714407,
+                                                                        "vxAUPerSecond":  2.4246581520337429E-08,
+                                                                        "vyAUPerSecond":  2.3307495770896747E-07,
+                                                                        "positionCalculationEpoch":  65631763596.798096,
+                                                                        "velocityCalculationEpoch":  65631763595.9668,
+                                                                        "periapsisAU":  0.718340772273422,
+                                                                        "apoapsisAU":  0.728031465972241,
+                                                                        "majorAxisAU":  1.44637223824566,
+                                                                        "minorAxisAU":  1.44633977405843,
+                                                                        "eccentricity":  0.00669999979436398,
+                                                                        "angleDegrees":  76.6999969482422,
+                                                                        "periodSeconds":  19407509.7909503,
+                                                                        "phaseSeconds":  0,
+                                                                        "massKg":  4.86999981091681E+24,
+                                                                        "radiusAU":  4.04551209124151E-05,
+                                                                        "direction":  1
+                                                                    }
+                                              },
+                                   "scanTargetId":  null,
+                                   "stationKeepingTargetId":  null
+                               }
+                           ],
+                 "bodies":  {
+                                "Sol":  {
+                                            "id":  "Sol",
+                                            "parentId":  null,
+                                            "xAU":  0,
+                                            "yAU":  0,
+                                            "vxAUPerSecond":  0,
+                                            "vyAUPerSecond":  0,
+                                            "positionCalculationEpoch":  65631763596.798096,
+                                            "velocityCalculationEpoch":  65631763595.9668,
+                                            "periapsisAU":  0,
+                                            "apoapsisAU":  0,
+                                            "majorAxisAU":  0,
+                                            "minorAxisAU":  0,
+                                            "eccentricity":  0,
+                                            "angleDegrees":  0,
+                                            "periodSeconds":  31556926,
+                                            "phaseSeconds":  0,
+                                            "massKg":  1.98910005267383E+30,
+                                            "radiusAU":  0.00464919714900757,
+                                            "direction":  1
+                                        },
+                                "Venus":  {
+                                              "id":  "Venus",
+                                              "parentId":  "Sol",
+                                              "xAU":  0.71817432442718432,
+                                              "yAU":  -0.079537925337714407,
+                                              "vxAUPerSecond":  2.4246581520337429E-08,
+                                              "vyAUPerSecond":  2.3307495770896747E-07,
+                                              "positionCalculationEpoch":  65631763596.798096,
+                                              "velocityCalculationEpoch":  65631763595.9668,
+                                              "periapsisAU":  0.718340772273422,
+                                              "apoapsisAU":  0.728031465972241,
+                                              "majorAxisAU":  1.44637223824566,
+                                              "minorAxisAU":  1.44633977405843,
+                                              "eccentricity":  0.00669999979436398,
+                                              "angleDegrees":  76.6999969482422,
+                                              "periodSeconds":  19407509.7909503,
+                                              "phaseSeconds":  0,
+                                              "massKg":  4.86999981091681E+24,
+                                              "radiusAU":  4.04551209124151E-05,
+                                              "direction":  1
+                                          },
+                                "VORB":  {
+                                             "id":  "VORB",
+                                             "parentId":  "Venus",
+                                             "xAU":  0.71805936733695008,
+                                             "yAU":  -0.07952647969901766,
+                                             "vxAUPerSecond":  2.038560209527418E-08,
+                                             "vyAUPerSecond":  2.1208050964005576E-07,
+                                             "positionCalculationEpoch":  65631763596.798096,
+                                             "velocityCalculationEpoch":  65631763595.9668,
+                                             "periapsisAU":  4.345E-05,
+                                             "apoapsisAU":  0.000116,
+                                             "majorAxisAU":  0.00015945,
+                                             "minorAxisAU":  0.000141988731947292,
+                                             "eccentricity":  0.455001567889621,
+                                             "angleDegrees":  0,
+                                             "periodSeconds":  14470.310399692,
+                                             "phaseSeconds":  0,
+                                             "massKg":  100000,
+                                             "radiusAU":  6.68458706417963E-09,
+                                             "direction":  1
+                                         },
+                                "VORB|Aux":  {
+                                                 "id":  "VORB|Aux",
+                                                 "parentId":  "Venus",
+                                                 "xAU":  0.71805936733695008,
+                                                 "yAU":  -0.07952647969901766,
+                                                 "vxAUPerSecond":  2.038560209527418E-08,
+                                                 "vyAUPerSecond":  2.1208050964005576E-07,
+                                                 "positionCalculationEpoch":  65631763596.798096,
+                                                 "velocityCalculationEpoch":  65631763595.9668,
+                                                 "periapsisAU":  4.345E-05,
+                                                 "apoapsisAU":  0.000116,
+                                                 "majorAxisAU":  0.00015945,
+                                                 "minorAxisAU":  0.000141988731947292,
+                                                 "eccentricity":  0.455001567889621,
+                                                 "angleDegrees":  0,
+                                                 "periodSeconds":  14470.310399692,
+                                                 "phaseSeconds":  0,
+                                                 "massKg":  100000,
+                                                 "radiusAU":  6.68458706417963E-09,
+                                                 "direction":  1
+                                             }
+                            },
+                 "navDisplay":  {
+                                    "targetId":  null,
+                                    "vrelLabel":  null,
+                                    "vrelText":  null,
+                                    "vrelMPerSecond":  null,
+                                    "vrelEpoch":  0,
+                                    "vrelFrame":  0,
+                                    "vcrsText":  null,
+                                    "vcrsEpoch":  0,
+                                    "vcrsFrame":  0,
+                                    "rangeText":  null,
+                                    "rangeEpoch":  0,
+                                    "rangeFrame":  0
+                                },
+                 "events":  [
+
+                            ],
+                 "nextSince":  0,
+                 "latestSequence":  0,
+                 "oldestAvailableSequence":  1,
+                 "overwritten":  0,
+                 "cursorOverrun":  false,
+                 "cursorAhead":  false,
+                 "note":  "One Unity-frame read of stored state; bodies can have different calculation epochs. No UpdateTime, projection, force, fuel scan or navigation command is invoked. Display fields are last observed game-generated strings and may be older than this snapshot. The bounded events include orbit hooks and completed nav readouts capped at 20 Hz wall time while polled; captureEpoch is not a ship integration timestamp."
+             }
+}
