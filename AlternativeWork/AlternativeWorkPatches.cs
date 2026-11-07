@@ -6,23 +6,23 @@ using HarmonyLib;
 
 namespace Ostrabus.AlternativeWork;
 
-[HarmonyPatch(typeof(WorkManager), nameof(WorkManager.ClaimNextTask))]
+[HarmonyPatch(typeof(WorkManager), "ClaimNextTask", new[] { typeof(Ostranauts.WorkManager.WorkClaimJob) })]
 internal static class WorkSelectionPatch {
     [HarmonyPostfix]
-    static void Postfix(WorkManager __instance, CondOwner co, ref IEnumerator __result) {
-        if (AlternativeWorkSystem.Enabled && __result != null) __result = new AlternativeWorkSystem.Selection(__result, __instance, co);
+    static void Postfix(WorkManager __instance, Ostranauts.WorkManager.WorkClaimJob job, ref IEnumerator __result) {
+        if (AlternativeWorkSystem.Enabled && __result != null) __result = new AlternativeWorkSystem.Selection(__result, __instance, job.CO);
     }
 }
 
 [HarmonyPatch(typeof(WorkManager), "CollectTasks")]
 internal static class WorkCollectionPatch {
-    [HarmonyPrefix]
-    static bool Prefix(WorkManager __instance, string strDuty, CondOwner co, bool bAIManual, ref List<Task2> __result) {
+    [HarmonyPostfix]
+    static void Postfix(WorkManager __instance, string strDuty, CondOwner co, bool bAIManual, ref List<Task2> __result) {
         var context = AlternativeWorkSystem.Context;
-        if (context == null || context.VanillaCollection || context.Manager != __instance || context.Crew != co) return true;
-        try { __result = AlternativeWorkSystem.Collect(__instance, strDuty, co, bAIManual, context.Worker); }
-        catch (Exception ex) { AlternativeWorkSystem.PlannerFailed(context, ex); return true; }
-        return false;
+        if (context == null || context.VanillaCollection || context.Manager != __instance || context.Crew != co || __result == null) return;
+        // Keep native claim reservations/time-scale filtering; rank only its candidates.
+        try { __result = AlternativeWorkSystem.Collect(__instance, strDuty, co, bAIManual, context.Worker, __result); }
+        catch (Exception ex) { AlternativeWorkSystem.PlannerFailed(context, ex); }
     }
 }
 

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Optimizations/BarterLocalIndexPatch.cs" Link="BarterLocalIndexPatch.cs" />
+    <Compile Include="../../Optimizations/BarterInitPatch.cs" Link="BarterInitPatch.cs" />
+    <Compile Include="../../Optimizations/ContainedItemRemovalPatch.cs" Link="ContainedItemRemovalPatch.cs" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(GameDir)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

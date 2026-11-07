@@ -16,6 +16,8 @@ internal static class AlternativeWorkSystem {
     internal static readonly AccessTools.FieldRef<WorkManager, Dictionary<string, List<Task2>>> Tasks = AccessTools.FieldRefAccess<WorkManager, Dictionary<string, List<Task2>>>("dictTasks2");
     internal static readonly AccessTools.FieldRef<WorkManager, int> Spawned = AccessTools.FieldRefAccess<WorkManager, int>("nSpawnedPriorities");
     internal static readonly AccessTools.FieldRef<WorkManager, List<Task2>> ActiveTasks = AccessTools.FieldRefAccess<WorkManager, List<Task2>>("aTasksActive");
+    internal static readonly AccessTools.FieldRef<WorkManager, Dictionary<Task2, Ostranauts.WorkManager.WorkClaimJob>> Reservations =
+        AccessTools.FieldRefAccess<WorkManager, Dictionary<Task2, Ostranauts.WorkManager.WorkClaimJob>>("_taskReservations");
     static readonly Dictionary<string, Worker> workers = new Dictionary<string, Worker>();
     static readonly List<string> crew = new List<string>();
     static readonly List<string> expired = new List<string>();
@@ -171,16 +173,17 @@ internal static class AlternativeWorkSystem {
         foreach (Ship docked in current.GetAllDockedShips()) if (docked != null && docked.strRegID == id) return true;
         return false;
     }
-    internal static List<Task2> Collect(WorkManager wm, string duty, CondOwner co, bool manual, Worker worker) {
+    internal static List<Task2> Collect(WorkManager wm, string duty, CondOwner co, bool manual, Worker worker, List<Task2> nativeCandidates = null) {
         var result = new List<Task2>();
-        if (!Tasks(wm).TryGetValue(duty, out List<Task2> tasks)) return result;
+        List<Task2> tasks = nativeCandidates;
+        if (tasks == null && !Tasks(wm).TryGetValue(duty, out tasks)) return result;
         var ranked = new List<Ranked>(tasks.Count);
         worker.Plan.Refresh(co);
         for (int i = 0; i < tasks.Count; i++) {
             Task2 task = tasks[i];
             var ownership = task.GetOwnership(co.strID);
             if (ownership == Task2.Allowed.Forbidden || (manual && ownership != Task2.Allowed.Owned)) continue;
-            if (StarSystem.fEpoch - task.fLastCheck <= 5 || worker.RetryAfter.TryGetValue(new TaskKey(task), out double retry) && StarSystem.fEpoch < retry) continue;
+            if ((nativeCandidates == null && StarSystem.fEpoch - task.fLastCheck <= 5) || worker.RetryAfter.TryGetValue(new TaskKey(task), out double retry) && StarSystem.fEpoch < retry) continue;
             if (!Allowed(co, task)) { Filtered++; continue; }
             DataHandler.mapCOs.TryGetValue(task.strTargetCOID, out CondOwner target);
             DataHandler.dictInteractions.TryGetValue(task.strInteraction, out JsonInteraction interaction);
@@ -227,19 +230,15 @@ internal static class AlternativeWorkSystem {
             "carriedOnlyFeedBatches", WorkBatchInventoryPatch.CarriedBatches, "expandedFeedBatches", WorkBatchInventoryPatch.ExpandedBatches, "workers", plans);
     }
 
-    // Keep vanilla's material/suit/haul machinery, isolating its shared coroutine scratch fields.
-    // AddTask also increments nSpawnedPriorities for existing prerequisites. Preserve that signal:
-    // otherwise an undelivered material can be mistaken for a suit requirement. Failed work's
-    // per-worker cooldown and vanilla's bounded restart loop prevent repeated selection here.
+    // 1.0.1.10 owns scratch fields, fake airtightness and frame budgets in WorkClaimJob.
+    // Scope only our ranking context around each native step; leave native job state intact.
     internal sealed class Selection : IEnumerator, IDisposable {
         readonly IEnumerator inner;
         readonly WorkManager wm;
         readonly CondOwner co;
         SearchContext context;
-        Task2 upstream;
-        int spawned, session;
-        bool started, done, ownsFakeAirtight;
-        Tile borrowedOrigin, assignedOrigin;
+        int session;
+        bool started, done;
         internal Selection(IEnumerator original, WorkManager manager, CondOwner worker) { inner = original; wm = manager; co = worker; }
         public object Current => inner.Current;
         public bool MoveNext() {
@@ -266,39 +265,14 @@ internal static class AlternativeWorkSystem {
             if (session != generation) { Dispose(); return false; }
             long selectionStart = Stopwatch.GetTimestamp();
             try {
-                // Fold a few cheap null yields; preserve explicit waits and a bounded frame slice.
-                for (int step = 0; step < 4; step++) {
-                    SearchContext previous = Context;
-                    Task2 previousUpstream = wm.taskUpstream;
-                    int previousSpawned = Spawned(wm);
-                    Context = context; wm.taskUpstream = upstream; Spawned(wm) = spawned;
-                    bool live = !ReferenceEquals(co, null) && co != null;
-                    double fakeBefore = live ? co.GetCondAmount("IsAirtightFake") : 0;
-                    Tile originBefore = live && co.Pathfinder != null ? co.Pathfinder.tilCurrent : null;
-                    bool more;
-                    bool failed = false;
-                    try { more = inner.MoveNext(); }
-                    catch { failed = true; throw; }
-                    finally {
-                        if (live && co != null) {
-                            double fakeAfter = co.GetCondAmount("IsAirtightFake");
-                            if (fakeBefore == 0 && fakeAfter > 0) ownsFakeAirtight = true;
-                            if (fakeAfter == 0) ownsFakeAirtight = false;
-                            Tile originAfter = co.Pathfinder != null ? co.Pathfinder.tilCurrent : null;
-                            if (originAfter != originBefore) {
-                                if (assignedOrigin == null) borrowedOrigin = originBefore;
-                                assignedOrigin = originAfter;
-                                if (originAfter == borrowedOrigin) borrowedOrigin = assignedOrigin = null;
-                            }
-                        }
-                        upstream = wm.taskUpstream; spawned = Spawned(wm);
-                        wm.taskUpstream = previousUpstream; Spawned(wm) = previousSpawned; Context = previous;
-                        if (failed) Dispose();
-                    }
-                    if (!more) { Dispose(); return false; }
-                    if (inner.Current != null || Stopwatch.GetTimestamp() - selectionStart >= Stopwatch.Frequency / 2000) return true;
-                }
-                return true;
+                SearchContext previous = Context;
+                Context = context;
+                bool more;
+                try { more = inner.MoveNext(); }
+                catch { Dispose(); throw; }
+                finally { Context = previous; }
+                if (!more) Dispose();
+                return more;
             } finally { SelectionMs += (Stopwatch.GetTimestamp() - selectionStart) * 1000d / Stopwatch.Frequency; }
         }
         public void Reset() { throw new NotSupportedException(); }
@@ -307,14 +281,9 @@ internal static class AlternativeWorkSystem {
             done = true;
             try { (inner as IDisposable)?.Dispose(); }
             finally {
-                if (session == generation && !ReferenceEquals(co, null) && co != null) {
-                    if (ownsFakeAirtight) co.ZeroCondAmount("IsAirtightFake");
-                    if (assignedOrigin != null && co.Pathfinder != null && co.Pathfinder.tilCurrent == assignedOrigin) co.Pathfinder.tilCurrent = borrowedOrigin;
-                }
-                ownsFakeAirtight = false; borrowedOrigin = assignedOrigin = null;
                 if (context != null) {
                     if (session == generation) activeSearches--;
-                    context = null; upstream = null;
+                    context = null;
                     if (!Enabled && activeSearches == 0) ClearWorkers();
                 }
             }

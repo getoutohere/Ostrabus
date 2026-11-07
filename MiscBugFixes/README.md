@@ -2,6 +2,90 @@
 
 Always enabled through the plugin's normal Harmony lifecycle. No update loop or saved state.
 
+## PDC conversion ammunition
+
+`PdcConversionAmmoPatch` suppresses starting loot when a vanilla PDC replaces
+an existing PDC. This prevents another 50-100 rounds being generated before
+native inventory transfer during installation/uninstallation, while new spawns
+retain their normal starting ammunition. See [PDC-CONVERSION-AMMO.md](PDC-CONVERSION-AMMO.md).
+
+## Tile helper memory leak
+
+`TileHelperCleanupPatch` performs native managed cleanup for discarded grid
+helpers while preserving the caller's Unity deletion order. `AsyncShipCleanupPatch`
+extends it to barter/preview/rating copies and protects newer same-ID objects
+from stale-copy registry removal. No polling, GC forcing or registry sweeps.
+See [TILE-HELPER-CLEANUP.md](TILE-HELPER-CLEANUP.md) for the live reproduction,
+scope and 1,036 offline checks.
+
+## Ranged attacks hitting the shooter
+
+Native `DamageSystem.DamageRay` skips attacker-owned body/equipment hits in its
+destructible branch but omits the equivalent check in its character-wound branch.
+A ray reporting the shooter's own body can therefore reach `Wound.Damage`, whose
+normal armor handling can also destroy their worn EVA suit. The personal shotgun
+uses ten straight rays; no ricochet is involved in this path.
+
+`RangedShooterExclusionPatch` changes only the wound-selection call inside that
+method. It returns no wound when the reported character is the attacker or has
+the attacker as its native RootParent. Ownership means the physical parent
+hierarchy, not property or faction ownership. Other hits use native wound
+selection unchanged. Skipping the shooter spends no ray damage, so a target
+behind that collider still receives the normal hit. Existing destructible
+exclusion, spread, penetration, cover, faction effects, cross-ship restrictions
+and environmental damage remain native. No global wound hook, polling, retained
+game references or additional per-shot collections are introduced.
+
+Always on, with no setting or saved state. Unfamiliar native IL emits a warning
+and retains vanilla behavior. `Tests/RangedSelfHitCheck` passes 626 checks under
+bundled Mono: original self-hit reproduction; applicable installed ranged attack
+assets; a complete ten-ray shotgun blast; target/friendly/environmental hits;
+attached parts; worn equipment; ordinary objects and cover; docking restrictions;
+native instruction preservation; fallback and allocation. Physics hit reports,
+engine access and wound writes are controlled fixture boundaries; the native
+hit-processing and damage-budget loop execute unchanged around the production fix.
+
+## Loose meat duplication and projectile cover
+
+`MeatScrapPatches.cs` contains two always-on fixes. The destruction correction
+applies to ordinary 0.2 kg `ItmMeat01Loose` scraps. The projectile-cover exclusion
+also includes loose meat eyes, hooves and horns. Installed meat and heavy meat
+planters keep their native behavior.
+
+**Duplication:** native loose meat uses `ACTMeat01Destroy`, just like installed
+meat. This resolves through `MSDestroyMeat` and `ItmMeatDestroyed` to another
+1–5 loose meat pieces. `LooseMeatDestructionPatch` corrects the individual
+`DestCheck.SetData` result to `ACTDefaultDestroy`, the same native path used by
+other loose meat variants; destruction produces ordinary trash. This handles
+new objects and reconstruction from saves without changing shared definitions,
+the installed-meat recipe, other checks or custom destruction recipes. There
+is no recurring scan or new save data.
+
+**Cover:** captured floor scraps have full-tile, ten-unit-deep colliders. They
+intercept rays at shooting height, and native `DamageRay` subtracts their
+remaining durability from the projectile budget. Its penetration parameter is
+used for wounds, not this object-damage calculation. Live captures showed
+shotgun and carbine rays intersecting the intended meat but spending their
+damage on scraps first. One carbine round spent 21 damage on seven scraps.
+
+`LooseMeatCoverPatch` changes only the `DmgLeft` call inside `DamageRay`: a
+loose meat piece, eye, hoof or horn with neither a parent nor a slot reports zero effective
+cover durability. The existing native branch then continues without spending
+environment, blunt or cut damage. Ray-based fire passes over these scraps;
+their actual durability, other damage paths, pickup/selection colliders,
+inventory, stack behavior and normal cover remain unchanged. Held or contained
+meat does not qualify. This is not a general penetration or weapon rebalance.
+The check allocates nothing and holds no game references. Unknown native ray
+IL warns and retains native behavior.
+
+The bundled-Mono `Tests/RangedSelfHitCheck` harness reproduces the recursive
+asset chain, executes native destruction-check initialization and native ray
+damage with controlled engine hits, checks installed/custom recipe preservation,
+reload reconstruction, installed/heavy/held/container cover, applicable native
+ranged modes, unchanged downstream damage, allocation and instruction preservation.
+It also verifies that opt-in personnel tracing respects and reports the cover
+fix and can be removed without disturbing the permanent patches.
+
 ## Navigation references after shallow replacement
 
 `ShipReplacementTargetsPatch.cs` fixes native `CrewSim.DestroyAndReload` leaving

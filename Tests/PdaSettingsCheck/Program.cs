@@ -53,7 +53,10 @@ static class Program {
         var all = (Array)AccessTools.Field(Type("PdaSettings.SettingsRegistry"), "All").GetValue(null);
         var settings = new Dictionary<string, object>();
         foreach (var setting in all) Check(settings.TryAdd((string)Field(setting, "Id"), setting), "Duplicate setting ID");
-        Check(settings.Count == 8, "Settings missing");
+        Check(settings.Count == 9, "Settings missing");
+        var hideNote = Config(false);
+        AccessTools.Field(Type("NavConsole.TutorialNote"), "HideFlag").SetValue(null, hideNote);
+        Check((int)Get(settings["hide_nav_note"]) == 0 && (string)Field(settings["hide_nav_note"], "Lifetime") == "Saved", "Nav tutorial default/lifetime incorrect");
         Set(settings["autovents"], 0); Check(!autovents.Value, "Auto-vents could not disable");
         Set(settings["autovents"], 1); Check(autovents.Value && (int)Get(settings["autovents"]) == 1, "Auto-vents could not enable");
         Set(settings["altwork"], 1); Check(flag.Value && (int)Get(settings["altwork"]) == 1, "Altwork setter/config not used");

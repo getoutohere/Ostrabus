@@ -53,8 +53,9 @@ internal sealed class WorkSupplyPlan {
         } catch { Clear(); throw; }
         finally { PlanningMs += (Stopwatch.GetTimestamp() - start) * 1000d / Stopwatch.Frequency; }
     }
-    internal static bool Available(Task2 task, CondOwner co, AlternativeWorkSystem.Worker worker) {
-        if (task == null || task.bManual || task.GetOwnership(co.strID) == Task2.Allowed.Forbidden || StarSystem.fEpoch - task.fLastCheck <= 5) return false;
+    internal static bool Available(Task2 task, CondOwner co, AlternativeWorkSystem.Worker worker, WorkManager manager = null) {
+        if (task == null || task.bManual || task.GetOwnership(co.strID) == Task2.Allowed.Forbidden || StarSystem.fEpoch - task.fLastCheck <= 5 ||
+            (manager != null && AlternativeWorkSystem.Reservations(manager).ContainsKey(task))) return false;
         return !(worker.RetryAfter.TryGetValue(new AlternativeWorkSystem.TaskKey(task), out double retry) && StarSystem.fEpoch < retry) && AlternativeWorkSystem.Allowed(co, task);
     }
     internal static bool IsSupplied(Task2 task) {
@@ -101,7 +102,7 @@ internal sealed class WorkSupplyPlan {
         for (int i = 0; i < tasks.Count; i++) {
             if (i > 0 && i % ScanSlice == 0) yield return null;
             Task2 task = tasks[i];
-            if (!Available(task, co, worker) || !DataHandler.mapCOs.TryGetValue(task.strTargetCOID, out CondOwner target) || target == null || target.ship == null || target.ship.strRegID != ship || target.tf == null) continue;
+            if (!Available(task, co, worker, wm) || !DataHandler.mapCOs.TryGetValue(task.strTargetCOID, out CondOwner target) || target == null || target.ship == null || target.ship.strRegID != ship || target.tf == null) continue;
             float distance = ((Vector2)target.tf.position - point).sqrMagnitude;
             if (distance > 64) continue;
             if (IsSupplied(task) || supplied.Contains(task.strTargetCOID)) continue;
@@ -113,7 +114,7 @@ internal sealed class WorkSupplyPlan {
             Task2 task = candidates[i];
             CountOutstanding(wm, tasks, ship, point);
             if (supplied.Count >= Window) break;
-            if (supplied.Contains(task.strTargetCOID) || !tasks.Contains(task) || !Available(task, co, worker)) continue;
+            if (supplied.Contains(task.strTargetCOID) || !tasks.Contains(task) || !Available(task, co, worker, wm)) continue;
             // Another worker can prepare or take a job while this operation yields.
             if (HasDelivery(tasks, task.strTargetCOID)) continue;
             if (!DataHandler.mapCOs.TryGetValue(task.strTargetCOID, out CondOwner target) || target == null || target.ship == null || target.ship.strRegID != ship) continue;
@@ -126,7 +127,7 @@ internal sealed class WorkSupplyPlan {
             try { while (probe.MoveNext()) yield return probe.Current; }
             finally { (probe as IDisposable)?.Dispose(); }
             CountOutstanding(wm, tasks, ship, point);
-            if (result.Value == null || supplied.Count >= Window || supplied.Contains(task.strTargetCOID) || !AlternativeWorkSystem.Enabled || !tasks.Contains(task) || !Available(task, co, worker) ||
+            if (result.Value == null || supplied.Count >= Window || supplied.Contains(task.strTargetCOID) || !AlternativeWorkSystem.Enabled || !tasks.Contains(task) || !Available(task, co, worker, wm) ||
                 !DataHandler.mapCOs.TryGetValue(task.strTargetCOID, out CondOwner current) || !ReferenceEquals(current, target) || target.ship == null || target.ship.strRegID != ship ||
                 string.IsNullOrEmpty(target.strPlaceholderInstallReq) || (target.aLot?.Count ?? 0) != lotCount || HasDelivery(tasks, task.strTargetCOID)) continue;
             // QueueMissingInputDeliveries uses manager-wide scratch. Install it only

@@ -7,13 +7,22 @@ namespace Ostrabus.Orbital;
 
 [HarmonyPatch(typeof(StarSystem), nameof(StarSystem.Update))]
 internal static class OrbitalStepObservationPatch {
+    internal sealed class Step : IDisposable {
+        internal SffSimulation Motion;
+        internal Economy.SffEconomy Economy;
+        public void Dispose() { try { Economy?.Dispose(); } finally { Motion?.Dispose(); } }
+    }
     [HarmonyPrefix]
-    internal static void Prefix(StarSystem __instance, double fTimeDelta, out SffSimulation __state) {
+    internal static void Prefix(StarSystem __instance, double fTimeDelta, out Step __state) {
         OrbitalSimulation.ObserveUpdate(__instance, fTimeDelta);
-        __state = SffSimulation.Begin(__instance, fTimeDelta, GUIFFWD.Active);
+        __state = null;
+        if (!GUIFFWD.Active || fTimeDelta < 60) return;
+        var economy = Economy.SffEconomy.Begin(__instance, fTimeDelta, true);
+        var motion = SffSimulation.Begin(__instance, fTimeDelta, true);
+        if (economy != null || motion != null) __state = new Step { Motion = motion, Economy = economy };
     }
     [HarmonyFinalizer]
-    internal static Exception Finalizer(Exception __exception, SffSimulation __state) {
+    internal static Exception Finalizer(Exception __exception, Step __state) {
         try { __state?.Dispose(); }
         catch (Exception ex) { Ostrabus.OstrabusPlugin.Logger?.LogError("[Orbital SFF] Cleanup: " + ex); }
         return __exception;

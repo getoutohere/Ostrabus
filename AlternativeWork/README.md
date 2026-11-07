@@ -11,7 +11,8 @@ the choice survives restarting the game. No custom save data is written.
 
 ## Integration
 
-The module replaces candidate collection within vanilla `ClaimNextTask`, retaining
+On 1.0.1.10 the module ranks and permission-filters the candidates returned by
+native `CollectTasks` within `ClaimNextTask(WorkClaimJob)`, retaining
 the game's interaction validation, build prerequisites/material delivery, hauling,
 reloads, suit preparation, claiming, work execution and cancellation. Duty priority
 and duty ordering remain vanilla; explicitly owned tasks take precedence over
@@ -19,6 +20,13 @@ unowned tasks within a duty. Within each ownership group, supplied work and work
 without construction inputs precede queued material deliveries, which precede
 unsupplied construction blueprints. Each group sorts by estimated travel cost.
 Lot contents are a readiness hint; partial supplies still require native validation.
+
+Native claim jobs keep ownership of their reservations, scheduler budget,
+prerequisite counters, fake-airtight state, completion and cancellation. Altwork
+does not restore the former blocking claim loop or run extra native iterator
+steps inside one scheduler step. Native reservation and time-scale cooldown
+filters run before alternative ranking. Background supply preparation also
+skips reserved tasks, including on revalidation after a yield.
 
 During alternative selection, required-input validation first checks stored inputs
 and then carried inventory, including accessible nested containers, using native
@@ -98,9 +106,10 @@ still unclaimed and its vessels remain eligible.
 - Batch haul/feed candidates also receive the vessel permission filter.
 - Automatic delayed claims (including returning from suit preparation) receive a
   permission and path recheck. Explicit manual direct orders keep vanilla behavior.
-- Each selection coroutine owns its `taskUpstream`/`nSpawnedPriorities` scratch
-  values. The shared fields are installed only during its `MoveNext` call and
-  restored afterward. Vanilla's prerequisite signal is preserved even when a
+- Native `WorkClaimJob` owns each selection's `taskUpstream`/`nSpawnedPriorities`
+  scratch and fake-airtight state. Its scope installs/restores these around
+  processing; our wrapper scopes only the alternative ranking context.
+  Vanilla's prerequisite signal is preserved even when a
   delivery task already exists: a positive counter diverts the failed install
   back to prerequisite work instead of suit preparation. The per-worker retry
   cooldown excludes the failed install on restart, and vanilla retains its
@@ -181,8 +190,10 @@ dotnet run --project Tests/SaveJsonCompatibility/Host -c Release -- Tests/Altern
 ```
 
 Checks cover incremental weighted routes against an independent reference on 100
-random graphs, disconnected/capped fields, cooldown key identity, coroutine scratch
-restoration and binding the patch classes to the shipped game methods. Floor-batch
+random graphs, disconnected/capped fields, cooldown key identity, native claim-scope
+restoration and binding the patch classes to the shipped game methods. Claim tests
+exercise real native reservation filtering, the production wrapper within native
+job scopes, fake-airtight preservation, cancellation and reservation cleanup. Floor-batch
 checks cover supplied/delivery ordering, ownership and cooldowns. Carried-input
 checks use the native deferred matcher with controlled inventory/reachability,
 covering carried-only, missing, partially carried and persistent inputs, one loot

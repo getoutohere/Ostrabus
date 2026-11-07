@@ -46,6 +46,7 @@ internal static class OrbitalSimulation {
     internal static void Reset() {
         CoastIntegration.Reset();
         SffSimulation.Reset();
+        Economy.SffEconomy.Reset();
         frames = new ConditionalWeakTable<BodyOrbit, FrameCache>(); system = null;
         corrections = cacheHits = calculations = ignored = invalid = pathQueries = 0;
         largeUpdates = superFastForwardUpdates = 0; lastStep = maximumStep = 0;
@@ -98,6 +99,7 @@ internal static class OrbitalSimulation {
         "lastWorldStepSeconds", lastStep, "maximumWorldStepSeconds", maximumStep,
         "worldUpdatesAtLeast60Seconds", largeUpdates, "superFastForwardUpdates", superFastForwardUpdates,
         "sffEnabled", SffSimulation.Enabled, "lastSff", SffSimulation.Snapshot(),
+        "sffEconomyEnabled", Economy.SffEconomy.Enabled, "lastEconomy", Economy.SffEconomy.Snapshot(),
         "coast", CoastIntegration.Snapshot(),
         "lastCorrection", SnapshotJson.Map("body", lastBody, "epoch", lastEpoch,
             "xMps2", lastX * MetersPerAU, "yMps2", lastY * MetersPerAU),

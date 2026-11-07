@@ -3,6 +3,35 @@
 Harmony patches for save/load costs and bounded profiling telemetry. Each optimization is isolated
 here so it can be reviewed or disabled independently.
 
+[Algorithmic cost audit](BIG-O-AUDIT.md) records findings, native offline
+benchmarks and a read-only inventory survey, with follow-up status noted there.
+
+## Inventory bookkeeping
+
+`BarterWritebackPatch` replaces repeated saved-ID scans during remote trade
+write-back with a reusable lookup. `ContainedItemRemovalPatch` removes records
+at their already-known index in full and preview loaders and the paced barter
+loader. `SaveRemainingIdsPatch` batches private remaining-ID removals into
+ordered compaction during saving, keeping native serialization intact.
+Scratch buffers are bounded, reused and cleared on exit, including errors and
+nested calls. See [INVENTORY-PERFORMANCE.md](INVENTORY-PERFORMANCE.md) for behavior,
+offline equivalence tests, timings and allocation measurements.
+
+## Remote barter finalization
+
+`BarterLocalIndexPatch` replaces repeated full saved-item scans in
+`BarterZoneShip.AddToLocalInstance` with a local ordinal ID lookup. The offline
+9,892-item native method benchmark improved from 2,004 ms to 1.87 ms with matching
+JSON output and serialization behavior. `BarterInitPatch` also distributes
+reconstruction and finalization across frames with a shared cooperative 4 ms
+budget, preserving native operation order and readiness gates. See
+[BARTER-FINALIZATION.md](BARTER-FINALIZATION.md) for cause, scope and validation.
+
+For a remaining live post-transit hitch, an explicitly started/stopped
+[temporary transit profiler](TRANSIT-PROFILING.md) separates native iterator
+steps, reconstruction/finalization phases, old-ship teardown and frame gaps.
+It installs no game hooks at startup and removes its observers on stop.
+
 ## Saved CO ship lookup
 
 `SavedCoShipLookupPatch` targets the generated `MoveNext` method for

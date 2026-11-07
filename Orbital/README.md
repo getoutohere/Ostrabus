@@ -2,6 +2,9 @@
 
 Namespace/subdirectory `Ostrabus.Orbital`. Experimental; default off.
 
+[Economic SFF catch-up](Economy/README.md) processes production, freight dispatch and
+eligible cargo arrivals in simulation-time order without changing the player's course.
+
 ```ini
 [Orbital]
 Enabled = false

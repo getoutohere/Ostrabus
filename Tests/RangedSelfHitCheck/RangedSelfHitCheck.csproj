@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../MiscBugFixes/RangedShooterExclusionPatch.cs" Link="RangedShooterExclusionPatch.cs" />
+    <Compile Include="../../MiscBugFixes/MeatScrapPatches.cs" Link="MeatScrapPatches.cs" />
+    <Compile Include="../../Inspection/PersonnelCombatInspection.cs" Link="PersonnelCombatInspection.cs" />
+    <Compile Include="../../Inspection/PersonnelCombatTraceHooks.cs" Link="PersonnelCombatTraceHooks.cs" />
+    <Compile Include="../../Inspection/SnapshotJson.cs" Link="SnapshotJson.cs" />
+    <Compile Include="../../Inspection/InspectionHttp.cs" Link="InspectionHttp.cs" />
+    <Compile Include="../../Inspection/PersonnelCombatRequest.cs" Link="PersonnelCombatRequest.cs" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(Managed)/UnityEngine.PhysicsModule.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(GameDir)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

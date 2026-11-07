@@ -4,9 +4,12 @@ Default: `http://127.0.0.1:18764`. Enabled when this plugin starts. Configure
 `[InspectionApi] Enabled` and `Port` in the plugin's BepInEx config; restart to
 apply. Install the rebuilt DLL and restart the game to load this version.
 
-The inspection routes are read-only. One explicit maintenance route can remove
-eligible derelicts; it requires `POST`, a distance threshold, a station ID, and
-`confirm=PRUNE`. The API has no authentication; local processes can query it.
+Inspection reads do not change game state. Explicit maintenance routes can prune
+eligible ships or derelicts; they require `POST` and confirmation. Personnel
+trace controls also require `POST`; they enable diagnostics without changing
+combat behavior. `POST /micrometeoroids/strike` deliberately requests a real
+BeatManager MM event, with possible ammunition use and damage. The API has no
+authentication; local processes can query it.
 It binds IPv4 loopback only and requires the matching numeric Host header.
 Browser Origin headers are rejected. No arbitrary code, reflection queries,
 request bodies, or persistent connections are exposed.
@@ -14,14 +17,38 @@ request bodies, or persistent connections are exposed.
 | Route | Result |
 | --- | --- |
 | `/health` | Whether the game is ready and the current simulation generation. |
+| `/cos/{id}/combat` | Raw combat state, queued targets/attack modes, armor/damage and direct equipment slots; also accepts `/npcs/{id}/combat`. |
+| `/combat/personnel/trace?since=0&limit=25` | Read the current/last personnel ranged-combat capture, forward-paged by `nextSince`. |
+| `POST /combat/personnel/trace/start?coId={id}&seconds=120` | Start tracing one shooter; omit `coId` to use selected crew. Duration is 1–300 wall-clock seconds, default 120. |
+| `POST /combat/personnel/trace/stop` | Remove trace hooks immediately and retain captured records for inspection. |
 | `/console?offset=0` | Actual GUI console text, including typed commands and responses. Available before loading a save. |
 | `/logs?since=0&limit=25` | Recent console/Unity/BepInEx logs; subsequent polls use `nextSince`. Works without Unity Update. |
 | `/profiling/load` | Last three bounded startup/save load profiles, including current progress, stage wall/work time, yields, inclusive method timings, slow calls and GC counts. Served off the main thread and available while loading; see [profiling notes](../Optimizations/README.md). |
+| `/profiling/transit` | Detached temporary transit/barter method timings and recent slow frame gaps, readable while loading. |
+| `POST /profiling/transit/start` | Install the temporary transit profiler; preserves loading behavior and records GC counts. |
+| `POST /profiling/transit/stop` | Finish capture and remove all transit profiling hooks. See [transit profiling](../Optimizations/TRANSIT-PROFILING.md). |
 | `/events/docking?since=0&limit=25` | Recent successful dock/moor/undock/unmoor transitions observed since plugin startup. |
 | `/events/ai?since=0&limit=25&shipId=O-TXXW` | Bounded in-memory history of sampled AI command, target, combat, and docking-state changes. |
 | `/events/combat?since=0&limit=25&shipId=O-TXXW` | Successful weapon-fire and ship-damage events; filters by involved ship ID. |
 | `/shipboard` | Current shallow boarding encounters, including start epoch and per-ship start crew readiness (`alive/active/ranged/other weapon/unarmed`) alongside current crew/load state, next casualty timing, ships ordered to return home, and the latest resolution's prize-capture checks. Weapon counts include detected carried weapons; read-only, captured on the Unity thread. See the [shipboard action module notes](../ShipboardAction/README.md) for the encounter and resolution rules. |
 | `/world` | Ship/CO counts, AI-region count, pause state. |
+| `/orbital` | Orbital/SFF reports, including `lastEconomy` dispatch, production, arrival, failure and timing counts with bounded shipment cargo summaries. |
+| `/economy` | Economic clocks, market count/settings and last SFF economic report; see [economy inspection](ECONOMY.md). |
+| `/economy/stations` or `/economy/markets` | Paged station markets or all registered markets, including lifecycle and recipe/category counts. |
+| `/economy/markets/{id}` | Market detail; append `/stock`, `/production`, `/actors`, `/manifest` or `/trade/{category}` for paged diagnostics. Station and freight detail aliases support the same views. |
+| `/economy/freight` | Cargo-pod markets with raw AI/home/destination/course/fuel state; player cargo and parked hulls are identified, not assumed to be NPC deliveries. |
+| `/economy/stations/{id}/freight` | Related freight with explicit incoming, pilot-home and hull-origin matches. |
+| `/economy/hubs` | Native stored trade hub memberships, without executing redirection or stochastic route selection. |
+| `/flight` | Detached flight-journal status, file path, written/dropped counts, errors and recent event metadata. Available during loading. |
+| `POST /flight/start` | Start a bounded, event-driven journal with a baseline, SFF and ATC transition captures and warning/error logs. |
+| `POST /flight/mark` | Capture a flight checkpoint, e.g. after engaging the course. |
+| `POST /flight/stop` | Capture final state, remove all temporary observers and asynchronously drain the file writer. See [flight journal](FLIGHT-JOURNAL.md). |
+| `/memory?since=0&limit=25` | Detached bounded memory/lifecycle records; works during loading without Unity calls. |
+| `POST /memory/start` | Install temporary memory/cleanup observers and capture a baseline; survives transit and save reload. |
+| `POST /memory/snapshot` | Explicit managed/native/process memory and CO ownership census; no forced GC. |
+| `POST /memory/assets` | Explicit expensive Unity object/texture/mesh/material scan; can hitch. |
+| `POST /memory/stop` | Capture final state and uninstall all memory hooks/listeners. See [memory diagnostics](MEMORY-DIAGNOSTICS.md). |
+| `POST /micrometeoroids/strike` | Request one MM event through BeatManager, retaining station/docking/torch/atmosphere exclusions and area-weighted scene target selection. Returns whether it triggered, target ID, detection probability/result, interception result, bursts and rounds. This causes real firing/ammunition use and possible damage. |
 | `/player` | Player character, selected crew, their respective ships, nav device/ship, and crosshair target ID. Also included in `/world`. |
 | `/player/nearby?radiusKm=500&offset=0&limit=25` | Ships near the selected crew's ship, with approximate distance, bearing and relative velocity. |
 | `/ships?offset=0&limit=25` | Ship IDs, names, load state, destroyed and AI flags. |
@@ -75,7 +102,7 @@ Reading it does not create state or run sensors. See [auto-vent notes](../QoL/Au
   two-second timeout. Incomplete headers are disconnected; inspection expiry
   returns 504 and its queued work is skipped.
 - HTTP headers are limited to 4096 bytes, targets to 512 characters, list size
-  to 50, offset to 10000, docking/condition lists to 32, and mapped strings to
+  to 50, offset to 10000 (1048576 for economy pages and console), docking/condition lists to 32, and mapped strings to
   1024 characters. Requests carry no body and connections close after one reply.
 - Scene switches/unloads and a replaced StarSystem invalidate queued requests.
   Game-not-ready queries return 503. Plugin destruction stops the socket listener,
@@ -257,6 +284,70 @@ pledge completion checks or lazily resolve CO references.
 `/ships/{id}/comms/{peerId}` returns matching messages from both ships' logs,
 including stored interaction/title/text/reply IDs. It does not request a new
 response or evaluate whether a message can currently be sent.
+
+## Personnel combat
+
+Use this for personal ranged weapons, distinct from `/events/combat` ship weapons.
+Start capture through the API, let the chosen actor fire, stop capture, then read
+`/combat/personnel/trace`. IDs in query strings and paths must be URL-encoded
+(for example `Ayden%20Kelly`). No request body is needed. GET cannot start or
+stop diagnostics. A second start returns 409 while the first trace is active;
+after stopping, starting a new trace clears its predecessor.
+
+Each ray records the native origin, direction, range, attack definition,
+shooter, intended target from the executing interaction and target state at
+firing. Rays fired outside an observed interaction can have a null intent.
+Pellets share an `attackSequence` within their enclosing attack interaction.
+`physicsCalled` distinguishes an early native return from an empty raycast.
+
+The trace observes the **original** `Physics.RaycastAll` result, including
+distances, points, normals, collider type/name/trigger/layer/bounds and resolved
+CO IDs. Candidate hits retain Unity's unsorted array order; distances identify
+their relative positions. Processing events follow the native traversal order,
+showing destructible/character component visits, actual damage rolls, object
+durability checks, requested `StatDamage` additions with immediate before/after
+values, and actual wound calls with their native return values. The three damage
+rolls are environment, blunt and cut, in that order. Multiply them by the attack
+definition's respective damage and the ray multiplier for initial budgets.
+Native wound return values include native wound scaling/armor; they are not
+unscaled projectile damage or a complete health report.
+
+Object durability checks report the effective value used by ray processing.
+`ignoredFloorMeat=true` identifies the always-on loose-meat cover fix: zero
+effective cover durability lets the ray continue without changing the scrap's
+actual durability or spending projectile damage.
+
+A candidate collider, attack reply, or normally returned ray is **not** proof
+that the intended target took damage. Follow processing events to distinguish
+geometry misses, intervening destructibles consuming damage, skipped shooter
+colliders and actual target damage. No additional raycasts, random draws,
+attacks, trigger evaluation or damage calls are made. Native exceptions remain
+native exceptions; exceptional rays record their exception type.
+
+Recording defaults off. The two Harmony hooks (attack context and ray
+observation) are installed only on explicit start and removed on stop, expiry,
+scene/system change or plugin disposal. While idle, only a constant-time check
+in the API pump remains. Active recording allocates diagnostic snapshots and
+adds collider/property reads, so use short captures rather than leave it on.
+Capture stops at 64 rays or the wall-clock deadline, even while game time is
+paused. Limit/timeout removes hooks at the next Unity pump, after native calls
+have unwound. Each ray stores at most 32 candidate hits and 64 processing events;
+truncation and dropped events are explicit. Stored history contains only
+bounded primitive data, no Unity objects, and never enters saves. Stop retains
+history; a new trace or scene/system transition clears it. Combat snapshots
+read at most eight queued interactions and 32 direct equipment entries; they
+do not search inventories recursively.
+
+`Tests/RangedSelfHitCheck` exercises the real native ray damage method with
+engine fixtures, including production hook installation/removal, intended
+target context, shooter filtering, ordinary/wound damage, unchanged random-draw
+count, exception propagation, capacity/timeout cleanup, detached serialization,
+HTTP query parsing and compatibility with the permanent self-hit fix. Fixtures
+provide collider hits; they do not establish live Unity collision geometry.
+
+On 1.0.1.10, `/workorders/scheduler` also includes bounded native `workClaims`,
+their reservation/spawn counts and iterator states, total reserved-task count,
+and the native work-manager frame budget. It reads these without advancing jobs.
 
 ## Validation
 

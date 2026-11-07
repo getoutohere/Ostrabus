@@ -83,6 +83,7 @@ internal sealed class SffSimulation : IDisposable {
         }
     }
     void Prepare(StarSystem system, ShipSitu anchor, List<Ship> members) {
+        foreach (var ship in members) if (Economy.SffEconomy.Current?.Owns(ship) == true) { excludedOther++; return; }
         if (anchor.NavData != null) { excludedRoutes++; return; }
         if (anchor.bIsBO || anchor.bBOLocked || anchor.bOrbitLocked) { excludedLocks++; return; }
         if (anchor.bIgnoreGrav || members.Count == 0) { excludedOther++; return; }

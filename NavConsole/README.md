@@ -1,6 +1,13 @@
 # Nav console enhancements
 
-Always enabled with the plugin. No global setting or PDA option is added.
+The proximity dial is always enabled with the plugin.
+
+The PDA Mod Settings app also offers **Hide nav tutorial note**. This hides the
+entire clickable "Don't crash!" paper, including its click target. The setting
+persists in BepInEx config (`NavConsole.HideTutorialNote`, default false), applies
+immediately to existing consoles and is applied when new nav UIs initialize.
+There is no per-frame polling or save data change; turning it off restores the
+native note. Removing the mod restores vanilla behavior.
 
 ## Proximity range dial
 

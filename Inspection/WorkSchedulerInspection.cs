@@ -30,8 +30,21 @@ internal static class WorkSchedulerInspection {
             if (crew.Count == 32) break;
             if (DataHandler.mapCOs.TryGetValue(id, out CondOwner co) && co != null) crew.Add(Actor(co));
         }
+        WorkManager manager = CrewSim.objInstance?.workManager;
+        var claims = new List<object>();
+        if (Field(manager, "_claimJobs") is Dictionary<CondOwner, Ostranauts.WorkManager.WorkClaimJob> jobs) foreach (var pair in jobs) {
+            if (claims.Count == 32) break;
+            var job = pair.Value;
+            claims.Add(SnapshotJson.Map("crewId", pair.Key == null ? null : pair.Key.strID, "done", job.IsDone, "cancelled", job.Cancelled,
+                "doneEpoch", job.DoneEpoch, "doneFrame", job.DoneFrame, "fakeAirtight", job.FakeAirtight,
+                "reservedTasks", job.ReservedTasks.Count, "spawnedTasks", job.SpawnedTasks.Count,
+                "result", job.Result.Value?.strName, "upstream", job.TaskUpstream?.strName,
+                "operation", Operation(job.Steps, 0, new HashSet<object>())));
+        }
         return SnapshotJson.Map("worldEpoch", StarSystem.fEpoch, "processedTime", Scheduler.ProcessedTime,
             "active", RequestState(active), "pending", pending, "priorityDebt", debts, "crew", crew,
+            "workClaims", claims, "workBudgetMs", Scheduler.WorkManagerBudgetSeconds * 1000d,
+            "reservedTaskCount", (Field(manager, "_taskReservations") as IDictionary)?.Count,
             "note", "Bounded read-only snapshot. Iterator state numbers identify compiler-generated suspension points; no enumerators are advanced.");
     }
 

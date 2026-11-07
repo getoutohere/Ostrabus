@@ -20,6 +20,7 @@ static class Program {
     static double Error(OrbitAcceleration.Acceleration a,OrbitAcceleration.Acceleration b) => Math.Sqrt((a.X-b.X)*(a.X-b.X)+(a.Y-b.Y)*(a.Y-b.Y));
     static double D(JToken node,string key) => (double)node[key];
     public static int Main(string[] args) {
+        if (args.Length != 0 && args[0] == "economy") { EconomyChecks.Run(Check); Console.WriteLine(checks + " economic checks passed."); return 0; }
         EphemerisBoundaryChecks.Run(Check);
         if (args.Length != 0 && args[0] == "ephemeris") { Console.WriteLine(checks + " ephemeris boundary checks passed."); return 0; }
         Check(!OrbitalSimulation.Enabled,"Launch should default off until initialized");

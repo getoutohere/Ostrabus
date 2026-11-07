@@ -4,6 +4,11 @@ Part of `Orbital`. Main launch flag defaults off; `SuperFastForward` defaults tr
 under it. `orbital on` activates both when the SFF subflag is enabled. Session-only
 `orbital sff off/on` allows comparison with parent correction alone.
 
+[Economic catch-up](Economy/README.md) additionally manages eligible shallow cargo
+ships, including their plotted courses, in a separate event timeline. Player courses,
+passenger transports and combat are excluded from that adapter. Its flights are
+excluded from the general trajectory correction to avoid double advancement.
+
 ## Integration
 
 `StarSystem.Update` prefix prepares corrected trajectories only while `GUIFFWD.Active`

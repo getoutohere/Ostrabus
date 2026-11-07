@@ -55,7 +55,11 @@ var display = Json(Json(ExcursionInspection.Snapshot(null, 1, 50).Body)["navDisp
 Check((string)display["vrelText"] == "15 m/s" && (string)display["vcrsText"] == "-3 m/s" && (double)display["vrelEpoch"] == 1000, "Readout strings/time lost");
 ExcursionInspection.Readout(wreck, "VREL ", "wrong");
 Check((string)Json(Json(ExcursionInspection.Snapshot(null, 1, 50).Body)["navDisplay"])["vrelText"] == "15 m/s", "Other ship display overwrote player");
+Field("lastDisplayTicks", Stopwatch.GetTimestamp() - Stopwatch.Frequency);
 ExcursionInspection.CaptureReadout(player);
+// First-call JIT can take over 50 ms offline; force the next call into the
+// blocked interval instead of depending on two real-time calls being adjacent.
+Field("lastDisplayTicks", Stopwatch.GetTimestamp() + Stopwatch.Frequency);
 ExcursionInspection.CaptureReadout(player);
 var readoutEvents = (List<object>)Json(ExcursionInspection.Snapshot(null, 1, 50).Body)["events"];
 Check(readoutEvents.Count == 1 && (string)Json(readoutEvents[0])["kind"] == "navDisplay", "Readout sampling/rate cap failed");

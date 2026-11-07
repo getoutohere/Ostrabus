@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Inspection/MemoryDiagnostics.cs" Link="MemoryDiagnostics.cs" />
+    <Compile Include="../../Inspection/MemoryDiagnosticHooks.cs" Link="MemoryDiagnosticHooks.cs" />
+    <Compile Include="../../Inspection/MemoryInspection.cs" Link="MemoryInspection.cs" />
+    <Compile Include="../../Inspection/SnapshotJson.cs" Link="SnapshotJson.cs" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.AnimationModule"><HintPath>$(Managed)/UnityEngine.AnimationModule.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(GameDir)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

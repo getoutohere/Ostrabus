@@ -11,7 +11,15 @@ static partial class Program {
     static void Check(bool ok, string message) { checks++; if (!ok) throw new Exception(message); }
     static void Field(object obj, string name, object value) { obj.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(obj, value); }
     static void StaticField(string name, object value) { typeof(AlternativeWorkSystem).GetField(name, BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, value); }
-    static T Empty<T>() => (T)FormatterServices.GetUninitializedObject(typeof(T));
+    static T Empty<T>() {
+        var result = (T)FormatterServices.GetUninitializedObject(typeof(T));
+        if (result is WorkManager wm) {
+            Field(wm, "_taskReservations", new Dictionary<Task2, Ostranauts.WorkManager.WorkClaimJob>());
+            Field(wm, "_claimJobs", new Dictionary<CondOwner, Ostranauts.WorkManager.WorkClaimJob>());
+            Field(wm, "_claimOrder", new List<Ostranauts.WorkManager.WorkClaimJob>());
+        }
+        return result;
+    }
     public static int Main() {
         AlternativeWorkSystem.Flag = null;
         var graph = new Graph(6);
@@ -53,9 +61,9 @@ static partial class Program {
         Field(selection, "started", true); Field(selection, "context", context);
         StaticField("activeSearches", 1);
         Check(selection.MoveNext(), "Explicit wait lost");
-        Check(wm.taskUpstream == outside && AlternativeWorkSystem.Spawned(wm) == 99 && AlternativeWorkSystem.Context == null, "Coroutine scratch leaked to other workers");
+        Check(wm.taskUpstream != outside && AlternativeWorkSystem.Spawned(wm) == 3 && AlternativeWorkSystem.Context == null, "Wrapper overwrote native job scratch or leaked its ranking context");
         Check(!selection.MoveNext() && inner.Resumed && inner.Disposed, "Search state not restored across frames");
-        Check(wm.taskUpstream == outside && AlternativeWorkSystem.Spawned(wm) == 99, "Completion overwrote shared state");
+        Check(wm.taskUpstream != outside && AlternativeWorkSystem.Spawned(wm) == 3, "Completion overwrote native job state");
 
         // Diagnostic reads must bind to this game version and must never run the inspected operation.
         const BindingFlags privateFields = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static;
@@ -83,6 +91,7 @@ static partial class Program {
             CheckSupplyPlan(8);
             CheckBatchInventory();
             CheckWindowControls();
+            CheckNativeClaims();
         } finally { harmony.UnpatchSelf(); }
         Console.WriteLine(checks + " alternative work checks passed.");
         return 0;
@@ -114,7 +123,7 @@ static partial class Program {
         public bool MoveNext() {
             Check(AlternativeWorkSystem.Context == context, "Wrong worker context");
             if (stage++ == 0) {
-                Check(wm.taskUpstream == null && AlternativeWorkSystem.Spawned(wm) == 0, "Inherited another worker's upstream task");
+                Check(wm.taskUpstream != null && AlternativeWorkSystem.Spawned(wm) == 99, "Wrapper overwrote native claim scope");
                 wm.taskUpstream = own; AlternativeWorkSystem.Spawned(wm) = 3; return true;
             }
             Check(wm.taskUpstream == own && AlternativeWorkSystem.Spawned(wm) == 3, "Lost selection's local prerequisite state");

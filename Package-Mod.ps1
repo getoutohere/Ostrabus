@@ -15,11 +15,18 @@ Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Build\Find-Game.ps1') -Destinat
 foreach ($packageFile in @('Ostrabus.dll', 'Ostrabus.pdb')) { Copy-Item -LiteralPath (Join-Path $packageBuild $packageFile) -Destination (Join-Path $packageRoot 'Plugin') }
 Copy-Item -LiteralPath (Join-Path $packageBuild 'PdaSettings\Assets') -Destination (Join-Path $packageRoot 'Plugin\PdaSettings') -Recurse
 foreach ($packageFile in @('Deploy-Mod.ps1', 'Deploy-Mod.cmd')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $packageFile) -Destination $packageRoot }
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'LICENSE') -Destination $packageRoot
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'PdaSettings\Install-Assets.ps1') -Destination (Join-Path $packageRoot 'PdaSettings')
 foreach ($packageDoc in @('README.md', 'DESIGN.md', 'IMPLEMENTATION.md')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('PdaSettings\' + $packageDoc)) -Destination (Join-Path $packageRoot 'PdaSettings')
 }
 @'
+Ostrabus experimental snapshot
+Target: Ostranauts 1.0.1.10 (public_test). Other game versions are not supported by
+this build. Requires an existing BepInEx 5 installation; BepInEx is not bundled.
+Source, feature inventory and module documentation:
+https://github.com/getoutohere/Ostrabus
+
 Close Ostranauts, then double-click Deploy-Mod.cmd to install the plugin and PDA
 assets. The installer retains other native mods and their enabled/disabled states.
 Existing TemplateExample plugin copies are disabled with backups retained.

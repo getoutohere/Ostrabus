@@ -106,7 +106,7 @@ internal static class InspectionSnapshots {
             int prefix = path.StartsWith("/cos/", StringComparison.Ordinal) ? 5 : 6;
             string idPath = path.Substring(prefix);
             string npcView = null;
-            foreach (string view in new[] { "conditions", "activity" }) {
+            foreach (string view in new[] { "conditions", "activity", "combat" }) {
                 string suffix = "/" + view;
                 if (idPath.EndsWith(suffix, StringComparison.Ordinal)) { idPath = idPath.Substring(0, idPath.Length - suffix.Length); npcView = view; break; }
             }
@@ -115,6 +115,7 @@ internal static class InspectionSnapshots {
             if (co == null) { return Reply(200, Map("id", id, "resolved", false, "note", "Entry exists but CO is null or Unity-destroyed.")); }
             if (npcView == "conditions") { return Reply(200, NpcInspection.Conditions(co, offset, limit, start)); }
             if (npcView == "activity") { return Reply(200, NpcInspection.Activity(co, offset, limit, start)); }
+            if (npcView == "combat") { return Reply(200, PersonnelCombatInspection.Snapshot(co)); }
             var data = COSummary(id, co);
             var conditions = new List<object>();
             bool truncated = false;
@@ -132,7 +133,7 @@ internal static class InspectionSnapshots {
             data.Add("factions", CombatInspection.PersonFactions(co, start));
             return Reply(200, data);
         }
-        return Reply(404, Map("error", "Unknown endpoint.", "routes", "/health /logs /profiling/load /events/docking /events/ai /events/combat /shipboard /console /world /player /player/nearby /ships /ships/{id} /ships/{id}/ai /ships/{id}/factions /ships/{id}/comms /ships/{id}/comms/{peerId} POST /ships/{id}/prune /npcs /npcs/{id} /cos/{id}/conditions /cos/{id}/activity /derelicts /derelicts/prune"));
+        return Reply(404, Map("error", "Unknown endpoint.", "routes", "/health /logs /profiling/load /events/docking /events/ai /events/combat /shipboard /console /world /player /player/nearby /ships /ships/{id} /ships/{id}/ai /ships/{id}/factions /ships/{id}/comms /ships/{id}/comms/{peerId} POST /ships/{id}/prune /npcs /npcs/{id} /cos/{id}/conditions /cos/{id}/activity /cos/{id}/combat /combat/personnel/trace POST /combat/personnel/trace/start POST /combat/personnel/trace/stop POST /micrometeoroids/strike /derelicts /derelicts/prune"));
     }
 
     static Dictionary<string, object> ShipSummary(string id, Ship ship) {

@@ -56,7 +56,7 @@ internal sealed class InspectionHttp {
         if (Url.Query.Length > 0) {
             foreach (string part in Url.Query.Substring(1).Split('&')) {
                 string[] pair = part.Split('=');
-                if (pair.Length != 2 || (pair[0] != "offset" && pair[0] != "limit" && pair[0] != "radiusKm" && pair[0] != "since" && pair[0] != "shipId" && pair[0] != "stationId" && pair[0] != "minDistanceKm" && pair[0] != "maxShips" && pair[0] != "confirm" && pair[0] != "dryRun") || QueryString[pair[0]] != null) { Error = "Expected unique supported query parameters."; return; }
+                if (pair.Length != 2 || (pair[0] != "offset" && pair[0] != "limit" && pair[0] != "radiusKm" && pair[0] != "since" && pair[0] != "shipId" && pair[0] != "stationId" && pair[0] != "minDistanceKm" && pair[0] != "maxShips" && pair[0] != "confirm" && pair[0] != "dryRun" && pair[0] != "coId" && pair[0] != "seconds") || QueryString[pair[0]] != null) { Error = "Expected unique supported query parameters."; return; }
                 QueryString.Add(pair[0], pair[1]);
             }
         }
