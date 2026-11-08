@@ -77,7 +77,11 @@ internal static class DollyEncumbrance {
                 supported += mass;
             }
         }
-        if (double.IsInfinity(supported) || supported>actual) return actual; // Do not mask corrupted mass bookkeeping.
+        // Independent inventory sums can differ by a few ulps after transfers.
+        // Reject meaningful corruption, not roundoff when the dolly is the
+        // character's entire carried inventory. Never change either raw mass.
+        if (double.IsInfinity(supported) || supported-actual>Math.Max(1e-6,actual*1e-9)) return actual;
+        supported = Math.Min(supported,actual);
         return actual - (1-Multiplier)*supported;
     }
     static void Refresh(Ship ship) {

@@ -19,9 +19,16 @@ internal static class MassRepairRules {
                 error = "potentially variable body/contents mass"; return false;
             }
         }
+        return TryFixedMass(starting, out mass, out error);
+    }
+    internal static bool TryFixedMass(string[] starting, out double mass, out string error) {
+        mass = 0; error = null;
         bool found = false;
         if (starting != null) foreach (string equation in starting) {
             if (equation == null) continue;
+            if (equation.IndexOf('|') >= 0) foreach (string option in equation.Split('|')) {
+                if (option.TrimStart('-').StartsWith("StatMass", StringComparison.Ordinal)) { error = "ambiguous base mass"; return false; }
+            }
             if (equation == "DEFAULT" || equation.StartsWith("-StatMass", StringComparison.Ordinal) || equation.StartsWith("StatMass|", StringComparison.Ordinal)) {
                 error = "ambiguous base mass"; return false;
             }

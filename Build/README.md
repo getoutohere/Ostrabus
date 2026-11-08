@@ -66,10 +66,12 @@ checked-in fixtures. Build the named project in Release, then pass its
 | Project under `Tests/` | Argument after DLL | Coverage |
 | --- | --- | --- |
 | `AIShipLifecycleCheck` | `patched` | Native before/after rendezvous, crew safety and hull reuse. No argument runs baseline reproduction only. |
+| `AutonomousDisembarkCheck` | none | Native needs/leisure selection, early disembark filtering, local alternatives and permission overrides. |
 | `DepartureWaypointCheck` | none | Native departure binding, station hierarchies and player-course controls. |
 | `OrbitalCheck` | `economy` | Production, freight, loading, SFF stage continuation and economic inspection. |
 | `SensorRuntimeCheck` | none | Sensor/EM hooks, offset consumers, paused outer-system contacts and fallback caching. |
 | `VenusDollyCheck` | none | Dolly burden, unchanged physical mass and location transitions. |
+| `DollyMassCheck` | none or `--graph <export.json>` | Native mass accounting and repair of nested containers, anatomy and characters; exclusions, rollback and idempotence. Optional detached save graph. |
 | `VorbRetrievalCheck` | none | Native retrieval assignments, ownership, exclusions and saved controllers. |
 | `PdaSettingsCheck` | none | Settings registry, native assets and toggles. |
 

@@ -3,6 +3,8 @@
   <ItemGroup><Compile Include="../../MiscBugFixes/BarterRemovalPatch.cs" Link="BarterRemovalPatch.cs" />
     <Compile Include="../../MiscBugFixes/BarterMassPatch.cs" Link="BarterMassPatch.cs" />
     <Compile Include="../../MiscBugFixes/StackMassPatch.cs" Link="StackMassPatch.cs" />
+    <Compile Include="../../MiscBugFixes/LiveMassPatch.cs" Link="LiveMassPatch.cs" />
+    <Compile Include="../../MiscBugFixes/StackMergeMassPatch.cs" Link="StackMergeMassPatch.cs" />
     <Reference Include="Assembly-CSharp"><HintPath>$(Game)/Ostranauts_Data/Managed/Assembly-CSharp.dll</HintPath></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Game)/Ostranauts_Data/Managed/UnityEngine.CoreModule.dll</HintPath></Reference>
     <Reference Include="0Harmony"><HintPath>$(Game)/BepInEx/core/0Harmony.dll</HintPath></Reference>

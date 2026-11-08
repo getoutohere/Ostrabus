@@ -1,6 +1,8 @@
 # Public snapshot preparation
 
 Current target: Ostranauts 1.0.1.10 (`public_test`), BepInEx 5, Windows.
+Current staging target: [Ostrabus 0.2.1](RELEASE-0.2.1.md). Project, plugin and PDA
+metadata report 0.2.1; `Ostrabus-0.2` remains the latest existing local tag.
 The local installation used for validation has BepInEx 5.4.23.6. The .NET 8 SDK
 is needed to build, not to use the installed plugin. Game and loader dependencies
 are supplied by the player's installation and are not redistributed.
@@ -13,8 +15,8 @@ are supplied by the player's installation and are not redistributed.
   Generated PDB paths map to `/_/Ostrabus`, not the author's workspace.
 - Packaging includes the plugin, symbols, PDA assets, installer, existing license
   and standalone installation notes. Raw captures and game assemblies stay out.
-- Native PDA metadata targets 1.0.1.10. Plugin version remains 1.0.0 pending a
-  release-version decision; no Git tag or hosted release is created by packaging.
+- Native PDA metadata targets 1.0.1.10. Project/plugin/PDA versions are aligned;
+  no Git tag or hosted release is created by packaging.
 - Legacy plugin/config/app identifiers are intentionally retained where needed
   for installed users and saved settings. Renaming them is not cosmetic cleanup.
 - Economic SFF and API live results are recorded in `Orbital/Economy/README.md`.
@@ -22,11 +24,11 @@ are supplied by the player's installation and are not redistributed.
 
 ## Decisions and follow-up
 
-- `Ostrabus-0.1` marks the existing experimental snapshot. For the next snapshot,
+- `Ostrabus-0.2` marks the existing experimental snapshot. For the next snapshot,
   choose whether to refresh the installable ZIP alongside the source changes;
   staging source does not rebuild or publish an archive.
-- Choose the next public snapshot version/tag and synchronize plugin/project/PDA
-  versions before tagging. Do not advertise compatibility beyond the tested game.
+- The next prepared snapshot is 0.2.1. Commit/tag creation and pushing remain
+  separate actions. Do not advertise compatibility beyond the tested game.
 - Keep known investigations distinguishable from completed fixes. In particular,
   orphaned economic records remain an investigation, not an automatic cleanup.
   See `Orbital/Economy/ORPHANED-MARKETS.md`.
@@ -49,7 +51,7 @@ against a disposable installation layout before publishing.
 Before tagging, review the staged diff and inspect the archive's file inventory.
 Keep generated archives, binaries, local settings and live captures out of source control.
 
-## Next snapshot: source preparation, November 8, 2026
+## Historical 0.2 source preparation, November 8, 2026
 
 Changes since 0.1 include independent opt-in EM propagation/contact estimates and
 their PDA controls/comparison tools; AI rendezvous/crew lifecycle corrections;
@@ -65,9 +67,8 @@ Selected orbital inputs live in `Tests/Fixtures/Navigation`; full saves and work
 captures remain ignored. No custom save DTOs or new mod-required save records are
 introduced by these changes. EM/contact settings default off in config.
 
-No next tag/version, commit, push or release publication is implied by this staging
-pass. Existing package/version identifiers remain unchanged until a release is
-explicitly requested.
+That preparation pass did not itself create a commit/tag or publish a release.
+The later `Ostrabus-0.2` tag records that snapshot; current preparation is 0.2.1.
 
 Preparation checks passed: 33 AI lifecycle, 69 departure, 649 sensor runtime,
 55 dolly, 25 retrieval and 47 PDA checks. The related economic/orbital runs passed

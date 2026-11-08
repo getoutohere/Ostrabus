@@ -43,6 +43,12 @@ container gets no independent allowance; a dolly inside another handled dolly is
 already included in that outer dolly's aggregate mass. Primary slot and parent
 identity exclude duplicate secondary-hand aliases. Stacks include their members
 with bounded traversal; malformed masses/stacks fall back to normal burden.
+The aggregate-mass guard allows a discrepancy of at most
+`max(0.000001 kg, characterMass * 1e-9)` and caps the discounted mass at the
+character's actual carried mass. Independent sums can otherwise differ by a few
+floating-point ulps after transfers, incorrectly disabling the entire allowance
+when the dolly accounts for all carried inventory. Meaningful discrepancies
+still fall back; neither stored mass is rewritten.
 
 Existing raw slot and docking collections are read through cached field
 delegates. The steady-state helper creates no lists, iterators, closures or
@@ -54,7 +60,7 @@ and gravity changes already recalculate burden through the patched entry points.
 
 ## Validation
 
-`Tests/VenusDollyCheck` passes 55 checks against the production patches and shipped assembly
+`Tests/VenusDollyCheck` exercises the production patches and shipped assembly
 under bundled Mono. It reproduces native full-mass burden first, then exercises
 all three native encumbrance entry points, nested payload addition/removal,
 ordinary containers, empty/loaded/multiple dollies, stacks, secondary-slot aliases,
@@ -62,6 +68,11 @@ malformed mass/stack fallback, actual station-body parent chains, apartments,
 transit, connected ships, undocking and VORB/other-planet exclusions. It checks
 every encumbrance write in the gravity setter to catch transient full-burden
 condition updates, plus unchanged physical mass and native inventory labels.
+The transfer-roundoff regression reproduces a persistent full-burden result from
+ordinary native AddMass additions/removals before the guard correction. It also
+checks gravity updates, unchanged raw masses, full-price unrelated gear and
+continued rejection of meaningful discrepancies. This matches the reported
+post-sale/re-drag symptom class; the exact historical sale was not traced.
 
 Condition storage and Unity equality/wear effects use fixture boundaries.
 Docking physics is replaced by a connection mutation; production lifecycle hooks

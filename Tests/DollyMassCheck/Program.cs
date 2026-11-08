@@ -18,8 +18,22 @@ static partial class Program {
     static bool Equal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = ReferenceEquals(__0, __1); return false; }
     static bool Unequal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = !ReferenceEquals(__0, __1); return false; }
     static bool Definition(string strName, ref JsonCondOwner __result) { definitions.TryGetValue(strName, out __result); return false; }
-    static bool Read(CondOwner __instance, string strName, ref double __result) { values[__instance.strID].TryGetValue(strName, out __result); return false; }
-    static bool Write(CondOwner __instance, string strName, double fAmount) { var map = values[__instance.strID]; map[strName] = (map.TryGetValue(strName, out double old) ? old : 0) + fAmount; return false; }
+    static bool Read(CondOwner __instance, string strName, ref double __result) {
+        if (liveWrites && strName == "StatMass" && massConditions.TryGetValue(__instance.strID, out var condition)) __result = condition.fCount;
+        else values[__instance.strID].TryGetValue(strName, out __result);
+        return false;
+    }
+    static bool Write(CondOwner __instance, string strName, double fAmount) {
+        var map = values[__instance.strID];
+        if (liveWrites && strName == "StatMass") {
+            if (massWriteFailureTarget == __instance.strID) { massWriteFailureTarget = null; throw new InvalidOperationException("fixture one-shot repair failure"); }
+            if (throwMassWrite) throw new InvalidOperationException("fixture mass write failure");
+            if (__instance.bFreezeConds) return false;
+            if (!massConditions.TryGetValue(__instance.strID, out var condition)) massConditions[__instance.strID] = condition = new Condition(new JsonCond { strName = strName }) { fCount = map["StatMass"] };
+            condition.AddAmount(__instance, fAmount); map[strName] = condition.fCount;
+        } else map[strName] = (map.TryGetValue(strName, out double old) ? old : 0) + fAmount;
+        return false;
+    }
     static CondOwner CO(string def, double mass) {
         var co = Empty<CondOwner>();
         AccessTools.Field(typeof(CondOwner), "_strID").SetValue(co, "fixture-" + ++serial);
@@ -41,7 +55,8 @@ static partial class Program {
         AccessTools.Field(typeof(Container), "aCOs").SetValue(container, list); parent.objContainer = container;
     }
     static bool Repair(CondOwner co) => MassRepair.TryRepair(co, out _, out _, out _);
-    public static void Main() {
+    public static void Main(string[] args) {
+        massRepairGraphPath = args.Length == 2 && args[0] == "--graph" ? args[1] : null;
         var raw = JArray.Parse(File.ReadAllText(Ostrabus.Development.InstallationPaths.Data + "condowners/condowners.json"));
         foreach (var item in raw.Where(x => x["strContainerCT"]?.Type == JTokenType.String))
             definitions[(string)item["strName"]] = new JsonCondOwner { strName = (string)item["strName"], strType = (string)item["strType"], strLoot = (string)item["strLoot"], strContainerCT = (string)item["strContainerCT"], aStartingConds = item["aStartingConds"]?.ToObject<string[]>() };
@@ -100,6 +115,7 @@ static partial class Program {
         var variable = CO("ItmCrate01", 714); variable.mapConds["StatGasMolN2"] = new Condition(null);
         Check(!Repair(variable) && variable.GetTotalMass() == 714, "Variable gas contents were reset to tare");
         Check(!MassRepairRules.TryTare("Item", null, new[] { "StatMass=1.0x1-5" }, null, out _, out _), "Random mass definition accepted");
+        Check(!MassRepairRules.TryTare("Item", null, new[] { "StatMass=1.0x5", "OtherStat=0.5x1|StatMass=0.5x9" }, null, out _, out _), "Mass-changing alternative definition accepted");
         Check(!MassRepairRules.TryTare("Item", null, new[] { "StatMass=1.0x5", "StatMass=1.0x7" }, null, out _, out _), "Multiple mass definitions accepted");
         Check(!MassRepairRules.TryTare("Item", null, Array.Empty<string>(), null, out _, out _), "Missing tare accepted");
         Check(!MassRepairRules.TryTare("Human", null, new[] { "StatMass=1.0x60" }, null, out _, out _), "Body mass reset to an asset default");
@@ -111,7 +127,8 @@ static partial class Program {
         AccessTools.Field(typeof(CondOwner), "_objShip").SetValue(shallowContainer, shallowShip);
         Check(!MassRepair.TryRepair(shallowContainer, out _, out _, out string shallowReason) && shallowReason.Contains("instantiated") && shallowContainer.GetTotalMass() == 714, "Partial shallow inventory was treated as empty");
         CheckNativeStackRemoval();
+        CheckDynamicMass();
         h.UnpatchSelf();
-        Console.WriteLine("Container mass checks passed: " + checks);
+        Console.WriteLine("Mass bookkeeping checks passed: " + checks);
     }
 }

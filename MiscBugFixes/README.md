@@ -246,35 +246,48 @@ pops/full stacks, incomplete loading, exceptions, save defaults/overrides, wirin
 preservation and source-save hash checks. Unity I/O and condition storage are
 fixtures. Debug DLL/PDB rebuilt; no live save was changed by these checks.
 
-## Container mass repair command
+## Mass repair command
 
-Run `massfix` (replaces `dollyfix`) to inspect instantiated inventory containers
-on fully materialized world ships (`Edit`/`Full`). Shallow ships' inventories
-can be partial, so their instantiated containers are excluded from the scan. Candidates
-must have both `IsContainer` and an actual inventory container component.
-It reports each correction, eligible-scope skips grouped by definition/reason,
-and a summary including the materialized ship count.
-It does not load unloaded inventories or operate on temporary remote-trade copies.
+A [broader mass bookkeeping audit](MASS-BOOKKEEPING-AUDIT.md) documents two further
+preventive patches: stack merge cleanup no longer subtracts cargo that remains
+present, and live condition-driven mass changes update ancestors and character
+encumbrance exactly once. These cover NPCs and player crew without resetting body
+or trait mass. Initial construction, frozen/loading state, shallow inventories,
+editor operations and temporary barter copies retain their original accounting.
+Existing corruption is not automatically repaired. Validation includes 475 mass
+checks, 105 remote-barter checks and 77 Venus dolly checks, with the patches active
+together in the compatibility cases.
 
-Expected mass is the installed asset's unambiguous, fixed tare plus current
-cargo, including stacks and nested containers' current weight. Cargo itself
-is not reset to asset defaults. Native `AddMass` applies
-the difference to ancestors and crew encumbrance, and the ship mass cache is
-invalidated. Correct containers are unchanged; underweight containers are also
-repaired. Frozen/cyclic/invalid graphs are skipped and reported. Definition
-overlays, explicit layout mass overrides, missing/random/ambiguous tare,
-body/gas/food/drink/fire-chemical mass, and definitions with unaudited starting
-loot are conservatively skipped. The latter can include backpacks or loaded
-weapons whose loot may be harmless; uncertain cases are reported rather than
-treated as proven fixed tare. Skipped ancestors may still receive their child's
-native cargo-weight delta; their own tare is not reset.
+Run `massfix` (replaces `dollyfix`) to repair eligible containers, reviewed human
+anatomical components and `Crew01` characters on materialized world ships
+(`Edit`/`Full`). Shallow/unloaded inventories and temporary barter copies remain
+excluded. It reports changed aggregates, grouped skip reasons and counts for
+containers, anatomy, people and materialized ships.
+
+The command reconstructs reviewed fixed tare plus actual owned contents. It
+counts stack members once, excludes secondary slot aliases, preserves missing
+or replaced limbs and held items, and reads Strong/Feeble mass adjustments from
+the installed loot. It plans an entire ownership tree before changing it, then
+applies each affected aggregate once through native `AddMass` so corrupt
+intermediate ancestors cannot underflow. Native labels, burden and the Venus
+dolly discount stay in use; ship mass caches are invalidated. A write failure
+attempts to restore that tree's original masses.
+
+Unreviewed definitions/overlays, explicit mass overrides, ambiguous tare,
+variable gas/food/drink/chemical contents, unaudited starting loot, unknown
+mass-affecting conditions and invalid/frozen graphs are skipped. A skipped
+parent can still receive a corrected cargo aggregate without reconstructing
+its own tare. No arbitrary floor/item normalization is performed. See
+[character reconstruction](CHARACTER-MASS-RECONSTRUCTION.md) for policy and tests.
 
 This is an on-demand repair, with no background scan or new simulation hooks.
 Changes are captured by normal game saving. The command repairs existing errors;
 the separate preventive patches above stop the reproduced causes of new errors.
 Offline checks are in `Tests/DollyMassCheck`; no manual reproduction is required.
-`Tools/MassAudit` shares the eligibility rules and performs a read-only save-wide
-simulation. See [MASSFIX-COVERAGE.md](MASSFIX-COVERAGE.md) for the initial result.
+`Tools/CharacterMassAudit` exports read-only saved ownership graphs for the
+production repair harness; an optional saved-graph run passes 710 checks and
+makes zero corrections on its second pass. `Tools/MassAudit` and
+[MASSFIX-COVERAGE.md](MASSFIX-COVERAGE.md) retain the older container-only audit.
 
 ## Autonomous sleeping and idle sitting
 

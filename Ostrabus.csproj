@@ -5,7 +5,7 @@
     <AssemblyName>Ostrabus</AssemblyName>
     <RootNamespace>Ostrabus</RootNamespace>
     <Product>Ostrabus</Product>
-    <Version>1.0.0</Version>
+    <Version>0.2.1</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <PathMap>$(MSBuildProjectDirectory)=/_/Ostrabus</PathMap>

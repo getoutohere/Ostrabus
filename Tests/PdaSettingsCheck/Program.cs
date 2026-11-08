@@ -32,7 +32,7 @@ static class Program {
         Check(app.Length == 1 && app[0].strName == "template_settings" && !app[0].bHidden, "Native app JSON invalid");
         Check(File.Exists(assets + "/images/" + app[0].strIcon + ".png"), "Packaged icon does not resolve");
         var info = JsonMapper.ToObject<JsonModInfo[]>(File.ReadAllText(assets + "/mod_info.json"));
-        Check(info.Length == 1 && info[0].strModVersion == "1.0.0", "Native metadata invalid");
+        Check(info.Length == 1 && info[0].strModVersion == Ostrabus.PluginInfo.PLUGIN_VERSION, "Native metadata does not match plugin version");
         var strings = JsonMapper.ToObject<JsonSimple[]>(File.ReadAllText(assets + "/data/strings/template_settings.json"));
         Check(strings.Length == 1 && strings[0].aValues.Length == 4 && strings[0].aValues[0] == "GUI_PDA_BUTTON_TEMPLATE_SETTINGS_TITLE", "Tooltip strings invalid");
 

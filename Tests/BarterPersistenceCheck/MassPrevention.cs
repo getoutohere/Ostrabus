@@ -17,7 +17,8 @@ partial class Program {
         var patch = new Harmony("offline.barter.mass.prevention");
         var fixture = new Harmony("offline.barter.mass.prevention.engine");
         try {
-            foreach (var type in new[] { typeof(StackMassPatch), typeof(BarterMassTransferScope), typeof(BarterMassDeltaPatch), typeof(BarterMassSavePatch), typeof(BarterMassDestroyPatch) }) {
+            foreach (var type in new[] { typeof(StackMassPatch), typeof(BarterMassTransferScope), typeof(BarterMassDeltaPatch), typeof(BarterMassSavePatch), typeof(BarterMassDestroyPatch),
+                typeof(StackMergeMassPatch), typeof(LiveMassConditionPatch), typeof(LiveMassAddPatch), typeof(LiveMassInitializationPatch) }) {
                 var bound = patch.CreateClassProcessor(type).Patch(); Check(bound != null && bound.Count > 0, "Mass prevention failed to bind " + type.Name);
             }
             fixture.Patch(AccessTools.Method(typeof(DataHandler), "GetCondOwnerDef"), prefix: new HarmonyMethod(typeof(Program), nameof(MassDefinition)));

@@ -66,6 +66,8 @@ static class Program {
         foreach (double write in writes) Near(write,expected,why+" transient write");
     }
     static void Main() {
+        var oldSim = CrewSim.objInstance;
+        CrewSim.objInstance = Empty<CrewSim>(); Set(CrewSim.objInstance, "_finishedLoading", true);
         var boundary=new Harmony("offline.venus-dolly.boundaries");
         var production=new Harmony("offline.venus-dolly.production");
         boundary.Patch(AccessTools.Method(typeof(UnityEngine.Object),"op_Equality"),prefix:new HarmonyMethod(typeof(Program),nameof(Equal)));
@@ -87,6 +89,8 @@ static class Program {
             var asm=typeof(Ostrabus.OstrabusPlugin).Assembly;
             production.CreateClassProcessor(asm.GetType("Ostrabus.Venus.DollyEncumbranceCalculationPatch",true)).Patch();
             production.CreateClassProcessor(asm.GetType("Ostrabus.Venus.DollyDockingBurdenPatch",true)).Patch();
+            foreach (string name in new[] { "LiveMassConditionPatch", "LiveMassAddPatch", "LiveMassInitializationPatch" })
+                production.CreateClassProcessor(asm.GetType("Ostrabus.MiscBugFixes." + name, true)).Patch();
             var helper=asm.GetType("Ostrabus.Venus.DollyEncumbrance",true);
             var eligible=(Func<Ship,bool>)Delegate.CreateDelegate(typeof(Func<Ship,bool>),AccessTools.Method(helper,"Eligible"));
             Burden(person,200,"Loaded dolly discounted; other 150 kg unchanged");
@@ -95,6 +99,24 @@ static class Program {
             Near(Read(person,"StatMass"),850,"Native parent mass propagation preserved");
             Check(person.mapInfo["StatMass"].Contains("850"),"Inventory label uses physical mass");
             dolly.AddMass(-200,true); Burden(person,200,"Payload removal restores effective burden");
+            // Emulate the scalar write immediately before the condition observer;
+            // production native parent/encumbrance bookkeeping remains intact.
+            Set(dolly, "_objShip", station); values[dolly]["StatMass"] = 600;
+            var changed = AccessTools.Method(asm.GetType("Ostrabus.MiscBugFixes.LiveMass", true), "Changed");
+            changed.Invoke(null, new object[] { new Condition(null) { fCount = 600 }, dolly, 500d });
+            Near(Read(person,"StatMass"),750,"Direct dolly mass delta propagates once");
+            Burden(person,210,"Direct mass propagation preserves Venus dolly discount");
+            values[dolly]["StatMass"] = 500;
+            changed.Invoke(null, new object[] { new Condition(null) { fCount = 500 }, dolly, 600d });
+            Near(Read(person,"StatMass"),650,"Direct dolly mass decrease propagates once");
+            Burden(person,200,"Direct mass decrease restores original dolly burden");
+            var repairWrite = AccessTools.Method(asm.GetType("Ostrabus.MiscBugFixes.MassRepairBatch", true), "SetOwnMass");
+            repairWrite.Invoke(null, new object[] { dolly, 600d });
+            Near(Read(person,"StatMass"),650,"Planned repair write suppresses duplicate ancestor propagation");
+            repairWrite.Invoke(null, new object[] { person, 750d });
+            Burden(person,210,"Planned tree repair preserves effective dolly burden");
+            repairWrite.Invoke(null, new object[] { dolly, 500d }); repairWrite.Invoke(null, new object[] { person, 650d });
+            Burden(person,200,"Planned tree repair restores original effective burden");
             writes.Clear(); station.Gravity=2;
             Check(writes.Count>=2,"Gravity setter and UpdateGravity both exercised");
             foreach (double v in writes) Near(v,400,"Gravity setter never transiently writes full burden");
@@ -120,6 +142,20 @@ static class Program {
             values[dolly]["StatMass"]=900; Burden(person,650,"Impossible aggregate does not conceal corruption");
             values[dolly]["StatMass"]=103; values[person]["StatMass"]=253; Burden(person,160.3,"Empty SuperHandy plus ordinary gear");
             values[dolly]["StatMass"]=500; values[person]["StatMass"]=650;
+            values[dolly]["StatMass"]=values[person]["StatMass"]=332.672;
+            person.AddMass(1000.1,true); person.AddMass(-1000.1,true);
+            Check(Read(person,"StatMass")<Read(dolly,"StatMass"),"Native inventory additions/removals can leave a tiny carrier/dolly rounding discrepancy");
+            Burden(person,Read(person,"StatMass")*.1,"Roundoff must not turn off the entire dolly allowance");
+            double rawPerson=Read(person,"StatMass"),rawDolly=Read(dolly,"StatMass");
+            writes.Clear();station.Gravity=.8756187303545272;
+            foreach(double value in writes) Near(value,rawPerson*.1*station.Gravity,"Gravity setter tolerates rounding without transient full burden");
+            Near(Read(person,"StatMass"),rawPerson,"Rounding tolerance does not rewrite carrier mass");
+            Near(Read(dolly,"StatMass"),rawDolly,"Rounding tolerance does not rewrite dolly mass");
+            person.AddMass(-.1,true);Burden(person,Read(person,"StatMass")*station.Gravity,"Meaningful mass discrepancies still fall back");
+            values[person]["StatMass"]=rawPerson;person.AddMass(.1,true);
+            Burden(person,(Read(person,"StatMass")-.9*rawDolly)*station.Gravity,"Unrelated gear remains full burden");
+            station.Gravity=1;
+            values[dolly]["StatMass"]=500; values[person]["StatMass"]=650;
             var apartment=Ship("VENC|RES_1","VENC",true,false);
             Check(eligible(apartment),"Apartment follows actual parent station reference");
             foreach (var s in new[]{Ship("VORB","Venus",true,false),Ship("OTHER","Earth",true,true),Ship("MISSING","absent",true,true)}) Check(!eligible(s),"Excluded location: "+s.strRegID);
@@ -139,6 +175,6 @@ static class Program {
             Check(!eligible(free),"Stale group reference without membership rejected");
             Near(Read(person,"StatMass"),650,"Physical/save mass unchanged across all transitions");
             Console.WriteLine("Venus dolly checks passed: "+checks);
-        } finally { production.UnpatchSelf(); boundary.UnpatchSelf(); }
+        } finally { production.UnpatchSelf(); boundary.UnpatchSelf(); CrewSim.objInstance = oldSim; }
     }
 }

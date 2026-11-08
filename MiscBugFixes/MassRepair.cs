@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace Ostrabus.MiscBugFixes;
 
 internal static class MassRepair {
-    sealed class Identity : IEqualityComparer<CondOwner> {
+    internal sealed class Identity : IEqualityComparer<CondOwner> {
         internal static readonly Identity Instance = new Identity();
         public bool Equals(CondOwner a, CondOwner b) => ReferenceEquals(a, b);
         public int GetHashCode(CondOwner co) => RuntimeHelpers.GetHashCode(co);
@@ -14,13 +14,26 @@ internal static class MassRepair {
     internal static bool InventoryMaterialized(Ship.Loaded state) => state >= Ship.Loaded.Edit;
 
     internal static bool TryRepair(CondOwner item, out double before, out double after, out string error, HashSet<string> massOverrides = null) {
+        if (!Measure(item, new MassRepairPolicy(), out before, out after, out error, massOverrides)) return false;
+        var seen = new HashSet<CondOwner>(Identity.Instance);
+        double delta = after - before;
+        for (CondOwner parent = item; parent != null; parent = parent.objCOParent) {
+            if (seen.Count >= 128 || !seen.Add(parent) || parent.bFreezeConds) { error = "frozen or cyclic parent chain"; return false; }
+            double revised = parent.GetCondAmount("StatMass") + delta;
+            if (!Finite(revised) || revised < 0) { error = "invalid resulting parent mass"; return false; }
+        }
+        if (Math.Abs(delta) < 0.000001) return false;
+        item.AddMass(delta);
+        item.ship?.ResetMass();
+        return true;
+    }
+    internal static bool Measure(CondOwner item, MassRepairPolicy policy, out double before, out double after, out string error, HashSet<string> massOverrides) {
         before = after = 0; error = null;
-        if (item == null || item.objContainer == null || !item.HasCond("IsContainer")) { error = "not a labeled inventory container"; return false; }
-        if (item.ship != null && !InventoryMaterialized(item.ship.LoadState)) { error = "ship inventory is not fully instantiated"; return false; }
+        if (item == null || MassRepairPolicy.Classify(item) == MassRepairPolicy.Kind.None) { error = "not a supported mass repair target"; return false; }
+        if (item.bFreezeConds || item.bFreezeCondRules) { error = "frozen condition state"; return false; }
+        if (item.ship != null && (!InventoryMaterialized(item.ship.LoadState) || item.ship is Ostranauts.Ships.BarterZoneShip)) { error = "ship inventory is not fully instantiated world state"; return false; }
         if (massOverrides != null && massOverrides.Contains(item.strID)) { error = "explicit layout mass override"; return false; }
-        var definition = DataHandler.GetCondOwnerDef(item.strCODef);
-        if (definition == null || definition.strName != item.strCODef) { error = "missing definition or unaudited overlay"; return false; }
-        if (!MassRepairRules.TryTare(definition?.strType, definition?.strLoot, definition?.aStartingConds, item.mapConds?.Keys, out after, out error)) return false;
+        if (!policy.Tare(item, MassRepairPolicy.Classify(item), out after, out error)) return false;
         var seen = new HashSet<CondOwner>(Identity.Instance) { item };
         if (item.objContainer != null) foreach (CondOwner child in item.objContainer.ContainedCOs) {
             if (child == null || child.objCOParent != item || child.coStackHead != null || seen.Contains(child)) continue;
@@ -34,17 +47,7 @@ internal static class MassRepair {
             }
         }
         before = item.GetCondAmount("StatMass");
-        if (!Finite(before) || !Finite(after)) { error = "nonfinite mass"; return false; }
-        double delta = after - before;
-        seen.Clear();
-        for (CondOwner parent = item; parent != null; parent = parent.objCOParent) {
-            if (seen.Count >= 128 || !seen.Add(parent) || parent.bFreezeConds) { error = "frozen or cyclic parent chain"; return false; }
-            double revised = parent.GetCondAmount("StatMass") + delta;
-            if (!Finite(revised) || revised < 0) { error = "invalid resulting parent mass"; return false; }
-        }
-        if (Math.Abs(delta) < 0.000001) return false;
-        item.AddMass(delta); // Native ancestor mass/crew encumbrance bookkeeping, not a raw condition reset.
-        item.ship?.ResetMass();
+        if (!Finite(before) || before < 0 || !Finite(after) || after < 0) { error = "nonfinite or negative mass"; return false; }
         return true;
     }
     static bool AddCargo(CondOwner co, HashSet<CondOwner> seen, ref double total, int depth) {
@@ -59,37 +62,31 @@ internal static class MassRepair {
         if (CrewSim.objInstance == null || !CrewSim.objInstance.FinishedLoading || DataHandler.mapCOs == null || CrewSim.system?.dictShips == null) {
             ConsoleToGUI.instance?.LogInfo("[MassFix] Load a game first."); return;
         }
-        int materializedShips = 0, examined = 0, repaired = 0, skipped = 0;
-        var reasons = new Dictionary<string, int>();
+        int materializedShips = 0;
         var massOverrides = new HashSet<string>();
-        foreach (Ship ship in CrewSim.system.dictShips.Values) {
-            if (ship == null || !InventoryMaterialized(ship.LoadState)) continue;
-            materializedShips++;
-            if (ship.json?.aItems == null) continue;
-            foreach (JsonItem part in ship.json.aItems) {
+        void Overrides(JsonItem[] items) {
+            if (items == null) return;
+            foreach (var part in items) {
                 if (part?.strID == null || part.aCondOverrides == null) continue;
                 foreach (var condition in part.aCondOverrides) if (condition?.CondName == "StatMass") { massOverrides.Add(part.strID); break; }
             }
         }
-        foreach (CondOwner co in DataHandler.mapCOs.Values) {
-            if (co == null || co.objContainer == null || !co.HasCond("IsContainer") || co.ship == null || !InventoryMaterialized(co.ship.LoadState) ||
-                !CrewSim.system.dictShips.TryGetValue(co.ship.strRegID, out Ship ship) || !ReferenceEquals(ship, co.ship)) continue;
-            examined++;
-            try {
-                if (TryRepair(co, out double before, out double after, out string error, massOverrides)) {
-                    repaired++;
-                    ConsoleToGUI.instance?.LogInfo($"[MassFix] {co.strCODef} {co.strID} on {ship.strRegID}: {before:F2} -> {after:F2} kg.");
-                } else if (error != null) {
-                    skipped++;
-                    string reason = co.strCODef + ": " + error;
-                    reasons[reason] = reasons.TryGetValue(reason, out int count) ? count + 1 : 1;
-                }
-            } catch (Exception error) {
-                skipped++;
-                ConsoleToGUI.instance?.LogInfo($"[MassFix] Skipped {co.strID}: {error.Message}.");
-            }
+        foreach (Ship ship in CrewSim.system.dictShips.Values) {
+            if (ship == null || !InventoryMaterialized(ship.LoadState)) continue;
+            materializedShips++;
+            Overrides(ship.json?.aItems); Overrides(ship.json?.aCrew); Overrides(ship.json?.aShallowPSpecs);
         }
-        foreach (var reason in reasons) ConsoleToGUI.instance?.LogInfo($"[MassFix] Skipped {reason.Value} x {reason.Key}.");
-        ConsoleToGUI.instance?.LogInfo($"[MassFix] Examined {examined} containers on {materializedShips} materialized ships; corrected {repaired}; skipped {skipped}.");
+        var candidates = new List<CondOwner>();
+        foreach (CondOwner co in DataHandler.mapCOs.Values) {
+            if (co == null || co.ship == null || !InventoryMaterialized(co.ship.LoadState) || MassRepairPolicy.Classify(co) == MassRepairPolicy.Kind.None ||
+                !CrewSim.system.dictShips.TryGetValue(co.ship.strRegID, out Ship ship) || !ReferenceEquals(ship, co.ship)) continue;
+            candidates.Add(co);
+        }
+        try {
+            var result = MassRepairBatch.Repair(candidates, massOverrides, worldOnly: true);
+            foreach (var change in result.Changes) ConsoleToGUI.instance?.LogInfo($"[MassFix] {change.Item.strCODef} {change.Item.strID} on {change.Item.ship?.strRegID}: {change.Before:F2} -> {change.After:F2} kg.");
+            foreach (var reason in result.Reasons) ConsoleToGUI.instance?.LogInfo($"[MassFix] Skipped {reason.Value} x {reason.Key}.");
+            ConsoleToGUI.instance?.LogInfo($"[MassFix] Examined {result.Containers} containers, {result.Anatomy} anatomical parts and {result.People} people on {materializedShips} materialized ships; corrected {result.Changes.Count} objects; skipped {result.Skipped}.");
+        } catch (Exception error) { ConsoleToGUI.instance?.LogInfo("[MassFix] Cancelled: " + error.Message); }
     }
 }

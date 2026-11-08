@@ -35,6 +35,7 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 - [Docking clearance](MiscBugFixes/DockingGridPrecisionPatch.cs): eliminate phantom obstructions caused by tiny coordinate errors in docking-fit checks.
 - [Remote barter](MiscBugFixes/BarterRemovalPatch.cs): remove sold items from unloaded ship inventories instead of crediting the sale while leaving the item available to sell again.
 - [Container mass](MiscBugFixes/STACK-REMOVAL-MASS.md): prevent repeated mass subtraction during nested removals and preserve mass changes made through remote barter copies.
+- [Mass propagation](MiscBugFixes/MASS-BOOKKEEPING-AUDIT.md): conserve mass during stack merges and propagate live item/body mass changes to owners and character encumbrance.
 - [Door auto-close](MiscBugFixes/DOOR-AUTO-CLOSE.md): preserve the auto-close setting through power loss and restoration.
 - [Automatic work selection](MiscBugFixes/AutoTaskScratchPatch.cs): keep patching, repair, and restoration candidate lists separate instead of letting native scratch-list aliasing mix them together.
 - [Crew sleeping](MiscBugFixes/CREW-REST.md): prevent autonomous player crew from choosing backpacks and EVA suits as beds.
@@ -56,6 +57,7 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 
 ### Performance enhancements
 
+- [Autonomous target selection](Optimizations/AUTONOMOUS-DISEMBARK.md): exclude needs, leisure and social targets on other ships when disembarking is forbidden, before sampling and evaluating candidates.
 - [Remote barter loading](Optimizations/BARTER-FINALIZATION.md): replace repeated inventory scans with an item-ID lookup and spread offscreen reconstruction/finalization across frames to reduce post-transit freezes.
 - [Remote trading](Optimizations/INVENTORY-PERFORMANCE.md): reuse an ID lookup during inventory write-back instead of repeatedly searching the saved inventory.
 - [Contained-item loading](Optimizations/INVENTORY-PERFORMANCE.md): remove processed records at their known index while preserving parent and slot restoration order.
@@ -76,7 +78,7 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 - [Stabilizer sound cues](MiscBugFixes/StabilizerCreakPatch.cs): scale the maneuver creaking threshold with active stabilizers' native damage reduction.
 - [PDA settings](PdaSettings/README.md): toggle supported mod features and adjust their settings through a native PDA app.
 - [Bounty indicators](Patch.cs): mark missing bounty targets as MIA rather than leaving their absence unexplained.
-- [Maintenance commands](MiscBugFixes/README.md): repair existing container masses with `massfix` and recover corrupted navigation targets with `navfix`.
+- [Maintenance commands](MiscBugFixes/README.md): repair container, anatomical and character masses with `massfix`, and recover corrupted navigation targets with `navfix`.
 - [Console noise](MiscBugFixes/README.md): keep routine electrical-audit and missing-font-glyph spam out of the player console while retaining diagnostic logs.
 - [Inspection API](Inspection/INSPECTION-API.md): inspect ships, crew, AI, navigation, work orders, station economies and freight, with removable combat/memory diagnostics, explicit ship pruning and a BeatManager MM test-strike endpoint.
 - [Meat scrap cover](MiscBugFixes/MeatScrapPatches.cs): let ranged shots pass over loose meat scraps, eyes, hooves and horns on the floor without consuming projectile damage.

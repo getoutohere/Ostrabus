@@ -1,7 +1,11 @@
 # Optimizations
 
-Harmony patches for save/load costs and bounded profiling telemetry. Each optimization is isolated
+Harmony patches for simulation and save/load costs, plus bounded profiling telemetry. Each optimization is isolated
 here so it can be reviewed or disabled independently.
+
+[Autonomous disembark filtering](AUTONOMOUS-DISEMBARK.md) rejects foreign-ship
+needs, leisure and social targets before candidate selection when native shore
+leave permission forbids departure. It works independently of AlternativeWork.
 
 [Algorithmic cost audit](BIG-O-AUDIT.md) records findings, native offline
 benchmarks and a read-only inventory survey, with follow-up status noted there.
