@@ -18,14 +18,16 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 - [Shallow refueling](RefuelRCSPatch.cs): replenish RCS fuel instead of incorrectly adding the fuel to ship mass.
 - [Ranged self-hits](MiscBugFixes/RangedShooterExclusionPatch.cs): exclude the shooter from character hit processing without blocking damage to intended targets or objects downrange.
 - [Meat duplication](MiscBugFixes/MeatScrapPatches.cs): destroy loose meat through the native default recipe instead of spawning another batch of loose meat.
-- [Meat scrap cover](MiscBugFixes/MeatScrapPatches.cs): let ranged shots pass over loose meat scraps, eyes, hooves and horns on the floor without consuming projectile damage.
 - [PDC ammunition](MiscBugFixes/PDC-CONVERSION-AMMO.md): prevent installation, uninstallation and other PDC conversions from generating another starting magazine before transferring existing ammunition.
 - [AI navigation targets](MiscBugFixes/ShipReplacementTargetsPatch.cs): preserve destination references when target ships are unloaded and reconstructed, preventing runaway route calculations.
+- [AI crew lifecycle](Navigation/CREWLESS-AI.md): prevent instant station cleanup during ship-to-ship docking and premature hull reuse; stop crewless AI thrust while preserving the visible hull.
 - [Hauler returns](Haulers/README.md): restore the home target after derelict release and cancel thrust left behind by abandoned commands.
+- [VORB collection](Venus/HAULER-RETRIEVAL-AUDIT.md): let VORB retrievers use their home depot's assignments and wreck ownership instead of VNCA's regional station.
 - [Navy target selection](Navigation/NavyCandidateFuelPatch.cs): reject unaffordable candidates before selection, closing the single-candidate and all-rejected fuel-check bypasses.
 - [Propulsion checks](Navigation/NavigationFuel.cs): treat invalid RCS delta-v as zero so ships without usable thrusters cannot bypass low-fuel checks.
 - [AI return orders](Navigation/StationReturn.cs): preserve flight and docking stages across save/reload, and discard obsolete trip fuel predictions when retargeting.
 - [Planetary gravity](Orbital/README.md): correct missing parent-body acceleration when integrating free objects near an orbiting planet.
+- [AI departure waypoints](Navigation/DEPARTURE-WAYPOINTS.md): clear a station relative to its own orbit instead of an unrelated planet, and continue intermediate freight legs during SFF.
 - [SFF economy and cargo loading](Orbital/Economy/README.md): preserve production, freight dispatch and arrival ordering during time skips, and stop loaded cargo from being duplicated at its source.
 - [VORB derelicts](Venus/README.md): restore native derelict anchoring and correct the orbit lookup used after undocking.
 - [Docked gravity](MiscBugFixes/DOCKED-GRAVITY.md): inherit the anchored group's gravity after transit instead of leaving reconstructed ships at the default 0.3 g.
@@ -41,6 +43,8 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 
 ### Simulation improvements
 
+- [EM propagation](EMPropagation/README.md): use inverse-square EM falloff for player and AI reception, independently toggleable in PDA settings.
+- [Contact position estimates](Sensors/README.md): replace distant-contact jitter with sensor-based range/bearing uncertainty and acquired transponder ranging, independently toggleable in PDA settings.
 - [Micrometeoroid detection and defense](Micrometeoroids/README.md): replace the unconditional 50% defense bypass with diminishing sensor contributions and PDC interception based on projectile speed and rounds fired; missed bursts still consume ammo.
 - [Micrometeoroid target fairness](Micrometeoroids/README.md): choose targets among loaded scene vessels by hull area instead of seeking the player's ship, preserving BeatManager event timing and exclusions.
 - [Shallow boarding combat](ShipboardAction/README.md): resolve hostile dockings between Galcon, CCRE, and Belt Pirates using crew numbers, weapon loadouts, injuries, and randomized casualties over time.
@@ -63,6 +67,7 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 
 ### Quality of life
 
+- [Venus dolly handling](Venus/DOLLY-ENCUMBRANCE.md): reduce dolly-and-payload encumbrance by 90% on Venus aerostats and their docked ships to approximate wheeled handling.
 - [Alternative autotask](AlternativeWork/README.md): favor nearby, reachable, supplied work and prevent crew from reserving jobs on vessels their permissions forbid them to enter.
 - [Crew hotkeys](Hotkeys/README.md): use Shift+R to toggle Open Airlock and Shift+T to toggle Disembark for the selected controllable crew member.
 - [Proximity alarm dial](NavConsole/README.md): choose a ship's warning range from 5, 10, 15, or 20 km using a dial on the nav console.
@@ -74,6 +79,7 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 - [Maintenance commands](MiscBugFixes/README.md): repair existing container masses with `massfix` and recover corrupted navigation targets with `navfix`.
 - [Console noise](MiscBugFixes/README.md): keep routine electrical-audit and missing-font-glyph spam out of the player console while retaining diagnostic logs.
 - [Inspection API](Inspection/INSPECTION-API.md): inspect ships, crew, AI, navigation, work orders, station economies and freight, with removable combat/memory diagnostics, explicit ship pruning and a BeatManager MM test-strike endpoint.
+- [Meat scrap cover](MiscBugFixes/MeatScrapPatches.cs): let ranged shots pass over loose meat scraps, eyes, hooves and horns on the floor without consuming projectile damage.
 
 ## Testing strategy
 

@@ -30,7 +30,8 @@ proximity ranges, return orders, and native app identifiers remain compatible.
 ## Project layout
 
 - Feature directories contain their own implementation and notes: `AlternativeWork`,
-  `CeresNavigation`, `Haulers`, `Navigation`, `Orbital`, `ShipboardAction`, and `Venus`.
+  `CeresNavigation`, `Haulers`, `Navigation`, `Orbital`, `ShipboardAction`, `Venus`,
+  `Sensors`, and `EMPropagation`.
 - `MiscBugFixes`, `QoL`, `Hotkeys`, and `NavConsole` contain smaller patches/features.
 - `Inspection` provides the localhost API; see its API documentation.
 - `PdaSettings` contains the settings UI, native assets, and installation tooling.
@@ -57,3 +58,23 @@ dotnet run --project Tests/SaveJsonCompatibility/Host -c Release --no-build -- T
 The same harness also supports `lifecycle` and `recovery`. Other test directories
 document their own checks. Native assets are read from the configured installation;
 exploratory diagnostics may additionally require locally captured input files.
+
+The following additional suites need only the configured game installation and
+checked-in fixtures. Build the named project in Release, then pass its
+`bin/Release/netstandard2.1/<project>.dll` to the same Mono host:
+
+| Project under `Tests/` | Argument after DLL | Coverage |
+| --- | --- | --- |
+| `AIShipLifecycleCheck` | `patched` | Native before/after rendezvous, crew safety and hull reuse. No argument runs baseline reproduction only. |
+| `DepartureWaypointCheck` | none | Native departure binding, station hierarchies and player-course controls. |
+| `OrbitalCheck` | `economy` | Production, freight, loading, SFF stage continuation and economic inspection. |
+| `SensorRuntimeCheck` | none | Sensor/EM hooks, offset consumers, paused outer-system contacts and fallback caching. |
+| `VenusDollyCheck` | none | Dolly burden, unchanged physical mass and location transitions. |
+| `VorbRetrievalCheck` | none | Native retrieval assignments, ownership, exclusions and saved controllers. |
+| `PdaSettingsCheck` | none | Settings registry, native assets and toggles. |
+
+Build `Ostrabus.csproj -c Debug` before suites that reference the plugin DLL.
+Run native suites sequentially; the Mono host shares a runtime staging directory.
+For the sensor model and vanilla comparison report, run
+`powershell -NoProfile -ExecutionPolicy Bypass -File Tools/SensorComparison/Run.ps1`.
+Generated reports stay under ignored `obj/`.

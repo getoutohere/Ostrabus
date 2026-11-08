@@ -50,10 +50,21 @@ static class Program {
         AccessTools.Field(Type("Hotkeys.FunctionalHotkeys"), "Flag").SetValue(null, hotkeys);
         var autovents = Config(true);
         AccessTools.Field(Type("QoL.AutoVents.AutoVentControl"), "Flag").SetValue(null, autovents);
+        var emPropagation = Config(false);
+        AccessTools.Field(Type("EMPropagation.EmPropagation"), "Flag").SetValue(null, emPropagation);
+        var sensorPositions = Config(false);
+        AccessTools.Field(Type("Sensors.SensorContacts"), "Flag").SetValue(null, sensorPositions);
         var all = (Array)AccessTools.Field(Type("PdaSettings.SettingsRegistry"), "All").GetValue(null);
         var settings = new Dictionary<string, object>();
         foreach (var setting in all) Check(settings.TryAdd((string)Field(setting, "Id"), setting), "Duplicate setting ID");
-        Check(settings.Count == 9, "Settings missing");
+        Check(settings.Count == 11, "Settings missing");
+        foreach(var id in new[]{"em_propagation","sensors"}) {
+            var config=id=="sensors"?sensorPositions:emPropagation;
+            Check((int)Get(settings[id])==0,"Sensor-related option should default off");
+            Set(settings[id],1); Check((int)Get(settings[id])==1 && config.Value,"Sensor-related PDA toggle/config failed");
+            Set(settings[id],0); Check((int)Get(settings[id])==0 && !config.Value,"Sensor-related PDA toggle did not disable");
+            Check((string)Field(settings[id],"Lifetime")=="Saved","Sensor-related PDA setting lifetime incorrect");
+        }
         var hideNote = Config(false);
         AccessTools.Field(Type("NavConsole.TutorialNote"), "HideFlag").SetValue(null, hideNote);
         Check((int)Get(settings["hide_nav_note"]) == 0 && (string)Field(settings["hide_nav_note"], "Lifetime") == "Saved", "Nav tutorial default/lifetime incorrect");

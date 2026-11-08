@@ -21,6 +21,8 @@ namespace Ostrabus {
             SceneManager.sceneUnloaded += global::Ostrabus.NavConsole.ProximityRange.Reset;
             SceneManager.sceneUnloaded += global::Ostrabus.Venus.VorbNavPlanGuard.ResetRuntimeState;
             Logger = base.Logger;
+            global::Ostrabus.EMPropagation.EmPropagation.Initialize(Config);
+            global::Ostrabus.Sensors.SensorContacts.Initialize(Config);
             global::Ostrabus.NavConsole.TutorialNote.HideFlag = Config.Bind("NavConsole", "HideTutorialNote", false, "Hide the clickable Don't crash! tutorial paper on nav consoles. Change live in the PDA Mod Settings app.");
             global::Ostrabus.QoL.AutoVents.AutoVentControl.Initialize(Config);
             SceneManager.sceneUnloaded += global::Ostrabus.QoL.AutoVents.AutoVentControl.SceneUnloaded;
@@ -63,6 +65,8 @@ namespace Ostrabus {
         }
 
         private void OnDestroy() {
+            global::Ostrabus.Sensors.SensorContacts.Stop();
+            global::Ostrabus.EMPropagation.EmPropagation.Stop();
             global::Ostrabus.PdaSettings.SettingsPanel.Stop();
             SceneManager.sceneUnloaded -= global::Ostrabus.QoL.AutoVents.AutoVentControl.SceneUnloaded;
             global::Ostrabus.QoL.AutoVents.AutoVentControl.Stop();

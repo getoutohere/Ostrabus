@@ -33,8 +33,10 @@ native AI FFWD, after the world's physical update reaches the final epoch.
 - The duplicated first DTO returned in a bundled trade route is considered once.
 - Native `FlyToPath.PlanTrip4` receives explicit departure-time points and loaded
   cargo mass. Rejected plans return the manifest before retiring the new hull.
-- Eligible existing and new freight follows its native course. After the course
-  ends, bounded local SFF navigation handles the final approach. Arrival requires
+- Eligible existing and new freight follows its native course. Completed departure
+  or obstacle legs can continue through native historical-time planning inside the
+  same skip, rather than treating every endpoint as final approach. Once nearby,
+  bounded local SFF navigation handles the final approach. Arrival requires
   distance/speed inside the native docking threshold; expiration alone is not delivery.
 - Arrival transfers inventory through `UnregisterCargoShip`. At equal timestamps,
   arrivals precede production, which precedes dispatch. Physical crew/hull retirement
@@ -96,7 +98,16 @@ six hours versus two three-hour skips, chronological input availability, partial
 flight, rejected/throwing plans, duplicate suppression, disabled scope, queue bounds
 and cleanup. These checks do not claim a full Unity ship-factory or live route test.
 
-Validation: 1,412 economic/inspection checks and 4,850 existing orbital checks pass under the
+Flight-stage regression cases cover departure-to-torch continuation, partial
+travel, several intermediate legs, carried fuel budgets, expired and absent
+courses, and null/throwing/non-advancing continuations. Continuation uses detached
+origin motion, never temporary live-hull relocation or a global-clock rewind.
+It permits at most eight new plans per freight preparation and uses the native
+5,000 km torch-planning cutoff to distinguish remaining long travel from local
+approach. See [departure waypoint diagnosis](../../Navigation/DEPARTURE-WAYPOINTS.md)
+for the separate native reference-frame correction and its controls.
+
+Validation: 1,443 economic/inspection checks and 4,850 existing orbital checks pass under the
 bundled Mono runtime. A separate .NET 8 run processes one million queue events with
 zero scheduler allocations after setup; this excludes native economic work and uses
 a real allocation counter rather than the bundled Mono counter. All 132 startup

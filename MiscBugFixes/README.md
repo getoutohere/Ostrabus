@@ -2,6 +2,14 @@
 
 Always enabled through the plugin's normal Harmony lifecycle. No update loop or saved state.
 
+## AI rendezvous and crew lifecycle
+
+`AIShipLifecyclePatches.cs` prevents instant station docking while already attached
+to another hull, and prevents reuse of hidden hulls before they detach. Crewless
+human-operated AI is stopped at registration/execution/undocking boundaries without
+hiding or deleting its hull. Normal transfers, crewed ships and intentionally
+uncrewed controllers retain their behavior. See the [investigation and validation](../Navigation/CREWLESS-AI.md).
+
 ## PDC conversion ammunition
 
 `PdcConversionAmmoPatch` suppresses starting loot when a vanilla PDC replaces

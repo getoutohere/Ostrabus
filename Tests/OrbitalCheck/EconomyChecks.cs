@@ -22,6 +22,7 @@ static partial class EconomyChecks {
     static double start = 1000000;
     static int serial, planCalls, syncs, movedFreighters;
     static bool rejectPlan, throwPlan;
+    static Func<FlyToPath,NavDataPoint,NavDataPoint,NavData> stagedPlan;
     static bool Manager(ref MarketManager __result) { __result = manager; return false; }
     static bool Blockade(ref float __result) { __result = 0; return false; }
     static bool Station(Ship __instance, ref bool __result) { __result = __instance.strRegID == "SOURCE" || __instance.strRegID == "DEST"; return false; }
@@ -63,6 +64,7 @@ static partial class EconomyChecks {
     static bool Destroy(Ship __instance) { __instance.bDestroyed = true; return false; }
     static bool Plan(FlyToPath __instance, NavDataPoint navOrigin, NavDataPoint navDestination, ref NavData __result) {
         planCalls++;
+        if (stagedPlan != null) { __result=stagedPlan(__instance,navOrigin,navDestination); return false; }
         if (throwPlan) throw new InvalidOperationException("fixture planner failure");
         if (rejectPlan) { __result = null; return false; }
         var ship = (Ship)AccessTools.Property(typeof(BaseCommand), "ShipUs").GetValue(__instance);
@@ -109,7 +111,7 @@ static partial class EconomyChecks {
         aInputCollections = input == null ? Array.Empty<string>() : new[] { input + "=1" }
     }) { LastUpdateTime = start };
     static void Setup() {
-        serial = planCalls = syncs = 0; rejectPlan = throwPlan = false; hulls.Clear(); markets.Clear();
+        serial = planCalls = syncs = 0; rejectPlan = throwPlan = false; stagedPlan=null; hulls.Clear(); markets.Clear();
         CrewSim.system = Empty<StarSystem>(); CrewSim.system.dictShips = new Dictionary<string, Ship>();
         var root = Empty<BodyOrbit>(); root.strName = "Sol"; root.fPeriod = 31556926;
         CrewSim.system.aBOs = new Dictionary<string, BodyOrbit> { { "Sol", root } };
@@ -161,6 +163,7 @@ static partial class EconomyChecks {
             LoadingChecks(check, patches);
             NativeChecks(check);
             PlanningChecks(check);
+            StageChecks(check, h);
             InspectionChecks(check);
             IntegrationChecks(check, h, patches);
         } finally { SffEconomy.Current?.Dispose(); patches.UnpatchSelf(); h.UnpatchSelf(); }

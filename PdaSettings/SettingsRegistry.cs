@@ -27,6 +27,8 @@ internal static class SettingsRegistry {
     internal const string AppId = "template_settings";
     internal static readonly Setting[] All = {
         new Setting("hide_nav_note", "Hide nav tutorial note", "Remove the Don't crash! paper from nav consoles.", "Saved", () => NavConsole.TutorialNote.Hidden ? 1 : 0, value => NavConsole.TutorialNote.SetHidden(value != 0)),
+        new Setting("em_propagation", "EM propagation", "Extend radio reception with inverse-square signal falloff.", "Saved", () => EMPropagation.EmPropagation.Enabled ? 1 : 0, value => EMPropagation.EmPropagation.SetEnabled(value != 0)),
+        new Setting("sensors", "Contact position estimates", "Replace distant contact jitter with sensor-based uncertainty.", "Saved", () => Sensors.SensorContacts.Enabled ? 1 : 0, value => Sensors.SensorContacts.SetEnabled(value != 0)),
         new Setting("altwork", "Alternative work", "Choose nearby work first.", "Saved", () => AlternativeWorkSystem.Enabled ? 1 : 0, value => AlternativeWorkSystem.SetEnabled(value != 0)),
         new Setting("supply_window", "Supply window", "Nearby jobs to supply ahead (1-30).", "Saved", () => WorkSupplyPlan.Window, WorkSupplyPlan.SetWindow, 1, WorkSupplyPlan.MaxWindow),
         new Setting("autovents", "Kang auto-vents", "Tolerate brief O2 dips; seal quickly in emergencies.", "Saved", () => QoL.AutoVents.AutoVentControl.Enabled ? 1 : 0, value => QoL.AutoVents.AutoVentControl.SetEnabled(value != 0)),

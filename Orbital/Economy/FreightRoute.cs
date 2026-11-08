@@ -18,14 +18,15 @@ internal sealed class FreightRoute {
     readonly BodyOrbit targetBody;
     readonly SffEnvironment environment;
     readonly double start, end;
-    readonly NavData course;
-    readonly List<NavDataPoint> points;
+    NavData course;
+    List<NavDataPoint> points;
     readonly MotionState initial;
     internal readonly Ship Ship;
     internal double Arrival = double.PositiveInfinity;
     internal MotionState Final;
     internal bool Delivered;
     internal SffOutcome Approach;
+    internal int StagesPlanned;
 
     internal FreightRoute(AIShip pilot, Ship station, double start, double end, SffEnvironment environment, NavData course) {
         this.pilot = pilot; Ship = pilot.Ship; this.station = station; this.start = start; this.end = end;
@@ -35,12 +36,21 @@ internal sealed class FreightRoute {
         initial = OrbitalMotion.Read(Ship.objSS);
         if (course != null) points = Points(course);
     }
-    internal static NavData Plan(AIShip pilot, Ship destination, double departure) {
+    internal static NavData Plan(AIShip pilot, Ship destination, double departure, MotionState? motion = null, double? rcs = null, double? fusion = null) {
         using var scope = new FreightPlanningScope(departure);
         var planner = new FlyToPath(pilot.Ship, enableDebugLogs: false);
         var target = new ShipSitu(destination.objSS, createPath: false);
         OrbitalMotion.Write(target, StationAt(destination.objSS, departure));
-        var origin = planner.CreateNavPointStatic(pilot.Ship.objSS, departure, bLockToBO: false);
+        var situation = pilot.Ship.objSS;
+        if (motion.HasValue) {
+            situation = new ShipSitu(situation, createPath:false);
+            situation.bIsBO = situation.bBOLocked = situation.bOrbitLocked = false;
+            situation.NavData = null;
+            OrbitalMotion.Write(situation, motion.Value);
+        }
+        var origin = planner.CreateNavPointStatic(situation, departure, bLockToBO: false);
+        if (rcs.HasValue) origin.FuelLevel = rcs.Value;
+        if (fusion.HasValue) origin.TorchFuelLevel = fusion.Value;
         var finish = planner.CreateNavPointStatic(target, departure);
         return planner.PlanTrip4(origin, finish, 1, 1);
     }
@@ -73,16 +83,36 @@ internal sealed class FreightRoute {
         if (targetBody == null || !OrbitalMotion.BodyAt(targetBody, start, out _)) return false;
         double approachStart = start;
         MotionState position = initial;
-        if (course != null) {
-            if (points == null || points.Count < 2 || points.Count > 4096) return false;
-            double previous = double.NegativeInfinity;
-            foreach (var point in points) {
-                if (point?.ObjSS == null || !OrbitAcceleration.Finite(point.ArrivalTime) || point.ArrivalTime <= previous) return false;
-                previous = point.ArrivalTime;
+        double? rcs = null, fusion = null;
+        for (;;) {
+            if (course != null) {
+                if (points == null || points.Count < 2 || points.Count > 4096) return false;
+                double previous = double.NegativeInfinity;
+                foreach (var point in points) {
+                    if (point?.ObjSS == null || !OrbitAcceleration.Finite(point.ArrivalTime) || point.ArrivalTime <= previous) return false;
+                    previous = point.ArrivalTime;
+                }
+                if (previous > end) { Final = Sample(course, end, out _, out _); return Final.Finite; }
+                var endpoint = Sample(course, previous, out double plannedRcs, out double plannedFusion);
+                if (!endpoint.Finite || !OrbitAcceleration.Finite(plannedRcs) || !OrbitAcceleration.Finite(plannedFusion)) return false;
+                // An already-expired course must not teleport the live hull back
+                // to its endpoint. Freshly completed stages use that endpoint.
+                if (previous >= approachStart) { approachStart = previous; position = endpoint; }
+                rcs = Math.Min(Ship.fShallowRCSRemass, Math.Max(0, plannedRcs));
+                fusion = Math.Min(Ship.fShallowFusionRemain, plannedFusion);
             }
-            if (previous > end) { Final = Sample(course, end, out _, out _); return Final.Finite; }
-            approachStart = Math.Max(start, previous);
-            position = Sample(course, approachStart, out _, out _);
+            var destination = TargetAt(approachStart);
+            // Native PlanTrip4 permits torch travel above this distance. A
+            // completed departure/obstacle leg isn't final RCS approach when
+            // an interplanetary journey still remains.
+            double torchDistanceKm = 3.342293712194078e-5 * OrbitalMotion.KmPerAU;
+            if ((position.Position-destination.Position).Length <= torchDistanceKm ||
+                Ship.fFusionThrustMax<=0 || !Ship.bFusionReactorRunning || approachStart>=end) break;
+            if (StagesPlanned>=8) return false; // Bounded even for overlapping/no-progress departure legs.
+            StagesPlanned++;
+            course = Plan(pilot, station, approachStart, position, rcs, fusion);
+            points = course == null ? null : Points(course);
+            if (points == null || points.Count<2 || points[points.Count-1].ArrivalTime<=approachStart) return false;
         }
         var goal = TargetAt(approachStart);
         if ((position.Position - goal.Position).Length < 15 && (position.Velocity - goal.Velocity).Length < .1) {

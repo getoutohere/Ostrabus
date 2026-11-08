@@ -22,9 +22,10 @@ are supplied by the player's installation and are not redistributed.
 
 ## Decisions and follow-up
 
-- Decide whether to distribute an installable experimental ZIP or keep the public
-  repository source-only. A local candidate archive does not publish a release.
-- Choose the public snapshot version/tag and synchronize plugin/project/PDA
+- `Ostrabus-0.1` marks the existing experimental snapshot. For the next snapshot,
+  choose whether to refresh the installable ZIP alongside the source changes;
+  staging source does not rebuild or publish an archive.
+- Choose the next public snapshot version/tag and synchronize plugin/project/PDA
   versions before tagging. Do not advertise compatibility beyond the tested game.
 - Keep known investigations distinguishable from completed fixes. In particular,
   orphaned economic records remain an investigation, not an automatic cleanup.
@@ -47,3 +48,29 @@ against a disposable installation layout before publishing.
 
 Before tagging, review the staged diff and inspect the archive's file inventory.
 Keep generated archives, binaries, local settings and live captures out of source control.
+
+## Next snapshot: source preparation, November 8, 2026
+
+Changes since 0.1 include independent opt-in EM propagation/contact estimates and
+their PDA controls/comparison tools; AI rendezvous/crew lifecycle corrections;
+VORB retrieval depot selection; Venus dolly encumbrance; and station-relative AI
+departure waypoints with intermediate freight-stage continuation during SFF.
+The target orbital-extrema UI document is a proposal, not an implemented feature.
+
+Module notes distinguish offline fixtures from live observations. Runtime sensor
+tests include the outer-system paused-redraw regression. Navigation cases cover
+station hierarchies and unchanged player plotting; economic tests cover virtual
+stage clocks, carried budgets, partial travel, bounded retries and cleanup.
+Selected orbital inputs live in `Tests/Fixtures/Navigation`; full saves and working
+captures remain ignored. No custom save DTOs or new mod-required save records are
+introduced by these changes. EM/contact settings default off in config.
+
+No next tag/version, commit, push or release publication is implied by this staging
+pass. Existing package/version identifiers remain unchanged until a release is
+explicitly requested.
+
+Preparation checks passed: 33 AI lifecycle, 69 departure, 649 sensor runtime,
+55 dolly, 25 retrieval and 47 PDA checks. The related economic/orbital runs passed
+1,443 and 4,850 checks, the model comparison passed 5,476 assertions, and the
+startup binding audit bound 141 classes without failures or warnings. These are
+offline results; the module notes describe live observations and test boundaries.

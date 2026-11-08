@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Ostrabus sensor comparison</title>
+<style>body{font:16px system-ui;background:#141b23;color:#e1e8ef;max-width:1400px;margin:35px auto;padding:0 20px}select{font:inherit;background:#253140;color:inherit;padding:8px;margin:8px 16px 8px 0}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}th,td{padding:9px;border-bottom:1px solid #3b4857;text-align:right}th:first-child,td:first-child{text-align:left}p{line-height:1.5;color:#b9c8d5}svg{width:100%;height:340px;background:#1c2530}h1{font-size:26px}.scroll{overflow-x:auto}</style>
+<h1>Sensor uncertainty — offline comparison</h1>
+<p>No live patches. Compare vanilla, vanilla with inverse-square EM propagation, and the overhaul with that EM improvement. Transponder timing requires a broadcasting target and sufficient EM-only reception. Optical detection and unrelated EM emissions cannot grant timestamp ranging. The local passive-navigation prior remains a gameplay abstraction.</p>
+<label>Package <select id="package"></select></label><label>Target <select id="target"></select></label>
+<p id="cutoff"></p>
+<h2>Spatial spread at 60 million km</h2>
+<p id="spreadSummary"></p>
+<svg id="spread" viewBox="0 0 1100 340" role="img" aria-label="Equal-scale range and cross-range error samples before and after scatter tuning"></svg>
+<p>Equal scale on both axes. Horizontal: range error; vertical: cross-range error. Each point represents one of 120 hypothetical contacts at the same true position, using the runtime's bounded noise distribution. Orange: previous scatter. Blue: revised scatter. This compares shape, not actual ship locations.</p>
+<p><strong>Both axes are logarithmic: each interval is a tenfold increase.</strong> Horizontal: distance to contact in kilometres. Vertical: positional RMS error, labelled in metres or kilometres. Exact positions are drawn on the bottom line; errors below 1 cm also clip to that line.</p>
+<svg id="plot" viewBox="0 0 1100 340" role="img" aria-label="Logarithmic comparison of vanilla, EM improvement and sensor overhaul positional uncertainty"></svg>
+<p><span style="color:#efbc78">Orange: vanilla</span> · <span style="color:#d69aff">Purple: EM improvement only</span> · <span style="color:#72c5ff">Blue: overhaul + EM improvement</span>. Coincident curves overlap. Radial uncertainty is along the line of sight; cross-range is perpendicular. Table errors are metres; bearing error is arcseconds.</p>
+<div class="scroll"><table><thead><tr><th>Distance km</th><th>Vanilla RMS m</th><th>EM fix RMS m</th><th>Overhaul RMS m</th><th>Radial σ m</th><th>Cross σ m</th><th>Bearing σ arcsec</th><th>XPDR signal</th><th>Timestamp received</th></tr></thead><tbody id="rows"></tbody></table></div>
+<script>
+const data=/*DATA*/[]; const p=document.getElementById('package'),t=document.getElementById('target');
+for(const [el,key] of [[p,'Package'],[t,'Target']])for(const value of new Set(data.map(r=>r[key]))){const o=document.createElement('option');o.value=o.textContent=value;el.append(o)}
+p.value='stellar-magnificence';t.value='cooperative-cold';
+const f=x=>x===0?'0':x<.01?x.toExponential(2):x.toLocaleString(undefined,{maximumFractionDigits:3});
+function draw(){
+ const rows=data.filter(r=>r.Package===p.value&&r.Target===t.value);
+ document.getElementById('cutoff').textContent='Native exact-position cutoff: '+f(rows[0].NativeCutoffKm)+' km; with EM improvement: '+f(rows[0].CorrectedCutoffKm)+' km. Transponder-only acquisition threshold: 0.30 (normal sensor skill).';
+ document.getElementById('rows').innerHTML=rows.map(r=>`<tr><td>${f(r.RangeKm)}</td><td>${f(r.NativeRmsM)}</td><td>${f(r.CorrectedRmsM)}</td><td>${f(r.ModelRmsM)}</td><td>${f(r.RangeSigmaM)}</td><td>${f(r.CrossSigmaM)}</td><td>${f(r.BearingSigmaArcsec)}</td><td>${r.TransponderBroadcasting?f(r.TransponderSignal):'off'}</td><td>${r.TimestampReceived?'Yes':'No'}</td></tr>`).join('');
+ const x=r=>85+(Math.log10(r.RangeKm)+1)/9*980,y=v=>270-(Math.log10(Math.max(.01,v))+2)/12*235;
+ let svg=''; const distances=['0.1','1','10','100','1,000','10,000','100,000','1,000,000','10,000,000','100,000,000'];
+ for(let i=0;i<10;i++){const xx=85+i/9*980;svg+=`<path d="M${xx} 30V270" stroke="#35414e"/><text x="${xx}" y="295" fill="#bbc9d6" text-anchor="middle" font-size="12">${distances[i]}</text>`}
+ for(const [v,label] of [[.01,'0 / ≤1 cm'],[1,'1 m'],[100,'100 m'],[10000,'10 km'],[1e6,'1,000 km'],[1e8,'100,000 km'],[1e10,'10M km']]){const yy=y(v);svg+=`<text x="78" y="${yy+4}" fill="#bbc9d6" text-anchor="end" font-size="12">${label}</text>`}
+ svg+='<text x="575" y="326" fill="#bbc9d6" text-anchor="middle">Distance to contact (km) — logarithmic</text>';
+ for(const [field,cutField,color] of [['NativeRmsM','NativeCutoffKm','#efbc78'],['CorrectedRmsM','CorrectedCutoffKm','#d69aff'],['ModelRmsM',null,'#72c5ff']]){
+  const points=rows.map(r=>({RangeKm:r.RangeKm,v:r[field]}));
+  if(cutField){const cut=rows[0][cutField];if(cut>=.1&&cut<=1e8){points.push({RangeKm:cut,v:0},{RangeKm:cut*(1+1e-9),v:cut*200*Math.sqrt(8/15)});points.sort((a,b)=>a.RangeKm-b.RangeKm)}}
+  svg+=`<polyline points="${points.map(r=>x(r)+','+y(r.v)).join(' ')}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+ }
+ document.getElementById('plot').innerHTML=svg;
+ const row=rows.find(r=>r.RangeKm===60000000);
+ const aspect=row.RangeSigmaM/Math.max(1e-30,row.CrossSigmaM),oldAspect=row.PreviousScatterRangeSigmaM/Math.max(1e-30,row.PreviousScatterCrossSigmaM);
+ document.getElementById('spreadSummary').textContent='Range-to-cross-range sigma ratio: '+f(oldAspect)+':1 before; '+f(aspect)+':1 now. Revised cross-range sigma: '+f(row.CrossSigmaM/1000)+' km.';
+ const horizontalBound=Math.max(row.RangeSigmaM,row.PreviousScatterRangeSigmaM)*Math.sqrt(3)*1.1,verticalBound=Math.max(row.CrossSigmaM,row.PreviousScatterCrossSigmaM)*Math.sqrt(3)*1.1;
+ const scale=Math.min(470/Math.max(1,horizontalBound),140/Math.max(1,verticalBound));
+ // Common scale is determined by the widest axis; no independent vertical stretching.
+ let cloud='<path d="M50 170H1050M550 15V325" stroke="#465465"/>';
+ let seed=123456789; const noise=()=>{seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return((seed>>>0)/4294967295*2-1)*Math.sqrt(3)};
+ const samples=Array.from({length:120},()=>[noise(),noise()]);
+ for(const [radial,cross,color] of [[row.PreviousScatterRangeSigmaM,row.PreviousScatterCrossSigmaM,'#efbc78'],[row.RangeSigmaM,row.CrossSigmaM,'#72c5ff']])for(const [a,b] of samples)cloud+=`<circle cx="${550+a*radial*scale}" cy="${170-b*cross*scale}" r="2.5" fill="${color}" fill-opacity=".6"/>`;
+ cloud+=`<text x="60" y="330" fill="#bbc9d6" font-size="12">Horizontal width: ${f(1000/scale/1000)} km. Vertical height: ${f(310/scale/1000)} km.</text>`;
+ document.getElementById('spread').innerHTML=cloud;
+}
+p.onchange=t.onchange=draw;draw();
+</script></html>

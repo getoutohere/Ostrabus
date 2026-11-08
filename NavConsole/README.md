@@ -1,5 +1,7 @@
 # Nav console enhancements
 
+Planned: [compact target periapsis/apoapsis readout](TARGET-ORBIT-DISPLAY.md).
+
 The proximity dial is always enabled with the plugin.
 
 The PDA Mod Settings app also offers **Hide nav tutorial note**. This hides the

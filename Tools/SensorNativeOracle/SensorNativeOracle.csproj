@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Sensors/Model/*.cs" Link="Model/%(Filename)%(Extension)" />
+    <Compile Include="../../EMPropagation/PropagationModel.cs" Link="Model/PropagationModel.cs" />
+    <Compile Include="../SensorComparison/ScenarioCatalog.cs" Link="ScenarioCatalog.cs" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>
