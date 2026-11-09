@@ -16,12 +16,13 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 
 - [Tile helper memory leak](MiscBugFixes/TILE-HELPER-CLEANUP.md): properly retire grid helper COs during tile and async-hull destruction, releasing stale registry entries and old ship references.
 - [Shallow refueling](RefuelRCSPatch.cs): replenish RCS fuel instead of incorrectly adding the fuel to ship mass.
+- [Torch autopilot fuel (pending playtesting)](Navigation/TORCH-COURSE-FIX.md): documented work in progress on fuel budgets, FLOW/coast control and cache synchronization; related implementation and harness files may be absent from this commit.
 - [Ranged self-hits](MiscBugFixes/RangedShooterExclusionPatch.cs): exclude the shooter from character hit processing without blocking damage to intended targets or objects downrange.
 - [Meat duplication](MiscBugFixes/MeatScrapPatches.cs): destroy loose meat through the native default recipe instead of spawning another batch of loose meat.
 - [PDC ammunition](MiscBugFixes/PDC-CONVERSION-AMMO.md): prevent installation, uninstallation and other PDC conversions from generating another starting magazine before transferring existing ammunition.
 - [AI navigation targets](MiscBugFixes/ShipReplacementTargetsPatch.cs): preserve destination references when target ships are unloaded and reconstructed, preventing runaway route calculations.
 - [AI crew lifecycle](Navigation/CREWLESS-AI.md): prevent instant station cleanup during ship-to-ship docking and premature hull reuse; stop crewless AI thrust while preserving the visible hull.
-- [Hauler returns](Haulers/README.md): restore the home target after derelict release and cancel thrust left behind by abandoned commands.
+- [Hauler returns](Haulers/README.md): restore home targets after derelict release, cancel abandoned thrust, and preserve the retrieval stage after SFF pickups.
 - [VORB collection](Venus/HAULER-RETRIEVAL-AUDIT.md): let VORB retrievers use their home depot's assignments and wreck ownership instead of VNCA's regional station.
 - [Navy target selection](Navigation/NavyCandidateFuelPatch.cs): reject unaffordable candidates before selection, closing the single-candidate and all-rejected fuel-check bypasses.
 - [Propulsion checks](Navigation/NavigationFuel.cs): treat invalid RCS delta-v as zero so ships without usable thrusters cannot bypass low-fuel checks.
@@ -53,7 +54,7 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 - [Ceres navigation](CeresNavigation/README.md): apply a homeward fuel reserve to patrol selection and chase retreat decisions.
 - [Free coasting](Orbital/README.md): reduce timestep-dependent orbital drift with velocity-Verlet integration and consistent native orbital coordinates.
 - [Super Fast Forward](Orbital/SFF-IMPLEMENTATION.md): replace hours-long constant-acceleration jumps with orbital coasting and partial AI travel while retaining native plotted courses and combat handling.
-- [VORB wreck variety](Venus/README.md): use Venus-specific wrecks for 70% of VORB wreck spawns.
+- [VORB wreck variety](Venus/README.md): default to 50% Venus-specific wrecks, adjustable from 0–100% in the PDA settings app.
 
 ### Performance enhancements
 
@@ -73,6 +74,7 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 - [Alternative autotask](AlternativeWork/README.md): favor nearby, reachable, supplied work and prevent crew from reserving jobs on vessels their permissions forbid them to enter.
 - [Crew hotkeys](Hotkeys/README.md): use Shift+R to toggle Open Airlock and Shift+T to toggle Disembark for the selected controllable crew member.
 - [Proximity alarm dial](NavConsole/README.md): choose a ship's warning range from 5, 10, 15, or 20 km using a dial on the nav console.
+- [Course-plot fine controls](QoL/CoursePlot/README.md): hover and scroll ACCEL LIMIT in 0.01 G steps or DRIFT PHASE in 0.01 steps, preserving native plotting and limits.
 - [Hide nav tutorial note](NavConsole/README.md): use a saved PDA setting to hide the clickable "Don't crash!" paper that obscures nav-console controls.
 - [Kang auto-vents](QoL/AutoVents/README.md): tolerate brief airlock-induced oxygen-pressure dips while retaining rapid closure for dangerous depressurization.
 - [Stabilizer sound cues](MiscBugFixes/StabilizerCreakPatch.cs): scale the maneuver creaking threshold with active stabilizers' native damage reduction.
@@ -114,5 +116,9 @@ every gameplay scenario. Module notes distinguish native-code tests from stubbed
 boundaries, record live observations, and identify remaining uncertainties. Not
 every change has every kind of coverage; untested behavior is not presented as
 verified.
+
+## Companion tools
+
+- [Torch drive calculator](Tools/TorchCalculator/README.md): a standalone HTML calculator for reactor fit, sustainable acceleration, He-3/D2O burn rates and fuel/tank mass tradeoffs. Open `calculator.html` directly.
 
 [Build, install, and run the offline checks](Build/README.md).

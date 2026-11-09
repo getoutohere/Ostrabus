@@ -1,5 +1,9 @@
 # Crewless civilian AI: O-KFMFL investigation
 
+The subsequent [police inspection correction](POLICE-INSPECTION-CONTROLLER.md)
+preserves legitimate officer boarding and adds explicit recovery for patrols
+stranded by the original own-hull crew requirement. Current lifecycle/API checks: 52.
+
 Observed 2026-11-07 on 1.0.1.10 near Mercury. Investigation used read-only live
 inspection and offline saves. Narrow lifecycle fixes are now implemented in
 `MiscBugFixes/AIShipLifecyclePatches.cs`; no live state repair or diagnostic hooks

@@ -1,4 +1,5 @@
 using System;
+using BepInEx.Configuration;
 using HarmonyLib;
 using Ostranauts.Ships.AIPilots;
 using Ostranauts.Ships.Commands;
@@ -7,7 +8,17 @@ namespace Ostrabus.Venus;
 
 internal static class VenusDerelicts {
     internal const string VenusLoot = "RandomDerelictVenus";
-    internal const double VenusChance = 0.70;
+    internal static ConfigEntry<int> WreckPercentConfig;
+    internal static int WreckPercent => Math.Max(0, Math.Min(100, WreckPercentConfig?.Value ?? 50));
+    internal static void Initialize(ConfigFile config) {
+        WreckPercentConfig = config.Bind("Venus", "VenusWreckPercent", 50, new ConfigDescription(
+            "Percentage of newly deployed VORB wrecks drawn from the Venus-specific pool; the remainder use RandomShip. Change live in the PDA Mod Settings app.", new AcceptableValueRange<int>(0, 100)));
+    }
+    internal static void SetWreckPercent(int value) {
+        if (value < 0 || value > 100) throw new ArgumentOutOfRangeException(nameof(value));
+        if (WreckPercentConfig == null) throw new InvalidOperationException("Venus wreck settings are not initialized.");
+        WreckPercentConfig.Value = value;
+    }
     internal static bool IsVorbOrbit(BodyOrbit orbit) {
         return orbit != null && (orbit.strName == "VORB" || (orbit.strName != null && orbit.strName.StartsWith("VORB|", StringComparison.Ordinal)));
     }
@@ -15,7 +26,8 @@ internal static class VenusDerelicts {
         return ship != null && !ship.bDestroyed && ship.objSS != null && !ship.objSS.bIsBO && ship.DMGStatus == Ship.Damage.Derelict;
     }
     internal static string ChooseLoot(string station, bool poolExists, double roll) {
-        return station == "VORB" && poolExists && roll < VenusChance ? VenusLoot : "RandomShip";
+        int percent = WreckPercent;
+        return station == "VORB" && poolExists && (percent == 100 || roll < percent / 100d) ? VenusLoot : "RandomShip";
     }
 }
 

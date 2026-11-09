@@ -8,8 +8,8 @@ int checks = 0;
 void Check(bool ok, string message) { checks++; if (!ok) throw new Exception(message); }
 object Invoke(Type type, string method, params object[] args) { return type.GetMethod(method, BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, args)!; }
 int venus = Enumerable.Range(0, 100).Count(i => VenusDerelicts.ChooseLoot("VORB", true, i / 100d) == VenusDerelicts.VenusLoot);
-Check(venus == 70, "Wrong 70/30 split");
-Check(VenusDerelicts.ChooseLoot("VORB", true, .7) == "RandomShip", "Wrong threshold boundary");
+Check(venus == 50, "Wrong default 50/50 split");
+Check(VenusDerelicts.ChooseLoot("VORB", true, .5) == "RandomShip", "Wrong threshold boundary");
 Check(VenusDerelicts.ChooseLoot("OKLG", true, 0) == "RandomShip", "Other stations affected");
 Check(VenusDerelicts.ChooseLoot("VORB", false, 0) == "RandomShip", "Missing Venus pool didn't fall back");
 BodyOrbit Orbit(string name) { var body = (BodyOrbit)FormatterServices.GetUninitializedObject(typeof(BodyOrbit)); body.strName = name; return body; }

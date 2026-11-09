@@ -117,7 +117,7 @@ internal sealed class InspectionApi : IDisposable {
             else if (http.Url?.AbsolutePath.TrimEnd('/') == global::Ostrabus.Micrometeoroids.MeteorTest.Route && http.HttpMethod != "POST") { reply = Error(405, "Micrometeoroid test strikes require POST."); }
             else if (PersonnelCombatRequest.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) && http.HttpMethod != "POST") { reply = Error(405, "Personnel trace controls require POST."); }
             else if (ShipPruning.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) && http.HttpMethod != "POST") { reply = Error(405, "Ship pruning requires POST."); }
-            else if (http.HttpMethod != "GET" && !(http.HttpMethod == "POST" && (http.Url?.AbsolutePath.TrimEnd('/') == "/derelicts/prune" || http.Url?.AbsolutePath.TrimEnd('/') == global::Ostrabus.Micrometeoroids.MeteorTest.Route || MemoryInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || TransitProfileInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || ShipPruning.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || PersonnelCombatRequest.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || FlightJournal.IsControl(http.Url?.AbsolutePath.TrimEnd('/'))))) { reply = Error(405, "GET is required except explicit pruning and diagnostic control POST routes."); }
+            else if (http.HttpMethod != "GET" && !(http.HttpMethod == "POST" && (http.Url?.AbsolutePath.TrimEnd('/') == "/derelicts/prune" || http.Url?.AbsolutePath.TrimEnd('/') == global::Ostrabus.Micrometeoroids.MeteorTest.Route || MemoryInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || TransitProfileInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || ShipPruning.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || ShipAIRecovery.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || HaulerRescue.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || ShipArrival.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || PersonnelCombatRequest.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || FlightJournal.IsControl(http.Url?.AbsolutePath.TrimEnd('/'))))) { reply = Error(405, "GET is required except explicit pruning and diagnostic control POST routes."); }
             else if (http.Url.AbsolutePath.Length > 256) { reply = Error(400, "Path too long."); }
             else if (!ParsePage(http.QueryString["offset"], 0, http.Url.AbsolutePath.TrimEnd('/') == "/console" || http.Url.AbsolutePath.StartsWith("/economy/", StringComparison.Ordinal) ? 1048576 : 10000, out int offset) ||
                      !ParsePage(http.QueryString["limit"], 25, 50, out int limit) || limit == 0 ||
@@ -308,6 +308,12 @@ internal sealed class InspectionApi : IDisposable {
                         reply = DerelictPruning.Preview(request.StationId, request.MinDistanceKm, request.Offset, request.Limit, start);
                     } else if (request.Path == "/derelicts/prune" && request.Method == "POST") {
                         reply = DerelictPruning.Prune(request.StationId, request.MinDistanceKm, request.MaxShips, request.Confirm, start);
+                    } else if (ShipArrival.IsRoute(request.Path)) {
+                        reply = ShipArrival.Run(request.Path, request.Method == "POST");
+                    } else if (HaulerRescue.IsRoute(request.Path)) {
+                        reply = HaulerRescue.Run(request.Path, request.Method == "POST");
+                    } else if (ShipAIRecovery.IsRoute(request.Path)) {
+                        reply = ShipAIRecovery.Run(request.Path, request.Method == "POST");
                     } else if (ShipPruning.IsRoute(request.Path) && request.Method == "POST") {
                         reply = ShipPruning.Run(request.ShipId, request.DryRun, request.Confirm);
                     } else {

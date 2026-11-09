@@ -5,7 +5,7 @@
     <AssemblyName>Ostrabus</AssemblyName>
     <RootNamespace>Ostrabus</RootNamespace>
     <Product>Ostrabus</Product>
-    <Version>0.2.1</Version>
+    <Version>0.2.2</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <PathMap>$(MSBuildProjectDirectory)=/_/Ostrabus</PathMap>
@@ -48,23 +48,23 @@
       <Private>False</Private>
     </Reference>
         <Reference Include="UnityEngine.UI">
-      <HintPath>$(GameDir)Ostranauts_Data/Managed/UnityEngine.UI.dll</HintPath>
+      <HintPath>$(Managed)/UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>$(GameDir)Ostranauts_Data/Managed/UnityEngine.UIModule.dll</HintPath>
+      <HintPath>$(Managed)/UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>$(GameDir)Ostranauts_Data/Managed/UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>$(Managed)/UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>$(GameDir)Ostranauts_Data/Managed/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>$(Managed)/Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.InputSystem">
-      <HintPath>$(GameDir)Ostranauts_Data/Managed/Unity.InputSystem.dll</HintPath>
+      <HintPath>$(Managed)/Unity.InputSystem.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

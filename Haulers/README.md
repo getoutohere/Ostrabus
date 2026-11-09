@@ -1,4 +1,35 @@
-# Deploying-hauler recovery
+# Station-hauler fixes
+
+For immediate completion through vanilla station/population mechanics, use the
+[station-arrival API](../Inspection/STATION-ARRIVAL.md). It supports local haulers,
+police and salvagers, checks crew preservation, and reports native tow delivery
+and hull retirement outcomes. This is the preferred rescue operation when the
+goal is returning existing NPCs to station life immediately.
+
+The inspection [rescue API](RESCUE-API.md) can explicitly detach stranded local
+haulers from abandoned wrecks, repair their approach state and request a native
+return home while preserving their existing crew. Wreck pruning is separate.
+
+## Retriever SFF continuation
+
+`HaulerRetrieverSffPatch` corrects the native shallow retriever handoff after an
+instant SFF pickup. Native code queued HaulShip for one invocation while leaving
+Main at outbound FlyTo; the next AI tick could plot a route while towing instead
+of sustaining the ordinary group-steering haul. The patch advances the verified
+native Main sequence to HaulShip and suppresses that disposable queue entry.
+Native hauling, arrival, docking, fuel accounting and save serialization remain
+responsible for the journey. No group-physics or navigation-planner hook is added.
+
+Only visible shallow AI retrievers attached exclusively to non-player derelicts,
+with no active plotted approach and the exact expected Main sequence at FlyTo or
+Dock, qualify. Materialized ships, player-owned tows, failed unattached pickups,
+other controllers and unknown tree layouts are excluded. No polling, saved keys
+or retained ship/command references are added; inspection occurs only in the
+existing retriever SFF callback. This does not repair already-corrupt momentum.
+
+See [saved evidence, native reproduction and validation](OKLG-RETRIEVER-RUNAWAYS.md).
+
+## Deploying-hauler recovery
 
 `Ostrabus.Haulers` generalizes the former VORB home-return patches to
 deploying haulers at every station. Always active, as the former patches were;

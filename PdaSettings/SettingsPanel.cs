@@ -14,6 +14,7 @@ internal sealed class SettingsPanel : MonoBehaviour {
         internal TMP_Text Description;
         internal RectTransform Panel, FirstControl, SecondControl, Number;
         internal Button Minus, Plus;
+        internal Slider Slider;
         internal int Displayed = int.MinValue;
     }
     static readonly AccessTools.FieldRef<GUIPDA, CanvasGroup> Home = AccessTools.FieldRefAccess<GUIPDA, CanvasGroup>("cgHome");
@@ -136,6 +137,28 @@ internal sealed class SettingsPanel : MonoBehaviour {
                 var toggle = Button("Toggle", panel, "", () => Change(row, row.Setting.Value == 0 ? 1 : 0), 8, 0, 100, 28);
                 row.FirstControl = (RectTransform)toggle.transform;
                 row.Value = toggle.GetComponentInChildren<TMP_Text>();
+            } else if (setting.IsPercentage) {
+                var control = Box("Percentage", panel, 0, 28);
+                control.anchorMax = new Vector2(0, 1); control.pivot = new Vector2(0, 1);
+                control.sizeDelta = new Vector2(180, 28); control.anchoredPosition = new Vector2(8, 0);
+                control.gameObject.AddComponent<Image>().color = new Color(1, 1, 1, 0.025f);
+                var percentageTrack = Box("Track", control, 11, 6);
+                percentageTrack.offsetMin = new Vector2(7, percentageTrack.offsetMin.y); percentageTrack.offsetMax = new Vector2(-7, percentageTrack.offsetMax.y);
+                percentageTrack.gameObject.AddComponent<Image>().color = new Color(0.16f, 0.23f, 0.25f);
+                var area = Box("HandleArea", control, 0, 28);
+                area.offsetMin = new Vector2(7, area.offsetMin.y); area.offsetMax = new Vector2(-7, area.offsetMax.y);
+                var percentageHandle = Box("Handle", area, 3, 22);
+                percentageHandle.sizeDelta = new Vector2(14, 22);
+                var percentageHandleImage = percentageHandle.gameObject.AddComponent<Image>();
+                percentageHandleImage.color = new Color(0.55f, 0.73f, 0.76f);
+                row.Slider = control.gameObject.AddComponent<Slider>();
+                row.Slider.handleRect = percentageHandle; row.Slider.targetGraphic = percentageHandleImage;
+                row.Slider.minValue = setting.Min; row.Slider.maxValue = setting.Max; row.Slider.wholeNumbers = true;
+                row.Slider.navigation = new Navigation { mode = Navigation.Mode.None };
+                row.Slider.SetValueWithoutNotify(setting.Value);
+                row.Slider.onValueChanged.AddListener(value => Change(row, Mathf.RoundToInt(value)));
+                row.Value = Text("Value", panel, "", 17, 200, 0, -8, 28);
+                row.FirstControl = control; row.Number = row.Value.rectTransform;
             } else {
                 row.Minus = Button("Decrease", panel, "-", () => Change(row, row.Setting.Value - 1), 8, 0, 38, 28);
                 row.Value = Text("Value", panel, "", 17, 50, 0, -52, 28);
@@ -173,7 +196,7 @@ internal sealed class SettingsPanel : MonoBehaviour {
     void Change(Row row, int value) {
         try {
             row.Setting.Set(value);
-            status.text = row.Setting.Title + ": " + (row.Setting.IsToggle ? value == 0 ? "OFF" : "ON" : value.ToString()) + " (" + row.Setting.Lifetime.ToLowerInvariant() + ").";
+            status.text = row.Setting.Title + ": " + row.Setting.Format(value) + " (" + row.Setting.Lifetime.ToLowerInvariant() + ").";
         } catch (Exception error) {
             status.text = "Could not change " + row.Setting.Title + ". See Player.log.";
             Ostrabus.OstrabusPlugin.Logger?.LogError("[PdaSettings] " + error);
@@ -186,7 +209,8 @@ internal sealed class SettingsPanel : MonoBehaviour {
             int value = row.Setting.Value;
             if (row.Displayed == value) continue;
             row.Displayed = value;
-            row.Value.text = row.Setting.IsToggle ? value == 0 ? "OFF" : "ON" : value.ToString();
+            row.Value.text = row.Setting.Format(value);
+            if (row.Slider != null) row.Slider.SetValueWithoutNotify(value);
             row.Value.color = row.Setting.IsToggle && value != 0 ? new Color(0.5f, 0.95f, 0.7f) : Color.white;
             if (row.Minus != null) row.Minus.interactable = value > row.Setting.Min;
             if (row.Plus != null) row.Plus.interactable = value < row.Setting.Max;

@@ -4,13 +4,23 @@ Namespace `Ostrabus.Venus`, formerly `VorbHaulerReturn`. These patches cover:
 
 - VORB hauler route validation, manual navigation fallback and return fuel assistance.
 - Enabling native VORB derelict anchoring and correcting the orbit lookup on undock.
-- A 70% Venus-specific wreck spawn chance at VORB.
+- A configurable Venus-specific wreck spawn chance at VORB (50% by default).
 - Correct VORB retrieval dispatch and wreck ownership lookup instead of using VNCA's regional station.
 - [Dolly handling](DOLLY-ENCUMBRANCE.md): count loaded dollies at 10% encumbrance on Venus aerostats and physically docked ships, without changing physical mass.
 
 General deploying-hauler home-return recovery and abandoned-thrust cleanup live
 in [Haulers](../Haulers/README.md) and apply at all stations. General orbital and
 super-fast-forward corrections live in `Orbital`.
+
+## Wreck distribution
+
+PDA **MOD SETTINGS → Venus-specific wrecks** has a whole-percentage slider from
+0–100%, default 50%. The remainder uses the native general `RandomShip` pool;
+this is a pool-selection probability, not a guaranteed mix in a small batch.
+Changes apply to future VORB hauler deployments and persist in BepInEx config as
+`[Venus] VenusWreckPercent`. Existing wrecks and other stations are unaffected.
+The choice is made once per deployment, including spawn retries. A missing
+Venus-specific loot pool retains the native general-pool fallback.
 
 The rename changes organization only. Detailed navigation diagnosis and policy
 history: [VORB hauler return](../Notes/VORB-HAULER-RETURN-PATCH.md).

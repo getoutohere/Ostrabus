@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ostrabus · Torch calculator</title>
+<style>
+:root{color-scheme:dark;--bg:#101619;--panel:#192226;--line:#324247;--text:#e5ecea;--muted:#a3b8b9;--accent:#edb56b;--good:#8bceae}*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;font:15px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--text)}main{max-width:1400px;margin:auto;padding:30px}header{display:flex;justify-content:space-between;gap:20px;align-items:start;margin-bottom:26px}.eyebrow{letter-spacing:.16em;color:var(--accent);font-size:12px}h1{font-size:30px;margin:4px 0 8px}h2{font-size:18px;margin:0 0 14px}p{margin:8px 0;color:var(--muted)}small,.muted{color:var(--muted)}.layout{display:grid;grid-template-columns:320px 1fr;gap:22px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:18px}label{display:block;font-size:13px;color:var(--muted);margin:13px 0 4px}input,select,button{font:inherit;background:#111b1e;color:var(--text);border:1px solid #465a60;border-radius:5px;padding:8px 10px;width:100%}input:focus,select:focus,button:focus{outline:2px solid var(--accent);outline-offset:2px}input[type=checkbox]{width:auto;accent-color:var(--accent);margin-right:8px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}.checks label{margin-top:14px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}.metric{font-size:30px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.unit{font-size:15px;color:var(--muted)}.sub{font-size:12px;color:var(--muted);margin-top:6px}.good{color:var(--good)}.warn{color:var(--accent)}.badge{font-size:13px;color:var(--muted);border:1px solid var(--line);padding:6px 10px;border-radius:20px;white-space:nowrap}summary{cursor:pointer;color:var(--accent);font-size:14px}table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}th,td{text-align:right;padding:10px 8px;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}th{font-size:12px;color:var(--muted);font-weight:500}tr.selected{background:#263437}svg{width:100%;height:220px;overflow:visible}svg text{font:11px system-ui;fill:var(--muted)}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.note{font-size:13px}.warning{border-left:3px solid var(--accent);padding:8px 12px;background:#332a20;margin:8px 0;font-size:14px}button{cursor:pointer;background:#334645;text-align:center;margin-top:12px}button:hover{background:#405654}.table-wrap{overflow:auto}footer{font-size:12px;color:var(--muted);padding:0 4px}#error{color:var(--accent)}@media(max-width:1000px){.layout{grid-template-columns:280px 1fr}.chart-grid{grid-template-columns:1fr}}@media(max-width:760px){main{padding:16px}.layout{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}header{display:block}.badge{display:inline-block;margin-top:8px}}
+</style></head><body><main>
+<header><div><div class="eyebrow">OSTRABUS / FLIGHT ENGINEERING</div><h1>Torch drive calculator</h1><p>Find the useful thrust ceiling before buying more reactor parts and fuel tanks.</p></div><span class="badge">Ostranauts 1.0.1.10 · standalone file</span></header>
+<div class="layout"><aside><form id="fit" class="panel"><h2>Your ship</h2>
+<label for="mass">Game-reported ship mass · kg</label><input id="mass" type="number" min="1" max="10000000000" step="any" value="32000" required><p class="note">Includes installed tank hardware. The game does not add He-3 or D2O contents to ship mass.</p>
+<label for="pairs">Active feeder + laser pairs</label><select id="pairs"><option value="1">1 pair</option><option value="2">2 pairs</option><option value="3">3 pairs</option><option value="4">4 pairs</option></select>
+<label for="desired">Desired acceleration · G</label><input id="desired" type="number" min="0.001" max="1000" step="any" value="3" required>
+<div class="checks"><label><input id="skilled" type="checkbox">Skilled pilot · 25% plotted fuel saving</label><label><input id="safety" type="checkbox">Nav torch safety on · approximately 2 G cap</label></div>
+<details style="margin-top:20px"><summary>Reactor details</summary><p class="note">Counts are active installed modules. Health is remaining condition, not damage.</p>
+<div class="pair"><div><label for="feeders">Feeders</label><input id="feeders" type="number" min="0" max="4" value="1" required></div><div><label for="lasers">Lasers</label><input id="lasers" type="number" min="0" max="4" value="1" required></div></div>
+<div class="pair"><div><label for="caps">Capacitors</label><input id="caps" type="number" min="0" max="4" value="1" required></div><div><label for="regs">Fuel regulators</label><input id="regs" type="number" min="0" max="4" value="1" required></div></div>
+<div class="pair"><div><label for="feedHealth">Feeder health · %</label><input id="feedHealth" type="number" min="0" max="100" value="100" required></div><div><label for="laserHealth">Laser health · %</label><input id="laserHealth" type="number" min="0" max="100" value="100" required></div></div>
+<div class="pair"><div><label for="cryos">Cryopumps</label><input id="cryos" type="number" min="0" max="4" value="1" required></div><div><label for="cryoHealth">Cryopump health · %</label><input id="cryoHealth" type="number" min="0" max="100" value="100" required></div></div>
+<label for="reserve">Suggested cycle headroom · % below thermal ceiling</label><input id="reserve" type="number" min="0" max="50" value="5" required>
+</details>
+<h2 style="margin-top:26px">Fuel planning</h2><label for="hours">Powered burn hours · acceleration + braking</label><input id="hours" type="number" min="0" max="10000" step="any" value="12" required>
+<p class="note">Exclude coast time. This is not total journey duration.</p>
+<label for="fuelMode">Fuel availability</label><select id="fuelMode"><option value="tanks">Installed tanks · assumed full</option><option value="kg">Enter remaining fuel in kg</option></select>
+<div id="tankInputs" class="pair"><div><label for="heTanks">He-3 tanks</label><input id="heTanks" type="number" min="0" max="10000" value="1" required></div><div><label for="dTanks">D2O tanks</label><input id="dTanks" type="number" min="0" max="10000" value="1" required></div></div>
+<div id="kgInputs" class="pair" hidden><div><label for="he3">He-3 aboard · kg</label><input id="he3" type="number" min="0" max="10000000000" step="any" value="2000" required disabled></div><div><label for="d2o">D2O aboard · kg</label><input id="d2o" type="number" min="0" max="10000000000" step="any" value="2000" required disabled></div></div>
+<p class="note" id="fuelAvailable"></p>
+</form><p id="error" role="alert"></p></aside>
+<section aria-live="polite"><div class="cards">
+<div class="panel"><div class="muted">Sustainable ceiling</div><div class="metric" id="max">—</div><div class="sub" id="recommend"></div></div>
+<div class="panel"><div class="muted">Requested acceleration</div><div class="metric" id="requested">—</div><div class="sub" id="cycle"></div></div>
+<div class="panel"><div class="muted">He-3 / powered hour</div><div class="metric" id="heRate">—</div><div class="sub">Native plotted-course fuel accounting</div></div>
+<div class="panel"><div class="muted">D2O / powered hour</div><div class="metric" id="dRate">—</div><div class="sub" id="endurance"></div></div>
+</div><div id="warnings"></div>
+<div class="panel"><h2>Would another pair help?</h2><p class="note">Same entered ship mass, health, capacitors and regulators. Added hardware mass is not silently included.</p><div class="table-wrap"><table><thead><tr><th>Pairs</th><th>Effective pellets</th><th>Sustained G</th><th>Max mass at requested G</th><th>He-3 kg/h</th><th>Feasible?</th></tr></thead><tbody id="compare"></tbody></table></div></div>
+<div class="panel chart-grid"><div><h2>Cycle versus acceleration</h2><svg id="thrust" viewBox="0 0 430 220" role="img" aria-label="Cycle setting versus acceleration"></svg><p class="note">Green: sustainable. Orange: beyond the thermal or safety limit. The high end may briefly produce thrust before the core cools.</p></div><div><h2>Core heat over ten minutes</h2><svg id="heat" viewBox="0 0 430 220" role="img" aria-label="Core temperature prediction"></svg><p class="note" id="heatNote"></p></div></div>
+<div class="panel"><h2>Fuel and tank budget</h2><div id="budget"></div><button id="addFuel" type="button">Add required full tanks and recalculate</button><p class="note">Assumes extra fuel needs new tanks, with no spare space in existing tanks. Each new tank adds 1,500 kg to ship mass; fuel contents add nothing. Full capacities: 5,216 kg He-3 and 44,722.8 kg D2O per tank. Changing existing tank counts estimates availability without adding their hardware mass again.</p></div>
+<details class="panel"><summary>What the game actually calculates</summary><div id="detail"></div><p class="note">The thermal ceiling balances heat removed by CYCLE against the maximum feeder/laser heating rate. Cryopumps remove excess heat above the ideal temperature; they do not rescue a core that cannot generate enough heat. Capacitors support at most two lasers each, and regulators support at most two feeders each.</p><p class="note">Plotted-course fuel is based on rated thrust, powered time and the pilot efficiency modifier. It is not proportional to the selected G setting. Manual fusion instead consumes according to actual pellet rate and core temperature. The manual estimate assumes an ideal-temperature equilibrium; the plotted estimate is the appropriate route budget.</p><p class="note">Assumes an ignited reactor in thrust mode, forward containment enabled, adequate power, cryogen supply when cryopumps are entered, and functional supporting equipment. Initial core temperature is ideal. Core/coil faults, startup, idle burn, gradual component wear, acceleration-induced hull damage and complete trip geometry are outside this calculator. Mass is the entered current total; values do not integrate changing mass over a journey. No live game connection or game-state writes.</p></details>
+</section></div><footer>Formulas traced to FusionIC.Run / Fusion / MassUsageMax, Ship.GetMaxTorchThrust / CalculateTorchFuelConsumption, and NavData.TimeAdvance / SetReactants. See the accompanying README for validation and limits.</footer>
+</main><script id="torch-model">
+// Browser port of TorchModel.cs. Explicit float rounding preserves the shipped Unity math.
+const TorchModel = (() => {
+    const F = Math.fround, ideal = .7250000238418579, au = 6.6845869117759804e-12, tick = .27000001072883606, dRatio = F(.667);
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+    function lerp(a, b, t) { a = F(a); b = F(b); t = F(t); return F(a + F(F(b - a) * clamp(t, 0, 1))); }
+    function validate(f) {
+        const limits = {feeders:[0,4],lasers:[0,4],capacitors:[0,4],regulators:[0,4],cryopumps:[0,4],feederHealth:[0,1],laserHealth:[0,1],cryoHealth:[0,1],exhaustVelocity:[1,1e9],massKg:[1,1e10],desiredG:[.001,1000],burnHours:[0,10000],he3Kg:[0,1e10],d2OKg:[0,1e10],reserve:[0,.5]};
+        for (const [key,[min,max]] of Object.entries(limits)) if (!Number.isFinite(f[key]) || f[key] < min || f[key] > max) throw Error(`${key} must be between ${min} and ${max}.`);
+        for (const key of ['feeders','lasers','capacitors','regulators','cryopumps']) if (!Number.isInteger(f[key])) throw Error(`${key} must be a whole number.`);
+    }
+    function pellets(f) {
+        let feeders = 0, lasers = 0;
+        for (let i=0;i<f.feeders;i++) feeders = F(feeders + F(1 - F(1-f.feederHealth)));
+        for (let i=0;i<f.lasers;i++) lasers = F(lasers + F(1 - F(1-f.laserHealth)));
+        return Math.min(feeders, f.regulators*2, lasers, f.capacitors*2)*2;
+    }
+    const rated = (p, ve) => 332499980926.5137*(ve/70500000)/70500000*p*393.06358381502895;
+    function acceleration(f, p, cycle) {
+        if (p<=0) return 0;
+        const c=F(cycle), normalized=F(F(lerp(1,F(p),c)/F(p))*c);
+        return F(normalized*rated(p,f.exhaustVelocity)/f.massKg*au)/au/9.81;
+    }
+    const usage = thrust => 2*thrust*70500000/.949999988079071/70500000/70500000;
+    function manualRate(temperature, rate, ve) {
+        const power=temperature>ideal?.3499999940395355:.3499999940395355*temperature/ideal;
+        return 2*(power*1e12)*(ve/70500000)/70500000/70500000*393.06358381502895*rate;
+    }
+    function step(temperature, cycle, flow, p, cryo, seconds) {
+        const dt=Math.min(seconds,1);
+        temperature-=cycle*.2*dt;
+        const minimum=lerp(F(p),F(.001),F(Math.min(temperature/ideal,1)));
+        const rate=p<=0?0:lerp(minimum,F(p),F(flow));
+        temperature+=rate*.04*dt;
+        if(cryo>0 && temperature>ideal) temperature=Math.max(ideal,temperature-.08*dt*cryo);
+        return {temperature:Math.max(0,temperature),rate};
+    }
+    function evaluate(values) {
+        const f={feeders:1,lasers:1,capacitors:1,regulators:1,cryopumps:1,feederHealth:1,laserHealth:1,cryoHealth:1,exhaustVelocity:70500000,massKg:32000,desiredG:3,burnHours:12,he3Kg:2000,d2OKg:2000,skilledPilot:false,safety:false,reserve:.05,...values};
+        validate(f);
+        const p=pellets(f), thrust=rated(p,f.exhaustVelocity), efficiency=f.skilledPilot?.75:1;
+        let lo=0,hi=p>0?1:0;
+        for(let i=0;i<55;i++){let mid=(lo+hi)/2;if(acceleration(f,p,mid)<f.desiredG)lo=mid;else hi=mid;}
+        const cycle=(lo+hi)/2, maxCycle=Math.min(1,p*.2);
+        let safety=1;
+        if(f.safety)while(safety>0 && acceleration(f,p,safety)>2)safety=Math.max(0,F(safety-F(.01)));
+        const limit=Math.min(maxCycle,safety), recommendedCycle=Math.min(maxCycle*(1-f.reserve),safety);
+        const thermalMaxG=acceleration(f,p,maxCycle), maxG=acceleration(f,p,limit), recommendedG=acceleration(f,p,recommendedCycle);
+        const thermallyFeasible=p>0 && f.desiredG<=thermalMaxG+1e-6, attainable=p>0 && f.desiredG<=maxG+1e-6;
+        const he3=usage(thrust)*efficiency*3600,d2o=he3*dRatio,equilibriumRate=cycle*5;
+        const minimum=lerp(F(p),F(.001),F(Math.min((ideal-cycle*.2*tick)/ideal,1)));
+        const flow=p>minimum?clamp((equilibriumRate-minimum)/(p-minimum),0,1):1;
+        const he3Need=he3*f.burnHours,d2oNeed=d2o*f.burnHours,extraHe3=Math.max(0,he3Need-f.he3Kg),extraD2O=Math.max(0,d2oNeed-f.d2OKg);
+        const newHe3Tanks=Math.ceil(extraHe3/5216),newD2OTanks=Math.ceil(extraD2O/44722.8),extraMass=1500*(newHe3Tanks+newD2OTanks);
+        const endurance=he3>0?Math.min(f.he3Kg/he3,f.d2OKg/d2o):0,warnings=[];
+        if(p<=0)warnings.push('No usable feeder/laser capacity. Fusion cannot be sustained with this fit.');
+        if(!attainable && p>0)warnings.push('Requested acceleration exceeds the sustainable limit for this mass and fit.');
+        if(f.safety && f.desiredG>maxG)warnings.push('The nav torch-safety switch caps acceleration at approximately 2 G in 1% cycle steps.');
+        if(extraMass>0)warnings.push('Available fuel does not cover the entered powered-burn duration.');
+        if(f.cryopumps===0 || f.cryoHealth===0)warnings.push('No effective cryogenic cooling: this ideal-state limit offers no protection against overheating transients.');
+        if(p<Math.min(f.feeders,f.lasers)*2-1e-5)warnings.push('Wear, capacitors or fuel regulators limit effective pellet throughput.');
+        const trace=[];let temp=ideal,elapsed=0,lowAt=null,cryo=0;
+        for(let i=0;i<f.cryopumps;i++)cryo=F(cryo+F(F(1-F(1-f.cryoHealth))*F(.6)));
+        const traceFlow=thermallyFeasible?flow:1;
+        while(elapsed<=600){
+            if(trace.length===0 || elapsed>=trace.length*5)trace.push({seconds:elapsed,temperature:temp,idealFraction:temp/ideal});
+            temp=step(temp,cycle,traceFlow,p,cryo,tick).temperature;elapsed+=tick;
+            if(lowAt===null && temp<ideal*.8)lowAt=elapsed;
+        }
+        const curve=Array.from({length:101},(_,i)=>({cycle:i/100,g:acceleration(f,p,i/100),sustainable:i/100<=limit+1e-8}));
+        return {pellets:p,ratedThrustN:thrust,maximumCycle:limit,maximumG:maxG,recommendedG,recommendedCycle,
+            maxMassAtDesiredG:f.safety&&f.desiredG>2?null:thermalMaxG*f.massKg/f.desiredG,requestedCycle:cycle,attainable,thermallyFeasible,balancedFlow:thermallyFeasible?flow:null,
+            he3KgHour:he3,d2oKgHour:d2o,manualHe3KgHour:thermallyFeasible?manualRate(ideal,equilibriumRate,f.exhaustVelocity)*3600:null,
+            manualD2OKgHour:thermallyFeasible?manualRate(ideal,equilibriumRate,f.exhaustVelocity)*dRatio*3600:null,
+            enduranceHours:endurance,he3Need,d2oNeed,extraHe3,extraD2O,newHe3Tanks,newD2OTanks,extraMass,
+            massAfterAddingFuelAndNewTanks:f.massKg+extraMass,lowTemperatureSeconds:lowAt,warnings,trace,curve};
+    }
+    return Object.freeze({evaluate});
+})();
+</script><script>
+const $=id=>document.getElementById(id), n=id=>Number($(id).value), fmt=(v,d=1)=>Number(v).toLocaleString(undefined,{maximumFractionDigits:d}), pct=v=>fmt(v*100,1)+'%';
+let result=null,timer,sequence=0;
+function input(){return{massKg:n('mass'),desiredG:n('desired'),feeders:n('feeders'),lasers:n('lasers'),capacitors:n('caps'),regulators:n('regs'),cryopumps:n('cryos'),feederHealth:n('feedHealth')/100,laserHealth:n('laserHealth')/100,cryoHealth:n('cryoHealth')/100,reserve:n('reserve')/100,burnHours:n('hours'),he3Kg:$('fuelMode').value==='tanks'?n('heTanks')*5216:n('he3'),d2OKg:$('fuelMode').value==='tanks'?n('dTanks')*44722.8:n('d2o'),skilledPilot:$('skilled').checked,safety:$('safety').checked}}
+function chart(id,points,xmax,ymax,lines=[]){const svg=$(id), X=x=>45+x/xmax*365,Y=y=>185-y/ymax*155;let s='';for(let i=0;i<=4;i++){let y=ymax*i/4;s+=`<path d="M45 ${Y(y)} H410" stroke="#324247"/><text x="36" y="${Y(y)+4}" text-anchor="end">${fmt(y,2)}</text>`;let x=xmax*i/4;s+=`<text x="${X(x)}" y="208" text-anchor="middle">${fmt(x)}</text>`}for(const l of lines)s+=`<path d="M45 ${Y(l.y)} H410" stroke="${l.color}" stroke-dasharray="4 5"/>`;for(let i=1;i<points.length;i++)s+=`<path d="M${X(points[i-1].x)} ${Y(points[i-1].y)} L${X(points[i].x)} ${Y(points[i].y)}" fill="none" stroke="${points[i].good?'#8bceae':'#edb56b'}" stroke-width="2.5"/>`;svg.innerHTML=s}
+function update(){const seq=++sequence;if(!$('fit').checkValidity()){$('error').textContent='Check the highlighted input values.';return}try{const f=input(),data={selected:TorchModel.evaluate(f),comparisons:[1,2,3,4].map(pairs=>({pairs,result:TorchModel.evaluate({...f,feeders:pairs,lasers:pairs})}))};result=data.selected;const s=result;$('error').textContent='';$('fuelAvailable').textContent=fmt(f.he3Kg)+' kg He-3 + '+fmt(f.d2OKg)+' kg D2O available.';$('max').innerHTML=fmt(s.maximumG,2)+' <span class="unit">G</span>';$('recommend').textContent=`${fmt(s.recommendedG,2)} G with ${n('reserve')}% cycle headroom · ceiling cycle ${pct(s.maximumCycle)}`;$('requested').className='metric '+(s.attainable?'good':'warn');$('requested').innerHTML=fmt(f.desiredG,2)+` <span class="unit">G · ${s.attainable?'sustainable':'over limit'}</span>`;$('cycle').textContent=`${pct(s.requestedCycle)} cycle${s.balancedFlow!==null?' · ~'+pct(s.balancedFlow)+' flow at ideal heat':''}`;$('heRate').innerHTML=fmt(s.he3KgHour)+' <span class="unit">kg/h</span>';$('dRate').innerHTML=fmt(s.d2oKgHour)+' <span class="unit">kg/h</span>';$('endurance').textContent=`${fmt(s.enduranceHours,2)} powered hours from entered fuel`;$('warnings').replaceChildren(...s.warnings.map(w=>{let e=document.createElement('div');e.className='warning';e.textContent=w;return e}));$('compare').innerHTML=data.comparisons.map(c=>{let a=c.result;return `<tr class="${f.feeders===c.pairs&&f.lasers===c.pairs?'selected':''}"><td>${c.pairs}</td><td>${fmt(a.pellets,2)}</td><td>${fmt(a.maximumG,2)}</td><td>${a.maxMassAtDesiredG===null?'Safety limit':fmt(a.maxMassAtDesiredG,0)+' kg'}</td><td>${fmt(a.he3KgHour)}</td><td class="${a.attainable?'good':'warn'}">${a.attainable?'Yes':'No'}</td></tr>`}).join('');chart('thrust',s.curve.map(p=>({x:p.cycle*100,y:p.g,good:p.sustainable})),100,Math.max(1,...s.curve.map(p=>p.g)));chart('heat',s.trace.map(p=>({x:p.seconds/60,y:p.idealFraction,good:p.idealFraction>=.8&&p.idealFraction<=1.2})),10,1.25,[{y:1,color:'#8bceae'},{y:.8,color:'#edb56b'}]);$('heatNote').textContent=s.thermallyFeasible?'Fixed equilibrium flow at the requested cycle, starting at ideal heat. This is a thermal prediction, not an autopilot replay.':`Best-case full feed at the required cycle. ${s.lowTemperatureSeconds!==null?'Crosses the 80% low-temperature threshold after ~'+fmt(s.lowTemperatureSeconds,0)+' seconds.':'No low-temperature crossing within ten minutes.'} The native autopilot can abort outside 80–120% under its guarded steady-burn conditions.`;$('budget').innerHTML=`<p>For <b>${fmt(f.burnHours)} powered hours</b>: <b>${fmt(s.he3Need)} kg He-3</b> and <b>${fmt(s.d2oNeed)} kg D2O</b>.</p><p>Shortfall: ${fmt(s.extraHe3)} kg He-3 + ${fmt(s.extraD2O)} kg D2O.</p><p>New tanks: ${s.newHe3Tanks} He-3 + ${s.newD2OTanks} D2O. Extra tank hardware mass: <b>${fmt(s.extraMass)} kg</b>; revised ship mass: <b>${fmt(s.massAfterAddingFuelAndNewTanks)} kg</b>.</p>`;$('addFuel').disabled=s.extraMass===0;$('detail').innerHTML=`<p>Effective pellet limit: <b>${fmt(s.pellets,3)}</b>. Rated thrust: <b>${fmt(s.ratedThrustN/1e6,3)} MN</b>. Maximum ship mass at ${fmt(f.desiredG)} G: <b>${s.maxMassAtDesiredG===null?'blocked by torch safety':fmt(s.maxMassAtDesiredG,0)+' kg'}</b>.</p><p>Manual equilibrium estimate: ${s.manualHe3KgHour===null?'unavailable above the sustainable limit':fmt(s.manualHe3KgHour)+' kg He-3/h + '+fmt(s.manualD2OKgHour)+' kg D2O/h'}. This differs from plotted-course accounting.</p>`}catch(e){if(seq===sequence)$('error').textContent=e.message}}
+$('fuelMode').addEventListener('change',()=>{const tanks=$('fuelMode').value==='tanks';$('tankInputs').hidden=!tanks;$('kgInputs').hidden=tanks;for(const id of ['heTanks','dTanks'])$(id).disabled=!tanks;for(const id of ['he3','d2o'])$(id).disabled=tanks;});$('pairs').addEventListener('change',()=>{$('feeders').value=$('lasers').value=$('pairs').value});$('fit').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(update,160)});$('fit').addEventListener('change',()=>{clearTimeout(timer);update()});$('fit').addEventListener('submit',e=>e.preventDefault());$('addFuel').addEventListener('click',()=>{if(!result)return;$('mass').value=result.massAfterAddingFuelAndNewTanks.toFixed(3);if($('fuelMode').value==='tanks'){$('heTanks').value=n('heTanks')+result.newHe3Tanks;$('dTanks').value=n('dTanks')+result.newD2OTanks;}else{$('he3').value=(n('he3')+result.newHe3Tanks*5216).toFixed(3);$('d2o').value=(n('d2o')+result.newD2OTanks*44722.8).toFixed(3);}update()});update();
+</script></body></html>

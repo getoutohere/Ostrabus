@@ -5,11 +5,14 @@
 - `Assets/` is a native mod directory, installed as `TemplateSettings` beside the
   native `loading_order.json`. It adds app metadata and tooltip strings. Its first
   icon is the approved transparent gear/sliders PNG `pda_apps/IcoTemplateSettings.png`.
-- `SettingsRegistry.cs` defines eight controls and delegates to existing module
+- `SettingsRegistry.cs` defines the controls and delegates to existing module
   setters. It does not parse console commands or retain world objects.
 - `SettingsPanel.cs` builds a scrollable Unity UI panel lazily. Font and click
   audio come from the native PDA. Toggle buttons and window increment/decrement
-  buttons apply immediately; the window remains bounded to 1–30. A permanent
+  buttons apply immediately; the window remains bounded to 1–30. The Venus wreck
+  percentage uses a whole-number 0–100 slider with a percentage readout, default
+  50%, saved through the module's validated config setter. Refresh uses
+  `SetValueWithoutNotify` to avoid feedback writes. A permanent
   vertical scrollbar supports dragging and track clicks, alongside wheel scrolling.
   Descriptions are shortened for one-line presentation at the standard 1080p UI
   size. Rows use TMP's measured text height with a six-pixel gap before controls;

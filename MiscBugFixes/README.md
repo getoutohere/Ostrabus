@@ -2,6 +2,27 @@
 
 Always enabled through the plugin's normal Harmony lifecycle. No update loop or saved state.
 
+## Torch autopilot fuel cache
+
+**Pending in-game playtesting.** The following describes the local Debug
+implementation, not a confirmed shipped feature. Related patch sources and the
+native test harness may be omitted from a commit while this documentation remains.
+
+`TorchFuelCachePatch` refreshes the reactor's reactant totals and the ship's
+normalized fuel budget after native `FusionIC.SetReactants` reconciles the tanks.
+It reads the same native tank lists, sums only this ship's inventory, and uses the
+limiting reactant rather than assuming the requested inventory fits. No new
+collections, polling, save data or retained ship references. Native tank writes,
+fuel consumption, route planning and autopilot safety criteria are unchanged.
+See [investigation and native-assembly validation](../Navigation/TORCH-FUEL-INVESTIGATION.md).
+
+`TorchCourseFuel.cs` and `TorchCourseFuelPatches.cs` additionally correct fuel
+budgeting and reactor control for supported player-plotted torch courses. They
+preserve native trajectories and skill benefits, idle during true coast, and
+cancel safely on unexpected hardware/fuel changes. Profiles are weakly keyed;
+normal native waypoint/plot-FLOW data supports save/reload without custom saved
+types. See [scope, lifecycle and validation](../Navigation/TORCH-COURSE-FIX.md).
+
 ## AI rendezvous and crew lifecycle
 
 `AIShipLifecyclePatches.cs` prevents instant station docking while already attached
@@ -9,6 +30,11 @@ to another hull, and prevents reuse of hidden hulls before they detach. Crewless
 human-operated AI is stopped at registration/execution/undocking boundaries without
 hiding or deleting its hull. Normal transfers, crewed ships and intentionally
 uncrewed controllers retain their behavior. See the [investigation and validation](../Navigation/CREWLESS-AI.md).
+
+Police inspection officers may temporarily board the connected target without
+losing their patrol controller; navigation waits for their return. An explicit
+inspection API can recover patrols stranded by the earlier own-hull crew guard.
+See [police inspection correction and recovery](../Navigation/POLICE-INSPECTION-CONTROLLER.md).
 
 ## PDC conversion ammunition
 

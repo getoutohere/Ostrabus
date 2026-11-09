@@ -54,10 +54,33 @@ static class Program {
         AccessTools.Field(Type("EMPropagation.EmPropagation"), "Flag").SetValue(null, emPropagation);
         var sensorPositions = Config(false);
         AccessTools.Field(Type("Sensors.SensorContacts"), "Flag").SetValue(null, sensorPositions);
+        var wreckPercent = Config(50);
+        AccessTools.Field(Type("Venus.VenusDerelicts"), "WreckPercentConfig").SetValue(null, wreckPercent);
         var all = (Array)AccessTools.Field(Type("PdaSettings.SettingsRegistry"), "All").GetValue(null);
         var settings = new Dictionary<string, object>();
         foreach (var setting in all) Check(settings.TryAdd((string)Field(setting, "Id"), setting), "Duplicate setting ID");
-        Check(settings.Count == 11, "Settings missing");
+        Check(settings.Count == 12, "Settings missing");
+        var wreckSetting = settings["venus_wreck_percent"];
+        Check((int)Get(wreckSetting) == 50 && (string)Field(wreckSetting, "Lifetime") == "Saved", "Wreck default/lifetime incorrect");
+        Check((bool)AccessTools.Property(wreckSetting.GetType(), "IsPercentage").GetValue(wreckSetting), "Wreck option must use percentage control");
+        Check((string)AccessTools.Method(wreckSetting.GetType(), "Format").Invoke(wreckSetting, new object[] { 50 }) == "50%", "Percentage label missing unit");
+        var chooseLoot = AccessTools.Method(Type("Venus.VenusDerelicts"), "ChooseLoot");
+        foreach (int percent in new[] { 0, 1, 25, 50, 70, 99, 100 }) {
+            Set(wreckSetting, percent);
+            Check(wreckPercent.Value == percent && (int)Get(wreckSetting) == percent, "Wreck setting/config not applied");
+            int selected = 0;
+            for (int i = 0; i < 100; i++) if ((string)chooseLoot.Invoke(null, new object[] { "VORB", true, i / 100d }) == "RandomDerelictVenus") selected++;
+            Check(selected == percent, "Configured wreck split incorrect");
+        }
+        Check((string)chooseLoot.Invoke(null, new object[] { "VORB", true, 1d }) == "RandomDerelictVenus", "100% must include Unity's inclusive RNG endpoint");
+        Check((string)chooseLoot.Invoke(null, new object[] { "OKLG", true, 0d }) == "RandomShip", "Wreck option affected OKLG");
+        Check((string)chooseLoot.Invoke(null, new object[] { "VORB", false, 0d }) == "RandomShip", "Unavailable Venus pool must retain native fallback");
+        foreach (int invalid in new[] { -1, 101 }) {
+            bool rejected = false;
+            try { Set(wreckSetting, invalid); } catch (TargetInvocationException e) { rejected = e.InnerException is ArgumentOutOfRangeException; }
+            Check(rejected && wreckPercent.Value == 100, "Out-of-range wreck setting changed config");
+        }
+        Set(wreckSetting, 50);
         foreach(var id in new[]{"em_propagation","sensors"}) {
             var config=id=="sensors"?sensorPositions:emPropagation;
             Check((int)Get(settings[id])==0,"Sensor-related option should default off");

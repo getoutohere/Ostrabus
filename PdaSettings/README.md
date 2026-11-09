@@ -9,6 +9,9 @@ to config or apply only to the current session.
 switches, default off. See [sensor A/B testing](../Sensors/README.md#live-ab-testing)
 for the combinations.
 
+**Venus-specific wrecks** is a saved 0–100% slider (default 50%) for new VORB
+hauler deployments. The remaining probability uses the general wreck pool.
+
 See [DESIGN.md](DESIGN.md) and [IMPLEMENTATION.md](IMPLEMENTATION.md) for the design,
 entry points, packaging and validation status.
 

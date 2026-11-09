@@ -7,6 +7,12 @@ Native audit decisions remain unchanged. No live save was changed. The installed
 game's actual Electrical methods, diagnostic routing and offscreen persistence pass 67 offline checks,
 with seven reproduced behavior findings.
 
+November 9 follow-up: the current assembly still reproduces all seven findings.
+[Offline candidate fixes and their limits](../Tests/SignalBoxAudit/CANDIDATES.md)
+now pass 2,484 combined checks, including reconstruction authority and vanilla
+conversion preservation. They remain test-only; signal behavior in the
+production plugin is still unchanged.
+
 Relevant definitions: `ItmElectricalBox01` and its Off/Damaged variants use
 `Electrical,Electrical`; `GUIBreaker` wires its knob to `Electrical.SetGateMode`,
 its main switch to `ToggleOverride`, and its output controls to `SetUpConnection`,
@@ -17,11 +23,13 @@ its main switch to `ToggleOverride`, and its output controls to `SetUpConnection
 Focus fixes on signal-box relationships. Electrical is shared infrastructure;
 do not apply all changes indiscriminately to every electrical device.
 
-The requested uninstall/reinstall preservation exception is only HVAC equipment
-linked to HVAC sensors (oxygen alarms, etc.). The earlier suggestion to preserve
-all signal-box/equipment links through uninstall/reinstall was explicitly
-withdrawn. Identify the actual HVAC relationship before applying that exception;
-it is not a general signal-box rule.
+Updated November 9: preserve connection and signal-logic state through uninstall/
+reinstall wherever vanilla already does so. This supersedes the earlier HVAC-only
+scope instruction. Native Electrical-to-Electrical mode replacement preserves
+identity and GPM state; a replacement without Electrical deliberately disconnects.
+Do not invent universal preservation for device types whose vanilla loose form
+has no Electrical component. The offline candidate asset/conversion checks record
+which shipped loose forms retain it.
 
 Temporary ship unloading is distinct from explicit wire removal, uninstallation,
 and permanent destruction. Do not erase wiring simply because an endpoint is

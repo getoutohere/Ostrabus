@@ -51,11 +51,20 @@ internal static class CrewedAIControl {
     static readonly AccessTools.FieldRef<Ship,List<PersonSpec>> People = AccessTools.FieldRefAccess<Ship,List<PersonSpec>>("aPeople");
     const AIType NeedsCrew = AIType.Civilian | AIType.Scav | AIType.Police | AIType.Pirate | AIType.Navy |
         AIType.Blockade | AIType.HaulerCargo | AIType.HaulerDeployer | AIType.HaulerRetriever;
-    internal static bool Allow(AIShip ai) {
+    internal static bool Allow(AIShip ai, bool fastForward = false) {
         if (ai == null || (ai.AIType & NeedsCrew) == 0) return true;
         Ship ship = ai.Ship;
         if (ship == null || ship.bDestroyed || ship.objSS == null || ship.LoadState < Ship.Loaded.Shallow || ship.objSS.bIsBO) return true;
         if (HasCrew(ship)) return true;
+        // A police captain legitimately leaves the patrol during a docked
+        // inspection. Keep the controller, but permit only its boarding logic;
+        // detached flight and instant/SFF travel still require crew aboard.
+        if (ai.AIType == AIType.Police && BoardingOfficer(ai, ship)) {
+            ship.Maneuver(0, 0, 0, 0, 1E-10f);
+            ship.SetThrust(0);
+            ship.objSS.ResetNavData();
+            return !fastForward && ai.ActiveCommandName == "ShakeDown";
+        }
         // Native unregistration stops controls but also marks the hull stale. Do not
         // introduce a disposal marker merely because a missing pilot was detected.
         bool wasStale = ship.ShipCO != null && ship.ShipCO.HasCond("IsStale",isThreshold:false);
@@ -65,6 +74,25 @@ internal static class CrewedAIControl {
         ship.objSS.vAccIn = default;
         ship.objSS.bIgnoreGrav = false;
         if (!wasStale && ship.ShipCO != null) ship.ShipCO.ZeroCondAmount("IsStale");
+        return false;
+    }
+    static bool Inspecting(CondOwner person, Ship ship) => person != null && person.bAlive && !person.bDestroyed &&
+        !person.HasCond("Unconscious", isThreshold:false) && person.HasCond("IsShakedownModeActive", isThreshold:false) &&
+        person.ship != null && !ReferenceEquals(person.ship, ship) && ship.IsDockedWith(person.ship);
+    static bool BoardingOfficer(AIShip ai, Ship ship) {
+        if (!ship.IsDocked()) return false;
+        if (Inspecting(ai.AICharacter?.CaptainUs, ship)) return true;
+        // On reload AssignCaptain cannot find the officer on the empty patrol.
+        // Native NPC creation claims its ship; require that relationship rather
+        // than accepting an arbitrary officer from the connected group.
+        foreach (var attached in ship.GetAllDockedShips()) {
+            var people = attached == null ? null : People(attached);
+            if (people == null) continue;
+            foreach (var spec in people) {
+                var person = spec?.GetCO();
+                if (Inspecting(person, ship) && person.OwnsShip(ship.strRegID)) return true;
+            }
+        }
         return false;
     }
     static bool HasCrew(Ship ship) {
@@ -101,7 +129,7 @@ internal static class CrewedAIExecutionPatch {
         yield return AccessTools.Method(typeof(AIShip),nameof(AIShip.RunAI));
         yield return AccessTools.Method(typeof(AIShip),nameof(AIShip.FFWD));
     }
-    static bool Prefix(AIShip __instance) => CrewedAIControl.Allow(__instance);
+    static bool Prefix(AIShip __instance, MethodBase __originalMethod) => CrewedAIControl.Allow(__instance, __originalMethod.Name == nameof(AIShip.FFWD));
 }
 
 // The shallow undock path bypasses CrewSim's materialized crew validation.

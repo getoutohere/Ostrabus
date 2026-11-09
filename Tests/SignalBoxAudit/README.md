@@ -10,3 +10,9 @@ behavior with logging installed, and exclusion of diagnostic messages from the
 GUI while preserving other logs/exceptions. When behavior fixes
 are implemented, turn those reproductions into regression tests with corrected
 expectations and the production patches installed.
+
+The harness now also installs [offline candidate fixes](CANDIDATES.md) after the
+native baseline: **2,484 total checks**, including a 300-event stateful network
+and the endpoint authority/conversion preservation matrix.
+These candidate hooks exist only in this test project and are not deployed. Their
+remaining lifecycle and label-format limitations are documented before promotion.

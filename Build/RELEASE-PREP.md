@@ -1,8 +1,8 @@
 # Public snapshot preparation
 
 Current target: Ostranauts 1.0.1.10 (`public_test`), BepInEx 5, Windows.
-Current staging target: [Ostrabus 0.2.1](RELEASE-0.2.1.md). Project, plugin and PDA
-metadata report 0.2.1; `Ostrabus-0.2` remains the latest existing local tag.
+Current staging target: [Ostrabus 0.2.2](RELEASE-0.2.2.md). Project, plugin and PDA
+metadata report 0.2.2; `Ostrabus-0.2` remains the latest existing local tag.
 The local installation used for validation has BepInEx 5.4.23.6. The .NET 8 SDK
 is needed to build, not to use the installed plugin. Game and loader dependencies
 are supplied by the player's installation and are not redistributed.
@@ -27,7 +27,7 @@ are supplied by the player's installation and are not redistributed.
 - `Ostrabus-0.2` marks the existing experimental snapshot. For the next snapshot,
   choose whether to refresh the installable ZIP alongside the source changes;
   staging source does not rebuild or publish an archive.
-- The next prepared snapshot is 0.2.1. Commit/tag creation and pushing remain
+- The next prepared snapshot is 0.2.2. Commit/tag creation and pushing remain
   separate actions. Do not advertise compatibility beyond the tested game.
 - Keep known investigations distinguishable from completed fixes. In particular,
   orphaned economic records remain an investigation, not an automatic cleanup.
@@ -68,7 +68,7 @@ captures remain ignored. No custom save DTOs or new mod-required save records ar
 introduced by these changes. EM/contact settings default off in config.
 
 That preparation pass did not itself create a commit/tag or publish a release.
-The later `Ostrabus-0.2` tag records that snapshot; current preparation is 0.2.1.
+The later `Ostrabus-0.2` tag records that snapshot; current preparation is 0.2.2.
 
 Preparation checks passed: 33 AI lifecycle, 69 departure, 649 sensor runtime,
 55 dolly, 25 retrieval and 47 PDA checks. The related economic/orbital runs passed

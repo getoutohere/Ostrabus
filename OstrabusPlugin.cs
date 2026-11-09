@@ -23,6 +23,7 @@ namespace Ostrabus {
             Logger = base.Logger;
             global::Ostrabus.EMPropagation.EmPropagation.Initialize(Config);
             global::Ostrabus.Sensors.SensorContacts.Initialize(Config);
+            global::Ostrabus.Venus.VenusDerelicts.Initialize(Config);
             global::Ostrabus.NavConsole.TutorialNote.HideFlag = Config.Bind("NavConsole", "HideTutorialNote", false, "Hide the clickable Don't crash! tutorial paper on nav consoles. Change live in the PDA Mod Settings app.");
             global::Ostrabus.QoL.AutoVents.AutoVentControl.Initialize(Config);
             SceneManager.sceneUnloaded += global::Ostrabus.QoL.AutoVents.AutoVentControl.SceneUnloaded;
@@ -99,7 +100,7 @@ namespace Ostrabus {
         // Harmony ownership. The project, assembly and displayed name are Ostrabus.
         public const string PLUGIN_GUID = "com.ostranauts.template";
         public const string PLUGIN_NAME = "Ostrabus";
-        public const string PLUGIN_VERSION = "0.2.1";
+        public const string PLUGIN_VERSION = "0.2.2";
     }
 }
 

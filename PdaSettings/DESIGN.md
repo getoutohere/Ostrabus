@@ -34,6 +34,7 @@ unknown-app fallback returns to Home. No game-save dependency is introduced.
 | --- | --- | --- |
 | Alternative work | Saved config | `AlternativeWorkSystem.SetEnabled` |
 | Supply window, 1–30 | Saved config | `WorkSupplyPlan.SetWindow` |
+| Venus-specific wrecks, 0–100% slider (default 50%) | Saved config | `VenusDerelicts.SetWreckPercent` |
 | Crew hotkeys | Saved config | `FunctionalHotkeys.Flag.Value` |
 | Kang auto-vents | Saved config | `QoL.AutoVents.AutoVentControl.SetEnabled` (feature toggle only) |
 | Orbital correction | This session | `OrbitalSimulation.SetEnabled` |

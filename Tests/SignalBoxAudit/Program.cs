@@ -140,6 +140,7 @@ static partial class Program {
         Finding("Connection nicknames containing '#' truncate; commas produce phantom malformed connection entries after reload.");
         CheckAuditLogging();
         CheckOffscreenPersistence();
+        CheckCandidateFixes();
         h.UnpatchSelf();
         Console.WriteLine("Signal-box audit: " + checks + " checks; " + findings.Count + " reproduced findings; logging routing verified. No live game or save changed.");
     }

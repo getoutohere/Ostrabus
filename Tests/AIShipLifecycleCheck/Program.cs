@@ -9,7 +9,7 @@ using Ostranauts.Ships.AIPilots;
 using Ostranauts.Ships.Commands;
 using Ostranauts.Ships.AIPilots.Interfaces;
 
-static class Program {
+static partial class Program {
     static int checks,cleanupCalls,collected,runBodies;
     static readonly Dictionary<CondOwner,HashSet<string>> conditions=new Dictionary<CondOwner,HashSet<string>>();
     static T Empty<T>() => (T)FormatterServices.GetUninitializedObject(typeof(T));
@@ -33,11 +33,12 @@ static class Program {
     static Ship MakeShip(string id) {
         var ship=Empty<Ship>();ship.strRegID=id;Back(ship,"objSS",Empty<ShipSitu>());
         Back(ship,"ShipCO",Empty<CondOwner>());ship.ShipCO.ship=ship;
-        Set(ship,"nLoadState",Ship.Loaded.Shallow);Set(ship,"aPeople",new List<PersonSpec>());Set(ship,"aDocked",new Dictionary<string,Ship>());
+        Set(ship,"nLoadState",Ship.Loaded.Shallow);Set(ship,"aPeople",new List<PersonSpec>());Set(ship,"aDocked",new Dictionary<string,Ship>());Set(ship,"aDockingPorts",new List<string>());
         return ship;
     }
     static CondOwner Person(Ship ship,string name) {
         var person=Empty<CondOwner>();Set(person,"_strID",name);person.ship=ship;person.bAlive=true;
+        Set(person,"aMyShips",new HashSet<string>{ship.strRegID});
         var spec=Empty<PersonSpec>();spec.strCO=name;Set(spec,"co",person);person.pspec=spec;
         ((List<PersonSpec>)AccessTools.Field(typeof(Ship),"aPeople").GetValue(ship)).Add(spec);
         return person;
@@ -65,12 +66,15 @@ static class Program {
         boundary.Patch(AccessTools.Method(typeof(CondOwner),nameof(CondOwner.ZeroCondAmount)),prefix:new HarmonyMethod(typeof(Program),nameof(ZeroCondition)));
         boundary.Patch(AccessTools.Method(typeof(Ship),nameof(Ship.Maneuver)),prefix:new HarmonyMethod(typeof(Program),nameof(Maneuver)));
         boundary.Patch(AccessTools.Method(typeof(Ship),nameof(Ship.SetThrust)),prefix:new HarmonyMethod(typeof(Program),nameof(Quiet)));
-        boundary.Patch(AccessTools.PropertyGetter(typeof(Ship),nameof(Ship.IsLocalAuthority)),prefix:new HarmonyMethod(typeof(Program),nameof(False)));
         boundary.Patch(AccessTools.Method(typeof(Ship),nameof(Ship.TowBracesSecured)),prefix:new HarmonyMethod(typeof(Program),nameof(False)));
         boundary.Patch(AccessTools.Method(typeof(CrewSim),nameof(CrewSim.DockAndDespawn)),prefix:new HarmonyMethod(typeof(Program),nameof(Cleanup)));
         boundary.Patch(AccessTools.Method(typeof(UnityEngine.Debug),nameof(UnityEngine.Debug.LogWarning),new[]{typeof(object)}),prefix:new HarmonyMethod(typeof(Program),nameof(Quiet)));
         try {
             StarSystem.fEpoch=65632375306.5815;
+            if (args.Length > 0 && args[0] == "rescue") { CheckHaulerRescue(); return; }
+            if (args.Length > 0 && args[0] == "instant-dock") { CheckPhysicalInstantDock(); return; }
+            if (args.Length > 0 && args[0] == "arrival") { CheckStationArrival(); return; }
+            if (args.Length > 0 && args[0].StartsWith("retrievers")) { CheckRetrieverSff(args[0] == "retrievers-patched"); return; }
             var a=MakeShip("O-JVV");var b=MakeShip("O-KFMFL");var station=MakeShip("HQCH");station.objSS.bIsBO=true;
             var hope=Person(b,"Hope");Person(a,"Alondra");Connect(a,b);
             CrewSim.coPlayer=Empty<CondOwner>();CrewSim.coPlayer.ship=MakeShip("PLAYER");
@@ -149,6 +153,32 @@ static class Program {
             Check(Registered==0 && !relief.HideFromSystem,"No conscious crew stops control without erasing hull");
             var stale=MakeShip("ALREADY STALE");conditions[stale.ShipCO]=new HashSet<string>{"IsStale"};
             AIShipManager.AddAIToDict(Controller(stale),"HQCH");Check(stale.ShipCO.HasCond("IsStale"),"Pre-existing disposal policy remains unchanged");
+            // The only officer legitimately boards the attached player's ship.
+            var patrol=MakeShip("INSPECTION-PATROL");var officer=Person(patrol,"Inspecting Officer");
+            conditions[officer]=new HashSet<string>{"IsShakedownModeActive"};
+            var police=Controller(patrol,Empty<PolicePilot>());
+            Back((BaseCharacter)police.AICharacter,"CaptainUs",officer);
+            Set(police,"_activeCommand",Empty<ShakeDown>());
+            AIShipManager.AddAIToDict(police,"HQCH");Check(Registered==1,"Police controller initially registered with its officer aboard");
+            var playerShip=CrewSim.coPlayer.ship;Connect(patrol,playerShip);
+            ((List<PersonSpec>)AccessTools.Field(typeof(Ship),"aPeople").GetValue(patrol)).Clear();
+            ((List<PersonSpec>)AccessTools.Field(typeof(Ship),"aPeople").GetValue(playerShip)).Add(officer.pspec);officer.ship=playerShip;
+            runBodies=0;police.RunAI();
+            Check(Registered==1 && runBodies==1 && patrol.IsDocked() && officer.bAlive && officer.ship==playerShip && !patrol.ShipCO.HasCond("IsStale"),
+                "Police inspection logic keeps its controller while the captain is on the attached ship");
+            Back((BaseCharacter)police.AICharacter,"CaptainUs",patrol.ShipCO);runBodies=0;police.RunAI();
+            Check(Registered==1 && runBodies==1,"Reloaded inspection finds its officer through native ship ownership when cached captain is unavailable");
+            Back((BaseCharacter)police.AICharacter,"CaptainUs",officer);
+            runBodies=0;police.FFWD();Check(Registered==1 && runBodies==0,"Boarded captain does not authorize instant/SFF flight");
+            Set(police,"_activeCommand",Empty<FlyTo>());runBodies=0;police.RunAI();
+            Check(Registered==1 && runBodies==0,"Boarded captain does not authorize navigation commands");
+            ((List<PersonSpec>)AccessTools.Field(typeof(Ship),"aPeople").GetValue(playerShip)).Clear();
+            ((List<PersonSpec>)AccessTools.Field(typeof(Ship),"aPeople").GetValue(patrol)).Add(officer.pspec);officer.ship=patrol;
+            runBodies=0;police.RunAI();
+            Check(Registered==1 && runBodies==1 && patrol.GetPeople(false).Count==1,"Returning officer resumes the existing controller without re-registration");
+            officer.ship=playerShip;((Dictionary<string,Ship>)AccessTools.Field(typeof(Ship),"aDocked").GetValue(patrol)).Clear();
+            runBodies=0;police.RunAI();Check(Registered==0 && runBodies==0,"Detached patrol without its officer still loses flight authority");
+            CheckRecoveryApi(boundary);
             Connect(a,b);cleanupCalls=0;CrewSim.DockAndDespawn(a,station);
             Check(cleanupCalls==1 && collected==2,"Legitimate explicit connected-party cleanup semantics remain native");
             Console.WriteLine(checks+" native lifecycle checks passed.");
