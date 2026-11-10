@@ -1,9 +1,12 @@
 # Public snapshot preparation
 
 Current target: Ostranauts 1.0.1.10 (`public_test`), BepInEx 5, Windows.
-Current staging scope: [changes after 0.2.2](PREPARED-CHANGES.md), again excluding
-the two pending torch gameplay changes. No new version has been chosen. Project,
-plugin and PDA metadata still report 0.2.2; `Ostrabus-0.2` is the latest local tag.
+Current staging scope: [Ostrabus 0.3.0](RELEASE-0.3.0.md): the custom plugin builder,
+its installer and composition tests. Project, plugin and PDA metadata report
+0.3.0. The two pending torch gameplay changes remain excluded.
+The earlier [post-0.2.2 preparation](PREPARED-CHANGES.md) was committed as
+`191d8d9`; it is historical context rather than this commit's new scope.
+`Ostrabus-0.2` remains the latest local tag; this preparation creates no tag.
 The local installation used for validation has BepInEx 5.4.23.6. The .NET 8 SDK
 is needed to build, not to use the installed plugin. Game and loader dependencies
 are supplied by the player's installation and are not redistributed.
@@ -25,11 +28,11 @@ are supplied by the player's installation and are not redistributed.
 
 ## Decisions and follow-up
 
-- `Ostrabus-0.2` marks the existing experimental snapshot. For the next snapshot,
-  choose whether to refresh the installable ZIP alongside the source changes;
-  staging source does not rebuild or publish an archive.
-- The previous prepared snapshot was [0.2.2](RELEASE-0.2.2.md). The next commit's
-  scope is recorded separately; commit/tag creation and pushing remain separate
+- `Ostrabus-0.2` marks the earlier experimental snapshot. Custom builder validation
+  produces ignored test packages under `dist/`; they are not a hosted release.
+- Earlier snapshots are documented in [0.2.2](RELEASE-0.2.2.md) and the
+  [post-0.2.2 changes](PREPARED-CHANGES.md). The current [0.3.0 scope](RELEASE-0.3.0.md)
+  is recorded separately; commit/tag creation and pushing remain separate
   actions. Do not advertise compatibility beyond the tested game.
 - Keep known investigations distinguishable from completed fixes. In particular,
   orphaned economic records remain an investigation, not an automatic cleanup.
@@ -39,6 +42,11 @@ are supplied by the player's installation and are not redistributed.
   the author's gameplay defaults as part of documentation cleanup.
 - Existing license text and attribution are preserved. Review its authorship and
   intended terms before a tagged release rather than inventing replacement terms.
+- The inherited Thunderstore workflow is still template infrastructure: its
+  publisher namespace/URL and reference-assembly input are not configured for
+  this snapshot. The validated paths are the Windows full/custom builders and
+  their local package scripts; this preparation does not certify or invoke CI
+  publishing. The package version field is aligned at 0.3.0.
 - Selected native-state fixtures are useful regression inputs; exploratory tools
   may need ignored local captures. The repository does not redistribute decompiled
   game source, assemblies, or complete saves.

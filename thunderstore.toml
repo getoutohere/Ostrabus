@@ -4,7 +4,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "MyTeamName"
 name = "Ostrabus"
-versionNumber = "0.0.1"
+versionNumber = "0.3.0"
 description = "Ostranauts bug fixes, quality-of-life features, simulation improvements and inspection tools."
 websiteUrl = "urlToMyGitOrSomething"
 containsNsfwContent = false

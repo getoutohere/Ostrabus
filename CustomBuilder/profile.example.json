@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "name": "crew-and-nav",
+  "features": [
+    "door-autoclose",
+    "crew-sleep",
+    "crew-hotkeys",
+    "proximity-range",
+    "pda-settings"
+  ]
+}

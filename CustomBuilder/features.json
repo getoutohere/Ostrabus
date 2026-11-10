@@ -1,0 +1,999 @@
+{
+  "schemaVersion": 1,
+  "excludedSources": [
+    "MiscBugFixes/TorchCourseFuel.cs",
+    "MiscBugFixes/TorchCourseFuelPatches.cs",
+    "MiscBugFixes/TorchFuelCachePatch.cs"
+  ],
+  "sharedPatches": [
+    "Ostrabus.NavConsole.ProximityCollisionPatch",
+    "Ostrabus.Optimizations.ShipFileProfilePatch"
+  ],
+  "features": [
+    {
+      "id": "tile-cleanup",
+      "title": "Retire orphaned tile helper objects",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/TileHelperCleanupPatch.cs",
+        "MiscBugFixes/AsyncShipCleanupPatch.cs"
+      ]
+    },
+    {
+      "id": "shallow-refuel",
+      "title": "Correct shallow RCS refueling",
+      "category": "bugfix",
+      "patchFiles": [
+        "RefuelRCSPatch.cs"
+      ]
+    },
+    {
+      "id": "flight-fuel",
+      "title": "Prevent double charging AI flight fuel",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/AIFlightFuelHandoff.cs"
+      ]
+    },
+    {
+      "id": "rcs-refill",
+      "title": "Preserve refills in native route fuel budgets",
+      "category": "bugfix",
+      "requires": [
+        "shallow-refuel",
+        "flight-fuel"
+      ],
+      "patchFiles": [
+        "Navigation/RcsReplenishment.cs"
+      ]
+    },
+    {
+      "id": "navigation-targets",
+      "title": "Repair stale target identity and route state",
+      "category": "bugfix",
+      "patchFiles": [
+        "Navigation/NavigationFuel.cs",
+        "MiscBugFixes/NavigationTargetRecovery.cs",
+        "MiscBugFixes/ShipReplacementTargetsPatch.cs"
+      ]
+    },
+    {
+      "id": "ai-crew-integrity",
+      "title": "Preserve AI controllers and crews across boarding/load",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/AIShipLifecyclePatches.cs"
+      ]
+    },
+    {
+      "id": "ai-return",
+      "title": "Schedule station returns through native AI priorities",
+      "category": "bugfix",
+      "requires": [
+        "navigation-targets",
+        "ai-crew-integrity"
+      ],
+      "patchFiles": [
+        "Navigation/StationReturn.cs"
+      ]
+    },
+    {
+      "id": "hauler-return",
+      "title": "Repair station-hauler returns and recovery",
+      "category": "bugfix",
+      "requires": [
+        "ai-return",
+        "navigation-targets"
+      ],
+      "patchFiles": [
+        "Haulers/HaulerReturnPatches.cs"
+      ],
+      "before": [
+        "SceneManager.sceneUnloaded += global::Ostrabus.Haulers.HaulerRecovery.SceneUnloaded;"
+      ],
+      "stop": [
+        "SceneManager.sceneUnloaded -= global::Ostrabus.Haulers.HaulerRecovery.SceneUnloaded;",
+        "global::Ostrabus.Haulers.HaulerRecovery.SceneUnloaded(default);"
+      ]
+    },
+    {
+      "id": "hauler-sff",
+      "title": "Preserve native hauling stage through SFF",
+      "category": "bugfix",
+      "requires": [
+        "hauler-return"
+      ],
+      "patchFiles": [
+        "Haulers/HaulerRetrieverSffPatch.cs"
+      ]
+    },
+    {
+      "id": "scav-assistance",
+      "title": "Restore authored scavenger emergency assistance",
+      "category": "bugfix",
+      "requires": [
+        "navigation-targets",
+        "flight-fuel",
+        "rcs-refill",
+        "ai-crew-integrity"
+      ],
+      "patchFiles": [
+        "MiscBugFixes/ScavEmergencyRecovery.cs"
+      ]
+    },
+    {
+      "id": "departure-waypoints",
+      "title": "Use correct body/station departure waypoints",
+      "category": "bugfix",
+      "patchFiles": [
+        "Navigation/DepartureWaypointPatch.cs"
+      ]
+    },
+    {
+      "id": "escape-targets",
+      "title": "Invalidate stale routes when escape targets change",
+      "category": "bugfix",
+      "requires": [
+        "navigation-targets"
+      ],
+      "patchFiles": [
+        "Navigation/EscapeTargetPatch.cs"
+      ]
+    },
+    {
+      "id": "ai-avoidance",
+      "title": "Correct past-encounter and unsafe planetary dodges",
+      "category": "bugfix",
+      "patchFiles": [
+        "Navigation/AIShipAvoidancePatch.cs"
+      ]
+    },
+    {
+      "id": "ranged-self-hit",
+      "title": "Exclude the shooter from ranged hit processing",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/RangedShooterExclusionPatch.cs"
+      ]
+    },
+    {
+      "id": "meat-scrap",
+      "title": "Prevent loose meat destruction duplicating meat",
+      "category": "bugfix",
+      "patches": [
+        {
+          "type": "Ostrabus.MiscBugFixes.LooseMeatDestructionPatch"
+        }
+      ]
+    },
+    {
+      "id": "meat-cover",
+      "title": "Keep loose meat and plot parts from blocking shots",
+      "category": "qol",
+      "patches": [
+        {
+          "type": "Ostrabus.MiscBugFixes.LooseMeatCoverPatch"
+        }
+      ]
+    },
+    {
+      "id": "pdc-ammo",
+      "title": "Preserve PDC ammunition across installation changes",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/PdcConversionAmmoPatch.cs"
+      ]
+    },
+    {
+      "id": "ship-rotation",
+      "title": "Clear stale dock protection that blocks rotation",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/ShipRotationPatch.cs"
+      ]
+    },
+    {
+      "id": "docking-clearance",
+      "title": "Correct docking-grid rounding precision",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/DockingGridPrecisionPatch.cs"
+      ]
+    },
+    {
+      "id": "docked-gravity",
+      "title": "Preserve consistent gravity across docked groups",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/DockedGravityPatch.cs"
+      ]
+    },
+    {
+      "id": "door-autoclose",
+      "title": "Restore door auto-close after power recovery",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/DoorAutoClosePatch.cs"
+      ]
+    },
+    {
+      "id": "crew-sleep",
+      "title": "Prevent automatic sleep on bags and EVA suits",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/CrewSleepPatch.cs"
+      ]
+    },
+    {
+      "id": "crew-idle-work",
+      "title": "Let autotask interrupt idle sitting for restoration",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/CrewIdleSeatPatch.cs"
+      ]
+    },
+    {
+      "id": "work-adjacency",
+      "title": "Reach adjacent wall-mounted work orders correctly",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/WorkRangePathPatch.cs"
+      ]
+    },
+    {
+      "id": "work-scratch",
+      "title": "Repair native autotask scratch-state reuse",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/AutoTaskScratchPatch.cs"
+      ]
+    },
+    {
+      "id": "remote-barter",
+      "title": "Remove sold items from remote shallow barter zones",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/BarterRemovalPatch.cs"
+      ]
+    },
+    {
+      "id": "mass-accounting",
+      "title": "Repair live, stack and nested-container mass accounting",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/LiveMassPatch.cs",
+        "MiscBugFixes/StackMassPatch.cs",
+        "MiscBugFixes/StackMergeMassPatch.cs",
+        "MiscBugFixes/BarterMassPatch.cs"
+      ]
+    },
+    {
+      "id": "comms-window",
+      "title": "Display newest local-channel messages",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/CommsDisplayPatch.cs"
+      ]
+    },
+    {
+      "id": "font-console",
+      "title": "Suppress missing-glyph and ellipsis console spam",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/MissingGlyphConsoleFilter.cs"
+      ]
+    },
+    {
+      "id": "electrical-logs",
+      "title": "Route faulty-connection noise to diagnostic logs",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/ElectricalAuditLogging.cs"
+      ]
+    },
+    {
+      "id": "venus-anchors",
+      "title": "Preserve Venus wreck orbital anchoring after salvage",
+      "category": "bugfix",
+      "patchFiles": [
+        "Venus/VorbUndockAnchorPatch.cs"
+      ],
+      "patches": [
+        {
+          "type": "Ostrabus.Venus.VorbAllowsAnchoringPatch"
+        }
+      ]
+    },
+    {
+      "id": "venus-depot",
+      "title": "Use the correct Venus derelict retrieval owner/depot",
+      "category": "bugfix",
+      "patchFiles": [
+        "Venus/VorbRetrievalDepotPatch.cs"
+      ]
+    },
+    {
+      "id": "venus-navigation",
+      "title": "Reject broken VORB hauler routes and use native returns",
+      "category": "bugfix",
+      "requires": [
+        "hauler-return",
+        "navigation-targets",
+        "rcs-refill"
+      ],
+      "patchFiles": [
+        "Venus/VorbNavPlanGuard.cs"
+      ],
+      "before": [
+        "SceneManager.sceneUnloaded += global::Ostrabus.Venus.VorbNavPlanGuard.ResetRuntimeState;"
+      ],
+      "stop": [
+        "SceneManager.sceneUnloaded -= global::Ostrabus.Venus.VorbNavPlanGuard.ResetRuntimeState;",
+        "global::Ostrabus.Venus.VorbNavPlanGuard.ResetRuntimeState(default);"
+      ]
+    },
+    {
+      "id": "hull-geometry",
+      "title": "Shared cached hull geometry service",
+      "category": "support",
+      "patches": [
+        {
+          "type": "Ostrabus.NavConsole.Outlines.HullMutationPatch"
+        },
+        {
+          "type": "Ostrabus.NavConsole.Outlines.HullRetirePatch"
+        }
+      ],
+      "before": [
+        "SceneManager.sceneUnloaded += global::Ostrabus.NavConsole.Outlines.HullDisplay.SceneUnloaded;",
+        "CrewSim.OnGameFinishedLoading.AddListener(global::Ostrabus.NavConsole.Outlines.HullDisplay.Loaded);"
+      ],
+      "stop": [
+        "CrewSim.OnGameFinishedLoading.RemoveListener(global::Ostrabus.NavConsole.Outlines.HullDisplay.Loaded);",
+        "SceneManager.sceneUnloaded -= global::Ostrabus.NavConsole.Outlines.HullDisplay.SceneUnloaded;",
+        "global::Ostrabus.NavConsole.Outlines.HullDisplay.Reset(true);"
+      ],
+      "hidden": true
+    },
+    {
+      "id": "hull-outlines",
+      "title": "Draw current exterior hull outlines at useful zoom",
+      "category": "qol",
+      "requires": [
+        "hull-geometry"
+      ],
+      "patchFiles": [
+        "NavConsole/Outlines/HullPresentation.cs"
+      ],
+      "patches": [
+        {
+          "type": "Ostrabus.NavConsole.Outlines.HullIconPatch"
+        },
+        {
+          "type": "Ostrabus.NavConsole.Outlines.HullDrawPatch"
+        },
+        {
+          "type": "Ostrabus.NavConsole.Outlines.HullNavClosePatch"
+        }
+      ]
+    },
+    {
+      "id": "comms-retention",
+      "title": "Prune safely obsolete comms records on load/save",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/CommsHistory.cs"
+      ],
+      "before": [
+        "CrewSim.OnGameFinishedLoading.AddListener(global::Ostrabus.Optimizations.CommsHistory.Loaded);"
+      ],
+      "stop": [
+        "CrewSim.OnGameFinishedLoading.RemoveListener(global::Ostrabus.Optimizations.CommsHistory.Loaded);",
+        "global::Ostrabus.Optimizations.CommsHistory.CancelLoad();"
+      ]
+    },
+    {
+      "id": "save-co-lookup",
+      "title": "Index saved CO-to-ship lookups during load",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/SavedCoShipLookupPatch.cs"
+      ]
+    },
+    {
+      "id": "save-id-lookup",
+      "title": "Avoid repeated remaining-item ID scans during save",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/SaveRemainingIdsPatch.cs"
+      ]
+    },
+    {
+      "id": "contained-removal",
+      "title": "Remove contained saved items without repeated searches",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/ContainedItemRemovalPatch.cs"
+      ]
+    },
+    {
+      "id": "barter-yields",
+      "title": "Budget nested barter-zone loading across frames",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/BarterInitPatch.cs"
+      ]
+    },
+    {
+      "id": "barter-index",
+      "title": "Index barter item lookup and writeback",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/BarterLocalIndexPatch.cs",
+        "Optimizations/BarterWritebackPatch.cs"
+      ]
+    },
+    {
+      "id": "portraits",
+      "title": "Compose Socials portraits without per-pixel overhead",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/PortraitCompositionPatch.cs"
+      ]
+    },
+    {
+      "id": "disembark-search",
+      "title": "Skip inaccessible needs/leisure targets for no-disembark crew",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/AutonomousDisembarkPatch.cs"
+      ]
+    },
+    {
+      "id": "batch-init",
+      "title": "Batch cheap system initialization coroutine steps",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/SystemInitBatchPatch.cs"
+      ],
+      "before": [
+        "global::Ostrabus.Optimizations.SystemInitBatchPatch.Enabled = Config.Bind(\"Optimizations\", \"BatchSystemInit\", true, \"Batch cheap saved-system restoration yields. Restart to apply.\").Value;",
+        "global::Ostrabus.Optimizations.SystemInitBatchPatch.BudgetMs = Config.Bind(\"Optimizations\", \"SystemInitBudgetMs\", 4d, \"Cooperative initialization budget; clamped to 0.5-8 ms.\").Value;"
+      ]
+    },
+    {
+      "id": "altwork",
+      "title": "Alternative nearby work and rolling supply planning",
+      "category": "qol",
+      "requires": [
+        "work-adjacency",
+        "work-scratch"
+      ],
+      "patchFiles": [
+        "AlternativeWork/AlternativeWorkPatches.cs",
+        "AlternativeWork/WorkBatchInventoryPatch.cs",
+        "AlternativeWork/WorkMaterialPatches.cs"
+      ],
+      "before": [
+        "global::Ostrabus.AlternativeWork.AlternativeWorkSystem.Flag = Config.Bind(\"AlternativeWork\", \"Enabled\", false, \"Alternative work selection; toggle in Mod Settings.\");",
+        "global::Ostrabus.AlternativeWork.WorkSupplyPlan.WindowConfig = Config.Bind(\"AlternativeWork\", \"SupplyWindow\", 8, new BepInEx.Configuration.ConfigDescription(\"Rolling nearby supply window.\", new BepInEx.Configuration.AcceptableValueRange<int>(1,30)));",
+        "SceneManager.sceneUnloaded += global::Ostrabus.AlternativeWork.AlternativeWorkSystem.SceneUnloaded;"
+      ],
+      "tick": [
+        "global::Ostrabus.AlternativeWork.AlternativeWorkSystem.Tick();"
+      ],
+      "stop": [
+        "SceneManager.sceneUnloaded -= global::Ostrabus.AlternativeWork.AlternativeWorkSystem.SceneUnloaded;",
+        "global::Ostrabus.AlternativeWork.AlternativeWorkSystem.Reset();"
+      ],
+      "settings": [
+        "altwork",
+        "supply_window"
+      ]
+    },
+    {
+      "id": "crew-hotkeys",
+      "title": "Crew permissions and safe helmet/EVA-battery hotkeys",
+      "category": "qol",
+      "before": [
+        "global::Ostrabus.Hotkeys.FunctionalHotkeys.Flag = Config.Bind(\"Hotkeys\", \"Enabled\", true, \"Crew permission and equipment shortcuts.\");",
+        "global::Ostrabus.Hotkeys.EquipmentShortcut.Binding = Config.Bind(\"Hotkeys\", \"EquipmentShortcut\", \"Shift+F\", \"Equip or stow helmet/EVA battery; rebind in Mod Settings.\");"
+      ],
+      "tick": [
+        "global::Ostrabus.Hotkeys.FunctionalHotkeys.Tick();"
+      ],
+      "settings": [
+        "hotkeys",
+        "equipment_shortcut"
+      ]
+    },
+    {
+      "id": "scrollbacks",
+      "title": "Drag and scroll nav/comms logs consistently",
+      "category": "qol",
+      "patchFiles": [
+        "NavConsole/ScrollbackPatches.cs"
+      ],
+      "stop": [
+        "global::Ostrabus.NavConsole.Scrollbacks.Stop();"
+      ]
+    },
+    {
+      "id": "hide-nav-note",
+      "title": "Hide the nav console tutorial paper",
+      "category": "qol",
+      "patchFiles": [
+        "NavConsole/TutorialNote.cs"
+      ],
+      "before": [
+        "global::Ostrabus.NavConsole.TutorialNote.HideFlag = Config.Bind(\"NavConsole\", \"HideTutorialNote\", false, \"Hide the nav tutorial paper; toggle in Mod Settings.\");"
+      ],
+      "settings": [
+        "hide_nav_note"
+      ]
+    },
+    {
+      "id": "proximity-range",
+      "title": "Add a proximity warning range dial",
+      "category": "qol",
+      "patchFiles": [
+        "NavConsole/ProximityDial.cs"
+      ],
+      "patches": [
+        {
+          "type": "Ostrabus.NavConsole.ProximityCollisionPatch"
+        }
+      ],
+      "before": [
+        "SceneManager.sceneUnloaded += global::Ostrabus.NavConsole.ProximityRange.Reset;"
+      ],
+      "stop": [
+        "SceneManager.sceneUnloaded -= global::Ostrabus.NavConsole.ProximityRange.Reset;",
+        "global::Ostrabus.NavConsole.ProximityRange.Reset(default);",
+        "global::Ostrabus.NavConsole.RoundKnobArt.Release();"
+      ]
+    },
+    {
+      "id": "stabilizer-creak",
+      "title": "Scale hull creaking cues with active stabilizers",
+      "category": "qol",
+      "patchFiles": [
+        "MiscBugFixes/StabilizerCreakPatch.cs"
+      ]
+    },
+    {
+      "id": "course-controls",
+      "title": "Fine-adjust torch course sliders with the mouse wheel",
+      "category": "qol",
+      "patchFiles": [
+        "QoL/CoursePlot/CourseFineControls.cs"
+      ]
+    },
+    {
+      "id": "social-filter",
+      "title": "Hide missing contacts and construction drones from Socials",
+      "category": "qol",
+      "patches": [
+        {
+          "methods": [
+            "GUIPDA_GetKnownSocialContacts_Postfix"
+          ],
+          "type": "Ostrabus.Patch"
+        }
+      ]
+    },
+    {
+      "id": "bounty-info",
+      "title": "Display missing bounty targets and bounty information",
+      "category": "qol",
+      "patches": [
+        {
+          "type": "Ostrabus.Patch+GUIBountyDetailsPatch"
+        },
+        {
+          "type": "Ostrabus.Patch+GUIBountyRowSinglePatch"
+        },
+        {
+          "type": "Ostrabus.Patch+GUIBountiesPatch"
+        }
+      ]
+    },
+    {
+      "id": "auto-vents",
+      "title": "Tolerate brief airlock pressure dips in Kang auto-vents",
+      "category": "qol",
+      "patchFiles": [
+        "QoL/AutoVents/AutoVentPatches.cs"
+      ],
+      "before": [
+        "global::Ostrabus.QoL.AutoVents.AutoVentControl.Initialize(Config);",
+        "SceneManager.sceneUnloaded += global::Ostrabus.QoL.AutoVents.AutoVentControl.SceneUnloaded;"
+      ],
+      "stop": [
+        "SceneManager.sceneUnloaded -= global::Ostrabus.QoL.AutoVents.AutoVentControl.SceneUnloaded;",
+        "global::Ostrabus.QoL.AutoVents.AutoVentControl.Stop();"
+      ],
+      "settings": [
+        "autovents"
+      ]
+    },
+    {
+      "id": "dolly-rolling",
+      "title": "Reduce dolly hauling burden on Venus aerostats",
+      "category": "qol",
+      "requires": [
+        "docked-gravity"
+      ],
+      "patchFiles": [
+        "Venus/DollyEncumbrance.cs"
+      ]
+    },
+    {
+      "id": "pda-settings",
+      "title": "Include the Mod Settings PDA app",
+      "category": "qol",
+      "patchFiles": [
+        "PdaSettings/SettingsPanel.cs"
+      ],
+      "stop": [
+        "global::Ostrabus.PdaSettings.SettingsPanel.Stop();"
+      ]
+    },
+    {
+      "id": "station-docked",
+      "title": "Ignore station-connected visiting hulls as traffic obstacles",
+      "category": "simulation",
+      "requires": [
+        "ai-avoidance"
+      ],
+      "patchFiles": [
+        "Navigation/StationDockedCollisions.cs"
+      ],
+      "patches": [
+        {
+          "type": "Ostrabus.NavConsole.ProximityCollisionPatch"
+        }
+      ],
+      "before": [
+        "global::Ostrabus.ShipNavigation.StationDockedCollisions.Flag = Config.Bind(\"Navigation\", \"StationDockedCollisionExemption\", true, \"Exclude station-connected visiting hulls from traffic collisions and avoidance.\");"
+      ],
+      "settings": [
+        "station_docked_collisions"
+      ]
+    },
+    {
+      "id": "hull-collisions",
+      "title": "Use swept exterior hull contacts for free ship impacts",
+      "category": "simulation",
+      "requires": [
+        "hull-geometry"
+      ],
+      "patchFiles": [
+        "Navigation/Collisions/PhysicalCollisionPatches.cs"
+      ],
+      "before": [
+        "global::Ostrabus.ShipNavigation.Collisions.PhysicalCollisions.Flag = Config.Bind(\"Navigation\", \"HullCollisions\", true, \"Use cached hull geometry for ordinary physical contacts. Weapons remain native.\");"
+      ],
+      "settings": [
+        "hull_collisions"
+      ]
+    },
+    {
+      "id": "orbital",
+      "title": "Correct gravity in moving planetary reference frames",
+      "category": "simulation",
+      "patches": [
+        {
+          "type": "Ostrabus.Orbital.OrbitalStepObservationPatch"
+        },
+        {
+          "type": "Ostrabus.Orbital.OrbitalGravityPatch"
+        },
+        {
+          "type": "Ostrabus.Orbital.OrbitalConsolePatch"
+        }
+      ],
+      "before": [
+        "global::Ostrabus.Orbital.OrbitalSimulation.Initialize(Config.Bind(\"Orbital\", \"Enabled\", false, \"Launch default for orbital correction; console orbital on/off overrides this session.\"));",
+        "SceneManager.sceneUnloaded += global::Ostrabus.Orbital.OrbitalSimulation.SceneUnloaded;"
+      ],
+      "stop": [
+        "SceneManager.sceneUnloaded -= global::Ostrabus.Orbital.OrbitalSimulation.SceneUnloaded;",
+        "global::Ostrabus.Orbital.OrbitalSimulation.Reset();"
+      ],
+      "settings": [
+        "orbital"
+      ]
+    },
+    {
+      "id": "coast",
+      "title": "Integrate free coasting at high time acceleration",
+      "category": "simulation",
+      "requires": [
+        "orbital"
+      ],
+      "patches": [
+        {
+          "type": "Ostrabus.Orbital.CoastMotionPatch"
+        },
+        {
+          "type": "Ostrabus.Orbital.CoastScopePatch"
+        }
+      ],
+      "settings": [
+        "coast"
+      ]
+    },
+    {
+      "id": "sff",
+      "title": "Preserve orbits and plausible AI travel during SFF",
+      "category": "simulation",
+      "requires": [
+        "orbital"
+      ],
+      "patches": [
+        {
+          "type": "Ostrabus.Orbital.SffBeforeCatchupPatch"
+        },
+        {
+          "type": "Ostrabus.Orbital.SffCatchupPatch"
+        },
+        {
+          "type": "Ostrabus.Orbital.SffMotionPatch"
+        }
+      ],
+      "before": [
+        "global::Ostrabus.Orbital.SffSimulation.Enabled = Config.Bind(\"Orbital\", \"SuperFastForward\", true, \"With Orbital enabled, preserve orbits and bounded AI travel during SFF.\").Value;"
+      ],
+      "settings": [
+        "sff"
+      ]
+    },
+    {
+      "id": "economy-sff",
+      "title": "Run production and cargo dispatch chronologically during SFF",
+      "category": "simulation",
+      "requires": [
+        "sff",
+        "cargo-loading"
+      ],
+      "patchFiles": [
+        "Orbital/Economy/EconomyPatches.cs",
+        "Orbital/Economy/FreightPlanningScope.cs"
+      ],
+      "before": [
+        "global::Ostrabus.Orbital.Economy.SffEconomy.Enabled = Config.Bind(\"Orbital\", \"SffEconomy\", true, \"Process background production and freight chronologically during corrected SFF.\").Value;"
+      ]
+    },
+    {
+      "id": "cargo-loading",
+      "title": "Avoid cargo duplication while loading native freight",
+      "category": "bugfix",
+      "patchFiles": [
+        "Orbital/Economy/CargoLoadingPatch.cs"
+      ]
+    },
+    {
+      "id": "ceres-navigation",
+      "title": "Apply homeward fuel reserves to Ceres patrols and chases",
+      "category": "simulation",
+      "requires": [
+        "navigation-targets",
+        "rcs-refill"
+      ],
+      "patchFiles": [
+        "CeresNavigation/CeresNavigationGuardrails.cs",
+        "Navigation/NavyCandidateFuelPatch.cs"
+      ],
+      "before": [
+        "SceneManager.sceneUnloaded += global::Ostrabus.CeresNavigation.CeresNavigationGuardrails.OnSceneUnloaded;"
+      ],
+      "stop": [
+        "SceneManager.sceneUnloaded -= global::Ostrabus.CeresNavigation.CeresNavigationGuardrails.OnSceneUnloaded;",
+        "global::Ostrabus.CeresNavigation.CeresNavigationGuardrails.ResetRuntimeState();"
+      ]
+    },
+    {
+      "id": "boarding",
+      "title": "Resolve shallow hostile boarding and prize-ship returns",
+      "category": "simulation",
+      "requires": [
+        "ai-return",
+        "rcs-refill"
+      ],
+      "patchFiles": [
+        "ShipboardAction/ShipboardActionPatch.cs"
+      ],
+      "before": [
+        "SceneManager.sceneUnloaded += global::Ostrabus.ShipboardAction.ShipboardActionSimulation.OnSceneUnloaded;"
+      ],
+      "stop": [
+        "SceneManager.sceneUnloaded -= global::Ostrabus.ShipboardAction.ShipboardActionSimulation.OnSceneUnloaded;",
+        "global::Ostrabus.ShipboardAction.ShipboardActionSimulation.ResetRuntimeState();"
+      ]
+    },
+    {
+      "id": "em-propagation",
+      "title": "Use inverse-square transponder/radio propagation",
+      "category": "simulation",
+      "before": [
+        "global::Ostrabus.EMPropagation.EmPropagation.Initialize(Config);"
+      ],
+      "stop": [
+        "global::Ostrabus.EMPropagation.EmPropagation.Stop();"
+      ],
+      "settings": [
+        "em_propagation"
+      ]
+    },
+    {
+      "id": "sensors",
+      "title": "Estimate contact position with a sensor-based gradient",
+      "category": "simulation",
+      "before": [
+        "global::Ostrabus.Sensors.SensorContacts.Initialize(Config);"
+      ],
+      "stop": [
+        "global::Ostrabus.Sensors.SensorContacts.Stop();"
+      ],
+      "settings": [
+        "sensors"
+      ]
+    },
+    {
+      "id": "venus-wreck-variety",
+      "title": "Choose the share of Venus-specific spawned wrecks",
+      "category": "simulation",
+      "patches": [
+        {
+          "type": "Ostrabus.Venus.VorbWreckSpawnPatch"
+        },
+        {
+          "type": "Ostrabus.Venus.VorbWreckLootPatch"
+        }
+      ],
+      "before": [
+        "global::Ostrabus.Venus.VenusDerelicts.Initialize(Config);"
+      ],
+      "settings": [
+        "venus_wreck_percent"
+      ]
+    },
+    {
+      "id": "mm-fairness",
+      "title": "Distribute BeatManager strikes across eligible loaded hulls",
+      "category": "simulation",
+      "patches": [
+        {
+          "type": "Ostrabus.Micrometeoroids.MeteorTargetPatch"
+        }
+      ]
+    },
+    {
+      "id": "pdc-defense",
+      "title": "Use sensor detection and ballistic PDC interception",
+      "category": "simulation",
+      "patches": [
+        {
+          "type": "Ostrabus.Micrometeoroids.MeteorDefensePatch"
+        },
+        {
+          "type": "Ostrabus.Micrometeoroids.MeteorBypassPatch"
+        },
+        {
+          "type": "Ostrabus.Micrometeoroids.MeteorBurstCapturePatch"
+        }
+      ]
+    },
+    {
+      "id": "inspection",
+      "title": "Local inspection API, event history and recovery commands",
+      "category": "developer",
+      "patchFiles": [
+        "Inspection/InspectionLogHooks.cs",
+        "Inspection/DockingInspection.cs",
+        "Inspection/ExcursionInspection.cs"
+      ],
+      "before": [
+        "_inspectionLogs = new global::Ostrabus.Inspection.InspectionLogHooks();"
+      ],
+      "after": [
+        "if (Config.Bind(\"InspectionApi\", \"Enabled\", true, \"Enable the localhost developer inspection API.\").Value) { try { _inspectionApi = new global::Ostrabus.Inspection.InspectionApi(Config.Bind(\"InspectionApi\", \"Port\", 18764, \"Local API port.\").Value); } catch (System.Exception error) { Logger.LogError(error); } }"
+      ],
+      "tick": [
+        "_inspectionApi?.Pump();"
+      ],
+      "stop": [
+        "_inspectionApi?.Dispose();",
+        "_inspectionLogs?.Dispose();"
+      ]
+    },
+    {
+      "id": "legacy-commands",
+      "title": "Legacy maintenance/debug commands including massfix and refuelai",
+      "category": "developer",
+      "patches": [
+        {
+          "methods": [
+            "ConsoleResolver_ResolveString_Prefix"
+          ],
+          "type": "Ostrabus.Patch"
+        }
+      ]
+    },
+    {
+      "id": "social-location",
+      "title": "Log NPC ship locations when clicking Socials contacts",
+      "category": "developer",
+      "patches": [
+        {
+          "methods": [
+            "GUISocialsRow_OnPointerClick_Prefix"
+          ],
+          "type": "Ostrabus.Patch"
+        }
+      ]
+    },
+    {
+      "id": "worktrace",
+      "title": "On-demand native work/suit tracing",
+      "category": "developer",
+      "requires": [
+        "inspection"
+      ],
+      "patchFiles": [
+        "Diagnostics/WorkTrace.cs"
+      ],
+      "before": [
+        "SceneManager.sceneUnloaded += global::Ostrabus.Diagnostics.WorkTrace.SceneUnloaded;"
+      ],
+      "after": [
+        "global::Ostrabus.Diagnostics.WorkTrace.SetEnabled(Config.Bind(\"Diagnostics\", \"WorkTrace\", false, \"Opt-in work diagnostics.\").Value);"
+      ],
+      "stop": [
+        "SceneManager.sceneUnloaded -= global::Ostrabus.Diagnostics.WorkTrace.SceneUnloaded;",
+        "global::Ostrabus.Diagnostics.WorkTrace.Stop();"
+      ],
+      "settings": [
+        "worktrace"
+      ]
+    },
+    {
+      "id": "load-profiling",
+      "title": "Instrument startup and save-load timings",
+      "category": "developer",
+      "requires": [
+        "inspection"
+      ],
+      "patchFiles": [
+        "Optimizations/LoadProfilingHooks.cs"
+      ],
+      "before": [
+        "global::Ostrabus.Optimizations.LoadProfiling.Enabled = Config.Bind(\"LoadProfiling\", \"Enabled\", true, \"Instrument load stages; restart to apply.\").Value;"
+      ],
+      "stop": [
+        "global::Ostrabus.Optimizations.LoadProfiling.Stop();"
+      ]
+    },
+    {
+      "id": "save-json",
+      "title": "Experimental compatible Newtonsoft save reader",
+      "category": "performance",
+      "requires": [
+        "save-co-lookup"
+      ],
+      "patchFiles": [
+        "Optimizations/SavedJsonLoadingPatch.cs"
+      ],
+      "patches": [
+        {
+          "type": "Ostrabus.Optimizations.ShipFileProfilePatch"
+        }
+      ],
+      "before": [
+        "global::Ostrabus.Optimizations.SavedJsonLoading.Enabled = Config.Bind(\"Optimizations\", \"ExperimentalSaveJson\", false, \"Experimental compatible save reader. Restart to apply.\").Value;"
+      ],
+      "experimental": true
+    }
+  ]
+}

@@ -1,8 +1,9 @@
-# Prepared source changes after 0.2.2
+# Historical preparation: changes after 0.2.2
 
-Commit preparation only. No commit, version bump, tag, push or release ZIP is
-created by this preparation. Plugin/project/PDA versions remain 0.2.2 until a
-new version is chosen explicitly.
+This preparation was subsequently committed as `191d8d9` ("Improve AI integrity,
+crew controls and navigation UI"). It retained version 0.2.2 and excluded the
+pending torch changes. The current preparation is [0.3.0](RELEASE-0.3.0.md).
+The scope and validation below describe that earlier source snapshot.
 
 ## Included
 

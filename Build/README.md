@@ -27,6 +27,11 @@ Close the game before deployment. The installer verifies copied files and retain
 disabled backups of predecessor plugin assemblies. Existing configuration, saved
 proximity ranges, return orders, and native app identifiers remain compatible.
 
+For category presets or individual feature choices, run
+`CustomBuilder/Build-Custom.cmd`; see the [custom builder guide](../CustomBuilder/README.md).
+Custom builds and packages are isolated from normal build output.
+`Deploy-Mod.cmd` continues deploying the full normal build.
+
 ## Project layout
 
 - Feature directories contain their own implementation and notes: `AlternativeWork`,

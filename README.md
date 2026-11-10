@@ -9,6 +9,7 @@ There is no guarantee it will be maintained for new game patches. Issues and pul
 The current build targets **Ostranauts 1.0.1.10 (`public_test`) with BepInEx 5**.
 It is an experimental snapshot; compatibility with other game versions is not implied.
 See [build/install instructions](Build/README.md) and the [release preparation notes](Build/RELEASE-PREP.md).
+For a custom selection of fixes and features, use the [custom plugin builder](CustomBuilder/README.md).
 
 ## Inventory of changes
 
@@ -16,7 +17,6 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 
 - [Tile helper memory leak](MiscBugFixes/TILE-HELPER-CLEANUP.md): properly retire grid helper COs during tile and async-hull destruction, releasing stale registry entries and old ship references.
 - [Comms channel display](Optimizations/COMMS-HISTORY.md): show the newest 100 stored messages chronologically instead of the oldest 100.
-- [Nav hull outlines](NavConsole/HULL-OUTLINES.md): draw cached exterior hull perimeters with corners and recesses intact, background updates, and unpadded detail selected by screen size instead of a fixed zoom cutoff.
 - [Shallow refueling](RefuelRCSPatch.cs): replenish RCS fuel instead of incorrectly adding the fuel to ship mass.
 - [AI flight fuel accounting](MiscBugFixes/AI-FLIGHT-FUEL-HANDOFF.md): prevent navigation-mode and loaded-state handoffs from charging the same travel twice, including across save/load.
 - [AI RCS replenishment](Navigation/RCS-REPLENISHMENT.md): preserve actual refills in stored route budgets across AI roles and stations without changing planned consumption.
@@ -81,6 +81,7 @@ See [build/install instructions](Build/README.md) and the [release preparation n
 
 ### Quality of life
 
+- [Nav hull outlines](NavConsole/HULL-OUTLINES.md): draw cached exterior hull perimeters with corners and recesses intact, background updates, and unpadded detail selected by screen size instead of a fixed zoom cutoff.
 - [Socials contact filtering](QoL/Socials/README.md): hide construction drones from the contact list without changing their relationships or simulation.
 - [Venus dolly handling](Venus/DOLLY-ENCUMBRANCE.md): reduce dolly-and-payload encumbrance by 90% on Venus aerostats and their docked ships to approximate wheeled handling.
 - [Alternative autotask](AlternativeWork/README.md): favor nearby, reachable, supplied work and prevent crew from reserving jobs on vessels their permissions forbid them to enter.
