@@ -5,6 +5,18 @@ BepInEx DLL and the accompanying `TemplateSettings` native asset mod, then resta
 Open the app from the PDA home screen. Each row identifies whether changes persist
 to config or apply only to the current session.
 
+**Station-docked hull exemption** controls visiting-hull collisions, avoidance
+and proximity warnings across station-docked chains. Saved, default on.
+
+**Hull-shaped collisions** uses the displayed exterior for ordinary free-ship
+impacts, while weapon hits and planetary/station handling remain native. Saved,
+default on; off immediately restores native circles. See the
+[collision model](../Navigation/Collisions/README.md).
+
+**Helmet and EVA battery shortcut** defaults to **Shift+F**. Click its button and
+press a new keyboard chord; **Esc** cancels and **RESET** restores Shift+F. The
+binding is saved. **Crew hotkeys** enables/disables it alongside Shift+R/T.
+
 **EM propagation** and **Contact position estimates** are independent saved
 switches, default off. See [sensor A/B testing](../Sensors/README.md#live-ab-testing)
 for the combinations.

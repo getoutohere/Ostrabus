@@ -13,6 +13,10 @@ static class Program {
         " was not found in the [" + font + "] font asset or any potential fallbacks. It was replaced by Unicode character \\u0020 in text object [txt].";
     static int Main() {
         string message = Warning("robotocondensed SDF");
+        const string ellipsis = "The character used for Ellipsis is not available in font asset [Jura-Bold SDF] or any potential fallbacks. Switching Text Overflow mode to Truncate.";
+        Check(!MissingGlyphConsoleFilter.Prefix(ellipsis, LogType.Warning), "Ellipsis fallback warning not filtered");
+        Check(MissingGlyphConsoleFilter.Prefix(ellipsis, LogType.Error), "Ellipsis error suppressed");
+        Check(MissingGlyphConsoleFilter.Prefix("The character used for Ellipsis is not available in font asset [Jura-Bold SDF] but loading the fallback failed.", LogType.Warning), "Unrecognized ellipsis failure suppressed");
         Check(!MissingGlyphConsoleFilter.Prefix(message, LogType.Warning), "Outlined warning not filtered");
         Check(!MissingGlyphConsoleFilter.Prefix(Warning("robotocondensed SDF No Outline"), LogType.Warning), "Unoutlined warning not filtered");
         Check(!MissingGlyphConsoleFilter.Prefix(Warning("robotocondensed SDF", "949F"), LogType.Warning), "Other missing glyph not filtered");
@@ -31,10 +35,15 @@ static class Program {
         console.Log(message, "", LogType.Warning);
         Check(Text(console) == "seed", "Warning reached GUI");
         Check((int)AccessTools.Field(typeof(ConsoleToGUI), "bugLevel").GetValue(console) == -1, "Suppressed warning raised GUI badge");
+        console.Log(ellipsis, "", LogType.Warning);
+        Check(Text(console) == "seed", "Ellipsis warning reached GUI");
+        Check((int)AccessTools.Field(typeof(ConsoleToGUI), "bugLevel").GetValue(console) == -1, "Ellipsis warning raised GUI badge");
         console.Log("Other warning", "", LogType.Warning);
         Check(Text(console).Contains("Other warning"), "Other warning lost");
         console.Log(message, "", LogType.Error);
         Check(Text(console).Contains(message) && console.ErrorCount == 1, "Error lost");
+        console.Log(ellipsis, "", LogType.Error);
+        Check(Text(console).Contains(ellipsis) && console.ErrorCount == 2, "Ellipsis error lost");
         Console.WriteLine(checks + " missing-glyph console filter checks passed.");
         return 0;
     }

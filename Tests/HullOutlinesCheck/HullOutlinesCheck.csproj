@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Core/**/*.cs" />
+    <Compile Include="../../NavConsole/Outlines/*.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="../../Navigation/Collisions/*.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="../../Navigation/StationDockedCollisions.cs" Link="StationDockedCollisions.cs" />
+    <Reference Include="BepInEx"><HintPath>$(GameDir)/BepInEx/core/BepInEx.dll</HintPath></Reference>
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(Managed)/UnityEngine.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.UIModule"><HintPath>$(Managed)/UnityEngine.UIModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(Managed)/UnityEngine.UI.dll</HintPath></Reference>
+    <Reference Include="Vectrosity"><HintPath>$(Managed)/Vectrosity.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
+    <Reference Include="Ionic.Zip.Unity"><HintPath>$(Managed)/Ionic.Zip.Unity.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(GameDir)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/971d166bd198dd305e939181b843e7713e9ce4be3099cd341fc0ffa48b7fa619.json.br",
+  "reason": "Reviewed shared AI collision/evasion call sites and native assets. 844 avoidance checks pass: exact saved evasion direction, two native failure controls, production FlyTo success for three anchors, independent geometry oracle, moving threats, exclusions and zero helper allocation. Planner 16, lifecycle 143, retarget 60, mixed fuel 22 and SOS/recovery 43 regressions pass. Catalogued unexpanded geometry dependencies; game binary and prior source implementations unchanged.",
+  "acceptedUtc": "2026-11-09T23:43:26.3688663Z",
+  "previousSnapshot": "assembly-baselines/25f0cb0a53ebd7f75ec6486241454d04e2c7e50818be58112633a2216b8fb60c.json.br"
+}

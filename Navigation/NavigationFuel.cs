@@ -42,7 +42,10 @@ internal static class RetargetFuelPatch {
     internal static void Prefix(Ship ship, out NavigationTargetKey __state) => __state = new NavigationTargetKey(ship);
     [HarmonyPostfix]
     internal static void Postfix(Ship ship, NavigationTargetKey __state) {
-        if (!__state.Same(new NavigationTargetKey(ship))) NavigationFuel.ClearPrediction(ship);
+        if (__state.Same(new NavigationTargetKey(ship))) return;
+        NavigationFuel.ClearPrediction(ship);
+        // One semantic change observation, two distinct cleanup responsibilities.
+        Ostrabus.Venus.VorbNavPlanGuard.TargetChanged(ship);
     }
 }
 

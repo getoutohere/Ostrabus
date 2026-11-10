@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/ddee9013254d691c04a97415b6ee3cd6947de799bc3d7ba7aaa1413f770676a4.json.br",
+  "reason": "Reviewed StationReturn ordinary-mission integration against unchanged 1.0.1.10 native trees and Selector dispatch. 93 bundled-Mono priority/return checks pass; 49 retriever model checks pass. Added explicit Selector.RunCommand dependency. Return priority is tested outside this graph slice; no invented graph coverage.",
+  "acceptedUtc": "2026-11-09T20:51:14.5767963Z",
+  "previousSnapshot": "assembly-baselines/dcf1842627b54063124bd9cab21b48749c87f9982bf92fed47e7e7aa020941c1.json.br"
+}

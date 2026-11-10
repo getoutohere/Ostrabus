@@ -5,7 +5,7 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using Ostrabus.Hotkeys;
 
-static class Program {
+static partial class Program {
     static int checks, messages, nativeSets;
     static CondOwner messageCrew;
     static string messageText, messageColor, messageOwner;
@@ -15,7 +15,7 @@ static class Program {
     static void Field(object obj, string name, object value) => AccessTools.Field(obj.GetType(), name).SetValue(obj, value);
     static bool Equal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = ReferenceEquals(__0, __1); return false; }
     static bool Unequal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = !ReferenceEquals(__0, __1); return false; }
-    static bool Has(CondOwner __instance, string strName, ref bool __result) { __result = strName == "IsPlayerCrew" && crewConditions.Contains(__instance.strID); return false; }
+    static bool Has(CondOwner __instance, string strName, ref bool __result) { __result = strName == "IsPlayerCrew" && crewConditions.Contains(__instance.strID) || equipmentConditions.TryGetValue(__instance, out var conditions) && conditions.Contains(strName); return false; }
     static bool Message(CondOwner __instance, string strMsg, string strColor, string strOwner) {
         messages++; messageCrew = __instance; messageText = strMsg; messageColor = strColor; messageOwner = strOwner; return false;
     }
@@ -87,7 +87,8 @@ static class Program {
             company.mapRoster.Remove(crew.strID); Rejected(crew, crewRules); company.mapRoster[crew.strID] = crewRules;
             company.mapRoster[crew.strID] = null; Rejected(crew, crewRules); company.mapRoster[crew.strID] = crewRules;
             Field(FunctionalHotkeys.Flag, "_typedValue", false); Rejected(crew, crewRules);
-            Console.WriteLine(checks + " hotkey permission/selection checks passed using native roster methods.");
+            EquipmentChecks();
+            Console.WriteLine(checks + " hotkey permission/selection/equipment checks passed.");
             return 0;
         } finally {
             CrewSim.coPlayer = oldPlayer; CrewSim.aSelected = oldSelection;

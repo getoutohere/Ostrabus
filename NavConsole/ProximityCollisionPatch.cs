@@ -23,6 +23,16 @@ internal static class ProximityCollisionPatch {
     internal static double BodyBuffer() => rangeKm <= 5 ? ProximityRange.NativeBodyAU : rangeKm / ProximityRange.KmPerAU;
     static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
         var code = instructions.ToList();
+        // Parked hulls do not produce physical contacts or proximity hazards.
+        // Reuse this existing scan hook; station/ATC entries themselves remain.
+        var hidden = AccessTools.PropertyGetter(typeof(Ship), nameof(Ship.HideFromSystem));
+        int hiddenChecks = 0;
+        foreach (var instruction in code) if (instruction.Calls(hidden)) {
+            instruction.opcode = OpCodes.Call;
+            instruction.operand = AccessTools.Method(typeof(global::Ostrabus.ShipNavigation.StationDockedCollisions), nameof(global::Ostrabus.ShipNavigation.StationDockedCollisions.IgnoreAsObstacle));
+            hiddenChecks++;
+        }
+        if (hiddenChecks != 1) throw new InvalidOperationException("Expected one collision obstacle visibility check; station docking policy requires review.");
         var starts = new List<int>();
         var bodies = new List<int>();
         for (int i = 0; i + 1 < code.Count; i++) {

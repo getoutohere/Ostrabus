@@ -26,6 +26,7 @@ static class Program {
     // Replace only config disk/event plumbing, not the production module setters.
     static bool WriteBool(ConfigEntry<bool> __instance, bool value) { AccessTools.Field(__instance.GetType(), "_typedValue").SetValue(__instance, value); return false; }
     static bool WriteInt(ConfigEntry<int> __instance, int value) { AccessTools.Field(__instance.GetType(), "_typedValue").SetValue(__instance, value); return false; }
+    static bool WriteString(ConfigEntry<string> __instance, string value) { AccessTools.Field(__instance.GetType(), "_typedValue").SetValue(__instance, value); return false; }
     static int Main(string[] args) {
         string assets = Path.GetFullPath("PdaSettings/Assets");
         var app = JsonMapper.ToObject<JsonPDAAppIcon[]>(File.ReadAllText(assets + "/data/pda_apps/template_settings.json"));
@@ -39,6 +40,7 @@ static class Program {
         var harmony = new Harmony("offline.pdasettings");
         harmony.Patch(AccessTools.PropertySetter(typeof(ConfigEntry<bool>), "Value"), prefix: new HarmonyMethod(typeof(Program), nameof(WriteBool)));
         harmony.Patch(AccessTools.PropertySetter(typeof(ConfigEntry<int>), "Value"), prefix: new HarmonyMethod(typeof(Program), nameof(WriteInt)));
+        harmony.Patch(AccessTools.PropertySetter(typeof(ConfigEntry<string>), "Value"), prefix: new HarmonyMethod(typeof(Program), nameof(WriteString)));
         harmony.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Equality"), prefix: new HarmonyMethod(typeof(Program), nameof(Equal)));
         harmony.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"), prefix: new HarmonyMethod(typeof(Program), nameof(Unequal)));
         foreach (var name in new[] { "AlternativeWork.AlternativeWorkSystem", "Orbital.OrbitalSimulation" }) harmony.Patch(AccessTools.Method(Type(name), "Log"), prefix: new HarmonyMethod(typeof(Program), nameof(Quiet)));
@@ -48,6 +50,12 @@ static class Program {
         AccessTools.Field(Type("AlternativeWork.WorkSupplyPlan"), "WindowConfig").SetValue(null, window);
         var hotkeys = Config(false);
         AccessTools.Field(Type("Hotkeys.FunctionalHotkeys"), "Flag").SetValue(null, hotkeys);
+        var shortcut = Config("Shift+F");
+        AccessTools.Field(Type("Hotkeys.EquipmentShortcut"), "Binding").SetValue(null, shortcut);
+        var stationCollisions = Config(true);
+        AccessTools.Field(Type("ShipNavigation.StationDockedCollisions"), "Flag").SetValue(null, stationCollisions);
+        var hullCollisions = Config(true);
+        AccessTools.Field(Type("ShipNavigation.Collisions.PhysicalCollisions"), "Flag").SetValue(null, hullCollisions);
         var autovents = Config(true);
         AccessTools.Field(Type("QoL.AutoVents.AutoVentControl"), "Flag").SetValue(null, autovents);
         var emPropagation = Config(false);
@@ -59,7 +67,26 @@ static class Program {
         var all = (Array)AccessTools.Field(Type("PdaSettings.SettingsRegistry"), "All").GetValue(null);
         var settings = new Dictionary<string, object>();
         foreach (var setting in all) Check(settings.TryAdd((string)Field(setting, "Id"), setting), "Duplicate setting ID");
-        Check(settings.Count == 12, "Settings missing");
+        Check(settings.Count == 15, "Settings missing");
+        var binding = settings["equipment_shortcut"];
+        Check((bool)AccessTools.Property(binding.GetType(), "IsKeyBinding").GetValue(binding), "Shortcut lacks capture control");
+        Check((string)AccessTools.Property(binding.GetType(), "BindingValue").GetValue(binding) == "Shift+F", "Wrong default shortcut");
+        AccessTools.Method(binding.GetType(), "SetBinding").Invoke(binding, new object[] { "ctrl+shift+g" });
+        Check(shortcut.Value == "Ctrl+Shift+G", "PDA shortcut failed to normalize and save");
+        foreach (string invalid in new[] { "Shift+R", "Shift+T", "Escape", "Shift", "Ctrl+MadeUp" }) {
+            bool rejected = false;
+            try { AccessTools.Method(binding.GetType(), "SetBinding").Invoke(binding, new object[] { invalid }); }
+            catch (TargetInvocationException error) { rejected = error.InnerException is ArgumentException; }
+            Check(rejected && shortcut.Value == "Ctrl+Shift+G", "Invalid shortcut changed config: " + invalid);
+        }
+        AccessTools.Method(binding.GetType(), "SetBinding").Invoke(binding, new object[] { "Shift+F" });
+        Check((int)Get(settings["station_docked_collisions"]) == 1, "Station exemption must retain previous default");
+        Set(settings["station_docked_collisions"], 0); Check(!stationCollisions.Value, "Station PDA option did not disable");
+        Set(settings["station_docked_collisions"], 1); Check(stationCollisions.Value, "Station PDA option did not enable");
+        Set(settings["hull_collisions"], 0); Check(!hullCollisions.Value, "Hull collision PDA option did not disable");
+        Set(settings["hull_collisions"], 1); Check(hullCollisions.Value, "Hull collision PDA option did not enable");
+        Check((string)Field(settings["hull_collisions"], "Lifetime") == "Saved", "Hull collision setting must persist");
+        Check((string)Field(settings["station_docked_collisions"], "Lifetime") == "Saved" && (string)Field(binding, "Lifetime") == "Saved", "New controls must persist");
         var wreckSetting = settings["venus_wreck_percent"];
         Check((int)Get(wreckSetting) == 50 && (string)Field(wreckSetting, "Lifetime") == "Saved", "Wreck default/lifetime incorrect");
         Check((bool)AccessTools.Property(wreckSetting.GetType(), "IsPercentage").GetValue(wreckSetting), "Wreck option must use percentage control");

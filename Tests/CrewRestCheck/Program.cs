@@ -187,6 +187,25 @@ static class Program {
         Check(Named(loot, "CONDSitEnd")["aCOs"].Values<string>().Contains("-Sitting=1.0x1"), "Stand-up does not clear sitting");
         Check(Named(loot, "CONDSitEndThem")["aCOs"].Values<string>().Contains("-IsOccupied=1.0x1"), "Stand-up does not release seat occupancy");
         var triggers = JArray.Parse(File.ReadAllText(root + "condtrigs/condtrigs.json"));
+        // Native evaluator, prescribed item labels: a global asset edit rejects
+        // the same target irrespective of who requested sleep or manual intent.
+        var nativeBed = CondTrigger.CloneFromJSON(Named(triggers, "TIsBedFree").ToObject<JsonCondTrigger>());
+        var stricterBed = nativeBed.Clone();
+        stricterBed.aForbids = stricterBed.aForbids.Concat(new[] { "IsContainer", "IsEVASuit" }).ToArray();
+        var parentBoundary = new Harmony("offline.crewrest.asset-parent-boundary");
+        parentBoundary.Patch(AccessTools.Method(typeof(CondOwner), "ValidateParent"), prefix: new HarmonyMethod(typeof(Program), nameof(Quiet)));
+        try {
+            foreach (string kind in new[] { "IsContainer", "IsEVASuit" }) {
+                var improvised = CO("asset-improvised-" + kind, "IsCushion", "IsSheet", kind);
+                improvised.mapConds = new Dictionary<string, Condition>();
+                foreach (string label in new[] { "IsCushion", "IsSheet", kind }) { var condition = Empty<Condition>(); condition.strName = label; condition.fCount = 1; improvised.mapConds[label] = condition; }
+                Check(nativeBed.Triggered(improvised, logOutcome: false), "Native bed asset no longer admits improvised target");
+                Check(!stricterBed.Triggered(improvised, logOutcome: false), "Proposed global bed asset filter does not reject improvised target");
+            }
+        } finally { parentBoundary.UnpatchSelf(); }
+        var sleepStart = Named(interactions, "SeekSleepSimple");
+        Check((string)sleepStart["CTTestThem"] == "TIsBedFree" && (bool?)sleepStart["bHumanOnly"] != true,
+            "Sleep interaction no longer shares its target trigger with autonomous use");
         Check(Named(triggers, "TNoDiscomfortsSitting")["aForbids"].Values<string>().Contains("DcOxygen03"), "Native oxygen-related seat exit changed");
         Check(Harmony.GetPatchInfo(AccessTools.Method(typeof(PledgeSurviveO2), "IsEmergency")) == null, "Oxygen emergency handling patched");
     }

@@ -7,6 +7,8 @@ using HarmonyLib;
 using Ostranauts.Core;
 using Ostranauts.Ships;
 using Ostranauts.Ships.AIPilots;
+using Ostranauts.Ships.AIPilots.Interfaces;
+using Ostranauts.Ships.Comms;
 using Ostranauts.Ships.Commands;
 using Ostranauts.ShipGUIs.Utilities;
 using Ostrabus.CeresNavigation;
@@ -57,12 +59,23 @@ static class CeresAuditChecks {
         internal NativeProbe(Program.Pilot pilot) : base(pilot) { }
         public override CommandStatus RunCommand(Blackboard board) { nativeCalls++; return Running; }
     }
+    sealed class FlagGate : BaseCommand {
+        readonly string key;
+        internal FlagGate(Program.Pilot pilot, string flag) : base(pilot) { key = flag; }
+        public override CommandStatus RunCommand(Blackboard board) => board.Get<bool>(key) ? Success : Failure;
+    }
     static AIShip Controller(Ship ship, Blackboard board = null, AIType role = AIType.Navy) {
         var pilot = new Program.Pilot { ShipUs = ship, Speed = 1e-9, Role = role, Blackboard = board ?? new Blackboard() };
         pilot.PriorityQueue = new QueuedCommandsNode("PriorityQueue", pilot);
         var ai = Empty<AIShip>(); Field(ai, "_shipUs", ship); Field(ai, "_aiCharacter", pilot);
         Field(ai, "<Blackboard>k__BackingField", pilot.Blackboard); Field(ai, "<HomeStation>k__BackingField", home.strRegID);
-        Field(ai, "_behaviorTree", new NativeProbe(pilot));
+        var main = new StickySequenceCommand("Main", new ICommand[] { new NativeProbe(pilot), new FlyTo(pilot), new Dock(pilot) });
+        var tree = new SelectorCommand("BehaviorTree", pilot.PriorityQueue,
+            new SequenceCommand("CombatResponse", new ICommand[] { new AmIInCombat(pilot), new NativeProbe(pilot) }),
+            new SequenceCommand("ThreatResponse", new ICommand[] { new FlagGate(pilot, "fixture.threat"), new NativeProbe(pilot) }),
+            new SequenceCommand("SupportResponse", new ICommand[] { new FlagGate(pilot, "fixture.support"), new NativeProbe(pilot) }), main);
+        pilot.BehaviorTree = tree;
+        Field(ai, "_behaviorTree", tree);
         AIShipManager.dictAIs = new Dictionary<string, List<AIShip>> { ["ceres"] = new List<AIShip> { ai } };
         return ai;
     }
@@ -74,7 +87,7 @@ static class CeresAuditChecks {
         ai.RunAI();
         Check(flyCalls == before + 1 && StationReturn.Pending(ai), "Return flight did not run exclusively");
     }
-    internal static void Run() {
+    internal static void Run(bool auditPriority = false) {
         var h = new Harmony("offline.ceres.repair");
         try {
             CrewSim.system = Empty<StarSystem>(); CrewSim.system.dictShips = new Dictionary<string, Ship>();
@@ -97,15 +110,36 @@ static class CeresAuditChecks {
             Patch(h, typeof(FlyTo), "CanExecute", nameof(Yes));
             Patch(h, typeof(Dock), "RunCommand", nameof(Docked));
             foreach (Type patch in new[] { typeof(InvalidRcsBudgetPatch), typeof(ClearTargetFuelPatch), typeof(RetargetFuelPatch),
-                typeof(StationReturnPatch), typeof(StationReturnFastForwardPatch), typeof(NavyCandidateFuelPatch),
+                typeof(StationReturnPatch), typeof(StationReturnMissionPatch), typeof(StationReturnFastForwardPatch), typeof(NavyCandidateFuelPatch),
                 typeof(LegacyReturnLoadPatch),
                 typeof(CeresNavigationGuardrails.ReturnGuardPatch), typeof(CeresNavigationGuardrails.PatrolHomePatch),
                 typeof(CeresNavigationGuardrails.PlannedReservePatch) }) h.CreateClassProcessor(patch).Patch();
 
             var ship = ShipAt("audit-patrol"); var ai = Controller(ship);
+            // Real pilot constructors, not assumed Main names/shapes. In
+            // particular Navy uses FlyToPatrol, whose FindCommand is exact-type.
+            h.Patch(AccessTools.Method(typeof(Comms), nameof(Comms.GetCaptain)), prefix: new HarmonyMethod(typeof(CeresAuditChecks), nameof(Quiet)));
+            var triggerLookup = AccessTools.Method(typeof(DataHandler), nameof(DataHandler.GetCondTrigger), new[] { typeof(string) });
+            h.Patch(triggerLookup, prefix: new HarmonyMethod(typeof(CeresAuditChecks), nameof(Quiet)));
+            foreach (AIType role in new[] { AIType.Navy, AIType.Pirate, AIType.Police }) {
+                var realShip = ShipAt("real-tree-" + role);
+                Field(realShip, "<Comms>k__BackingField", Empty<Comms>());
+                BaseCharacter realPilot = role == AIType.Navy ? (BaseCharacter)new NavyPilot(null, realShip) :
+                    role == AIType.Pirate ? new PiratePilot(null, realShip) : new PolicePilot(null, realShip);
+                var realAI = Empty<AIShip>(); Field(realAI, "_shipUs", realShip); Field(realAI, "_aiCharacter", realPilot);
+                Field(realAI, "<Blackboard>k__BackingField", realPilot.Blackboard);
+                StationReturn.Request(realAI, home); StationReturn.Register(realAI);
+                var root = (SelectorCommand)realPilot.BehaviorTree;
+                var branches = (List<ICommand>)AccessTools.Field(typeof(SelectorCommand), "_childCommands").GetValue(root);
+                int beforeReal = flyCalls; flyRunning = true;
+                StationReturn.RunChild(branches.Last(), realPilot.Blackboard, root);
+                Check(flyCalls == beforeReal + 1, "Real " + role + " mission did not accept return dispatch");
+                StationReturn.Cancel(realAI);
+            }
+            h.Unpatch(triggerLookup, HarmonyPatchType.Prefix, h.Id);
             ai.Blackboard.Set("TripFuelPrediction", "old-patrol&100");
             StationReturn.Request(ai, home);
-            Check(!ai.Blackboard.HasKey("TripFuelPrediction"), "Retarget retains previous fuel prediction");
+            Check(ai.Blackboard.HasKey("TripFuelPrediction") && ship.shipScanTarget == null, "Request changed active target/prediction before gaining control");
             Check(ai.AICharacter.PriorityQueue.CanExecute(ai.Blackboard) == false, "Return created a queued custom sequence");
             flyRunning = true; AssertFlight(ai); AssertFlight(ai);
             Check(dockCalls == 0 && nativeCalls == 0, "Return ran docking/tree while flight is running");
@@ -171,8 +205,45 @@ static class CeresAuditChecks {
             StationReturn.Request(ai, home);
             Check(ReferenceEquals(plan, ship.objSS.NavData), "Duplicate return request discarded healthy route");
             ai.AICharacter.PriorityQueue.EnqueueCommand(new NativeProbe((Program.Pilot)ai.AICharacter));
-            AssertFlight(ai);
-            Check(ai.AICharacter.PriorityQueue.CanExecute(ai.Blackboard), "Return discarded unrelated queued command");
+            int urgentBefore = nativeCalls, returnBefore = flyCalls;
+            ai.RunAI();
+            Check(nativeCalls == urgentBefore + 1 && flyCalls == returnBefore, "Return starved native queued command");
+            Check(StationReturnFastForwardPatch.Prefix(ai), "Return suppressed queued command SFF");
+            var priorityQueue = ai.AICharacter.PriorityQueue;
+            Field(priorityQueue, "currentCommand", null);
+            ((Queue<ICommand>)AccessTools.Field(typeof(QueuedCommandsNode), "commandQueue").GetValue(priorityQueue)).Clear();
+            if (auditPriority) {
+                int treeBefore = nativeCalls, flightBefore = flyCalls;
+                ai.Blackboard.Set("InCombat", true);
+                Check(new AmIInCombat(ai.AICharacter).RunCommand(ai.Blackboard).Status == CommandCode.Finished,
+                    "Audit setup did not activate native combat predicate");
+                ai.RunAI();
+                Check(nativeCalls == treeBefore + 1 && flyCalls == flightBefore,
+                    "Pending return bypassed native combat branch");
+                Check(StationReturnFastForwardPatch.Prefix(ai), "Return suppressed active combat SFF");
+                ai.Blackboard.Set("InCombat", false);
+                AssertFlight(ai);
+                foreach (string flag in new[] { "fixture.threat", "fixture.support" }) {
+                    ai.Blackboard.Set(flag, true); treeBefore = nativeCalls; flightBefore = flyCalls;
+                    ai.RunAI();
+                    Check(nativeCalls == treeBefore + 1 && flyCalls == flightBefore, "Return bypassed preceding " + flag + " selector branch");
+                    ai.Blackboard.Set(flag, false); AssertFlight(ai);
+                }
+                ai.Blackboard.Set("InCombat", true);
+                ai = Controller(ship, Reload(ai.Blackboard)); treeBefore = nativeCalls; flightBefore = flyCalls;
+                ai.RunAI();
+                Check(nativeCalls == treeBefore + 1 && flyCalls == flightBefore && StationReturn.Pending(ai), "Reloaded combat lost priority or return intent");
+                ai.Blackboard.Set("InCombat", false); AssertFlight(ai);
+                // A new request during a reaction must not steal its target or
+                // invalidate its planned maneuver before the mission gets control.
+                var reactionDestination = ShipAt("reaction-destination", .005);
+                new TargetData(reactionDestination).ApplyToShip(ship);
+                Field(ai, "_activeReaction", new NativeProbe((Program.Pilot)ai.AICharacter));
+                StationReturn.Request(ai, reactionDestination); StationReturn.Request(ai, home);
+                Check(ReferenceEquals(ship.shipScanTarget, reactionDestination), "Request overwrote reaction destination");
+                Field(ai, "_activeReaction", null);
+                Console.WriteLine("Priority regression fixed: native queued/combat decisions run before return; quiet return resumes.");
+            }
             StationReturn.Cancel(ai);
 
             ai = Controller(ship); StationReturn.Request(ai, home);

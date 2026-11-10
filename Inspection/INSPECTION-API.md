@@ -27,11 +27,17 @@ request bodies, or persistent connections are exposed.
 | `/profiling/transit` | Detached temporary transit/barter method timings and recent slow frame gaps, readable while loading. |
 | `POST /profiling/transit/start` | Install the temporary transit profiler; preserves loading behavior and records GC counts. |
 | `POST /profiling/transit/stop` | Finish capture and remove all transit profiling hooks. See [transit profiling](../Optimizations/TRANSIT-PROFILING.md). |
+| `/profiling/socials` | Detached inclusive/exclusive timings, allocations, portrait fallback counts and deferred UI work from a temporary Socials capture. Readable while the main thread is busy. |
+| `POST /profiling/socials/start` | Arm temporary hooks for the next Socials opening. Automatically unhooks after that opening and three deferred UI frames, or after 180 seconds. |
+| `POST /profiling/socials/open` | Explicit diagnostic UI action: arm capture and open the native Socials app. Rejects an unavailable PDA or an already-open Socials app. Does not evict portrait caches or rerun save loading. |
+| `POST /profiling/socials/stop` | Cancel capture and remove its hooks while retaining captured detached results. Also stops on scene/system changes and API shutdown. |
 | `/events/docking?since=0&limit=25` | Recent successful dock/moor/undock/unmoor transitions observed since plugin startup. |
 | `/events/ai?since=0&limit=25&shipId=O-TXXW` | Bounded in-memory history of sampled AI command, target, combat, and docking-state changes. |
 | `/events/combat?since=0&limit=25&shipId=O-TXXW` | Successful weapon-fire and ship-damage events; filters by involved ship ID. |
 | `/shipboard` | Current shallow boarding encounters, including start epoch and per-ship start crew readiness (`alive/active/ranged/other weapon/unarmed`) alongside current crew/load state, next casualty timing, ships ordered to return home, and the latest resolution's prize-capture checks. Weapon counts include detected carried weapons; read-only, captured on the Unity thread. See the [shipboard action module notes](../ShipboardAction/README.md) for the encounter and resolution rules. |
 | `/world` | Ship/CO counts, AI-region count, pause state. |
+| `/ui/scrollbacks` | Current map and docking/comms display bindings, visibility, scroll bounds/positions, follow state and pointer mapping. Read on demand; no recorder or additional hooks. |
+| `/ui/hulls` | Exterior-perimeter worker/queue state, capture progress, published/applied versions, component/vertex/rendered-point counts, zoom/selection/scale details, collision-cover pieces/errors and optional physical hit/sweep/fallback counters. Read on demand; no diagnostic hooks. |
 | `/orbital` | Orbital/SFF reports, including `lastEconomy` dispatch, production, arrival, failure and timing counts with bounded shipment cargo summaries. |
 | `/economy` | Economic clocks, market count/settings and last SFF economic report; see [economy inspection](ECONOMY.md). |
 | `/economy/stations` or `/economy/markets` | Paged station markets or all registered markets, including lifecycle and recipe/category counts. |
@@ -52,9 +58,12 @@ request bodies, or persistent connections are exposed.
 | `/player` | Player character, selected crew, their respective ships, nav device/ship, and crosshair target ID. Also included in `/world`. |
 | `/player/nearby?radiusKm=500&offset=0&limit=25` | Ships near the selected crew's ship, with approximate distance, bearing and relative velocity. |
 | `/ships?offset=0&limit=25` | Ship IDs, names, load state, destroyed and AI flags. |
-| `/ships/O-U2V` | Ship summary, raw shallow fuel/capacity/mass, propulsion fields, AI timers, scan/combat targets, navigation target and stored nav plan, and saved direct docking links. |
+| `/ships/O-U2V` | Ship summary, raw shallow fuel/capacity/mass, propulsion fields, AI timers, scan/combat targets, navigation target and stored nav plan, saved direct docking links, and read-only `stationDockedCollisionExempt`. |
 | `/ships/O-U2V/ai` | AI registration, region, home station, active command chain/state, navigation target and stored nav plan, affiliations, captain, combat target and combat blackboard. |
+| `GET /ships/O-U2V/refuel` | Preview replenishing this AI ship's RCS fuel to capacity. Optional `targetKg` specifies desired total kilograms, clamped to capacity; lower targets never drain fuel. |
+| `POST /ships/O-U2V/refuel` | Apply that explicit refill on the Unity thread, using corrected shallow/native materialized filling. Preserve remaining route consumption by rebasing stored fuel levels once. See [refuel contract](REFUEL.md). |
 | `/ships/O-U2V/factions` | Ship owner, ship affiliations and ship CO affiliations, including unregistered ships. |
+| `POST /ships/O-U2V/prune?force=true&dryRun=true` | Preview named-hull pruning with native detachment; apply with `confirm=PRUNE`. Ownership/plot/crew protections remain. See [ship pruning](SHIP-PRUNING.md). |
 | `/ships/O-U2V/comms?offset=0&limit=25` | Raw crew/profile references and both sides' recent conversation entries. Does not send messages or evaluate interactions. |
 | `/ships/O-U2V/comms/O-QYX?offset=0&limit=25` | Stored conversation between any two ships, read from both ship logs. |
 | `/npcs?offset=0&limit=25` | COs with a PersonSpec; the scan cursor counts all COs, so pages may be empty. |
@@ -215,7 +224,8 @@ Invoke-RestMethod -Method Post 'http://127.0.0.1:18764/ships/O-X5GYK/prune?confi
 
 The path accepts one exact registry ID/call sign, URL-encoded, up to 64 characters.
 There is no display-name, transponder-alias, prefix or wildcard matching. This
-route requires POST, including for dry runs. It accepts only `dryRun` and `confirm`.
+route requires POST, including for dry runs. It accepts only `dryRun`, `confirm`
+and optional boolean `force`.
 Actual deletion requires `confirm=PRUNE`; `dryRun=true` checks eligibility only.
 The existing loopback, browser-Origin rejection, queued main-thread execution,
 generation and request-expiration protections apply.
@@ -223,7 +233,10 @@ generation and request-expiration protections apply.
 The native crew condition is `TIsNPCPrunable`; there is no invented hull flag.
 Every resolved crew member must pass before anyone is removed. Unresolved crew,
 non-pruneable crew, player-owned/current-player ships, active plot ships, stations,
-body objects and docked/tethered ships are refused. Empty traffic AI and derelicts
+body objects are refused. Docked/tethered ships are refused unless `force=true`
+can safely detach the shallow group through native methods. Connected player,
+station/body and plot ships stay protected; only the named hull is pruned.
+Empty traffic AI and derelicts
 are eligible under these protections; other empty hulls are refused. Explicit
 pruning has no distance/faction restriction and permits anchored derelicts.
 
@@ -236,8 +249,11 @@ Native hull destruction unregisters AI and cleans the registry/COs. This endpoin
 has no background worker, retained ship references or persistent state.
 
 Offline `Tests/ShipPruneCheck` covers parsing and refusal/commit ordering with
-native types and explicit trigger/destruction test doubles. It does not execute
-Unity scene teardown offline. No live pruning is performed by those checks.
+native types and explicit trigger/destruction test doubles (156 assertions).
+It also executes native pair/chain undocking and group teardown, while gravity,
+mass and presentation are fixture boundaries. It does not execute Unity scene
+teardown offline. No live pruning is performed by those checks. Full force and
+partial-detachment contract: [ship pruning](SHIP-PRUNING.md).
 
 `/logs` is served on the HTTP thread and stays available when the simulation
 cannot pump requests. It combines Unity's threaded log event, BepInEx events,

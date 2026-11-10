@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/dcf1842627b54063124bd9cab21b48749c87f9982bf92fed47e7e7aa020941c1.json.br",
+  "reason": "Reviewed shared flight fuel source/dependency addition; retain retriever abstraction and record accounting as an unexpanded boundary with native witness in scavenger slice.",
+  "acceptedUtc": "2026-11-09T19:07:10.9777333Z",
+  "previousSnapshot": "assembly-baselines/9cad41940b6b7e5f3397ed5f8664ecebde17d022d3fa0e2f2e82bc3c59405e7c.json.br"
+}

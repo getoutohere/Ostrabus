@@ -43,10 +43,6 @@ internal static class HaulerRecovery {
         }
         return null;
     }
-    internal static AIShip GetVorbHaulerAI(Ship ship) {
-        var ai = Controller(ship);
-        return ai != null && string.Equals(ai.HomeStation, "VORB", StringComparison.Ordinal) ? ai : null;
-    }
     internal static bool EmptyAndUncontrolled(Ship ship) => ship?.objSS != null && !ship.HasDockGroup && !ship.IsDocked() &&
         ship.GetAllDockedShips().Count == 0 && ship.objSS.NavData == null && ship.objSS.vAccIn.x == 0 && ship.objSS.vAccIn.y == 0;
     internal static bool Targetless(Ship ship) => ship.shipScanTarget == null && ship.shipSituTarget == null;

@@ -2,6 +2,13 @@
 
 Always enabled through the plugin's normal Harmony lifecycle. No update loop or saved state.
 
+## Comms channel window
+
+`CommsDisplayPatch` corrects the native oldest-100 selection to show the newest
+100 messages chronologically. Formatting, live arrivals and conversation
+interactions remain native. See [comms investigation and protected history
+retention](../Optimizations/COMMS-HISTORY.md) for the separate cleanup policy.
+
 ## Torch autopilot fuel cache
 
 **Pending in-game playtesting.** The following describes the local Debug
@@ -346,9 +353,11 @@ player-facing console only. The observed spam was U+9997 (`馗`) in the vanilla
 fallbacks lack that glyph, so TextMeshPro substitutes a space. Correct rendering
 requires an appropriate font asset/fallback; this filter leaves rendering intact.
 
-Original warnings remain in `Player.log` and inspection logs. Other fonts,
-warning formats and all errors/exceptions remain visible. Always on, no setting,
-save data or retained objects. `Tests/MissingGlyphCheck` passes 15 checks,
+The same filter also hides the standard missing-ellipsis warning, observed with
+`Jura-Bold SDF`, when TextMeshPro explicitly falls back to Truncate overflow.
+Original warnings remain in `Player.log` and inspection logs. Other warning
+formats and all errors/exceptions remain visible. Always on, no setting,
+save data or retained objects. `Tests/MissingGlyphCheck` passes 21 checks,
 including native console output and warning-badge behavior.
 
 ## Walking into an adjacent work target

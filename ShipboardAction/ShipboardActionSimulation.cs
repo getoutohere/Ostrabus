@@ -586,12 +586,8 @@ internal static class ShipboardActionSimulation
                 ai.Blackboard.Remove(ReturnRouteQueuedKey);
                 continue;
             }
-            if (ship.shipScanTarget == null)
-            {
-                ship.shipScanTarget = home;
-                ship.shipSituTarget = home.objSS;
-                ship.TargetData = new TargetData(home);
-            }
+            // Pending intent is enough. The shared ordinary-mission branch
+            // binds home only after native urgent/combat decisions have run.
         }
     }
 

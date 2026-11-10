@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/f64798948cd0dfcec8a3f16332441bb3a4937bf01905219038d97e1af5fa5e5f.json.br",
+  "reason": "Reviewed single retarget observer and removed VORB empty-home shortcut; shared actual RCS replenishment with unchanged navigation policy. Native reproduction 3; refill 21; scope 70; API 23; mixed accounting 22; SOS recovery 43; lifecycle 143; priority 93; orbital/hauler 4850 pass. Updated overlays and native bindings; native assembly and assets unchanged.",
+  "acceptedUtc": "2026-11-09T21:37:31.8958906Z",
+  "previousSnapshot": "assembly-baselines/abc9d717fb9ee767504361bc4f17eb3d4979753f415bb17b1de0780417724eb1.json.br"
+}

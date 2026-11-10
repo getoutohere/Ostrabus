@@ -2,7 +2,7 @@
 
 Namespace `Ostrabus.Venus`, formerly `VorbHaulerReturn`. These patches cover:
 
-- VORB hauler route validation, manual navigation fallback and return fuel assistance.
+- VORB hauler route validation and manual navigation fallback.
 - Enabling native VORB derelict anchoring and correcting the orbit lookup on undock.
 - A configurable Venus-specific wreck spawn chance at VORB (50% by default).
 - Correct VORB retrieval dispatch and wreck ownership lookup instead of using VNCA's regional station.
@@ -11,6 +11,8 @@ Namespace `Ostrabus.Venus`, formerly `VorbHaulerReturn`. These patches cover:
 General deploying-hauler home-return recovery and abandoned-thrust cleanup live
 in [Haulers](../Haulers/README.md) and apply at all stations. General orbital and
 super-fast-forward corrections live in `Orbital`.
+Shared [RCS refill accounting](../Navigation/RCS-REPLENISHMENT.md) applies across
+AI roles/homes; the remaining VORB route safeguards do not own that accounting.
 
 ## Wreck distribution
 

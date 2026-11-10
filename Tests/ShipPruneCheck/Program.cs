@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using HarmonyLib;
 using Ostrabus.Inspection;
 
-static class Program {
+static partial class Program {
     static int checks,hulls,people,homeRemovals,visibility;
     static bool missingTrigger,retainCrew;
     static StarSystem world;
@@ -28,8 +28,11 @@ static class Program {
         var ship=Empty<Ship>();ship.strRegID=id;ship.publicName="fixture";ship.IsAIShip=true;
         AccessTools.Property(typeof(Ship),nameof(Ship.objSS)).SetValue(ship,Empty<ShipSitu>());
         AccessTools.Field(typeof(Ship),"aDockingPorts").SetValue(ship,new List<string>());
+        AccessTools.Field(typeof(Ship),"aDocked").SetValue(ship,new Dictionary<string,Ship>());
+        AccessTools.Field(typeof(Ship),"nLoadState").SetValue(ship,Ship.Loaded.Shallow);
+        AccessTools.Field(typeof(Ship),"aPeople").SetValue(ship,new List<PersonSpec>());
         world.dictShips[id]=ship;var crew=new List<CondOwner>();crews[id]=crew;
-        for(int i=0;i<crewCount;i++){var person=Empty<CondOwner>();AccessTools.Field(typeof(CondOwner),"_strID").SetValue(person,id+"-"+i);crew.Add(person);allowed.Add(person.strID);}
+        for(int i=0;i<crewCount;i++){var person=Empty<CondOwner>();AccessTools.Field(typeof(CondOwner),"_strID").SetValue(person,id+"-"+i);crew.Add(person);allowed.Add(person.strID);ship.People.Add(Empty<PersonSpec>());}
         return ship;
     }
     static InspectionHttp Http(string target,string method="POST") {
@@ -57,16 +60,20 @@ static class Program {
             AccessTools.Field(typeof(StarSystem),"dictShipOwners").SetValue(world,new Dictionary<string,string>());
             CrewSim.system=world;CrewSim.coPlayer=Empty<CondOwner>();AccessTools.Field(typeof(CondOwner),"_strID").SetValue(CrewSim.coPlayer,"player");
             PlotManager.dictPlotsActive=new Dictionary<string,JsonPlotSave>();
-            foreach(var pair in new[]{new[]{"/ships/O-X5GYK/prune?dryRun=true","O-X5GYK"},new[]{"/ships/O-X5GYK/prune?confirm=PRUNE","O-X5GYK"}}) {
+            foreach(var pair in new[]{new[]{"/ships/O-X5GYK/prune?dryRun=true","O-X5GYK"},new[]{"/ships/O-X5GYK/prune?confirm=PRUNE","O-X5GYK"},new[]{"/ships/O-X5GYK/prune?dryRun=true&force=true","O-X5GYK"},new[]{"/ships/O-X5GYK/prune?confirm=PRUNE&force=true","O-X5GYK"},new[]{"/ships/O-X5GYK/prune?force=false&dryRun=true","O-X5GYK"}}) {
                 var http=Http(pair[0]);Check(http.Error==null,"HTTP rejected supported POST");
-                Check(ShipPruning.Parse(http,out string id,out bool dry,out string error) && id==pair[1] && error==null,"Route parse failed");
+                Check(ShipPruning.Parse(http,out string id,out bool dry,out bool force,out string error) && id==pair[1] && error==null,"Route parse failed");
                 Check(dry==pair[0].Contains("dryRun=true"),"Wrong dry-run dispatch");
+                Check(force==pair[0].Contains("force=true"),"Wrong force dispatch");
             }
-            foreach(string target in new[]{"/ships/O-A/prune","/ships/O-A/prune?confirm=prune","/ships/O-A/prune?dryRun=1","/ships/O-A/prune?dryRun=true&shipId=O-B","/ships/O%2FA/prune?dryRun=true","/ships//prune?dryRun=true"})
-                Check(!ShipPruning.Parse(Http(target),out _,out _,out _),"Accepted malformed/ambiguous request: "+target);
-            Check(!ShipPruning.Parse(Http("/ships/O-A/prune?dryRun=true","GET"),out _,out _,out _),"GET permitted prune dispatch");
-            Check(!ShipPruning.Parse(Http("/world?dryRun=true","GET"),out _,out _,out _),"Unrelated route accepted dryRun");
+            foreach(string target in new[]{"/ships/O-A/prune","/ships/O-A/prune?confirm=prune","/ships/O-A/prune?dryRun=1","/ships/O-A/prune?dryRun=true&shipId=O-B","/ships/O%2FA/prune?dryRun=true","/ships//prune?dryRun=true","/ships/O-A/prune?confirm=PRUNE&force=1","/ships/O-A/prune?dryRun=true&force="})
+                Check(!ShipPruning.Parse(Http(target),out _,out _,out _,out _),"Accepted malformed/ambiguous request: "+target);
+            Check(!ShipPruning.Parse(Http("/ships/O-A/prune?dryRun=true","GET"),out _,out _,out _,out _),"GET permitted prune dispatch");
+            Check(!ShipPruning.Parse(Http("/world?dryRun=true","GET"),out _,out _,out _,out _),"Unrelated route accepted dryRun");
+            Check(!ShipPruning.Parse(Http("/world?force=true","GET"),out _,out _,out _,out _),"Unrelated route accepted force");
             Check(Http("/ships/O-A/prune?dryRun=true&dryRun=true").Error!=null,"Duplicate query accepted");
+            Check(Http("/ships/O-A/prune?confirm=PRUNE&force=true&force=true").Error!=null,"Duplicate force accepted");
+            Check(Http("/ships/O-A/refuel?targetKg=500").Error==null,"Transport rejected supported refuel targetKg");
             Check(!ShipPruning.IsRoute("/ships/prune"),"Missing-ID route overlaps path segments");
             var ship=Make("O-A",2);
             Check(ShipPruning.Run("O-A",false,null).Status==400 && hulls==0 && people==0,"Missing confirmation mutated state");
@@ -91,6 +98,7 @@ static class Program {
             Make("O-PARTIAL",1);retainCrew=true;int hullCount=hulls;
             var partial=ShipPruning.Run("O-PARTIAL",false,"PRUNE");
             Check(partial.Status==409 && !(bool)Body(partial)["removed"] && hulls==hullCount && world.dictShips.ContainsKey("O-PARTIAL"),"Hull removed while crew remained");
+            retainCrew=false;CheckForce(h);
             CrewSim.coPlayer=null;Check(ShipPruning.Run("O-ANCHOR",false,"PRUNE").Status==503,"Missing player protection allowed mutation");
             Console.WriteLine(checks+" ship-pruning checks passed (parser, dry-run, refusal, complete preflight and exact-target destruction dispatch).");return 0;
         } finally {h.UnpatchSelf();}

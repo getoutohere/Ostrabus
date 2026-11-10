@@ -34,7 +34,8 @@ See [saved evidence, native reproduction and validation](OKLG-RETRIEVER-RUNAWAYS
 `Ostrabus.Haulers` generalizes the former VORB home-return patches to
 deploying haulers at every station. Always active, as the former patches were;
 independent of the experimental Orbital toggle. Venus-specific route validation,
-manual navigation fallback and fuel assistance remain in Venus.
+and manual navigation fallback remain in Venus. RCS refill accounting now lives
+in [shared navigation](../Navigation/RCS-REPLENISHMENT.md), independent of role/home.
 
 After a successful derelict release or empty HaulShip failure, an eligible empty
 hauler's native pilot supplies its target. Recovery verifies that the target is

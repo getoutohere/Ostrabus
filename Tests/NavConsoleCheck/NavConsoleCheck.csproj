@@ -3,11 +3,13 @@
   <ItemGroup>
     <Reference Include="BepInEx"><HintPath>$(GameDir)/BepInEx/core/BepInEx.dll</HintPath></Reference>
     <Compile Include="../../NavConsole/*.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="../../Navigation/StationDockedCollisions.cs" Link="StationDockedCollisions.cs" />
     <EmbeddedResource Include="../../NavConsole/Assets/RoundKnob-v3.png" LogicalName="Ostrabus.NavConsole.RoundKnob.png" />
     <Reference Include="UnityEngine.ImageConversionModule"><HintPath>$(Game)/Ostranauts_Data/Managed/UnityEngine.ImageConversionModule.dll</HintPath></Reference>
     <Reference Include="Assembly-CSharp"><HintPath>$(Game)/Ostranauts_Data/Managed/Assembly-CSharp.dll</HintPath></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Game)/Ostranauts_Data/Managed/UnityEngine.CoreModule.dll</HintPath></Reference>
     <Reference Include="UnityEngine.UIModule"><HintPath>$(Game)/Ostranauts_Data/Managed/UnityEngine.UIModule.dll</HintPath></Reference>
+    <Reference Include="Unity.InputSystem"><HintPath>$(Game)/Ostranauts_Data/Managed/Unity.InputSystem.dll</HintPath></Reference>
     <Reference Include="UnityEngine.UI"><HintPath>$(Game)/Ostranauts_Data/Managed/UnityEngine.UI.dll</HintPath></Reference>
     <Reference Include="Unity.TextMeshPro"><HintPath>$(Game)/Ostranauts_Data/Managed/Unity.TextMeshPro.dll</HintPath></Reference>
     <Reference Include="0Harmony"><HintPath>$(Game)/BepInEx/core/0Harmony.dll</HintPath></Reference>

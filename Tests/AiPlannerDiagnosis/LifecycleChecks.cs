@@ -21,6 +21,7 @@ static class LifecycleChecks {
     static void Field(object target, string name, object value) => AccessTools.Field(target.GetType(), name).SetValue(target, value);
     static void Check(bool ok, string reason) { checks++; if (!ok) throw new Exception(reason); }
     static bool Quiet() => false;
+    static bool ExpectedGuardWarning(object message) => !message.ToString().StartsWith("[VORB Nav Guard] Rejected route for guard-hauler:", StringComparison.Ordinal);
     static bool TransformOf(ref Transform __result) { __result = transform; return false; }
     static bool Find(ref GameObject __result) { __result = go; return false; }
     static bool Amount(ref double __result) { __result = 0; return false; }
@@ -184,7 +185,6 @@ static class LifecycleChecks {
         } finally { h.UnpatchSelf(); }
     }
     static void GuardIntegration(CrewSim crewSim, StarSystem system, Harmony h) {
-        h.CreateClassProcessor(typeof(Ostrabus.Venus.VorbTargetChangePatch)).Patch();
         h.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.RetargetFuelPatch)).Patch();
         h.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.ClearTargetFuelPatch)).Patch();
         var station = ShipAt("VORB", new ShipSitu(false) { bIsBO = true, strBOPORShip = "VORB" }); system.dictShips["VORB"] = station;
@@ -229,5 +229,30 @@ static class LifecycleChecks {
         observer.shipSituTarget = new ShipSitu(other.objSS, false) { vBOOffsety = 2e-7 };
         Ostrabus.Venus.VorbNavPlanGuard.ValidateCurrentPlan(observer);
         Check(observer.objSS.NavData == null && !state.ManualFallback, "Direct waypoint change not invalidated");
+        // Conditional-removal investigation: general target repair does not
+        // perform route validation or account for fuel added after planning.
+        var warning = AccessTools.Method(typeof(Ostrabus.OstrabusPlugin.Sink), "LogWarning");
+        h.Patch(warning, prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(ExpectedGuardWarning)));
+        foreach (string defect in new[] { "negative-fuel", "expired", "non-finite", "reverse-time" }) {
+            Ostrabus.Venus.VorbNavPlanGuard.TargetChanged(observer);
+            var invalid = new NavData(observer);
+            double epoch = StarSystem.fEpoch;
+            invalid.AddNavDataPoint(new NavDataPoint(defect == "expired" ? epoch - 20 : epoch, new ShipSitu(false), 100, 0, 0));
+            invalid.AddNavDataPoint(new NavDataPoint(defect == "expired" ? epoch - 10 : defect == "reverse-time" ? epoch - 1 : epoch + 100,
+                new ShipSitu(false) { vPosx = defect == "non-finite" ? double.NaN : .00001 }, defect == "negative-fuel" ? -1 : 50, 0, 0));
+            observer.objSS.NavData = invalid;
+            Check(!Ostrabus.Venus.VorbNavPlanGuard.ValidateCurrentPlan(observer) && observer.objSS.NavData == null,
+                "VORB guard no longer rejects independent " + defect + " input");
+            Check(Ostrabus.Venus.VorbNavPlanGuard.TryGetState(observer, out var rejected) && rejected.ManualFallback,
+                "Rejected plan did not retain manual fallback");
+        }
+        h.Unpatch(warning, HarmonyPatchType.Prefix, h.Id);
+        Ostrabus.Venus.VorbNavPlanGuard.TargetChanged(observer);
+        var fuelPlan = Route();
+        double plannedUse = fuelPlan.Origin.FuelLevel - fuelPlan.Destination.FuelLevel;
+        Ostrabus.ShipNavigation.RcsReplenishment.Rebase(observer, fuelPlan, 20);
+        Check(fuelPlan.Origin.FuelLevel == 120 && fuelPlan.Destination.FuelLevel == 70 &&
+            fuelPlan.Origin.FuelLevel - fuelPlan.Destination.FuelLevel == plannedUse,
+            "Fuel-addition rebasing is not independent of target-reference integrity");
     }
 }

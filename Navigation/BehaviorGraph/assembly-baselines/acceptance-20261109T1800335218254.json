@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/7e3a96760cf1bf9b9966ed9cdae866cc5f1611f973ffbcacf701ebf1b0005e01.json.br",
+  "reason": "Initial comparison baseline for the source-reviewed 1.0.1.10 retriever reference; dependency coverage limits are retained, not silently approved.",
+  "acceptedUtc": "2026-11-09T18:00:33.5211924Z",
+  "previousSnapshot": null
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/9452d889165dd1502caf17547900a8eab459252acfa987ccf4faeb3b49afd579.json.br",
+  "reason": "Final reviewed station-attached policy: station/apartment chains only; asteroid, beacon, buoy, waypoint and projectile exclusions. 880 navigation/policy and 843 NavConsole checks pass, including native patrol/returning-hauler controls, production approach for three anchors, native proximity with explicit impact-body boundary, immediate undocking, free-space/weapon/body controls and zero warmed allocations/references. Full geometry remains unexpanded; live validation pending.",
+  "acceptedUtc": "2026-11-10T00:25:01.3280705Z",
+  "previousSnapshot": "assembly-baselines/4ed8fcfc1c419cbf598d2f613859677c3431f0fec15c354f450d99f2fb95ddbe.json.br"
+}

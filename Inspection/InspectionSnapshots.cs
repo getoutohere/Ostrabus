@@ -16,6 +16,8 @@ internal static class InspectionSnapshots {
     internal static InspectionApi.Reply Query(string path, int offset, int limit, long start, double radiusKm = 500) {
         var ships = CrewSim.system.dictShips;
         if (path == "/player") { return Reply(200, PlayerInspection.Player()); }
+        if (path == "/ui/scrollbacks") { return Reply(200, global::Ostrabus.NavConsole.Scrollbacks.Snapshot()); }
+        if (path == "/ui/hulls") { return Reply(200, global::Ostrabus.NavConsole.Outlines.HullDisplay.Inspect()); }
         if (path == "/player/nearby") { return PlayerInspection.Nearby(offset, limit, radiusKm, start); }
         if (path == "/shipboard") { return Reply(200, global::Ostrabus.ShipboardAction.ShipboardActionSimulation.InspectionSnapshot()); }
         if (path == "/world") {
@@ -79,6 +81,7 @@ internal static class InspectionSnapshots {
             data.Add("storedShallowFuelKg", ship.fShallowRCSRemass);
             data.Add("storedShallowCapacityKg", ship.fShallowRCSRemassMax);
             data.Add("storedShallowMassKg", ShallowMass(ship));
+            data.Add("stationDockedCollisionExempt", global::Ostrabus.ShipNavigation.StationDockedCollisions.IsExempt(ship));
             data.Add("fuelIsCurrent", ship.LoadState <= Ship.Loaded.Shallow);
             data.Add("fuelNote", "Raw stored fields. Full/Edit ship values may be stale; no canister scan or fallback capacity calculation performed.");
             data.Add("aiPauseTimer", ship.fAIPauseTimer);
@@ -133,7 +136,7 @@ internal static class InspectionSnapshots {
             data.Add("factions", CombatInspection.PersonFactions(co, start));
             return Reply(200, data);
         }
-        return Reply(404, Map("error", "Unknown endpoint.", "routes", "/health /logs /profiling/load /events/docking /events/ai /events/combat /shipboard /console /world /player /player/nearby /ships /ships/{id} /ships/{id}/ai GET|POST /ships/{id}/ai/restore GET|POST /ships/{id}/hauler/rescue GET|POST /ships/{id}/arrival[/{stationId}] /ships/{id}/factions /ships/{id}/comms /ships/{id}/comms/{peerId} POST /ships/{id}/prune /npcs /npcs/{id} /cos/{id}/conditions /cos/{id}/activity /cos/{id}/combat /combat/personnel/trace POST /combat/personnel/trace/start POST /combat/personnel/trace/stop POST /micrometeoroids/strike /derelicts /derelicts/prune"));
+        return Reply(404, Map("error", "Unknown endpoint.", "routes", "/health /logs /profiling/load /events/docking /events/ai /events/combat /shipboard /console /world /player /player/nearby /ships /ships/{id} /ships/{id}/ai GET|POST /ships/{id}/ai/restore GET|POST /ships/{id}/refuel GET|POST /ships/{id}/hauler/rescue GET|POST /ships/{id}/arrival[/{stationId}] /ships/{id}/factions /ships/{id}/comms /ships/{id}/comms/{peerId} POST /ships/{id}/prune /npcs /npcs/{id} /cos/{id}/conditions /cos/{id}/activity /cos/{id}/combat /combat/personnel/trace POST /combat/personnel/trace/start POST /combat/personnel/trace/stop POST /micrometeoroids/strike /derelicts /derelicts/prune"));
     }
 
     static Dictionary<string, object> ShipSummary(string id, Ship ship) {

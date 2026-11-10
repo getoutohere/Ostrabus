@@ -36,6 +36,9 @@ unknown-app fallback returns to Home. No game-save dependency is introduced.
 | Supply window, 1–30 | Saved config | `WorkSupplyPlan.SetWindow` |
 | Venus-specific wrecks, 0–100% slider (default 50%) | Saved config | `VenusDerelicts.SetWreckPercent` |
 | Crew hotkeys | Saved config | `FunctionalHotkeys.Flag.Value` |
+| Helmet and EVA battery shortcut | Saved config | `EquipmentShortcut.Set` |
+| Station-docked hull exemption | Saved config | `StationDockedCollisions.SetEnabled` |
+| Hull-shaped collisions | Saved config | `PhysicalCollisions.SetEnabled` |
 | Kang auto-vents | Saved config | `QoL.AutoVents.AutoVentControl.SetEnabled` (feature toggle only) |
 | Orbital correction | This session | `OrbitalSimulation.SetEnabled` |
 | Orbital coasting | This session | `CoastIntegration.SetEnabled` |

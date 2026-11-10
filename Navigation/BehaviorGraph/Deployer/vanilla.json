@@ -1,0 +1,1316 @@
+{
+    "nodes":  {
+                  "carry":  {
+                                "label":  "Attached deployer: native HaulShip",
+                                "layer":  "control",
+                                "sources":  [
+                                                "pilot",
+                                                "haul"
+                                            ],
+                                "detail":  ""
+                            },
+                  "release":  {
+                                  "label":  "Main[2]: native AnchorDockedShip",
+                                  "layer":  "control",
+                                  "sources":  [
+                                                  "pilot",
+                                                  "anchor"
+                                              ],
+                                  "detail":  ""
+                              },
+                  "free":  {
+                               "label":  "After successful release",
+                               "layer":  "control",
+                               "sources":  [
+                                               "anchor",
+                                               "recovery"
+                                           ],
+                               "detail":  ""
+                           },
+                  "empty":  {
+                                "label":  "Main[1]: empty HaulShip",
+                                "layer":  "control",
+                                "sources":  [
+                                                "haul"
+                                            ],
+                                "detail":  ""
+                            },
+                  "idle":  {
+                               "label":  "No command: abandoned maneuver possible",
+                               "layer":  "control",
+                               "sources":  [
+                                               "fly",
+                                               "eligibility"
+                                           ],
+                               "detail":  ""
+                           },
+                  "fly":  {
+                              "label":  "Main[3]: ordinary FlyTo home",
+                              "layer":  "control",
+                              "sources":  [
+                                              "pilot",
+                                              "fly"
+                                          ],
+                              "detail":  ""
+                          },
+                  "plotted":  {
+                                  "label":  "Native planned leg",
+                                  "layer":  "control",
+                                  "sources":  [
+                                                  "path",
+                                                  "plan"
+                                              ],
+                                  "detail":  ""
+                              },
+                  "changed":  {
+                                  "label":  "Goal changed; route ownership boundary",
+                                  "layer":  "control",
+                                  "sources":  [
+                                                  "target",
+                                                  "guard",
+                                                  "fuel"
+                                              ],
+                                  "detail":  ""
+                              },
+                  "refill":  {
+                                 "label":  "Fuel added during stored plan",
+                                 "layer":  "control",
+                                 "sources":  [
+                                                 "plan",
+                                                 "ship",
+                                                 "replenishment"
+                                             ],
+                                 "detail":  ""
+                             },
+                  "manual":  {
+                                 "label":  "Rejected plan: manual fallback",
+                                 "layer":  "control",
+                                 "sources":  [
+                                                 "guard",
+                                                 "fly"
+                                             ],
+                                 "detail":  ""
+                             },
+                  "done":  {
+                               "label":  "Native station arrival boundary",
+                               "layer":  "control",
+                               "sources":  [
+                                               "pilot"
+                                           ],
+                               "detail":  "Requires actual native flight/docking outcomes; does not imply crew deletion or successful arrival from target assignment."
+                           }
+              },
+    "id":  "deployer-1.0.1.10",
+    "gameVersion":  "1.0.1.10",
+    "baselineCommit":  "117e658",
+    "variables":  {
+                      "home":  {
+                                   "values":  [
+                                                  "vorb",
+                                                  "other"
+                                              ],
+                                   "description":  "Controller HomeStation identity, not player location.",
+                                   "kind":  "state"
+                               },
+                      "eligible":  {
+                                       "values":  [
+                                                      "true",
+                                                      "false"
+                                                  ],
+                                       "description":  "Exact existing empty-deployer recovery exclusions pass; supplied boundary.",
+                                       "kind":  "native_result"
+                                   },
+                      "target":  {
+                                     "values":  [
+                                                    "none",
+                                                    "drop",
+                                                    "home",
+                                                    "new"
+                                                ],
+                                     "description":  "Current navigation goal.",
+                                     "kind":  "state"
+                                 },
+                      "route":  {
+                                    "values":  [
+                                                   "none",
+                                                   "valid",
+                                                   "old",
+                                                   "invalid"
+                                               ],
+                                    "description":  "Stored route, independent of the selected target.",
+                                    "kind":  "state"
+                                },
+                      "prediction":  {
+                                         "values":  [
+                                                        "none",
+                                                        "old"
+                                                    ],
+                                         "description":  "TripFuelPrediction is independent of NavData.",
+                                         "kind":  "state"
+                                     },
+                      "thrust":  {
+                                     "values":  [
+                                                    "latched",
+                                                    "stopped"
+                                                ],
+                                     "description":  "Abandoned maneuver, not velocity.",
+                                     "kind":  "state"
+                                 },
+                      "fuel":  {
+                                   "values":  [
+                                                  "unchanged",
+                                                  "refill_preserved",
+                                                  "refill_erased"
+                                              ],
+                                   "description":  "Absolute reconciliation outcome for prescribed 100+20-25 kg fixture.",
+                                   "kind":  "state"
+                               },
+                      "budget":  {
+                                     "values":  [
+                                                    "stale",
+                                                    "rebased"
+                                                ],
+                                     "description":  "Stored plan fuel levels relative to explicit external fuel addition.",
+                                     "kind":  "state"
+                                 },
+                      "permits_anchor":  {
+                                             "values":  [
+                                                            "true",
+                                                            "false"
+                                                        ],
+                                             "description":  "Station AllowsAnchoring trigger result supplied from assets.",
+                                             "kind":  "native_result"
+                                         },
+                      "wreck_anchor":  {
+                                           "values":  [
+                                                          "locked",
+                                                          "free"
+                                                      ],
+                                           "description":  "Released wreck orbit state; unrelated to hauler route.",
+                                           "kind":  "state"
+                                       },
+                      "towing":  {
+                                     "values":  [
+                                                    "true",
+                                                    "false"
+                                                ],
+                                     "description":  "Physical attachment to a wreck.",
+                                     "kind":  "state"
+                                 },
+                      "fallback":  {
+                                       "values":  [
+                                                      "true",
+                                                      "false"
+                                                  ],
+                                       "description":  "Latched manual fallback.",
+                                       "kind":  "state"
+                                   }
+                  },
+    "edges":  [
+                  {
+                      "id":  "haul.arrive",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "haul",
+                                      "pilot"
+                                  ],
+                      "event":  "native_haul_success",
+                      "note":  "A supplied native success, not a computed trajectory.",
+                      "set":  {
+
+                              },
+                      "from":  "carry",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "release"
+                  },
+                  {
+                      "id":  "release.locked",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "anchor"
+                                  ],
+                      "event":  "release",
+                      "note":  "",
+                      "set":  {
+                                  "towing":  "false",
+                                  "wreck_anchor":  "locked",
+                                  "target":  "none"
+                              },
+                      "from":  "release",
+                      "when":  {
+                                   "facts":  {
+                                                 "permits_anchor":  [
+                                                                        "true"
+                                                                    ]
+                                             }
+                               },
+                      "to":  "free"
+                  },
+                  {
+                      "id":  "release.free",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "anchor"
+                                  ],
+                      "event":  "release",
+                      "note":  "",
+                      "set":  {
+                                  "towing":  "false",
+                                  "wreck_anchor":  "free",
+                                  "target":  "none"
+                              },
+                      "from":  "release",
+                      "when":  {
+                                   "facts":  {
+                                                 "permits_anchor":  [
+                                                                        "false"
+                                                                    ]
+                                             }
+                               },
+                      "to":  "free"
+                  },
+                  {
+                      "id":  "free.fly_fail",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "fly"
+                                  ],
+                      "event":  "native_fly_failure",
+                      "note":  "Targetless manual FlyTo fails; no claim about collision branches.",
+                      "set":  {
+
+                              },
+                      "from":  "free",
+                      "when":  {
+                                   "facts":  {
+                                                 "target":  [
+                                                                "none"
+                                                            ]
+                                             }
+                               },
+                      "to":  "idle"
+                  },
+                  {
+                      "id":  "free.fly_home",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "pilot",
+                                      "fly"
+                                  ],
+                      "event":  "next_main",
+                      "note":  "",
+                      "set":  {
+
+                              },
+                      "from":  "free",
+                      "when":  {
+                                   "facts":  {
+                                                 "target":  [
+                                                                "home"
+                                                            ]
+                                             }
+                               },
+                      "to":  "fly"
+                  },
+                  {
+                      "id":  "empty.cleanup",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "haul"
+                                  ],
+                      "event":  "empty_haul_failure",
+                      "note":  "GetTarget may obtain home just before empty-haul cleanup discards it.",
+                      "set":  {
+                                  "target":  "none",
+                                  "route":  "none"
+                              },
+                      "from":  "empty",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "idle"
+                  },
+                  {
+                      "id":  "idle.loop",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "eligibility"
+                                  ],
+                      "event":  "idle_tick",
+                      "note":  "Native failure does not itself stop a latched maneuver.",
+                      "set":  {
+
+                              },
+                      "from":  "idle",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "idle"
+                  },
+                  {
+                      "id":  "plan.accept",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "path"
+                                  ],
+                      "event":  "native_plan_accepted",
+                      "note":  "",
+                      "set":  {
+                                  "route":  "valid"
+                              },
+                      "from":  "fly",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "plotted"
+                  },
+                  {
+                      "id":  "plan.goal_change",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "target",
+                                      "path"
+                                  ],
+                      "event":  "apply_new_goal",
+                      "note":  "ApplyToShip assigns target fields; existing path is not reset by this setter.",
+                      "set":  {
+                                  "target":  "new",
+                                  "route":  "old"
+                              },
+                      "from":  "plotted",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "changed"
+                  },
+                  {
+                      "id":  "plan.same_goal",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "target"
+                                  ],
+                      "event":  "reapply_same_goal",
+                      "note":  "",
+                      "set":  {
+
+                              },
+                      "from":  "plotted",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "plotted"
+                  },
+                  {
+                      "id":  "plan.refill",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "ship",
+                                      "plan"
+                                  ],
+                      "event":  "add_fuel",
+                      "note":  "Event supplies actual added gas; not a guarantee every role refuels while a plan exists.",
+                      "set":  {
+                                  "budget":  "stale"
+                              },
+                      "from":  "plotted",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "refill"
+                  },
+                  {
+                      "id":  "fuel.erase",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "plan"
+                                  ],
+                      "event":  "native_plan_advance",
+                      "note":  "",
+                      "set":  {
+                                  "fuel":  "refill_erased"
+                              },
+                      "from":  "refill",
+                      "when":  {
+                                   "facts":  {
+                                                 "budget":  [
+                                                                "stale"
+                                                            ]
+                                             }
+                               },
+                      "to":  "plotted"
+                  },
+                  {
+                      "id":  "fuel.keep",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "plan"
+                                  ],
+                      "event":  "native_plan_advance",
+                      "note":  "",
+                      "set":  {
+                                  "fuel":  "refill_preserved"
+                              },
+                      "from":  "refill",
+                      "when":  {
+                                   "facts":  {
+                                                 "budget":  [
+                                                                "rebased"
+                                                            ]
+                                             }
+                               },
+                      "to":  "plotted"
+                  },
+                  {
+                      "id":  "plan.bad",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "plan"
+                                  ],
+                      "event":  "invalid_route_supplied",
+                      "note":  "Injected invalid input; does not assert a current native planner naturally creates it.",
+                      "set":  {
+                                  "route":  "invalid"
+                              },
+                      "from":  "plotted",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "plotted"
+                  },
+                  {
+                      "id":  "fly.arrive",
+                      "evidence":  [
+                                       "review"
+                                   ],
+                      "sources":  [
+                                      "pilot"
+                                  ],
+                      "event":  "native_station_arrival",
+                      "note":  "",
+                      "set":  {
+
+                              },
+                      "from":  "fly",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "done"
+                  }
+              ],
+    "predicates":  {
+                       "vorb":  {
+                                    "facts":  {
+                                                  "home":  [
+                                                               "vorb"
+                                                           ]
+                                              }
+                                },
+                       "recover":  {
+                                       "facts":  {
+                                                     "eligible":  [
+                                                                      "true"
+                                                                  ]
+                                                 }
+                                   }
+                   },
+    "findings":  [
+                     {
+                         "id":  "risk.stale_route",
+                         "sources":  [
+                                         "target",
+                                         "path",
+                                         "guard"
+                                     ],
+                         "evidence":  [
+                                          "review"
+                                      ],
+                         "when":  {
+                                      "facts":  {
+                                                    "route":  [
+                                                                  "old"
+                                                              ]
+                                                }
+                                  },
+                         "note":  "Current navigation goal and stored route differ under the supplied retarget event.",
+                         "kind":  "integrity",
+                         "severity":  "warning"
+                     },
+                     {
+                         "id":  "risk.refill_erased",
+                         "sources":  [
+                                         "plan",
+                                         "guard"
+                                     ],
+                         "evidence":  [
+                                          "review"
+                                      ],
+                         "when":  {
+                                      "facts":  {
+                                                    "fuel":  [
+                                                                 "refill_erased"
+                                                             ]
+                                                }
+                                  },
+                         "note":  "Native absolute fuel reconciliation erased an external refill in the prescribed fixture.",
+                         "kind":  "accounting",
+                         "severity":  "warning"
+                     },
+                     {
+                         "id":  "risk.invalid_route",
+                         "sources":  [
+                                         "guard",
+                                         "plan"
+                                     ],
+                         "evidence":  [
+                                          "review"
+                                      ],
+                         "when":  {
+                                      "facts":  {
+                                                    "route":  [
+                                                                  "invalid"
+                                                              ]
+                                                }
+                                  },
+                         "note":  "Invalid route was explicitly supplied; not evidence it was naturally generated.",
+                         "kind":  "containment",
+                         "severity":  "warning"
+                     }
+                 ],
+    "scope":  {
+                  "status":  "partial_explicit_slice",
+                  "description":  "Cross-home deploying-hauler release, target-route identity and shared refill accounting. Implemented fixes only; numeric/loaded tank boundaries remain explicit.",
+                  "roles":  [
+                                "HaulerDeployer"
+                            ],
+                  "preconditions":  [
+                                        "No higher-priority reaction unless excluded by eligible=false.",
+                                        "Refill/retarget events explicitly supply a live stored plan and actual goal/fuel changes.",
+                                        "All named home stations follow the same native deploying pilot tree.",
+                                        "Refill events refer to initialized non-player AI ships with a current valid finite plan; player-owned ships and player navigation are excluded."
+                                    ],
+                  "opaque":  [
+                                 "Numeric planner feasibility",
+                                 "Reachability/frequency of every role caller",
+                                 "SFF wrapper/Main handoff",
+                                 "Loaded scene navigation",
+                                 "StationReturn scheduling",
+                                 "Actual crew transfer and station retirement",
+                                 "Native anchoring asset migration"
+                             ]
+              },
+    "sources":  {
+                    "pilot":  {
+                                  "path":  "Ostranauts.Ships.AIPilots/HaulerDeployingPilot.cs",
+                                  "sha256":  "676d7118c8e42c0e248b4833e5bf537407ba46b9fa9d278bb8958f016afd3074",
+                                  "symbol":  "Main/GetTarget/FFWD",
+                                  "origin":  "game",
+                                  "anchors":  [
+                                                  "new AnchorDockedShip(this)"
+                                              ]
+                              },
+                    "haul":  {
+                                 "path":  "Ostranauts.Ships.Commands/HaulShip.cs",
+                                 "sha256":  "71706999e6360b21cf0dec093db1e143bd1aed5ef5e44431279eba8b3154df3d",
+                                 "symbol":  "RunCommand empty/towed branches",
+                                 "origin":  "game",
+                                 "anchors":  [
+                                                 "allDockedShips.Count == 0"
+                                             ]
+                             },
+                    "anchor":  {
+                                   "path":  "Ostranauts.Ships.Commands/AnchorDockedShip.cs",
+                                   "sha256":  "aa75b04a14b98141696e407b1b3e777064498187850a90dc69d3b18d99d0e813",
+                                   "symbol":  "RunCommand/ResolveInstantly",
+                                   "origin":  "game",
+                                   "anchors":  [
+                                                   "TIsAllowsAnchoring"
+                                               ]
+                               },
+                    "fly":  {
+                                "path":  "Ostranauts.Ships.Commands/FlyTo.cs",
+                                "sha256":  "bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52",
+                                "symbol":  "RunCommand",
+                                "origin":  "game",
+                                "anchors":  [
+                                                "HandleRCSFuel(blackboard)"
+                                            ]
+                            },
+                    "path":  {
+                                 "path":  "Ostranauts.Ships.Commands/FlyToPath.cs",
+                                 "sha256":  "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18",
+                                 "symbol":  "RunCommand existing plan early return",
+                                 "origin":  "game",
+                                 "anchors":  [
+                                                 "base.ShipUs.objSS.NavData != null"
+                                             ]
+                             },
+                    "target":  {
+                                   "path":  "Ostranauts.Ships/TargetData.cs",
+                                   "sha256":  "49ee14a7a489125bd81bf18a84f23af6f9d7908756684be3eba0c8263ac239f1",
+                                   "symbol":  "ApplyToShip",
+                                   "origin":  "game",
+                                   "anchors":  [
+                                                   "ship.TargetData = this;"
+                                               ]
+                               },
+                    "plan":  {
+                                 "path":  "Ostranauts.ShipGUIs.Utilities/NavData.cs",
+                                 "sha256":  "bbd69f4666ba775d0998f9b310afe633b407ebe848978c9217c2a7c2d786731a",
+                                 "symbol":  "TimeAdvance absolute RCS reconciliation",
+                                 "origin":  "game",
+                                 "anchors":  [
+                                                 "num4 = rCSRemain - (double)num3;"
+                                             ]
+                             },
+                    "recovery":  {
+                                     "path":  "Haulers/HaulerReturnPatches.cs",
+                                     "sha256":  "6afd3442e815611c836538249521a0958d6c8c7d8085b4e6f1b56c3861564f81",
+                                     "symbol":  "Release/empty haul/idle handoffs",
+                                     "origin":  "repo",
+                                     "anchors":  [
+                                                     "HaulerRecovery.RestoreHomeTarget"
+                                                 ]
+                                 },
+                    "eligibility":  {
+                                        "path":  "Haulers/HaulerRecovery.cs",
+                                        "sha256":  "d0f70ccfb3ae7f53c82b78132dcdea8a6cd722251f3543dc142860809f139e6d",
+                                        "symbol":  "Eligible/RestoreHomeTarget/AfterIdleAI",
+                                        "origin":  "repo",
+                                        "anchors":  [
+                                                        "ai.AIType != AIType.HaulerDeployer"
+                                                    ]
+                                    },
+                    "guard":  {
+                                  "path":  "Venus/VorbNavPlanGuard.cs",
+                                  "sha256":  "e3c8e4bf5a06bc9a22d86b15515ab60b8301eccc5a378f8eb244ac968c6551c2",
+                                  "symbol":  "Validation/TargetChanged/IsVorbHauler (no refill ownership or home-target shortcut)",
+                                  "origin":  "repo",
+                                  "anchors":  [
+                                                  "string.Equals(aiShip.HomeStation, \"VORB\""
+                                              ]
+                              },
+                    "fuel":  {
+                                 "path":  "Navigation/NavigationFuel.cs",
+                                 "sha256":  "dbc8a1c7ebbb52f49c159b674c84032b4703308b0070130bbf5d62e13c2a6065",
+                                 "symbol":  "RetargetFuelPatch",
+                                 "origin":  "repo",
+                                 "anchors":  [
+                                                 "NavigationFuel.ClearPrediction(ship)"
+                                             ]
+                             },
+                    "ship":  {
+                                 "path":  "Ship.cs",
+                                 "sha256":  "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48",
+                                 "symbol":  "AIRefuel/RefuelRCS",
+                                 "origin":  "game",
+                                 "anchors":  [
+                                                 "fShallowRCSRemass = GetRCSMax();"
+                                             ]
+                             },
+                    "replenishment":  {
+                                          "origin":  "repo",
+                                          "path":  "Navigation/RcsReplenishment.cs",
+                                          "symbol":  "RcsReplenishment / native refill observers",
+                                          "anchors":  [
+                                                          "internal static bool Rebase",
+                                                          "RcsAutomaticReplenishmentPatch"
+                                                      ],
+                                          "sha256":  "c0927a98b7187b224295e458b647cd9a011b64247f70ce5f9b0623640bd5799d"
+                                      },
+                    "escape_native":  {
+                                          "origin":  "game",
+                                          "path":  "Ostranauts.Ships.Commands/TargetEscapeStation.cs",
+                                          "symbol":  "RunCommand/SetTarget/ResolveInstantly",
+                                          "anchors":  [
+                                                          "private void SetTarget(Ship target)"
+                                                      ],
+                                          "sha256":  "ec80d4b8a8df559c146ba9f27bcb13a3451d3103e6b5d0c99f444b50f736ff27"
+                                      },
+                    "escape_repair":  {
+                                          "origin":  "repo",
+                                          "path":  "Navigation/EscapeTargetPatch.cs",
+                                          "symbol":  "EscapeTargetPatch",
+                                          "anchors":  [
+                                                          "data.ApplyToShip(ship)",
+                                                          "ship.objSS.ResetNavData()"
+                                                      ],
+                                          "sha256":  "d783788c02a27143a2c504852c562741a1931821de59d935bec93f033fae906f"
+                                      },
+
+  "avoidance_native": {
+    "origin": "game",
+    "path": "AIShipManager.cs",
+    "symbol": "IsOnCollisionCourse/GetEscapePoint/AIIntercept2",
+    "anchors": [
+      "public static bool IsOnCollisionCourse(",
+      "private static Point GetEscapePoint("
+    ],
+    "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+  },
+  "avoidance_repair": {
+    "origin": "repo",
+    "path": "Navigation/AIShipAvoidancePatch.cs",
+    "symbol": "AIShipAvoidance and guarded AIShipAvoidancePatch.Transpiler",
+    "anchors": [
+      "internal static Point SelectEscape(",
+      "internal static bool FutureCollision("
+    ],
+    "sha256": "66e387fb1c6ee519624eb5699bc61fbcae3dd415292f9d58037b5bbf375e505a"
+  },
+  "avoidance_geometry": {
+    "origin": "repo",
+    "path": "Navigation/ConstantAccelerationApproach.cs",
+    "symbol": "ConstantAccelerationApproach.MinimumSquared",
+    "anchors": [
+      "internal static double MinimumSquared("
+    ],
+    "sha256": "1dab09efdcd60b3d8a5b95841da780834752f50dd87078bebd8363cd632207fb"
+  },
+  "avoidance_ephemeris": {
+    "origin": "repo",
+    "path": "Orbital/NativeEphemeris.cs",
+    "symbol": "Detached body position/velocity",
+    "anchors": [
+      "internal static class NativeEphemeris"
+    ],
+    "sha256": "602b2c8fd83fd5d3f62fb194c91b347747f1bd2b973755124da347d5a300775e"
+  },
+  "avoidance_frame": {
+    "origin": "repo",
+    "path": "Orbital/OrbitAcceleration.cs",
+    "symbol": "Detached body frame acceleration",
+    "anchors": [
+      "internal static class OrbitAcceleration"
+    ],
+    "sha256": "3f21742d25891cccb06ebdbe9586a8aeb622c525748058fc060aa715b8bf17c7"
+  },
+  "avoidance_motion": {
+    "origin": "repo",
+    "path": "Orbital/OrbitalMotion.cs",
+    "symbol": "DVector math used by avoidance",
+    "anchors": [
+      "internal readonly struct DVector"
+    ],
+    "sha256": "ef098a02e24b6c59b473579c00ba0f6b279043cb8a07b99fe705dd75d8c553dd"
+  },
+
+  "station_collision_native": {
+    "origin": "game",
+    "path": "CollisionManager.cs",
+    "symbol": "Ship collision scan/response and projectile/body separation",
+    "anchors": [
+      "public static void CheckCollisions(",
+      "private static void ProcessCollision(Ship a, Ship b"
+    ],
+    "sha256": "f49512841470ef28b14deec8a1dceb803278d527e5aa6184ec309220a61e865b"
+  },
+  "station_collision_policy": {
+    "origin": "repo",
+    "path": "Navigation/StationDockedCollisions.cs",
+    "symbol": "Station docking-chain policy and physical prefix",
+    "anchors": [
+      "internal static bool IsExempt(",
+      "pending.Clear(); visited.Clear(); evaluating = false;"
+    ],
+    "sha256": "a6dc4e7ad7e94c6f74e0191121776b53f6508d95936189a0a4cf1c8e89498449"
+  },
+  "station_collision_scan": {
+    "origin": "repo",
+    "path": "NavConsole/ProximityCollisionPatch.cs",
+    "symbol": "Existing collision/proximity scan with station-attached candidate filtering",
+    "anchors": [
+      "StationDockedCollisions.IgnoreAsObstacle",
+      "hiddenChecks != 1"
+    ],
+    "sha256": "0734bb745bd265599ec5ea5d1bde253c66aef8ee5a97577a186ec72d4abebd4e"
+  }
+
+},
+    "evidence":  {
+                     "review":  {
+                                    "supports":  "Cross-home source/caller/asset review and explicit native scope fixture; not a full-world state graph.",
+                                    "level":  "source_review_and_native_offline",
+                                    "artifact":  "Notes/AI-REGIONAL-SCOPE-AUDIT.md"
+                                },
+                     "replenishment":  {
+                                           "level":  "native_offline_and_source_review",
+                                           "artifact":  "Navigation/RCS-REPLENISHMENT.md",
+                                           "supports":  "Prescribed cross-role refills, pending loaded debits, API coexistence and refill-before-validation; physical tank I/O is stubbed."
+                                       },
+                     "escape_handoff":  {
+                                            "level":  "native_offline_and_source_review",
+                                            "artifact":  "Navigation/ESCAPE-RETARGET.md",
+                                            "supports":  "60 native caller/production-patch checks with explicit world/weapon/health/plan boundaries; whole police dispatch, shared escape leaves, Navy/Blockade controls and allocation. Full combat remains unexpanded."
+                                        },
+
+  "avoidance_validation": {
+    "level": "native_offline_and_geometry_tests",
+    "artifact": "Navigation/PLANETARY-AVOIDANCE-AUDIT.md",
+    "supports": "844 checks including production native FlyTo replay for three anchors, original failure controls, motion oracle and allocation. Flight geometry/evasion remain unexpanded external outcomes in this transition slice; no live validation claimed."
+  },
+
+  "station_traffic_validation": {
+    "level": "native_offline_and_policy_tests",
+    "artifact": "Navigation/STATION-DOCKED-COLLISIONS.md",
+    "supports": "880 assertions: live-link scope, native proximity scan, physical prefix with counting body boundary, free-space/projectile/body controls and native shared FlyTo replay of both patrol and returning hauler. Native impact controls fail; production reaches original targets for three anchors. Full geometry remains unexpanded; no live success claim."
+  }
+
+},
+    "schemaVersion":  1,
+    "assemblySha256":  "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+    "scenarios":  [
+                      {
+                          "id":  "release-vorb",
+                          "events":  [
+                                         "release"
+                                     ],
+                          "note":  "",
+                          "start":  "release",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "target",
+                                                         "node":  "free",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "target",
+                                                           "node":  "free",
+                                                           "value":  "home"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "eligible":  "true",
+                                        "towing":  "true",
+                                        "thrust":  "latched",
+                                        "route":  "none",
+                                        "home":  "vorb",
+                                        "permits_anchor":  "true",
+                                        "target":  "drop"
+                                    }
+                      },
+                      {
+                          "id":  "empty-vorb",
+                          "events":  [
+                                         "empty_haul_failure"
+                                     ],
+                          "note":  "",
+                          "start":  "empty",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "target",
+                                                         "node":  "idle",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "target",
+                                                           "node":  "fly",
+                                                           "value":  "home"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "eligible":  "true",
+                                        "route":  "none",
+                                        "target":  "home",
+                                        "thrust":  "latched",
+                                        "home":  "vorb"
+                                    }
+                      },
+                      {
+                          "id":  "retarget-vorb",
+                          "events":  [
+                                         "apply_new_goal"
+                                     ],
+                          "note":  "",
+                          "start":  "plotted",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "route",
+                                                         "node":  "changed",
+                                                         "value":  "old"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "route",
+                                                           "node":  "changed",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "route":  "valid",
+                                        "prediction":  "old",
+                                        "target":  "home",
+                                        "home":  "vorb"
+                                    }
+                      },
+                      {
+                          "id":  "refill-vorb",
+                          "events":  [
+                                         "add_fuel",
+                                         "native_plan_advance"
+                                     ],
+                          "note":  "",
+                          "start":  "plotted",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "fuel",
+                                                         "node":  "plotted",
+                                                         "value":  "refill_erased"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "fuel",
+                                                           "node":  "plotted",
+                                                           "value":  "refill_preserved"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "route":  "valid",
+                                        "fuel":  "unchanged",
+                                        "target":  "home",
+                                        "home":  "vorb"
+                                    }
+                      },
+                      {
+                          "id":  "invalid-vorb",
+                          "events":  [
+                                         "invalid_route_supplied"
+                                     ],
+                          "note":  "Supplied invalid route tests containment only.",
+                          "start":  "plotted",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "route",
+                                                         "node":  "plotted",
+                                                         "value":  "invalid"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "fallback",
+                                                           "node":  "manual",
+                                                           "value":  "true"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "route":  "valid",
+                                        "fallback":  "false",
+                                        "target":  "home",
+                                        "home":  "vorb"
+                                    }
+                      },
+                      {
+                          "id":  "same-goal-vorb",
+                          "events":  [
+                                         "reapply_same_goal"
+                                     ],
+                          "note":  "",
+                          "start":  "plotted",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "route",
+                                                         "node":  "plotted",
+                                                         "value":  "valid"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "route",
+                                                           "node":  "plotted",
+                                                           "value":  "valid"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "route":  "valid",
+                                        "prediction":  "old",
+                                        "target":  "home",
+                                        "home":  "vorb"
+                                    }
+                      },
+                      {
+                          "id":  "release-other",
+                          "events":  [
+                                         "release"
+                                     ],
+                          "note":  "",
+                          "start":  "release",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "target",
+                                                         "node":  "free",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "target",
+                                                           "node":  "free",
+                                                           "value":  "home"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "eligible":  "true",
+                                        "towing":  "true",
+                                        "thrust":  "latched",
+                                        "route":  "none",
+                                        "home":  "other",
+                                        "permits_anchor":  "true",
+                                        "target":  "drop"
+                                    }
+                      },
+                      {
+                          "id":  "empty-other",
+                          "events":  [
+                                         "empty_haul_failure"
+                                     ],
+                          "note":  "",
+                          "start":  "empty",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "target",
+                                                         "node":  "idle",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "target",
+                                                           "node":  "fly",
+                                                           "value":  "home"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "eligible":  "true",
+                                        "route":  "none",
+                                        "target":  "home",
+                                        "thrust":  "latched",
+                                        "home":  "other"
+                                    }
+                      },
+                      {
+                          "id":  "retarget-other",
+                          "events":  [
+                                         "apply_new_goal"
+                                     ],
+                          "note":  "",
+                          "start":  "plotted",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "route",
+                                                         "node":  "changed",
+                                                         "value":  "old"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "route",
+                                                           "node":  "changed",
+                                                           "value":  "old"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "route":  "valid",
+                                        "prediction":  "old",
+                                        "target":  "home",
+                                        "home":  "other"
+                                    }
+                      },
+                      {
+                          "id":  "refill-other",
+                          "events":  [
+                                         "add_fuel",
+                                         "native_plan_advance"
+                                     ],
+                          "note":  "",
+                          "start":  "plotted",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "fuel",
+                                                         "node":  "plotted",
+                                                         "value":  "refill_erased"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "fuel",
+                                                           "node":  "plotted",
+                                                           "value":  "refill_preserved"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "route":  "valid",
+                                        "fuel":  "unchanged",
+                                        "target":  "home",
+                                        "home":  "other"
+                                    }
+                      },
+                      {
+                          "id":  "invalid-other",
+                          "events":  [
+                                         "invalid_route_supplied"
+                                     ],
+                          "note":  "Supplied invalid route tests containment only.",
+                          "start":  "plotted",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "route",
+                                                         "node":  "plotted",
+                                                         "value":  "invalid"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "fallback",
+                                                           "node":  "plotted",
+                                                           "value":  "false"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "route":  "valid",
+                                        "fallback":  "false",
+                                        "target":  "home",
+                                        "home":  "other"
+                                    }
+                      },
+                      {
+                          "id":  "same-goal-other",
+                          "events":  [
+                                         "reapply_same_goal"
+                                     ],
+                          "note":  "",
+                          "start":  "plotted",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "route",
+                                                         "node":  "plotted",
+                                                         "value":  "valid"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "route",
+                                                           "node":  "plotted",
+                                                           "value":  "valid"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "route":  "valid",
+                                        "prediction":  "old",
+                                        "target":  "home",
+                                        "home":  "other"
+                                    }
+                      },
+                      {
+                          "id":  "recovery-exclusion",
+                          "events":  [
+                                         "empty_haul_failure"
+                                     ],
+                          "note":  "",
+                          "start":  "empty",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "target",
+                                                         "node":  "idle",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "target",
+                                                           "node":  "idle",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "eligible":  "false",
+                                        "route":  "none",
+                                        "target":  "home",
+                                        "thrust":  "latched",
+                                        "home":  "vorb"
+                                    }
+                      },
+                      {
+                          "id":  "saved-targetless-other",
+                          "events":  [
+                                         "native_fly_failure",
+                                         "idle_tick"
+                                     ],
+                          "note":  "Whole native selector/Main/AI witness exists in scope mode; physical flight is a fixture.",
+                          "start":  "free",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "target",
+                                                         "node":  "idle",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "target",
+                                                           "node":  "fly",
+                                                           "value":  "home"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "eligible":  "true",
+                                        "route":  "none",
+                                        "target":  "none",
+                                        "thrust":  "latched",
+                                        "home":  "other"
+                                    }
+                      },
+                      {
+                          "id":  "saved-targetless-vorb",
+                          "events":  [
+                                         "native_fly_failure",
+                                         "idle_tick"
+                                     ],
+                          "note":  "Same native failure/idle retry as other homes after removing the VORB-only early target shortcut; physical flight is a fixture.",
+                          "start":  "free",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "target",
+                                                         "node":  "idle",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "target",
+                                                           "node":  "fly",
+                                                           "value":  "home"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "eligible":  "true",
+                                        "route":  "none",
+                                        "target":  "none",
+                                        "thrust":  "latched",
+                                        "home":  "vorb"
+                                    }
+                      }
+                  ]
+}

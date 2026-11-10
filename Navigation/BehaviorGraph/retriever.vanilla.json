@@ -1,0 +1,3352 @@
+{
+    "schemaVersion":  1,
+    "id":  "retriever-1.0.1.10",
+    "gameVersion":  "1.0.1.10",
+    "assemblySha256":  "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+    "baselineCommit":  "117e658",
+    "scope":  {
+                  "status":  "partial_explicit_slice",
+                  "roles":  [
+                                "HaulerRetriever"
+                            ],
+                  "description":  "Control-point graph with orthogonal facts, not a full game state machine or physics simulator.",
+                  "covered":  [
+                                  "Main pickup/haul/arrival",
+                                  "SFF pickup continuation",
+                                  "group route authority mechanism",
+                                  "crew guard at representative load/tick boundaries",
+                                  "target replacement",
+                                  "reserve reuse",
+                                  "VORB depot identity",
+                                  "explicit native station arrival"
+                              ],
+                  "opaque":  [
+                                 "exact AIIntercept2 steering and fuel arithmetic",
+                                 "collision/hostility/surrender predicates",
+                                 "full selector scheduling and frame timings",
+                                 "plan generation and moving targets",
+                                 "full save/ATC teardown ordering",
+                                 "population selection and later NPC behavior",
+                                 "physical integration inside Orbital",
+                                 "non-retriever role trees"
+                             ],
+                  "notProven":  [
+                                    "historical cause of each stranded ship",
+                                    "all Harmony ordering/interactions",
+                                    "end-to-end live SFF prevention",
+                                    "absence of unmodeled paths"
+                                ],
+                  "preconditions":  [
+                                        "Locations represented are OKLG and VORB/VNCA local retrievers.",
+                                        "No higher-priority external reaction, queued directive or StationReturn intent unless an explicit event represents it.",
+                                        "Native planner, collision, health, faction and timing outcomes are externally supplied assumptions/results, not synthesized."
+                                    ],
+                  "sourceFingerprintPolicy":  "SHA-256 of UTF-8 decoded text normalized to LF; assembly fingerprint is raw binary SHA-256. Changed files require review, not automatic blessing."
+              },
+    "sources":  {
+                    "retriever":  {
+                                      "origin":  "game",
+                                      "path":  "Ostranauts.Ships.AIPilots/HaulerRetrievingPilot.cs",
+                                      "symbol":  "HaulerRetrievingPilot constructor / GetTarget / FFWD",
+                                      "anchors":  [
+                                                      "new StickySequenceCommand(\"Main\"",
+                                                      "public override ICommand FFWD",
+                                                      "FindDerelictTarget"
+                                                  ],
+                                      "sha256":  "9244be33820d92ab159a8044dcd08eb7ea0c72c23049c90acd31c532e53ece40"
+                                  },
+                    "sticky":  {
+                                   "origin":  "game",
+                                   "path":  "Ostranauts.Ships.Commands/StickySequenceCommand.cs",
+                                   "symbol":  "StickySequenceCommand.RunCommand / SaveData",
+                                   "anchors":  [
+                                                   "_currentChild",
+                                                   "command.CanExecute",
+                                                   "command.OnExit"
+                                               ],
+                                   "sha256":  "15ee314ea9253a93513ef20b2d519edfd3ef7b1e2cd721373f034a0d6b63317d"
+                               },
+                    "dispatch":  {
+                                     "origin":  "game",
+                                     "path":  "Ostranauts.Ships.AIPilots/AIShip.cs",
+                                     "symbol":  "AIShip.RunAI / FFWD / FindShipForFaction",
+                                     "anchors":  [
+                                                     "new OneShotWrapperCommand(command)",
+                                                     "_activeReaction",
+                                                     "FindShipForFaction"
+                                                 ],
+                                     "sha256":  "713ed29317fc3512c8923c78e4cbf746d177a0057571d177c76035b2016a3103"
+                                 },
+                    "queue":  {
+                                  "origin":  "game",
+                                  "path":  "Ostranauts.Ships.Commands/QueuedCommandsNode.cs",
+                                  "symbol":  "QueuedCommandsNode.RunCommand / LoadSaveData",
+                                  "anchors":  [
+                                                  "currentCommand.OnExit",
+                                                  "EnqueueUrgentCommand(command2)"
+                                              ],
+                                  "sha256":  "8eda547644c33e59ad24f6bd1f8628cded6d5628f99f21625ce4f92ab25d880a"
+                              },
+                    "oneshot":  {
+                                    "origin":  "game",
+                                    "path":  "Ostranauts.Ships.Commands/OneShotWrapperCommand.cs",
+                                    "symbol":  "OneShotWrapperCommand.RunCommand",
+                                    "anchors":  [
+                                                    "_wrappedCommand.RunCommand",
+                                                    "CommandCode.Finished"
+                                                ],
+                                    "sha256":  "03cc95249c9d460b677f2d1bcee9ef4d1368d539afe9d2bedd1503a289959c11"
+                                },
+                    "target":  {
+                                   "origin":  "game",
+                                   "path":  "Ostranauts.Ships.Commands/TargetNewIfNone.cs",
+                                   "symbol":  "TargetNewIfNone.RunCommand / FindTarget / RequestHelp",
+                                   "anchors":  [
+                                                   "AIShipManager.LowFuel",
+                                                   "private bool RequestHelp",
+                                                   "private TargetDataDTO FindTarget"
+                                               ],
+                                   "sha256":  "fd7c311b3c45a67bbfec7a8adb0528877ec9f928fc5705700c3388756ca5e7d0"
+                               },
+                    "fly":  {
+                                "origin":  "game",
+                                "path":  "Ostranauts.Ships.Commands/FlyTo.cs",
+                                "symbol":  "FlyTo.RunCommand / CanExecute / ApplyTripFuel",
+                                "anchors":  [
+                                                "HasValidPathTarget()",
+                                                "HandleRCSFuel",
+                                                "progress \u003c= _tripFuelDTO.Progress"
+                                            ],
+                                "sha256":  "bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"
+                            },
+                    "path":  {
+                                 "origin":  "game",
+                                 "path":  "Ostranauts.Ships.Commands/FlyToPath.cs",
+                                 "symbol":  "FlyToPath.RunCommand",
+                                 "anchors":  [
+                                                 "base.ShipUs.objSS.NavData != null",
+                                                 "return base.Running"
+                                             ],
+                                 "sha256":  "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+                             },
+                    "haul":  {
+                                 "origin":  "game",
+                                 "path":  "Ostranauts.Ships.Commands/HaulShip.cs",
+                                 "symbol":  "HaulShip.RunCommand",
+                                 "anchors":  [
+                                                 "DeltaVRemainingRCS \u003c= 0.0",
+                                                 "ToggleTowBracesShallow",
+                                                 "AIShipManager.AIIntercept2"
+                                             ],
+                                 "sha256":  "71706999e6360b21cf0dec093db1e143bd1aed5ef5e44431279eba8b3154df3d"
+                             },
+                    "dock":  {
+                                 "origin":  "game",
+                                 "path":  "Ostranauts.Ships.Commands/Dock.cs",
+                                 "symbol":  "Dock.RunCommand / ResolveInstantly / AttemptToDock",
+                                 "anchors":  [
+                                                 "ResolveInstantly(Blackboard blackboard)",
+                                                 "CrewSim.DockAndDespawn",
+                                                 "requestClearance: false"
+                                             ],
+                                 "sha256":  "37515df3429295135b9b3abcecc4341c3026d118199e7513299c49b9e00f8b95"
+                             },
+                    "undock":  {
+                                   "origin":  "game",
+                                   "path":  "Ostranauts.Ships.Commands/Undock.cs",
+                                   "symbol":  "Undock.RunCommand / Cleanup",
+                                   "anchors":  [
+                                                   "AttemptToUndock",
+                                                   "PushbackFrom",
+                                                   "private void Cleanup"
+                                               ],
+                                   "sha256":  "aa01b4c2829c0231a7e19251e119c14362173bac574780e9bf15fc8e51b0171c"
+                               },
+                    "delivery":  {
+                                     "origin":  "game",
+                                     "path":  "Ostranauts.Ships.Commands/DockCargoAndDespawn.cs",
+                                     "symbol":  "DockCargoAndDespawn.RunCommand / ResolveInstantly / HandleDockedShips",
+                                     "anchors":  [
+                                                     "TransferMarketCargo",
+                                                     "base.ShipUs.Undock(dockedShip)",
+                                                     "dockedShip.Destroy"
+                                                 ],
+                                     "sha256":  "5b8e2e88cb943202406e89bdc0b44a5132cdf27616a9eff7c4045f98f4adedbf"
+                                 },
+                    "population":  {
+                                       "origin":  "game",
+                                       "path":  "CrewSim.cs",
+                                       "symbol":  "CrewSim.DockAndDespawn / MoveCO / DestroyAndReload",
+                                       "anchors":  [
+                                                       "TIsValidStationDropOff",
+                                                       "condOwner.Destroy()",
+                                                       "MoveCO(condOwner, shipStation",
+                                                       "DestroyAndReload"
+                                                   ],
+                                       "sha256":  "3f4396cd567159dd3a132cc148e72c6df331c6fef08ced4423e0f495afeea038"
+                                   },
+                    "manager":  {
+                                    "origin":  "game",
+                                    "path":  "AIShipManager.cs",
+                                    "symbol":  "AIShipManager.ApplySaveData / UnregisterShip / RegionCleanup",
+                                    "anchors":  [
+                                                    "private static void ApplySaveData",
+                                                    "IsStale",
+                                                    "RegionCleanup"
+                                                ],
+                                    "sha256":  "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+                                },
+                    "group":  {
+                                  "origin":  "game",
+                                  "path":  "SolarSystem/DockGroup.cs",
+                                  "symbol":  "DockGroup.UpdateAnchor / SyncShipInput / TimeAdvance",
+                                  "anchors":  [
+                                                  "Anchor.CopyFrom",
+                                                  "anchor.TimeAdvance(timeDelta)",
+                                                  "objSS.vVelX = anchor.vVelX"
+                                              ],
+                                  "sha256":  "af36efe3945211b2eb7a63b0022ecf843e4c54fcad94a15f3c715af8d699f7ba"
+                              },
+                    "situation":  {
+                                      "origin":  "game",
+                                      "path":  "ShipSitu.cs",
+                                      "symbol":  "ShipSitu.CopyFrom / TimeAdvance",
+                                      "anchors":  [
+                                                      "NavData.TimeAdvance(this)",
+                                                      "public void CopyFrom",
+                                                      "fW +="
+                                                  ],
+                                      "sha256":  "09eba8d52011e3a63659e3bb7d582bf21ecaccd8de8ff0a67711d5dec5169a79"
+                                  },
+                    "playback":  {
+                                     "origin":  "game",
+                                     "path":  "Ostranauts.ShipGUIs.Utilities/NavData.cs",
+                                     "symbol":  "NavData.TimeAdvance",
+                                     "anchors":  [
+                                                     "situUs.fW = 0f",
+                                                     "situUs.ResetAccelerations()",
+                                                     "situUs.vVelX = point.X"
+                                                 ],
+                                     "sha256":  "bbd69f4666ba775d0998f9b310afe633b407ebe848978c9217c2a7c2d786731a"
+                                 },
+                    "world":  {
+                                  "origin":  "game",
+                                  "path":  "StarSystem.cs",
+                                  "symbol":  "StarSystem.Update / UpdateDockingGroups / CleanupStaleShips",
+                                  "anchors":  [
+                                                  "UpdateDockingGroups(fTimeDelta)",
+                                                  "private static void CleanupStaleShips",
+                                                  "item.bRemove = true"
+                                              ],
+                                  "sha256":  "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+                              },
+                    "physical":  {
+                                     "origin":  "game",
+                                     "path":  "Ship.cs",
+                                     "symbol":  "Ship.Dock / Undock / UpdateDockedShips",
+                                     "anchors":  [
+                                                     "currentSitu._dockGroup.SyncShipInput",
+                                                     "public void Undock(Ship objShip)",
+                                                     "OnDock.Invoke"
+                                                 ],
+                                     "sha256":  "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+                                 },
+                    "fix_handoff":  {
+                                        "origin":  "repo",
+                                        "path":  "Haulers/HaulerRetrieverSffPatch.cs",
+                                        "symbol":  "HaulerRetrieverSffPatch.Postfix",
+                                        "anchors":  [
+                                                        "Current(main) = 4",
+                                                        "__result = null",
+                                                        "steps.Count != 6"
+                                                    ],
+                                        "sha256":  "f4d8ff4958a15418c3d6efbc04b090c57a82ec5648e0f4200c3fee9ba1ce2fdb"
+                                    },
+                    "fix_lifecycle":  {
+                                          "origin":  "repo",
+                                          "path":  "MiscBugFixes/AIShipLifecyclePatches.cs",
+                                          "symbol":  "InstantDockStatePatch / DetachedReserveHullPatch / CrewedAIControl",
+                                          "anchors":  [
+                                                          "ship.IsDocked()",
+                                                          "if (HasCrew(ship)) return true",
+                                                          "if (!wasStale",
+                                                          "DetachedHidden"
+                                                      ],
+                                          "sha256":  "8b32b760c10361a5baa7fad8598423ad7102d36b8bfd67564961305ad6f1fabc"
+                                      },
+                    "fix_target":  {
+                                       "origin":  "repo",
+                                       "path":  "MiscBugFixes/ShipReplacementTargetsPatch.cs",
+                                       "symbol":  "ShipReplacementTargetsPatch.Postfix",
+                                       "anchors":  [
+                                                       "ReferenceEquals(observer.shipSituTarget",
+                                                       "target.Situ = replacement.objSS"
+                                                   ],
+                                       "sha256":  "a8c5c1fcc0b4343adace40e3618c06d6ac62113d340128c57c3ad139d25461c2"
+                                   },
+                    "fix_depot":  {
+                                      "origin":  "repo",
+                                      "path":  "Venus/VorbRetrievalDepotPatch.cs",
+                                      "symbol":  "VorbRetrievalDepotPatch.Depot",
+                                      "anchors":  [
+                                                      "ai.HomeStation == \"VORB\"",
+                                                      "return system.GetNearestStationRegional"
+                                                  ],
+                                      "sha256":  "43b038e33264097e61624630f48e4b7813d781da04408dcfcefd5e2235043609"
+                                  },
+                    "sff":  {
+                                "origin":  "repo",
+                                "path":  "Orbital/SffSimulation.cs",
+                                "symbol":  "SffSimulation.Prepare / Advance / AllowCatchup",
+                                "anchors":  [
+                                                "if (ship.objSS.NavData != null)",
+                                                "internal bool AllowCatchup",
+                                                "suppressedCatchup++"
+                                            ],
+                                "sha256":  "e7565a26e8412120444bff374476de35f91490e951252128cf8e719f119eb926"
+                            },
+                    "rescue":  {
+                                   "origin":  "repo",
+                                   "path":  "Inspection/ShipArrival.cs",
+                                   "symbol":  "ShipArrival.Run",
+                                   "anchors":  [
+                                                   "if (apply) foreach (var co in crew) co.CatchUp()",
+                                                   "crewPreservedAtStation",
+                                                   "command.ResolveInstantly"
+                                               ],
+                                   "sha256":  "bea3648abcf27f0ee217d1be278adce5fc11f3337b1e69c0a0fc7ceef7aa5dc9"
+                               },
+                    "return":  {
+                                   "origin":  "repo",
+                                   "path":  "Navigation/StationReturn.cs",
+                                   "symbol":  "StationReturn.RunChild / native ordinary mission dispatch / StationReturnFastForwardPatch",
+                                   "anchors":  [
+                                                   "Never steer a docked/tethered group",
+                                                   "nameof(AIShip.FFWD)"
+                                               ],
+                                   "sha256":  "20e6ec9c2501b4deedc04ff75a7904a14d0f2840488bc88876f0b71c0645213c"
+                               },
+                    "venus_guard":  {
+                                        "origin":  "repo",
+                                        "path":  "Venus/VorbNavPlanGuard.cs",
+                                        "symbol":  "VorbNavPlanGuard",
+                                        "anchors":  [
+                                                        "VORB"
+                                                    ],
+                                        "sha256":  "e3c8e4bf5a06bc9a22d86b15515ab60b8301eccc5a378f8eb244ac968c6551c2"
+                                    },
+                    "fuel_refs":  {
+                                      "origin":  "repo",
+                                      "path":  "Navigation/NavigationFuel.cs",
+                                      "symbol":  "RetargetFuelPatch / ClearTargetFuelPatch",
+                                      "anchors":  [
+                                                      "ClearPrediction(ship)",
+                                                      "class RetargetFuelPatch"
+                                                  ],
+                                      "sha256":  "dbc8a1c7ebbb52f49c159b674c84032b4703308b0070130bbf5d62e13c2a6065"
+                                  },
+                    "fix_flightfuel":  {
+                                           "origin":  "repo",
+                                           "path":  "MiscBugFixes/AIFlightFuelHandoff.cs",
+                                           "symbol":  "AIFlightFuelHandoff.Planned/Fetched/PhysicallyPaid and optional native SaveData marker",
+                                           "anchors":  [
+                                                           "state.Planned = true;",
+                                                           "Math.Max(previous, now)",
+                                                           "ostrabus.flightfuel.v1"
+                                                       ],
+                                           "sha256":  "073f4ca245f0ba8d4aff987cbbeeaf86cb688ad626b0f3c9788dcb9ed675e5dd"
+                                       },
+                    "replenishment":  {
+                                          "origin":  "repo",
+                                          "path":  "Navigation/RcsReplenishment.cs",
+                                          "symbol":  "RcsReplenishment / native refill observers",
+                                          "anchors":  [
+                                                          "internal static bool Rebase",
+                                                          "RcsAutomaticReplenishmentPatch"
+                                                      ],
+                                          "sha256":  "c0927a98b7187b224295e458b647cd9a011b64247f70ce5f9b0623640bd5799d"
+                                      },
+                    "escape_native":  {
+                                          "origin":  "game",
+                                          "path":  "Ostranauts.Ships.Commands/TargetEscapeStation.cs",
+                                          "symbol":  "RunCommand/SetTarget/ResolveInstantly",
+                                          "anchors":  [
+                                                          "private void SetTarget(Ship target)"
+                                                      ],
+                                          "sha256":  "ec80d4b8a8df559c146ba9f27bcb13a3451d3103e6b5d0c99f444b50f736ff27"
+                                      },
+                    "escape_repair":  {
+                                          "origin":  "repo",
+                                          "path":  "Navigation/EscapeTargetPatch.cs",
+                                          "symbol":  "EscapeTargetPatch",
+                                          "anchors":  [
+                                                          "data.ApplyToShip(ship)",
+                                                          "ship.objSS.ResetNavData()"
+                                                      ],
+                                          "sha256":  "d783788c02a27143a2c504852c562741a1931821de59d935bec93f033fae906f"
+                                      },
+
+  "avoidance_native": {
+    "origin": "game",
+    "path": "AIShipManager.cs",
+    "symbol": "IsOnCollisionCourse/GetEscapePoint/AIIntercept2",
+    "anchors": [
+      "public static bool IsOnCollisionCourse(",
+      "private static Point GetEscapePoint("
+    ],
+    "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+  },
+  "avoidance_repair": {
+    "origin": "repo",
+    "path": "Navigation/AIShipAvoidancePatch.cs",
+    "symbol": "AIShipAvoidance and guarded AIShipAvoidancePatch.Transpiler",
+    "anchors": [
+      "internal static Point SelectEscape(",
+      "internal static bool FutureCollision("
+    ],
+    "sha256": "66e387fb1c6ee519624eb5699bc61fbcae3dd415292f9d58037b5bbf375e505a"
+  },
+  "avoidance_geometry": {
+    "origin": "repo",
+    "path": "Navigation/ConstantAccelerationApproach.cs",
+    "symbol": "ConstantAccelerationApproach.MinimumSquared",
+    "anchors": [
+      "internal static double MinimumSquared("
+    ],
+    "sha256": "1dab09efdcd60b3d8a5b95841da780834752f50dd87078bebd8363cd632207fb"
+  },
+  "avoidance_ephemeris": {
+    "origin": "repo",
+    "path": "Orbital/NativeEphemeris.cs",
+    "symbol": "Detached body position/velocity",
+    "anchors": [
+      "internal static class NativeEphemeris"
+    ],
+    "sha256": "602b2c8fd83fd5d3f62fb194c91b347747f1bd2b973755124da347d5a300775e"
+  },
+  "avoidance_frame": {
+    "origin": "repo",
+    "path": "Orbital/OrbitAcceleration.cs",
+    "symbol": "Detached body frame acceleration",
+    "anchors": [
+      "internal static class OrbitAcceleration"
+    ],
+    "sha256": "3f21742d25891cccb06ebdbe9586a8aeb622c525748058fc060aa715b8bf17c7"
+  },
+  "avoidance_motion": {
+    "origin": "repo",
+    "path": "Orbital/OrbitalMotion.cs",
+    "symbol": "DVector math used by avoidance",
+    "anchors": [
+      "internal readonly struct DVector"
+    ],
+    "sha256": "ef098a02e24b6c59b473579c00ba0f6b279043cb8a07b99fe705dd75d8c553dd"
+  },
+
+  "station_collision_native": {
+    "origin": "game",
+    "path": "CollisionManager.cs",
+    "symbol": "Ship collision scan/response and projectile/body separation",
+    "anchors": [
+      "public static void CheckCollisions(",
+      "private static void ProcessCollision(Ship a, Ship b"
+    ],
+    "sha256": "f49512841470ef28b14deec8a1dceb803278d527e5aa6184ec309220a61e865b"
+  },
+  "station_collision_policy": {
+    "origin": "repo",
+    "path": "Navigation/StationDockedCollisions.cs",
+    "symbol": "Station docking-chain policy and physical prefix",
+    "anchors": [
+      "internal static bool IsExempt(",
+      "pending.Clear(); visited.Clear(); evaluating = false;"
+    ],
+    "sha256": "a6dc4e7ad7e94c6f74e0191121776b53f6508d95936189a0a4cf1c8e89498449"
+  },
+  "station_collision_scan": {
+    "origin": "repo",
+    "path": "NavConsole/ProximityCollisionPatch.cs",
+    "symbol": "Existing collision/proximity scan with station-attached candidate filtering",
+    "anchors": [
+      "StationDockedCollisions.IgnoreAsObstacle",
+      "hiddenChecks != 1"
+    ],
+    "sha256": "0734bb745bd265599ec5ea5d1bde253c66aef8ee5a97577a186ec72d4abebd4e"
+  }
+
+},
+    "evidence":  {
+                     "source":  {
+                                    "level":  "source_reviewed",
+                                    "artifact":  "Haulers/OKLG-RETRIEVER-RUNAWAYS.md",
+                                    "supports":  "Native branches read directly; does not recover a historical caller."
+                                },
+                     "retriever_repro":  {
+                                             "level":  "offline_native",
+                                             "artifact":  "Tests/AIShipLifecycleCheck/RetrieverSffChecks.cs",
+                                             "supports":  "Native SFF/queue/sequence handoff and route/group overwrite reproduced; scene steering/docking boundaries substituted."
+                                         },
+                     "lifecycle":  {
+                                       "level":  "offline_native",
+                                       "artifact":  "Tests/AIShipLifecycleCheck/Program.cs",
+                                       "supports":  "Crew registration/execution guards, instant-dock ordering and connected reserve selection; selected Unity boundaries substituted."
+                                   },
+                     "arrival":  {
+                                     "level":  "offline_native",
+                                     "artifact":  "Tests/AIShipLifecycleCheck/StationArrivalChecks.cs",
+                                     "supports":  "Native retirement, ownership and unregistration; MoveCO, scene and market boundaries substituted."
+                                 },
+                     "live_arrival":  {
+                                          "level":  "live_observed",
+                                          "artifact":  "Haulers/LIVE-ARRIVAL-2026-11-09.md",
+                                          "supports":  "Four original pilots alive at OKLG/interiors after API arrival. Patrol restoration seen. Fresh fixed SFF pickup not observed."
+                                      },
+                     "sff_tests":  {
+                                       "level":  "offline_native",
+                                       "artifact":  "Tests/OrbitalCheck/SffChecks.cs",
+                                       "supports":  "Captured group/route exclusions and bounded travel/arrival gates; not an end-to-end proof of all regional AI."
+                                   },
+                     "depot":  {
+                                   "level":  "offline_native",
+                                   "artifact":  "Tests/VorbRetrievalCheck/Program.cs",
+                                   "supports":  "Depot ownership/assignment correction; candidate selection and exclusions exercised."
+                               },
+                     "escape_handoff":  {
+                                            "level":  "native_offline_and_source_review",
+                                            "artifact":  "Navigation/ESCAPE-RETARGET.md",
+                                            "supports":  "60 native caller/production-patch checks with explicit world/weapon/health/plan boundaries; whole police dispatch, shared escape leaves, Navy/Blockade controls and allocation. Full combat remains unexpanded."
+                                        },
+
+  "avoidance_validation": {
+    "level": "native_offline_and_geometry_tests",
+    "artifact": "Navigation/PLANETARY-AVOIDANCE-AUDIT.md",
+    "supports": "844 checks including production native FlyTo replay for three anchors, original failure controls, motion oracle and allocation. Flight geometry/evasion remain unexpanded external outcomes in this transition slice; no live validation claimed."
+  },
+
+  "station_traffic_validation": {
+    "level": "native_offline_and_policy_tests",
+    "artifact": "Navigation/STATION-DOCKED-COLLISIONS.md",
+    "supports": "880 assertions: live-link scope, native proximity scan, physical prefix with counting body boundary, free-space/projectile/body controls and native shared FlyTo replay of both patrol and returning hauler. Native impact controls fail; production reaches original targets for three anchors. Full geometry remains unexpanded; no live success claim."
+  }
+
+},
+    "variables":  {
+                      "main":  {
+                                   "values":  [
+                                                  "0",
+                                                  "1",
+                                                  "2",
+                                                  "3",
+                                                  "4",
+                                                  "5"
+                                              ],
+                                   "description":  "Native StickySequence Main index, not a semantic enum.",
+                                   "kind":  "state"
+                               },
+                      "active":  {
+                                     "values":  [
+                                                    "none",
+                                                    "Undock",
+                                                    "TargetNewIfNone",
+                                                    "FlyTo",
+                                                    "Dock",
+                                                    "HaulShip",
+                                                    "DockCargoAndDespawn"
+                                                ],
+                                     "description":  "Observed active leaf can lag the next Main index.",
+                                     "kind":  "state"
+                                 },
+                      "registered":  {
+                                         "values":  [
+                                                        "true",
+                                                        "false"
+                                                    ],
+                                         "description":  "Controller is registered.",
+                                         "kind":  "state"
+                                     },
+                      "visible":  {
+                                      "values":  [
+                                                     "true",
+                                                     "false"
+                                                 ],
+                                      "description":  "Hull is not HideFromSystem.",
+                                      "kind":  "state"
+                                  },
+                      "crew":  {
+                                   "values":  [
+                                                  "aboard_ready",
+                                                  "unavailable",
+                                                  "station",
+                                                  "deleted"
+                                              ],
+                                   "description":  "Readiness summarizes the native alive/conscious/non-player/same-hull policy. Not a crew count.",
+                                   "kind":  "state"
+                               },
+                      "connected":  {
+                                        "values":  [
+                                                       "true",
+                                                       "false"
+                                                   ],
+                                        "description":  "Hull belongs to a physically connected party.",
+                                        "kind":  "state"
+                                    },
+                      "foreign_crew":  {
+                                           "values":  [
+                                                          "true",
+                                                          "false"
+                                                      ],
+                                           "description":  "Connected neighbor has crew; says nothing about transfer authorization.",
+                                           "kind":  "state"
+                                       },
+                      "transfer_authorized":  {
+                                                  "values":  [
+                                                                 "true",
+                                                                 "false"
+                                                             ],
+                                                  "description":  "Intent contract for moving a neighboring crew. Must be established, never inferred from adjacency.",
+                                                  "kind":  "assumption"
+                                              },
+                      "member_route":  {
+                                           "values":  [
+                                                          "true",
+                                                          "false"
+                                                      ],
+                                           "description":  "A native NavData exists on the tug.",
+                                           "kind":  "state"
+                                       },
+                      "anchor_route":  {
+                                           "values":  [
+                                                          "true",
+                                                          "false"
+                                                      ],
+                                           "description":  "Synthetic group anchor has NavData.",
+                                           "kind":  "state"
+                                       },
+                      "target":  {
+                                     "values":  [
+                                                    "none",
+                                                    "wreck",
+                                                    "station"
+                                                ],
+                                     "description":  "Target category; precise object identities remain external.",
+                                     "kind":  "state"
+                                 },
+                      "target_current":  {
+                                             "values":  [
+                                                            "true",
+                                                            "false"
+                                                        ],
+                                             "description":  "Target references the current registered object, not a replaced ShipSitu.",
+                                             "kind":  "state"
+                                         },
+                      "anchor_stale":  {
+                                           "values":  [
+                                                          "true",
+                                                          "false"
+                                                      ],
+                                           "description":  "Inherited powered/rotating controls have lost their steering authority.",
+                                           "kind":  "state"
+                                       },
+                      "thrust":  {
+                                     "values":  [
+                                                    "true",
+                                                    "false"
+                                                ],
+                                     "description":  "A commanded nonzero acceleration is present.",
+                                     "kind":  "state"
+                                 },
+                      "motion_owner":  {
+                                           "values":  [
+                                                          "member",
+                                                          "anchor",
+                                                          "native_manual",
+                                                          "none"
+                                                      ],
+                                           "description":  "Which modeled update most recently determined motion.",
+                                           "kind":  "state"
+                                       },
+                      "queue":  {
+                                    "values":  [
+                                                   "none",
+                                                   "haul_once",
+                                                   "other"
+                                               ],
+                                    "description":  "Relevant native priority continuation.",
+                                    "kind":  "state"
+                                },
+                      "home":  {
+                                   "values":  [
+                                                  "VORB",
+                                                  "other"
+                                              ],
+                                   "description":  "VORB or OKLG (other) within this first slice; not a claim about Ceres fleets.",
+                                   "kind":  "state"
+                               },
+                      "depot":  {
+                                    "values":  [
+                                                   "regional",
+                                                   "home"
+                                               ],
+                                    "description":  "Whose assignments/ownership feed empty retriever selection.",
+                                    "kind":  "state"
+                                },
+                      "shallow":  {
+                                      "values":  [
+                                                     "true",
+                                                     "false"
+                                                 ],
+                                      "description":  "Source is exactly Shallow, as required by the new handoff patch.",
+                                      "kind":  "state"
+                                  },
+                      "player_party":  {
+                                           "values":  [
+                                                          "true",
+                                                          "false"
+                                                      ],
+                                           "description":  "Source/connected party includes player ownership or controlled ship.",
+                                           "kind":  "state"
+                                       },
+                      "tow_eligible":  {
+                                           "values":  [
+                                                          "true",
+                                                          "false"
+                                                      ],
+                                           "description":  "Every attached hull passes the handoff patch\u0027s non-player derelict filter.",
+                                           "kind":  "state"
+                                       },
+                      "tree_expected":  {
+                                            "values":  [
+                                                           "true",
+                                                           "false"
+                                                       ],
+                                            "description":  "The exact six native Main leaves and identity of the returned HaulShip match.",
+                                            "kind":  "state"
+                                        },
+                      "home_available":  {
+                                             "values":  [
+                                                            "true",
+                                                            "false"
+                                                        ],
+                                             "description":  "VORB depot lookup availability checks pass.",
+                                             "kind":  "state"
+                                         },
+                      "stale":  {
+                                    "values":  [
+                                                   "true",
+                                                   "false"
+                                               ],
+                                    "description":  "Native IsStale disposal marker, distinct from an invalid object reference.",
+                                    "kind":  "state"
+                                },
+                      "arrival_accepted":  {
+                                               "values":  [
+                                                              "true",
+                                                              "false"
+                                                          ],
+                                               "description":  "Native dropoff trigger and faction disposition accept this crew.",
+                                               "kind":  "native_result"
+                                           },
+                      "delta_v_positive":  {
+                                               "values":  [
+                                                              "true",
+                                                              "false"
+                                                          ],
+                                               "description":  "Native HaulShip DeltaVRemainingRCS \u003e 0; not a universal enforcement model.",
+                                               "kind":  "native_result"
+                                           },
+                      "selection_succeeds":  {
+                                                 "values":  [
+                                                                "true",
+                                                                "false"
+                                                            ],
+                                                 "description":  "Authored/random/fuel/geometry candidate pipeline yields a target.",
+                                                 "kind":  "native_result"
+                                             },
+                      "pickup_succeeds":  {
+                                              "values":  [
+                                                             "true",
+                                                             "false"
+                                                         ],
+                                              "description":  "Instant Dock succeeds under native requirements.",
+                                              "kind":  "native_result"
+                                          },
+                      "plan_accepted":  {
+                                            "values":  [
+                                                           "true",
+                                                           "false"
+                                                       ],
+                                            "description":  "Native FlyToPath accepts a route; planner internals are opaque here.",
+                                            "kind":  "native_result"
+                                        },
+                      "crew_guard_applicable":  {
+                                                    "values":  [
+                                                                   "true",
+                                                                   "false"
+                                                               ],
+                                                    "description":  "Crew guard\u0027s valid object, load state, role and non-body scope holds.",
+                                                    "kind":  "derived"
+                                                },
+                      "sff_applied":  {
+                                          "values":  [
+                                                         "true",
+                                                         "false"
+                                                     ],
+                                          "description":  "Enabled Orbital SFF actually captured and applied this party\u0027s motion.",
+                                          "kind":  "derived"
+                                      },
+                      "sff_ready":  {
+                                        "values":  [
+                                                       "true",
+                                                       "false"
+                                                   ],
+                                        "description":  "Applied skip meets native-arrival range and speed handoff checks.",
+                                        "kind":  "derived"
+                                    },
+                      "operator_eligible":  {
+                                                "values":  [
+                                                               "true",
+                                                               "false"
+                                                           ],
+                                                "description":  "ALL ShipArrival preflight checks pass, including updated crew acceptance.",
+                                                "kind":  "derived"
+                                            },
+                      "surrender":  {
+                                        "values":  [
+                                                       "true",
+                                                       "false"
+                                                   ],
+                                        "description":  "Native threat branch reaches surrender; actor decision is external.",
+                                        "kind":  "native_result"
+                                    },
+                      "collision":  {
+                                        "values":  [
+                                                       "true",
+                                                       "false"
+                                                   ],
+                                        "description":  "Native collision avoidance requests a maneuver.",
+                                        "kind":  "native_result"
+                                    },
+                      "retired":  {
+                                      "values":  [
+                                                     "true",
+                                                     "false"
+                                                 ],
+                                      "description":  "Native station retirement finished.",
+                                      "kind":  "state"
+                                  },
+                      "selected_reserve":  {
+                                               "values":  [
+                                                              "true",
+                                                              "false"
+                                                          ],
+                                               "description":  "Native reserve selection selected this hull, before spawning/reset.",
+                                               "kind":  "state"
+                                           }
+                  },
+    "predicates":  {
+                       "handoff_scope":  {
+                                             "facts":  {
+                                                           "shallow":  [
+                                                                           "true"
+                                                                       ],
+                                                           "visible":  [
+                                                                           "true"
+                                                                       ],
+                                                           "registered":  [
+                                                                              "true"
+                                                                          ],
+                                                           "member_route":  [
+                                                                                "false"
+                                                                            ],
+                                                           "connected":  [
+                                                                             "true"
+                                                                         ],
+                                                           "player_party":  [
+                                                                                "false"
+                                                                            ],
+                                                           "tow_eligible":  [
+                                                                                "true"
+                                                                            ],
+                                                           "tree_expected":  [
+                                                                                 "true"
+                                                                             ],
+                                                           "main":  [
+                                                                        "2",
+                                                                        "3"
+                                                                    ]
+                                                       }
+                                         },
+                       "crew_stop":  {
+                                         "facts":  {
+                                                       "crew_guard_applicable":  [
+                                                                                     "true"
+                                                                                 ],
+                                                       "crew":  [
+                                                                    "unavailable"
+                                                                ]
+                                                   }
+                                     },
+                       "attached":  {
+                                        "facts":  {
+                                                      "connected":  [
+                                                                        "true"
+                                                                    ]
+                                                  }
+                                    },
+                       "vorb_depot":  {
+                                          "facts":  {
+                                                        "home":  [
+                                                                     "VORB"
+                                                                 ],
+                                                        "home_available":  [
+                                                                               "true"
+                                                                           ]
+                                                    }
+                                      },
+                       "sff_not_ready":  {
+                                             "facts":  {
+                                                           "sff_applied":  [
+                                                                               "true"
+                                                                           ],
+                                                           "sff_ready":  [
+                                                                             "false"
+                                                                         ]
+                                                       }
+                                         },
+                       "operator_safe":  {
+                                             "facts":  {
+                                                           "operator_eligible":  [
+                                                                                     "true"
+                                                                                 ],
+                                                           "arrival_accepted":  [
+                                                                                    "true"
+                                                                                ],
+                                                           "player_party":  [
+                                                                                "false"
+                                                                            ],
+                                                           "foreign_crew":  [
+                                                                                "false"
+                                                                            ]
+                                                       }
+                                         }
+                   },
+    "nodes":  {
+                  "undock":  {
+                                 "label":  "Undock / Main 0",
+                                 "layer":  "command",
+                                 "sources":  [
+                                                 "undock",
+                                                 "sticky"
+                                             ],
+                                 "detail":  "May remain Running; do not assume detachment in one frame."
+                             },
+                  "target":  {
+                                 "label":  "Choose or retain target / Main 1",
+                                 "layer":  "command",
+                                 "sources":  [
+                                                 "target",
+                                                 "retriever"
+                                             ],
+                                 "detail":  "Native low-fuel home selection, authored dispatch, randomized candidates and failure paths."
+                             },
+                  "candidates":  {
+                                     "label":  "Empty retriever depot/candidates",
+                                     "layer":  "decision",
+                                     "sources":  [
+                                                     "retriever"
+                                                 ],
+                                     "detail":  "Messages, ownership filters and randomness are not reimplemented."
+                                 },
+                  "fly":  {
+                              "label":  "FlyTo / Main 2",
+                              "layer":  "command",
+                              "sources":  [
+                                              "fly",
+                                              "path"
+                                          ],
+                              "detail":  "Manual or plotted path depends on native target/geometry/collision decisions."
+                          },
+                  "dock":  {
+                               "label":  "Dock / Main 3",
+                               "layer":  "command",
+                               "sources":  [
+                                               "dock"
+                                           ],
+                               "detail":  "Ordinary docking rejects already attached ships; instant path differs."
+                           },
+                  "haul":  {
+                               "label":  "HaulShip / Main 4",
+                               "layer":  "command",
+                               "sources":  [
+                                               "haul"
+                                           ],
+                               "detail":  "Manual group steering, tow braces, collision avoidance and native zero-delta-v stop."
+                           },
+                  "deliver":  {
+                                  "label":  "DockCargoAndDespawn / Main 5",
+                                  "layer":  "command",
+                                  "sources":  [
+                                                  "delivery"
+                                              ],
+                                  "detail":  "Normal arrival range/speed requirements; instant SFF entry is a different boundary."
+                              },
+                  "queued_haul":  {
+                                      "label":  "SFF one-shot HaulShip pending",
+                                      "layer":  "command",
+                                      "sources":  [
+                                                      "dispatch",
+                                                      "oneshot",
+                                                      "queue"
+                                                  ],
+                                      "detail":  "Wrapper discards Running continuation. Main can still be 2 or 3."
+                                  },
+                  "path":  {
+                               "label":  "Plotted member motion",
+                               "layer":  "physics",
+                               "sources":  [
+                                               "playback",
+                                               "situation"
+                                           ],
+                               "detail":  "Playback sets member pose/velocity and resets spin; not proof group follows."
+                           },
+                  "group":  {
+                                "label":  "Group anchor overwrite",
+                                "layer":  "physics",
+                                "sources":  [
+                                                "world",
+                                                "group"
+                                            ],
+                                "detail":  "Runs after ship updates; inherits anchor controls and does not copy member route."
+                            },
+                  "threat":  {
+                                 "label":  "Native threat-response branch",
+                                 "layer":  "decision",
+                                 "sources":  [
+                                                 "retriever"
+                                             ],
+                                 "detail":  "Priority queue precedes this branch. Sequence checks can fail or remain Running."
+                             },
+                  "surrendered":  {
+                                      "label":  "Native surrender interaction",
+                                      "layer":  "command",
+                                      "sources":  [
+                                                      "retriever"
+                                                  ],
+                                      "detail":  "Not forced successful; resumption/negotiation remains opaque."
+                                  },
+                  "flee":  {
+                               "label":  "Native flee: station/SOS/undock/fly/dock",
+                               "layer":  "command",
+                               "sources":  [
+                                               "retriever"
+                                           ],
+                               "detail":  "Authored multi-command branch; not a universal return-home rule."
+                           },
+                  "unregistered":  {
+                                       "label":  "Stopped/unregistered ship",
+                                       "layer":  "lifecycle",
+                                       "sources":  [
+                                                       "manager"
+                                                   ],
+                                       "detail":  "Can be legitimately stranded. Does not mean the hull or people were destroyed."
+                                   },
+                  "retired":  {
+                                  "label":  "Hidden hull; crew transferred or rejected",
+                                  "layer":  "lifecycle",
+                                  "sources":  [
+                                                  "population"
+                                              ],
+                                  "detail":  "Native dropoff may delete rejected people. Hull reuse/cleanup is not eternal persistence."
+                              },
+                  "reserve":  {
+                                  "label":  "Hidden reserve lookup",
+                                  "layer":  "lifecycle",
+                                  "sources":  [
+                                                  "dispatch"
+                                              ],
+                                  "detail":  "Native selection is faction/POI dependent and originally permits attached hidden hulls."
+                              },
+                  "reserve_blocked":  {
+                                          "label":  "Connected reserve not selected",
+                                          "layer":  "lifecycle",
+                                          "sources":  [
+                                                          "fix_lifecycle"
+                                                      ],
+                                          "detail":  "Rejects a lifecycle-invalid reuse candidate, not all hidden ships."
+                                      },
+                  "spawn":  {
+                                "label":  "Reuse/reset and create/assign crew",
+                                "layer":  "lifecycle",
+                                "sources":  [
+                                                "retriever",
+                                                "dispatch"
+                                            ],
+                                "detail":  "Assigning crew and positioning remain native; reset does not itself guarantee clean angular state."
+                            },
+                  "load":  {
+                               "label":  "Reconstruct saved AI/tree/crew",
+                               "layer":  "boundary",
+                               "sources":  [
+                                               "manager",
+                                               "sticky",
+                                               "queue"
+                                           ],
+                               "detail":  "Native command deserialization is not validated as a full save emulator here."
+                           },
+                  "replacement":  {
+                                      "label":  "Ship instance replaced on unload/reload",
+                                      "layer":  "boundary",
+                                      "sources":  [
+                                                      "population"
+                                                  ],
+                                      "detail":  "Logical registry identity can survive while object references change."
+                                  },
+                  "operator":  {
+                                   "label":  "Explicit operator station arrival",
+                                   "layer":  "operator",
+                                   "sources":  [
+                                                   "rescue"
+                                               ],
+                                   "detail":  "Not an autonomous fallback; consumes eligible empty wrecks for local haulers."
+                               },
+                  "flee_flight":  {
+                                      "label":  "Flee branch FlyTo (not Main)",
+                                      "layer":  "command",
+                                      "sources":  [
+                                                      "retriever",
+                                                      "fly"
+                                                  ],
+                                      "detail":  "Separate authored branch/leaf. The Main index is not advanced by this flight."
+                                  }
+              },
+    "edges":  [
+                  {
+                      "id":  "main.undock_done",
+                      "from":  "undock",
+                      "to":  "target",
+                      "event":  "undock_finished",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "main":  "1",
+                                  "active":  "Undock",
+                                  "connected":  "false"
+                              },
+                      "sources":  [
+                                      "undock",
+                                      "sticky"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Finished leaf advances Main; actual detach completion is an event assumption."
+                  },
+                  {
+                      "id":  "main.select",
+                      "from":  "target",
+                      "to":  "candidates",
+                      "event":  "select_candidates",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "false"
+                                                               ]
+                                             }
+                               },
+                      "set":  {
+                                  "depot":  "regional"
+                              },
+                      "sources":  [
+                                      "retriever",
+                                      "target"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Empty retriever uses regional depot unless patched; low-fuel branch is represented separately."
+                  },
+                  {
+                      "id":  "main.candidate",
+                      "from":  "candidates",
+                      "to":  "fly",
+                      "event":  "candidate_found",
+                      "when":  {
+                                   "facts":  {
+                                                 "selection_succeeds":  [
+                                                                            "true"
+                                                                        ]
+                                             }
+                               },
+                      "set":  {
+                                  "main":  "2",
+                                  "target":  "wreck",
+                                  "active":  "TargetNewIfNone"
+                              },
+                      "sources":  [
+                                      "retriever",
+                                      "target"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Native randomness, availability, fuel screening and geometry are opaque predicates; no nearest-work policy is invented."
+                  },
+                  {
+                      "id":  "main.no_target",
+                      "from":  "candidates",
+                      "to":  "unregistered",
+                      "event":  "no_candidate",
+                      "when":  {
+                                   "facts":  {
+                                                 "selection_succeeds":  [
+                                                                            "false"
+                                                                        ]
+                                             }
+                               },
+                      "set":  {
+                                  "registered":  "false",
+                                  "thrust":  "false",
+                                  "stale":  "true"
+                              },
+                      "sources":  [
+                                      "target",
+                                      "manager"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Retriever RequestHelp returns false. This is an authored role distinction, not automatically a bug."
+                  },
+                  {
+                      "id":  "main.low_fuel_home",
+                      "from":  "target",
+                      "to":  "fly",
+                      "event":  "native_low_fuel_home",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "main":  "2",
+                                  "target":  "station"
+                              },
+                      "sources":  [
+                                      "target"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Native home/nearest-station choice; result is not guaranteed affordable or successful."
+                  },
+                  {
+                      "id":  "main.fly_done",
+                      "from":  "fly",
+                      "to":  "dock",
+                      "event":  "flight_finished",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "main":  "3"
+                              },
+                      "sources":  [
+                                      "fly",
+                                      "sticky"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Ordinary completion advances only after native leaf success."
+                  },
+                  {
+                      "id":  "main.docked",
+                      "from":  "dock",
+                      "to":  "haul",
+                      "event":  "pickup_finished",
+                      "when":  {
+                                   "facts":  {
+                                                 "pickup_succeeds":  [
+                                                                         "true"
+                                                                     ]
+                                             }
+                               },
+                      "set":  {
+                                  "main":  "4",
+                                  "connected":  "true",
+                                  "target":  "none",
+                                  "member_route":  "false"
+                              },
+                      "sources":  [
+                                      "dock",
+                                      "sticky"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Normal Main pickup, without the SFF out-of-band handoff."
+                  },
+                  {
+                      "id":  "main.dock_failed",
+                      "from":  "dock",
+                      "to":  "haul",
+                      "event":  "pickup_failed",
+                      "when":  {
+                                   "facts":  {
+                                                 "pickup_succeeds":  [
+                                                                         "false"
+                                                                     ]
+                                             }
+                               },
+                      "set":  {
+                                  "main":  "4"
+                              },
+                      "sources":  [
+                                      "sticky",
+                                      "dock"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "StickySequence increments on failure too. This is not proof that a tow exists."
+                  },
+                  {
+                      "id":  "haul.no_tow",
+                      "from":  "haul",
+                      "to":  "undock",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "false"
+                                                               ]
+                                             }
+                               },
+                      "set":  {
+                                  "target":  "none",
+                                  "member_route":  "false",
+                                  "main":  "0",
+                                  "active":  "none"
+                              },
+                      "sources":  [
+                                      "haul"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Empty HaulShip clears target and fails; following cargo leaf also fails without a target, exhausting/resetting Main. Next native cycle starts Undock."
+                  },
+                  {
+                      "id":  "haul.tick",
+                      "from":  "haul",
+                      "to":  "haul",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "true"
+                                                               ],
+                                                 "delta_v_positive":  [
+                                                                          "true"
+                                                                      ]
+                                             }
+                               },
+                      "set":  {
+                                  "main":  "4",
+                                  "active":  "HaulShip",
+                                  "target":  "station",
+                                  "motion_owner":  "native_manual",
+                                  "anchor_stale":  "false"
+                              },
+                      "sources":  [
+                                      "haul",
+                                      "physical"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Native AIIntercept2/UpdateDockedShips sync controls to anchor. No fuel bypass is introduced."
+                  },
+                  {
+                      "id":  "haul.exhausted",
+                      "from":  "haul",
+                      "to":  "unregistered",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "true"
+                                                               ],
+                                                 "delta_v_positive":  [
+                                                                          "false"
+                                                                      ]
+                                             }
+                               },
+                      "set":  {
+                                  "registered":  "false",
+                                  "thrust":  "false",
+                                  "stale":  "true"
+                              },
+                      "sources":  [
+                                      "haul",
+                                      "manager"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Native HaulShip explicitly unregisters at zero usable delta-v; intentional failure remains represented."
+                  },
+                  {
+                      "id":  "haul.collision",
+                      "from":  "haul",
+                      "to":  "haul",
+                      "event":  "collision_avoidance",
+                      "when":  {
+                                   "facts":  {
+                                                 "collision":  [
+                                                                   "true"
+                                                               ]
+                                             }
+                               },
+                      "set":  {
+                                  "motion_owner":  "native_manual"
+                              },
+                      "sources":  [
+                                      "haul"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Collision evasion retained; target and next decision need not be home."
+                  },
+                  {
+                      "id":  "haul.reached",
+                      "from":  "haul",
+                      "to":  "deliver",
+                      "event":  "haul_finished",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "main":  "5"
+                              },
+                      "sources":  [
+                                      "haul",
+                                      "sticky"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Requires native range/speed success, not just a home target string."
+                  },
+                  {
+                      "id":  "delivery.accept",
+                      "from":  "deliver",
+                      "to":  "retired",
+                      "event":  "arrival",
+                      "when":  {
+                                   "facts":  {
+                                                 "arrival_accepted":  [
+                                                                          "true"
+                                                                      ]
+                                             }
+                               },
+                      "set":  {
+                                  "retired":  "true",
+                                  "visible":  "false",
+                                  "registered":  "false",
+                                  "crew":  "station",
+                                  "connected":  "false",
+                                  "thrust":  "false"
+                              },
+                      "sources":  [
+                                      "delivery",
+                                      "population"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "arrival",
+                                       "live_arrival"
+                                   ],
+                      "note":  "Market delivery, tow disposal and crew transfer remain native; individual tow details are opaque."
+                  },
+                  {
+                      "id":  "delivery.reject",
+                      "from":  "deliver",
+                      "to":  "retired",
+                      "event":  "arrival",
+                      "when":  {
+                                   "facts":  {
+                                                 "arrival_accepted":  [
+                                                                          "false"
+                                                                      ]
+                                             }
+                               },
+                      "set":  {
+                                  "retired":  "true",
+                                  "visible":  "false",
+                                  "registered":  "false",
+                                  "crew":  "deleted"
+                              },
+                      "sources":  [
+                                      "population"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "arrival"
+                                   ],
+                      "note":  "Native rejected dropoff destroys people; modeled as a policy risk, not silently replaced."
+                  },
+                  {
+                      "id":  "sff.pickup",
+                      "from":  "fly",
+                      "to":  "queued_haul",
+                      "event":  "sff_pickup",
+                      "when":  {
+                                   "facts":  {
+                                                 "member_route":  [
+                                                                      "false"
+                                                                  ],
+                                                 "target":  [
+                                                                "wreck"
+                                                            ],
+                                                 "pickup_succeeds":  [
+                                                                         "true"
+                                                                     ]
+                                             }
+                               },
+                      "set":  {
+                                  "connected":  "true",
+                                  "target":  "none",
+                                  "queue":  "haul_once"
+                              },
+                      "sources":  [
+                                      "retriever",
+                                      "dispatch",
+                                      "oneshot"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "retriever_repro"
+                                   ],
+                      "note":  "Native instant pickup leaves Main unchanged and queues a one-shot HaulShip."
+                  },
+                  {
+                      "id":  "sff.pickup_failed",
+                      "from":  "fly",
+                      "to":  "queued_haul",
+                      "event":  "sff_pickup",
+                      "when":  {
+                                   "facts":  {
+                                                 "member_route":  [
+                                                                      "false"
+                                                                  ],
+                                                 "pickup_succeeds":  [
+                                                                         "false"
+                                                                     ]
+                                             }
+                               },
+                      "set":  {
+                                  "queue":  "haul_once",
+                                  "target":  "none"
+                              },
+                      "sources":  [
+                                      "retriever",
+                                      "dock",
+                                      "dispatch"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "retriever_repro"
+                                   ],
+                      "note":  "Native callback also returns HaulShip on Dock failure; no success assumed."
+                  },
+                  {
+                      "id":  "sff.continue_route",
+                      "from":  "fly",
+                      "to":  "fly",
+                      "event":  "sff_with_route",
+                      "when":  {
+                                   "facts":  {
+                                                 "member_route":  [
+                                                                      "true"
+                                                                  ]
+                                             }
+                               },
+                      "set":  {
+
+                              },
+                      "sources":  [
+                                      "retriever",
+                                      "dispatch"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Native route continuation retained. Orbital excludes plotted members and their group."
+                  },
+                  {
+                      "id":  "sff.already_attached",
+                      "from":  "fly",
+                      "to":  "retired",
+                      "event":  "sff_station_shortcut",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "true"
+                                                               ],
+                                                 "member_route":  [
+                                                                      "false"
+                                                                  ],
+                                                 "target":  [
+                                                                "station"
+                                                            ],
+                                                 "arrival_accepted":  [
+                                                                          "true"
+                                                                      ]
+                                             }
+                               },
+                      "set":  {
+                                  "crew":  "station",
+                                  "retired":  "true",
+                                  "visible":  "false",
+                                  "registered":  "false"
+                              },
+                      "sources":  [
+                                      "dock",
+                                      "population",
+                                      "retriever"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "lifecycle"
+                                   ],
+                      "note":  "Native instant Dock lacks normal attached guard; inclusive cleanup can collect neighboring crew."
+                  },
+                  {
+                      "id":  "queue.one_haul",
+                      "from":  "queued_haul",
+                      "to":  "fly",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "true"
+                                                               ],
+                                                 "delta_v_positive":  [
+                                                                          "true"
+                                                                      ],
+                                                 "main":  [
+                                                              "2"
+                                                          ]
+                                             }
+                               },
+                      "set":  {
+                                  "active":  "HaulShip",
+                                  "target":  "station",
+                                  "queue":  "none",
+                                  "thrust":  "true"
+                              },
+                      "sources":  [
+                                      "oneshot",
+                                      "queue",
+                                      "haul"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "retriever_repro"
+                                   ],
+                      "note":  "Assumes the one manual hauling tick commands nonzero RCS, as seeded in the native motion reproduction. Wrapper ends despite Running."
+                  },
+                  {
+                      "id":  "fly.plot_connected",
+                      "from":  "fly",
+                      "to":  "path",
+                      "event":  "plan_accepted",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "true"
+                                                               ],
+                                                 "plan_accepted":  [
+                                                                       "true"
+                                                                   ],
+                                                 "thrust":  [
+                                                                "true"
+                                                            ]
+                                             }
+                               },
+                      "set":  {
+                                  "active":  "FlyTo",
+                                  "member_route":  "true",
+                                  "anchor_stale":  "true"
+                              },
+                      "sources":  [
+                                      "fly",
+                                      "path"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "retriever_repro"
+                                   ],
+                      "note":  "Switches authority away from synced hauling; anchor retains inherited inputs."
+                  },
+                  {
+                      "id":  "fly.plot_free",
+                      "from":  "fly",
+                      "to":  "path",
+                      "event":  "plan_accepted",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "false"
+                                                               ],
+                                                 "plan_accepted":  [
+                                                                       "true"
+                                                                   ]
+                                             }
+                               },
+                      "set":  {
+                                  "active":  "FlyTo",
+                                  "member_route":  "true",
+                                  "anchor_stale":  "false"
+                              },
+                      "sources":  [
+                                      "fly",
+                                      "path"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Ordinary free-ship plotted travel is a separate path."
+                  },
+                  {
+                      "id":  "path.member",
+                      "from":  "path",
+                      "to":  "group",
+                      "event":  "world_member",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "true"
+                                                               ],
+                                                 "member_route":  [
+                                                                      "true"
+                                                                  ]
+                                             }
+                               },
+                      "set":  {
+                                  "motion_owner":  "member"
+                              },
+                      "sources":  [
+                                      "playback",
+                                      "situation"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "retriever_repro"
+                                   ],
+                      "note":  "Native member playback occurs before group wrapper."
+                  },
+                  {
+                      "id":  "path.free",
+                      "from":  "path",
+                      "to":  "fly",
+                      "event":  "world_member",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "false"
+                                                               ],
+                                                 "member_route":  [
+                                                                      "true"
+                                                                  ]
+                                             }
+                               },
+                      "set":  {
+                                  "motion_owner":  "member"
+                              },
+                      "sources":  [
+                                      "playback"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "No docking-group overwrite."
+                  },
+                  {
+                      "id":  "group.overwrite",
+                      "from":  "group",
+                      "to":  "fly",
+                      "event":  "world_group",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "true"
+                                                               ],
+                                                 "anchor_route":  [
+                                                                      "false"
+                                                                  ]
+                                             }
+                               },
+                      "set":  {
+                                  "motion_owner":  "anchor"
+                              },
+                      "sources":  [
+                                      "world",
+                                      "group"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "retriever_repro"
+                                   ],
+                      "note":  "Latched anchor accelerations/spin can overwrite the member\u0027s route."
+                  },
+                  {
+                      "id":  "sff.haul_shortcut",
+                      "from":  "haul",
+                      "to":  "deliver",
+                      "event":  "sff_haul",
+                      "when":  {
+                                   "facts":  {
+                                                 "target":  [
+                                                                "station"
+                                                            ]
+                                             }
+                               },
+                      "set":  {
+
+                              },
+                      "sources":  [
+                                      "retriever",
+                                      "delivery"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Native callback directly resolves cargo arrival, with no distance/time-capability test in this branch."
+                  },
+                  {
+                      "id":  "threat.entry",
+                      "from":  "fly",
+                      "to":  "threat",
+                      "event":  "threat_check",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+
+                              },
+                      "sources":  [
+                                      "retriever"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Summary of the authored threat branch; full selector/sequence evaluation is not flattened into an unconditional interrupt."
+                  },
+                  {
+                      "id":  "threat.surrender",
+                      "from":  "threat",
+                      "to":  "surrendered",
+                      "event":  "surrender_reached",
+                      "when":  {
+                                   "facts":  {
+                                                 "surrender":  [
+                                                                   "true"
+                                                               ]
+                                             }
+                               },
+                      "set":  {
+
+                              },
+                      "sources":  [
+                                      "retriever"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Native health/targeting and sequence predicates must reach this point."
+                  },
+                  {
+                      "id":  "threat.flee",
+                      "from":  "threat",
+                      "to":  "flee",
+                      "event":  "flee_reached",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+
+                              },
+                      "sources":  [
+                                      "retriever"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Only when the authored sequence reaches its Flee child; not every threat causes flight."
+                  },
+                  {
+                      "id":  "threat.resume",
+                      "from":  "threat",
+                      "to":  "fly",
+                      "event":  "threat_branch_failed",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+
+                              },
+                      "sources":  [
+                                      "retriever"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Failure may allow ordinary work; a threat observation is not a forced outcome."
+                  },
+                  {
+                      "id":  "flee.undock",
+                      "from":  "flee",
+                      "to":  "flee_flight",
+                      "event":  "flee_undock_finished",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "connected":  "false",
+                                  "target":  "station"
+                              },
+                      "sources":  [
+                                      "retriever",
+                                      "undock"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Preserves native SOS/escape possibilities."
+                  },
+                  {
+                      "id":  "pool.available",
+                      "from":  "retired",
+                      "to":  "reserve",
+                      "event":  "native_reuse_check",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+
+                              },
+                      "sources":  [
+                                      "dispatch"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Return records may be selected for reuse or later cleaned up."
+                  },
+                  {
+                      "id":  "pool.select",
+                      "from":  "reserve",
+                      "to":  "spawn",
+                      "event":  "reserve_candidate",
+                      "when":  {
+                                   "facts":  {
+                                                 "visible":  [
+                                                                 "false"
+                                                             ]
+                                             }
+                               },
+                      "set":  {
+                                  "selected_reserve":  "true"
+                              },
+                      "sources":  [
+                                      "dispatch"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "lifecycle"
+                                   ],
+                      "note":  "Native selection did not reject a hidden attached hull."
+                  },
+                  {
+                      "id":  "pool.spawn",
+                      "from":  "spawn",
+                      "to":  "undock",
+                      "event":  "native_spawn",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "visible":  "true",
+                                  "registered":  "true",
+                                  "retired":  "false",
+                                  "crew":  "aboard_ready",
+                                  "main":  "0"
+                              },
+                      "sources":  [
+                                      "retriever"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Conditional on successful native spawn/crew assignment; identity of assigned crew remains external."
+                  },
+                  {
+                      "id":  "pool.cleanup",
+                      "from":  "reserve",
+                      "to":  "unregistered",
+                      "event":  "native_stale_cleanup",
+                      "when":  {
+                                   "facts":  {
+                                                 "stale":  [
+                                                               "true"
+                                                           ],
+                                                 "connected":  [
+                                                                   "false"
+                                                               ]
+                                             }
+                               },
+                      "set":  {
+                                  "visible":  "false"
+                              },
+                      "sources":  [
+                                      "world"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Summary boundary only: actual age, ownership and plot checks remain opaque; node does NOT claim hull deletion."
+                  },
+                  {
+                      "id":  "load.register",
+                      "from":  "load",
+                      "to":  "fly",
+                      "event":  "restore_ai",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "registered":  "true"
+                              },
+                      "sources":  [
+                                      "manager"
+                                  ],
+                      "evidence":  [
+                                       "source",
+                                       "lifecycle"
+                                   ],
+                      "note":  "Native manager registers restored AI without readiness validation."
+                  },
+                  {
+                      "id":  "replace.native",
+                      "from":  "replacement",
+                      "to":  "fly",
+                      "event":  "replace_instance",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "target_current":  "false"
+                              },
+                      "sources":  [
+                                      "population"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "Observer still points at the prior instance unless transferred; represents the investigated stale-reference case."
+                  },
+                  {
+                      "id":  "queue.failed_haul",
+                      "from":  "queued_haul",
+                      "to":  "fly",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+                                                 "connected":  [
+                                                                   "false"
+                                                               ]
+                                             }
+                               },
+                      "set":  {
+                                  "queue":  "none",
+                                  "target":  "none",
+                                  "member_route":  "false"
+                              },
+                      "sources":  [
+                                      "oneshot",
+                                      "haul"
+                                  ],
+                      "evidence":  [
+                                       "source"
+                                   ],
+                      "note":  "One-shot empty HaulShip failure clears target, then native Main resumes."
+                  }
+              ],
+    "findings":  [
+                     {
+                         "id":  "risk.route_anchor_conflict",
+                         "kind":  "integrity_mechanism",
+                         "severity":  "high",
+                         "when":  {
+                                      "facts":  {
+                                                    "registered":  [
+                                                                       "true"
+                                                                   ],
+                                                    "connected":  [
+                                                                      "true"
+                                                                  ],
+                                                    "member_route":  [
+                                                                         "true"
+                                                                     ],
+                                                    "anchor_route":  [
+                                                                         "false"
+                                                                     ],
+                                                    "anchor_stale":  [
+                                                                         "true"
+                                                                     ],
+                                                    "motion_owner":  [
+                                                                         "anchor"
+                                                                     ]
+                                                }
+                                  },
+                         "sources":  [
+                                         "group",
+                                         "playback"
+                                     ],
+                         "note":  "A reproduced route/anchor control conflict, not a claim that every plotted group necessarily runs away.",
+                         "evidence":  [
+                                          "retriever_repro"
+                                      ]
+                     },
+                     {
+                         "id":  "risk.uncrewed_commands",
+                         "kind":  "integrity_contract",
+                         "severity":  "high",
+                         "when":  {
+                                      "facts":  {
+                                                    "registered":  [
+                                                                       "true"
+                                                                   ],
+                                                    "crew":  [
+                                                                 "unavailable"
+                                                             ],
+                                                    "thrust":  [
+                                                                   "true"
+                                                               ],
+                                                    "crew_guard_applicable":  [
+                                                                                  "true"
+                                                                              ]
+                                                }
+                                  },
+                         "sources":  [
+                                         "fix_lifecycle"
+                                     ],
+                         "note":  "Ready crew unavailable while commanded thrust persists. Scope excludes intentional uncrewed controllers.",
+                         "evidence":  [
+                                          "lifecycle"
+                                      ]
+                     },
+                     {
+                         "id":  "risk.unrelated_crew_transfer",
+                         "kind":  "integrity_contract",
+                         "severity":  "high",
+                         "when":  {
+                                      "facts":  {
+                                                    "retired":  [
+                                                                    "true"
+                                                                ],
+                                                    "foreign_crew":  [
+                                                                         "true"
+                                                                     ],
+                                                    "transfer_authorized":  [
+                                                                                "false"
+                                                                            ],
+                                                    "crew":  [
+                                                                 "station"
+                                                             ]
+                                                }
+                                  },
+                         "sources":  [
+                                         "population"
+                                     ],
+                         "note":  "Adjacency alone does not authorize taking a neighbor\u0027s crew. Legitimate group returns require a separately established intent contract.",
+                         "evidence":  [
+                                          "lifecycle"
+                                      ]
+                     },
+                     {
+                         "id":  "policy.rejected_crew_deleted",
+                         "kind":  "native_policy_review",
+                         "severity":  "review",
+                         "when":  {
+                                      "facts":  {
+                                                    "crew":  [
+                                                                 "deleted"
+                                                             ]
+                                                }
+                                  },
+                         "sources":  [
+                                         "population"
+                                     ],
+                         "note":  "Vanilla disposal policy is recorded, not automatically reclassified as a defect or suppressed for autonomous arrivals.",
+                         "evidence":  [
+                                          "source",
+                                          "arrival"
+                                      ]
+                     }
+                 ],
+    "scenarios":  [
+                      {
+                          "id":  "sff-pickup-conflict",
+                          "start":  "fly",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "sff_pickup",
+                                         "ai_tick",
+                                         "plan_accepted",
+                                         "world_member",
+                                         "world_group"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "finding":  "risk.route_anchor_conflict"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "haul",
+                                                           "without":  "risk.route_anchor_conflict"
+                                                       }
+                                     },
+                          "note":  "Conditional native reproduction. Nonzero first haul thrust and accepted route are explicit assumptions; a blocked later event is reported, not silently invented."
+                      },
+                      {
+                          "id":  "normal-haul",
+                          "start":  "haul",
+                          "facts":  {
+                                        "main":  "4",
+                                        "active":  "HaulShip",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "true",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "station",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "ai_tick"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "haul"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "haul"
+                                                       }
+                                     },
+                          "note":  "Ordinary successful steering remains available."
+                      },
+                      {
+                          "id":  "fuel-exhaustion",
+                          "start":  "haul",
+                          "facts":  {
+                                        "main":  "4",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "true",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "station",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "false",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "ai_tick"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "unregistered"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "unregistered"
+                                                       }
+                                     },
+                          "note":  "Legitimate stranding is not forced into rescue."
+                      },
+                      {
+                          "id":  "player-tow-exclusion",
+                          "start":  "fly",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "true",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "sff_pickup",
+                                         "ai_tick",
+                                         "plan_accepted",
+                                         "world_member",
+                                         "world_group"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "finding":  "risk.route_anchor_conflict"
+                                                     },
+                                         "effective":  {
+                                                           "finding":  "risk.route_anchor_conflict"
+                                                       }
+                                     },
+                          "note":  "Patch intentionally does not claim to fix player-controlled groups; scope exclusion leaves this conditional mechanism reachable."
+                      },
+                      {
+                          "id":  "unknown-tree-fallback",
+                          "start":  "fly",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "false",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "sff_pickup",
+                                         "ai_tick",
+                                         "plan_accepted",
+                                         "world_member",
+                                         "world_group"
+                                     ],
+                          "expect":  {
+                                         "effective":  {
+                                                           "finding":  "risk.route_anchor_conflict"
+                                                       }
+                                     },
+                          "note":  "Unknown native layouts fail closed instead of modifying an arbitrary tree."
+                      },
+                      {
+                          "id":  "uncrewed-restoration",
+                          "start":  "load",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "false",
+                                        "visible":  "true",
+                                        "crew":  "unavailable",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "true",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "restore_ai"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "finding":  "risk.uncrewed_commands"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "unregistered",
+                                                           "without":  "risk.uncrewed_commands"
+                                                       }
+                                     },
+                          "note":  "Lifecycle guard is containment, not a crew creation or hull disposal rule."
+                      },
+                      {
+                          "id":  "vorb-assignments",
+                          "start":  "target",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "VORB",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "select_candidates"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "depot",
+                                                         "value":  "regional"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "depot",
+                                                           "value":  "home"
+                                                       }
+                                     },
+                          "note":  "Correct depot identity; native random candidate selection is retained."
+                      },
+                      {
+                          "id":  "other-depot",
+                          "start":  "target",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "select_candidates"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "depot",
+                                                         "value":  "regional"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "depot",
+                                                           "value":  "regional"
+                                                       }
+                                     },
+                          "note":  "Other station behavior remains native."
+                      },
+                      {
+                          "id":  "partial-sff-travel",
+                          "start":  "haul",
+                          "facts":  {
+                                        "main":  "4",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "true",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "station",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "true",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "sff_haul"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "deliver"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "haul"
+                                                       }
+                                     },
+                          "note":  "Applied bounded travel suppresses instant arrival before native handoff range/speed."
+                      },
+                      {
+                          "id":  "plotted-sff-exclusion",
+                          "start":  "haul",
+                          "facts":  {
+                                        "main":  "4",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "true",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "true",
+                                        "anchor_route":  "false",
+                                        "target":  "station",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "sff_haul"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "deliver"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "deliver"
+                                                       }
+                                     },
+                          "note":  "Capture exclusions remain explicit: SFF gate cannot protect a group it did not capture."
+                      },
+                      {
+                          "id":  "connected-reserve",
+                          "start":  "reserve",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "false",
+                                        "visible":  "false",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "true",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "reserve_candidate"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "spawn"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "reserve_blocked"
+                                                       }
+                                     },
+                          "note":  "Blocks premature reuse, not every hidden hull."
+                      },
+                      {
+                          "id":  "detached-reserve",
+                          "start":  "reserve",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "false",
+                                        "visible":  "false",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "reserve_candidate"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "spawn"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "spawn"
+                                                       }
+                                     },
+                          "note":  "Legitimate reserve reuse remains available."
+                      },
+                      {
+                          "id":  "reload-target-reference",
+                          "start":  "replacement",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "replace_instance"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "target_current",
+                                                         "value":  "false"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "target_current",
+                                                           "value":  "true"
+                                                       }
+                                     },
+                          "note":  "Exact old-instance references are transferred, not arbitrary waypoint clones."
+                      },
+                      {
+                          "id":  "native-rejected-dropoff",
+                          "start":  "deliver",
+                          "facts":  {
+                                        "main":  "5",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "false",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "arrival"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "finding":  "policy.rejected_crew_deleted"
+                                                     },
+                                         "effective":  {
+                                                           "finding":  "policy.rejected_crew_deleted"
+                                                       }
+                                     },
+                          "note":  "Autonomous authored policy is not silently rewritten by an operator rescue API."
+                      },
+                      {
+                          "id":  "operator-rescue",
+                          "start":  "haul",
+                          "facts":  {
+                                        "main":  "4",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "true",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "station",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "operator_arrival"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "haul"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "retired",
+                                                           "fact":  "crew",
+                                                           "value":  "station"
+                                                       }
+                                     },
+                          "note":  "Manual operation requires an explicit event; its absence in vanilla is reported as blocked."
+                      },
+                      {
+                          "id":  "threat-retreat",
+                          "start":  "fly",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "threat_check",
+                                         "flee_reached",
+                                         "flee_undock_finished"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "flee_flight"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "flee_flight"
+                                                       }
+                                     },
+                          "note":  "Authored retreat remains a possible conditional path, not a prescribed response to every threat."
+                      },
+                      {
+                          "id":  "failed-pickup",
+                          "start":  "fly",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "false",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "sff_pickup",
+                                         "ai_tick"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "fly"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "fly"
+                                                       }
+                                     },
+                          "note":  "No fabricated attached tow on failure. The wrapper\u0027s actual failure and sequence resumption require further expansion."
+                      },
+                      {
+                          "id":  "attached-cleanup-composition",
+                          "start":  "fly",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "true",
+                                        "foreign_crew":  "true",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "station",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "sff_station_shortcut"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "finding":  "risk.unrelated_crew_transfer"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "haul",
+                                                           "without":  "risk.unrelated_crew_transfer"
+                                                       }
+                                     },
+                          "note":  "Composed inner Dock prefix and outer retriever postfix. Source-grounded conditional inference, not a new combined native-scene measurement."
+                      },
+                      {
+                          "id":  "fixed-haul-to-arrival",
+                          "start":  "fly",
+                          "facts":  {
+                                        "main":  "2",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "false",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "wreck",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "false",
+                                        "sff_ready":  "false",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "sff_pickup",
+                                         "ai_tick",
+                                         "ai_tick",
+                                         "haul_finished",
+                                         "arrival"
+                                     ],
+                          "expect":  {
+                                         "effective":  {
+                                                           "fact":  "crew",
+                                                           "node":  "retired",
+                                                           "value":  "station"
+                                                       }
+                                     },
+                          "note":  "Reference trace given successful later native hauling and acceptance. Does not guarantee every repaired ship reaches home."
+                      },
+                      {
+                          "id":  "sff-arrival-reached",
+                          "start":  "haul",
+                          "facts":  {
+                                        "main":  "4",
+                                        "active":  "FlyTo",
+                                        "registered":  "true",
+                                        "visible":  "true",
+                                        "crew":  "aboard_ready",
+                                        "connected":  "true",
+                                        "foreign_crew":  "false",
+                                        "transfer_authorized":  "false",
+                                        "member_route":  "false",
+                                        "anchor_route":  "false",
+                                        "target":  "station",
+                                        "target_current":  "true",
+                                        "anchor_stale":  "false",
+                                        "thrust":  "false",
+                                        "motion_owner":  "none",
+                                        "queue":  "none",
+                                        "home":  "other",
+                                        "depot":  "regional",
+                                        "shallow":  "true",
+                                        "player_party":  "false",
+                                        "tow_eligible":  "true",
+                                        "tree_expected":  "true",
+                                        "home_available":  "true",
+                                        "stale":  "false",
+                                        "arrival_accepted":  "true",
+                                        "delta_v_positive":  "true",
+                                        "selection_succeeds":  "true",
+                                        "pickup_succeeds":  "true",
+                                        "plan_accepted":  "true",
+                                        "crew_guard_applicable":  "true",
+                                        "sff_applied":  "true",
+                                        "sff_ready":  "true",
+                                        "operator_eligible":  "true",
+                                        "surrender":  "false",
+                                        "collision":  "false",
+                                        "retired":  "false",
+                                        "selected_reserve":  "false"
+                                    },
+                          "events":  [
+                                         "sff_haul"
+                                     ],
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "deliver"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "deliver"
+                                                       }
+                                     },
+                          "note":  "Bounded SFF travel allows native arrival once actual handoff checks pass."
+                      }
+                  ]
+}

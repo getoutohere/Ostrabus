@@ -19,8 +19,11 @@ namespace Ostrabus {
             SceneManager.sceneUnloaded += global::Ostrabus.CeresNavigation.CeresNavigationGuardrails.OnSceneUnloaded;
             SceneManager.sceneUnloaded += global::Ostrabus.Haulers.HaulerRecovery.SceneUnloaded;
             SceneManager.sceneUnloaded += global::Ostrabus.NavConsole.ProximityRange.Reset;
+            SceneManager.sceneUnloaded += global::Ostrabus.NavConsole.Outlines.HullDisplay.SceneUnloaded;
             SceneManager.sceneUnloaded += global::Ostrabus.Venus.VorbNavPlanGuard.ResetRuntimeState;
             Logger = base.Logger;
+            CrewSim.OnGameFinishedLoading.AddListener(global::Ostrabus.Optimizations.CommsHistory.Loaded);
+            CrewSim.OnGameFinishedLoading.AddListener(global::Ostrabus.NavConsole.Outlines.HullDisplay.Loaded);
             global::Ostrabus.EMPropagation.EmPropagation.Initialize(Config);
             global::Ostrabus.Sensors.SensorContacts.Initialize(Config);
             global::Ostrabus.Venus.VenusDerelicts.Initialize(Config);
@@ -28,6 +31,9 @@ namespace Ostrabus {
             global::Ostrabus.QoL.AutoVents.AutoVentControl.Initialize(Config);
             SceneManager.sceneUnloaded += global::Ostrabus.QoL.AutoVents.AutoVentControl.SceneUnloaded;
             global::Ostrabus.Hotkeys.FunctionalHotkeys.Flag = Config.Bind("Hotkeys", "Enabled", true, "Enable functional crew hotkeys in normal crew view. Shift+R toggles Open Airlock; Shift+T toggles Disembark for the selected controllable crew member.");
+            global::Ostrabus.Hotkeys.EquipmentShortcut.Binding = Config.Bind("Hotkeys", "EquipmentShortcut", "Shift+F", "Toggle the selected crew member's helmet and worn EVA suit battery. Rebind in the PDA Mod Settings app.");
+            global::Ostrabus.ShipNavigation.StationDockedCollisions.Flag = Config.Bind("Navigation", "StationDockedCollisionExemption", true, "Exclude station-docked visiting hulls and their connected groups from ship collisions, AI avoidance and proximity warnings. Change live in the PDA Mod Settings app.");
+            global::Ostrabus.ShipNavigation.Collisions.PhysicalCollisions.Flag = Config.Bind("Navigation", "HullCollisions", true, "Use cached exterior hulls for ordinary free ship collisions. Weapons, planets, station regions and AI avoidance stay native. Toggle live in the PDA Mod Settings app.");
             global::Ostrabus.Orbital.OrbitalSimulation.Initialize(Config.Bind("Orbital", "Enabled", false, "Launch default for parent-frame acceleration correction on numerically simulated free ships/docked groups. Console orbital on/off overrides for this session without changing this setting. Experimental; live AI/navigation validation required."));
             global::Ostrabus.Orbital.SffSimulation.Enabled = Config.Bind("Orbital", "SuperFastForward", true, "With Orbital enabled, replace SFF numerical jumps with orbital coasting and bounded AI travel. Player plotted courses and combat retain vanilla behavior. Console orbital sff on/off overrides for this session.").Value;
             global::Ostrabus.Orbital.Economy.SffEconomy.Enabled = Config.Bind("Orbital", "SffEconomy", true, "With Orbital and SuperFastForward enabled, process production, cargo dispatch and eligible shallow freight arrivals chronologically during SFF.").Value;
@@ -66,9 +72,15 @@ namespace Ostrabus {
         }
 
         private void OnDestroy() {
+            CrewSim.OnGameFinishedLoading.RemoveListener(global::Ostrabus.Optimizations.CommsHistory.Loaded);
+            CrewSim.OnGameFinishedLoading.RemoveListener(global::Ostrabus.NavConsole.Outlines.HullDisplay.Loaded);
+            SceneManager.sceneUnloaded -= global::Ostrabus.NavConsole.Outlines.HullDisplay.SceneUnloaded;
+            global::Ostrabus.NavConsole.Outlines.HullDisplay.Reset(true);
+            global::Ostrabus.Optimizations.CommsHistory.CancelLoad();
             global::Ostrabus.Sensors.SensorContacts.Stop();
             global::Ostrabus.EMPropagation.EmPropagation.Stop();
             global::Ostrabus.PdaSettings.SettingsPanel.Stop();
+            global::Ostrabus.NavConsole.Scrollbacks.Stop();
             SceneManager.sceneUnloaded -= global::Ostrabus.QoL.AutoVents.AutoVentControl.SceneUnloaded;
             global::Ostrabus.QoL.AutoVents.AutoVentControl.Stop();
             global::Ostrabus.Diagnostics.WorkTrace.Stop();

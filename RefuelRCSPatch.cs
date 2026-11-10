@@ -24,8 +24,6 @@ internal static class RefuelRCSPatch
         double accepted = Math.Min((double)amount, Math.Max(0, capacity - fuel));
         if (accepted > 0) {
             __instance.fShallowRCSRemass = Math.Min(capacity, fuel + accepted);
-            try { Venus.VorbNavPlanGuard.FuelAdded(__instance, __instance.fShallowRCSRemass - fuel); }
-            catch (Exception ex) { Ostrabus.OstrabusPlugin.Logger?.LogWarning($"[VORB Nav Guard] Could not rebase a refuelled route: {ex.Message}"); }
         }
         __result = (float)(amount - accepted);
         return false;

@@ -7,6 +7,9 @@
   icon is the approved transparent gear/sliders PNG `pda_apps/IcoTemplateSettings.png`.
 - `SettingsRegistry.cs` defines the controls and delegates to existing module
   setters. It does not parse console commands or retain world objects.
+  Shortcut rows have a string binding and validated setter, separate from numeric
+  settings. Station-docked collision exemption and Hull-shaped collisions are
+  independent saved toggles; neither creates custom game-save state.
 - `SettingsPanel.cs` builds a scrollable Unity UI panel lazily. Font and click
   audio come from the native PDA. Toggle buttons and window increment/decrement
   buttons apply immediately; the window remains bounded to 1–30. The Venus wreck
@@ -17,7 +20,9 @@
   Descriptions are shortened for one-line presentation at the standard 1080p UI
   size. Rows use TMP's measured text height with a six-pixel gap before controls;
   wrapping at narrower widths grows the row. Layout runs on opening/resizing,
-  not during the periodic value refresh.
+  not during the periodic value refresh. A shortcut button captures keyboard input
+  only while rebinding; Esc, focus loss, closing or switching apps cancels it.
+  Capture reads the Input System each frame; ordinary refresh stays at 4 Hz.
 - `SettingsAppPatch` intercepts exactly `template_settings` in `GUIPDA.OpenApp`.
   Other app IDs continue through the original dispatcher.
 - `SettingsStatePatch` restores Home before a native state change, including a

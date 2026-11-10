@@ -2,7 +2,69 @@
 
 Planned: [compact target periapsis/apoapsis readout](TARGET-ORBIT-DISPLAY.md).
 
+[Parallel hull outlines](HULL-OUTLINES.md) replace incomplete/stale nav silhouettes
+with cached exterior perimeters that preserve hull corners and recesses. Useful
+onscreen hulls remain detailed based on projected size, with no icon padding or
+fixed 2.5 km cutoff. Physical collision changes remain separate; see
+the [native outline/collision audit](OUTLINES-AUDIT.md).
+
 The proximity dial is always enabled with the plugin.
+
+## Comms and diagnostic scrollbacks
+
+The local-channel comms display and nav diagnostic log support clicking their
+scrollbar tracks and dragging their thumbs. These are render-texture displays:
+vanilla handles wheel input explicitly, but does not forward pointer events
+from the visible console into the offscreen scrollbar. `Scrollbacks` maps the
+pointer through the visible RawImage's rectangle/UVs and the render camera into
+the native scrollbar track. Thumb size, direction and initial grip offset are
+respected; dragging can continue outside the panel until release.
+
+Wheel notches move 20% of the viewport height, independent of transcript length
+or scrollbar thumb size. Input is bounded to the displayed log, and the nav map
+does not pan, zoom or select contacts through its diagnostic log. Hidden logs
+do not play wheel-scroll sounds; scrolling at an endpoint is silent.
+
+Comms follow new messages while at the bottom. Browsing older entries suspends
+following and preserves the reading position when messages arrive. Returning
+to the bottom resumes following; opening a channel starts at its latest entry.
+Vanilla starts a scaled-time `CrewSim.ScrollBottom` coroutine for every appended
+message, including history batches. Pending jumps can therefore override manual
+scrolling or accumulate while paused. Only that comms scheduling call is replaced
+with one coalesced, frame-based layout update that manual input cancels. The
+shared helper remains unchanged for other UIs. Diagnostic-log ordering remains
+native (newest first); it does not acquire comms-style bottom following.
+
+Bindings are discovered independently during native map and docking/comms UI
+initialization: their RawImages belong to separate `GUIOrbitDraw` and
+`GUIDockSys` prefabs. Comms following does not depend on the map being active,
+its editing mode, or the tutorial-paper flag (which can remain true while the
+paper is hidden). Scroll distances use native ScrollRect content/view bounds
+in viewport units, without a world-scale cutoff for offscreen canvases.
+Input runs in
+the existing UI callbacks with no extra Update component, timer or background
+polling. Weak tables tie bindings and follow state to the native UI lifetime;
+plugin teardown clears them. No save state or game assets change. A missing
+surface binding logs a BepInEx warning with its missing components and retains
+native input for that surface, including if pointer mapping is unavailable.
+An unbound comms panel still completes its initial jump to the latest message.
+
+`Tests/NavConsoleCheck` adds 701 scrollback checks under bundled Mono: long-log
+wheel distances, thumb directions/grip/end stops, follow suspension/resumption,
+batch coalescing, paused-frame completion, reopening and cancellation. It also
+executes native message append with text/engine boundaries stubbed, verifies
+unchanged native formatting, and compares every unrelated nav-input instruction.
+The checks execute the production routing and bounds readers with engine
+properties stubbed, covering the previously broken unbound-display fallback,
+inactive map/hidden tutorial independence and separate docking UI binding.
+The complete plugin's Harmony binding audit includes all five patch classes.
+Actual rendered pointer placement and the intermittent long-session symptom
+still require observation in a running Unity scene.
+
+`GET /ui/scrollbacks` reports the current bindings, visibility, native bounds,
+normalized positions, follow state and pointer-to-viewport mapping. It runs only
+when requested through the existing inspection dispatcher; it installs no
+diagnostic hooks or recorder.
 
 The PDA Mod Settings app also offers **Hide nav tutorial note**. This hides the
 entire clickable "Don't crash!" paper, including its click target. The setting
@@ -96,7 +158,7 @@ DTOs, item definitions or sidecar files. Without the plugin vanilla ignores them
 - `ProximityDialInitPatch` adds the dial after the native warnings initialization.
 - `ProximityDialRefreshPatch` synchronizes its readout after native UI updates.
 
-`Tests/NavConsoleCheck` runs with the game's bundled Mono: 842 checks cover all
+`Tests/NavConsoleCheck` runs with the game's bundled Mono: 843 range checks cover all
 positions and native speed factors, shared console copies, malformed values,
 native JsonItem/LitJson roundtrip, transfer to another ship, nested range scopes,
 unchanged surrounding native IL, equal label angles/radii, index alignment, drag steps/end

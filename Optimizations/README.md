@@ -3,6 +3,20 @@
 Harmony patches for simulation and save/load costs, plus bounded profiling telemetry. Each optimization is isolated
 here so it can be reviewed or disabled independently.
 
+[Comms history](COMMS-HISTORY.md) removes old transcript entries after full save
+loading and before the main-thread save snapshot, preserving unread incoming
+messages, in-flight deliveries and each conversation's last reply context.
+This is a seven-day retention policy, not a format change or a hard history cap.
+
+[Portrait composition](SOCIALS-FIRST-OPEN.md) replaces the native cold portrait
+pixel loop with borrowed raw input views and a reusable float-color output buffer.
+Native cache hits, portrait selection, layer order and texture upload remain in
+place. This targets the Socials first-open stall without background preparation
+or changes to social history.
+The refined blend loop reduced a measured 182-contact first opening from
+5.75 to 0.52 seconds; the module notes distinguish composition from remaining
+deferred UI work and describe the native/offline validation boundaries.
+
 [Autonomous disembark filtering](AUTONOMOUS-DISEMBARK.md) rejects foreign-ship
 needs, leisure and social targets before candidate selection when native shore
 leave permission forbids departure. It works independently of AlternativeWork.

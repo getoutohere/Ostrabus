@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/c0086faf647fa8dffbbdfdfb3495c6eff03abae4fe5c8b6e5cbcae647a24c825.json.br",
+  "reason": "Initial reviewed deploying-hauler scope slice. Same native tree across homes; current general recovery and VORB-only route/refill coverage modeled without proposed fixes. 69 bundled-Mono scope assertions and 59 conditional model checks; physical flight, full SFF and loaded/player travel remain explicit gaps.",
+  "acceptedUtc": "2026-11-09T21:13:21.0396398Z",
+  "previousSnapshot": null
+}

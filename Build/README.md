@@ -73,7 +73,10 @@ checked-in fixtures. Build the named project in Release, then pass its
 | `VenusDollyCheck` | none | Dolly burden, unchanged physical mass and location transitions. |
 | `DollyMassCheck` | none or `--graph <export.json>` | Native mass accounting and repair of nested containers, anatomy and characters; exclusions, rollback and idempotence. Optional detached save graph. |
 | `VorbRetrievalCheck` | none | Native retrieval assignments, ownership, exclusions and saved controllers. |
+| `ScavFuelDiagnosis` | none; `fuel`; `fuel-patched`; `refuel`; `sos` | Native scav Hold/sequence, mixed-mode fuel baseline/fix, capped refueling API and authored SOS entry/eligibility diagnosis. |
 | `PdaSettingsCheck` | none | Settings registry, native assets and toggles. |
+| `PortraitCompositionCheck` | none | Native portrait cold/warm paths, pixel equivalence, raw channel layouts, fallback handling, buffer allocation and guarded transpiler binding. |
+| `SocialsProfilingCheck` | none | Temporary profiling registration, nested timing, deferred UI capture, native exceptions, timeout and removal of all diagnostic hooks. |
 | `CoursePlotCheck` | none | Native thrust inversion, fine-control increments, limits and course-control patch bindings. |
 
 Build `Ostrabus.csproj -c Debug` before suites that reference the plugin DLL.

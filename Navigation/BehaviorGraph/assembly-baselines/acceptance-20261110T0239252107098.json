@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/777591592c715fa3b73c4f699874bb973215d0dd8390d5933c9dada6309ff764.json.br",
+  "reason": "Reviewed saved PDA gate for station-docked collision policy. Default-on behavior is unchanged; disabled helper, native collision entry and native proximity candidate restoration pass bundled-Mono regression tests. Graph boundary notes and source fingerprints updated; 49/79/63 model checks pass.",
+  "acceptedUtc": "2026-11-10T02:39:25.2085284Z",
+  "previousSnapshot": "assembly-baselines/c160bf0fba4710bd2a3f412b59f4eb5f9311f3946eb7857c026685e4f827c8c6.json.br"
+}

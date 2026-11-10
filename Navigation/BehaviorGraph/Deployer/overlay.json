@@ -1,0 +1,225 @@
+{
+    "id":  "ostrabus-working-deployer",
+    "base":  "deployer-1.0.1.10",
+    "documentedDependencies":  [
+                                   {
+                                       "sources":  [
+                                                       "pilot",
+                                                       "guard"
+                                                   ],
+                                       "status":  "boundary_not_transition_expanded",
+                                       "id":  "unexpanded",
+                                       "reason":  "Higher-priority pilot branches, native SFF callbacks, player torch plotting and late loaded-ship fuel reconciliation require separate scopes."
+                                   },
+                                   {
+                                       "id":  "escape_handoff",
+                                       "sources":  [
+                                                       "escape_native",
+                                                       "escape_repair"
+                                                   ],
+                                       "status":  "boundary_not_transition_expanded",
+                                       "reason":  "Production escape setter uses coherent native assignment and invalidates obsolete routes for semantic goal changes. Native caller evidence: Notes/AI-RETARGET-CALLER-AUDIT.md. Complete combat/retreat is outside this slice; generic ApplyToShip route invalidation has not been generalized. Navy/Blockade already clear routes through TargetNearestStation."
+                                   },
+
+  {
+    "id": "planet_safe_avoidance",
+    "sources": [
+      "avoidance_native",
+      "avoidance_repair",
+      "avoidance_geometry",
+      "avoidance_ephemeris",
+      "avoidance_frame",
+      "avoidance_motion"
+    ],
+    "status": "boundary_not_transition_expanded",
+    "reason": "Shared native evasion rejects past-only warnings and vets opposite dodges against bodies and moving obstacles. No target/retirement policy changes. Full flight geometry remains outside this slice; see Navigation/PLANETARY-AVOIDANCE-AUDIT.md and Tests/PlanetaryNavigationCheck."
+  },
+
+  {
+    "id": "station_docked_traffic",
+    "sources": [
+      "station_collision_native",
+      "station_collision_policy",
+      "station_collision_scan",
+      "avoidance_repair"
+    ],
+    "status": "boundary_not_transition_expanded",
+    "reason": "Saved PDA policy, default on: nonstation hulls connected to stations/apartments are nonhazards while enabled; disabling immediately restores native hull treatment. Enabled hulls are nonhazards for ship contact, AI evasion and proximity scans. Free-space tows, actual stations, weapon/planet hits remain native. Shared-command fixture evidence; no geometric transition model or forced arrival."
+  }
+
+],
+    "schemaVersion":  1,
+    "patches":  [
+                    {
+                        "id":  "general_deployer_recovery",
+                        "operations":  [
+                                           {
+                                               "id":  "fix.empty_home",
+                                               "predicate":  "recover",
+                                               "to":  "fly",
+                                               "edge":  "empty.cleanup",
+                                               "set":  {
+                                                           "target":  "home",
+                                                           "thrust":  "stopped"
+                                                       },
+                                               "kind":  "intercept",
+                                               "phase":  "after"
+                                           },
+                                           {
+                                               "id":  "fix.idle_home",
+                                               "predicate":  "recover",
+                                               "to":  "fly",
+                                               "edge":  "idle.loop",
+                                               "set":  {
+                                                           "target":  "home",
+                                                           "thrust":  "stopped"
+                                                       },
+                                               "kind":  "intercept"
+                                           },
+                                           {
+                                               "id":  "fix.release_home_locked",
+                                               "predicate":  "recover",
+                                               "to":  "free",
+                                               "edge":  "release.locked",
+                                               "set":  {
+                                                           "target":  "home",
+                                                           "thrust":  "stopped"
+                                                       },
+                                               "kind":  "intercept",
+                                               "phase":  "after"
+                                           },
+                                           {
+                                               "id":  "fix.release_home_free",
+                                               "predicate":  "recover",
+                                               "to":  "free",
+                                               "edge":  "release.free",
+                                               "set":  {
+                                                           "target":  "home",
+                                                           "thrust":  "stopped"
+                                                       },
+                                               "kind":  "intercept",
+                                               "phase":  "after"
+                                           }
+                                       ],
+                        "removes":  [
+                                        "Targetless idle/failed empty-haul state when eligibility passes."
+                                    ],
+                        "summary":  "Eligible empty deploying haulers recover the native home target and stop abandoned thrust at release/failure/idle boundaries.",
+                        "preserves":  [
+                                          "Native target choice, movement, fuel and exclusions."
+                                      ],
+                        "sources":  [
+                                        "recovery",
+                                        "eligibility"
+                                    ],
+                        "evidence":  [
+                                         "review"
+                                     ],
+                        "classification":  "execution_integrity"
+                    },
+                    {
+                        "id":  "global_prediction_invalidation",
+                        "operations":  [
+                                           {
+                                               "to":  "changed",
+                                               "set":  {
+                                                           "prediction":  "none"
+                                                       },
+                                               "edge":  "plan.goal_change",
+                                               "id":  "fix.prediction",
+                                               "kind":  "replace"
+                                           }
+                                       ],
+                        "removes":  [
+                                        "Old manual trip budget after a goal change."
+                                    ],
+                        "summary":  "Semantic target change clears TripFuelPrediction, not NavData.",
+                        "preserves":  [
+                                          "Stored route currently remains outside VORB-specific handling."
+                                      ],
+                        "sources":  [
+                                        "fuel"
+                                    ],
+                        "evidence":  [
+                                         "review"
+                                     ],
+                        "classification":  "accounting_integrity"
+                    },
+                    {
+                        "id":  "vorb_scope",
+                        "operations":  [
+                                           {
+                                               "id":  "fix.vorb_goal",
+                                               "predicate":  "vorb",
+                                               "to":  "changed",
+                                               "edge":  "fix.prediction",
+                                               "set":  {
+                                                           "prediction":  "none",
+                                                           "fallback":  "false",
+                                                           "route":  "none"
+                                                       },
+                                               "kind":  "intercept"
+                                           },
+                                           {
+                                               "id":  "fix.vorb_bad",
+                                               "predicate":  "vorb",
+                                               "to":  "manual",
+                                               "edge":  "plan.bad",
+                                               "set":  {
+                                                           "fallback":  "true",
+                                                           "route":  "none"
+                                                       },
+                                               "kind":  "intercept"
+                                           }
+                                       ],
+                        "removes":  [
+                                        "Stale route and invalid supplied plan within the unchanged regional scope."
+                                    ],
+                        "summary":  "Existing VORB-only deployer target reset and invalid-plan manual fallback; shared observers own target comparison and refill accounting.",
+                        "preserves":  [
+                                          "Other home stations remain unmodified by this guard."
+                                      ],
+                        "sources":  [
+                                        "guard"
+                                    ],
+                        "evidence":  [
+                                         "review"
+                                     ],
+                        "classification":  "regional_containment"
+                    },
+                    {
+                        "id":  "shared_replenishment",
+                        "classification":  "accounting_integrity",
+                        "sources":  [
+                                        "replenishment",
+                                        "plan",
+                                        "ship"
+                                    ],
+                        "evidence":  [
+                                         "replenishment"
+                                     ],
+                        "summary":  "Actual accepted RCS addition translates the still-current plan budgets across AI roles and homes before route validation.",
+                        "removes":  [
+                                        "External refill erased by absolute remaining-fuel reconciliation."
+                                    ],
+                        "preserves":  [
+                                          "Planned expenditure, targets and native route/assistance policy; player ships are excluded."
+                                      ],
+                        "operations":  [
+                                           {
+                                               "kind":  "replace",
+                                               "edge":  "plan.refill",
+                                               "id":  "fix.refill",
+                                               "to":  "refill",
+                                               "set":  {
+                                                           "budget":  "rebased"
+                                                       }
+                                           }
+                                       ]
+                    }
+                ],
+    "notApplicable":  [
+                          "StationReturn does not drive ordinary deploying-hauler Main; it must not be assumed equivalent.",
+                          "Regional route rejection is not generalized by the shared accounting repair."
+                      ]
+}

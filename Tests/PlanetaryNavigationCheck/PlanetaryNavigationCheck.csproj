@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BepInEx"><HintPath>$(GameDir)/BepInEx/core/BepInEx.dll</HintPath></Reference>
+    <Compile Include="../../Navigation/AIShipAvoidancePatch.cs" Link="AIShipAvoidancePatch.cs" />
+    <Compile Include="../../Navigation/ConstantAccelerationApproach.cs" Link="ConstantAccelerationApproach.cs" />
+    <Compile Include="../../Navigation/StationDockedCollisions.cs" Link="StationDockedCollisions.cs" />
+    <Compile Include="../../NavConsole/ProximityCollisionPatch.cs" Link="ProximityCollisionPatch.cs" />
+    <Compile Include="../../NavConsole/ProximityRange.cs" Link="ProximityRange.cs" />
+    <Compile Include="../../Orbital/NativeEphemeris.cs" Link="NativeEphemeris.cs" />
+    <Compile Include="../../Orbital/OrbitalMotion.cs" Link="OrbitalMotion.cs" />
+    <Compile Include="../../Orbital/OrbitAcceleration.cs" Link="OrbitAcceleration.cs" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(GameDir)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

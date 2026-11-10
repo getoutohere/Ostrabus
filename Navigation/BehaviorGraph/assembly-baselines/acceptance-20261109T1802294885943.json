@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/9cad41940b6b7e5f3397ed5f8664ecebde17d022d3fa0e2f2e82bc3c59405e7c.json.br",
+  "reason": "Bind the initial source-reviewed 1.0.1.10 comparison baseline to graph/overlay declarations; retain prior snapshot and all coverage caveats.",
+  "acceptedUtc": "2026-11-09T18:02:29.4861568Z",
+  "previousSnapshot": "assembly-baselines/7e3a96760cf1bf9b9966ed9cdae866cc5f1611f973ffbcacf701ebf1b0005e01.json.br"
+}

@@ -98,10 +98,15 @@ static class Program {
         Check(patched.Count == original.Count + 2, "Expected only two inserted instructions");
         Check(patched.Count(i => i.Calls(AccessTools.Method(typeof(ProximityCollisionPatch), "ShipBuffer"))) == 2, "Ship warning comparison/normalization not both patched");
         Check(patched.Count(i => i.Calls(AccessTools.Method(typeof(ProximityCollisionPatch), "BodyBuffer"))) == 2, "Body warning comparison/normalization not both patched");
+        Check(patched.Count(i => i.Calls(AccessTools.Method(typeof(Ostrabus.ShipNavigation.StationDockedCollisions), "IgnoreAsObstacle"))) == 1, "Station-docked candidate filter not installed exactly once");
         int n = 0;
         foreach (var instruction in patched) {
             if (instruction.Calls(AccessTools.Method(typeof(ProximityCollisionPatch), "ShipBuffer"))) continue;
             var before = original[n++];
+            if (instruction.Calls(AccessTools.Method(typeof(Ostrabus.ShipNavigation.StationDockedCollisions), "IgnoreAsObstacle"))) {
+                Check(instruction.opcode == System.Reflection.Emit.OpCodes.Call && before.Calls(AccessTools.PropertyGetter(typeof(global::Ship), nameof(global::Ship.HideFromSystem))), "Station filter replaced a different collision instruction");
+                continue;
+            }
             bool replaced = instruction.Calls(AccessTools.Method(typeof(ProximityCollisionPatch), "BodyBuffer"));
             Check(replaced ? before.operand is double d && d == ProximityRange.NativeBodyAU : instruction.opcode == before.opcode && Equals(instruction.operand, before.operand), "Unrelated collision instruction changed");
         }
@@ -109,6 +114,7 @@ static class Program {
         h.CreateClassProcessor(typeof(ProximityDialInitPatch)).Patch();
         h.CreateClassProcessor(typeof(ProximityDialRefreshPatch)).Patch();
         Check(Harmony.GetPatchInfo(target).Transpilers.Count == 1, "Native collision hook not installed");
+        ScrollbackChecks.Run(h);
         h.UnpatchSelf();
         System.Console.WriteLine(checks + " nav-console range/save/native-IL checks passed. Native scene layout remains a live check.");
         return 0;

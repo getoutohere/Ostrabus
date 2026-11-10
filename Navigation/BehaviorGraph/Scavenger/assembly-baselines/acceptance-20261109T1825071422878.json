@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/180a28bde04c40792a9d239bf9016885ac826d46249efe277833362564b53d61.json.br",
+  "reason": "Reviewed initial slice boundary wording: player-help node is a helper handoff, and busy dispatch is not a terminal failure; retain initial capture.",
+  "acceptedUtc": "2026-11-09T18:25:07.1396271Z",
+  "previousSnapshot": "assembly-baselines/72922df697ffbfe91623493b844d9b56cc5c864d98fdff73c3a48a2f1a29da5b.json.br"
+}

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../../NavConsole/Outlines/Envelope.cs" Link="Envelope.cs" />
+    <Compile Include="../../../NavConsole/Outlines/ContourBuilder.cs" Link="ContourBuilder.cs" />
+    <Compile Include="../../../NavConsole/Outlines/CollisionShape.cs" Link="CollisionShape.cs" />
+    <Compile Include="../../../Navigation/Collisions/HullContact.cs" Link="HullContact.cs" />
+    <Compile Include="../../../NavConsole/Outlines/HullWorker.cs" Link="HullWorker.cs" />
+    <Compile Include="../../../NavConsole/Outlines/HullZoom.cs" Link="HullZoom.cs" />
+    <Compile Include="../CoreChecks.cs" Link="CoreChecks.cs" />
+    <Compile Include="../CollisionChecks.cs" Link="CollisionChecks.cs" />
+  </ItemGroup>
+</Project>

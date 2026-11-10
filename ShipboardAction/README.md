@@ -1,5 +1,8 @@
 # Shipboard action simulation
 
+Prize/survivor return intent now yields to native queued, combat and threat
+decisions through the [shared ordinary-mission integration](../Navigation/RETURN-PRIORITY.md).
+
 This module simulates combat after hostile AI ships dock or moor together. It is
 implemented separately under `Ostrabus.ShipboardAction` and runs from an
 `AIShipManager.Update` Harmony postfix.

@@ -91,10 +91,10 @@ class Patch
     [HarmonyPatch(typeof(GUIPDA), "GetKnownSocialContacts")]
     static List<Relationship> GUIPDA_GetKnownSocialContacts_Postfix(List<Relationship> __result)
     {
-        int removed = __result.RemoveAll(contact => contact.pspec.GetCO() == null );
-        ConsoleToGUI.instance.LogInfo($"[Socials] hiding {removed} non-extant people");
+        int removed = __result.RemoveAll(QoL.Socials.ContactVisibility.Hide);
+        ConsoleToGUI.instance.LogInfo($"[Socials] hiding {removed} missing contacts or construction drones");
         __result.Sort((x, y) => x.pspec.strFirstName.CompareTo(y.pspec.strFirstName));
-        ConsoleToGUI.instance.LogInfo($"[Socials] return {__result.Count} live people");
+        ConsoleToGUI.instance.LogInfo($"[Socials] return {__result.Count} contacts");
         return __result;
     }
 

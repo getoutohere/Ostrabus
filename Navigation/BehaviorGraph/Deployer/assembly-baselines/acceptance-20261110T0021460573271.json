@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/4ed8fcfc1c419cbf598d2f613859677c3431f0fec15c354f450d99f2fb95ddbe.json.br",
+  "reason": "Reviewed intentional station-attached hull policy and native collision/AI/proximity code. 876 navigation checks and 843 NavConsole range/save/IL checks pass, including patrol and saved returning-hauler impact controls, production arrival for three anchors, native proximity scan with explicit impact-body boundary, scope/undock/weapon/body controls and zero warmed allocations/references. Source/assembly boundaries catalogued; full flight geometry remains unexpanded and live validation is pending.",
+  "acceptedUtc": "2026-11-10T00:21:46.0557488Z",
+  "previousSnapshot": "assembly-baselines/19d2adc5ae806fb956d04c99bb842c4a91478302be5889587c7606e3e1fa2f07.json.br"
+}

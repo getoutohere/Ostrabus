@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/72922df697ffbfe91623493b844d9b56cc5c864d98fdff73c3a48a2f1a29da5b.json.br",
+  "reason": "Initial source-reviewed OKLG scavenger slice; native Hold and shipspec reproduction; no recovery behavior fabricated and fuel exhaustion provenance remains open.",
+  "acceptedUtc": "2026-11-09T18:23:13.8323396Z",
+  "previousSnapshot": null
+}

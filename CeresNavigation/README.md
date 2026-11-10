@@ -1,5 +1,8 @@
 # Ceres navigation guardrails
 
+Returns now run at the native ordinary-mission branch, after queued/combat/threat
+decisions; see [return scheduling](../Navigation/RETURN-PRIORITY.md).
+
 The Ceres policy covers CCRE, GalileanConfederacy and BeltPirates. Shared defect
 fixes live in `Navigation/` (`Ostrabus.ShipNavigation`) and also serve
 boarding returns and other factions where the same native defect applies.

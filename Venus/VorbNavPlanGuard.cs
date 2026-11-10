@@ -3,7 +3,6 @@ using Ostrabus.ShipNavigation;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
-using Ostrabus.Haulers;
 using Ostranauts.Core;
 using Ostranauts.ShipGUIs.Utilities;
 using Ostranauts.Ships;
@@ -43,8 +42,6 @@ internal static class VorbNavPlanGuard
         {
             Ship ship = __instance?.ShipUs;
             if (!IsVorbHauler(ship)) return;
-            AIShip aiShip = HaulerRecovery.GetVorbHaulerAI(ship);
-            if (aiShip != null && IsTargetlessAndEmpty(ship)) HaulerRecovery.RestoreHomeTarget(ship, aiShip, "targetless return recovery");
             ValidateCurrentPlan(ship);
         }
         catch (Exception ex)
@@ -122,16 +119,10 @@ internal static class VorbNavPlanGuard
         States.Remove(ship);
     }
 
-    internal static void FuelAdded(Ship ship, double amount) {
-        if (amount <= 0 || !IsVorbHauler(ship)) return;
-        // A route stores absolute remaining fuel. Rebase it after a refill, or TimeAdvance removes that refill as catch-up.
-        if (!ValidateCurrentPlan(ship)) return;
-        RouteState state = GetState(ship);
-        state.FuelAddedKg += amount;
-        NavData plan = ship.objSS.NavData;
-        if (plan == null) return;
-        List<NavDataPoint> points = NavPoints(plan);
-        for (int i = 0; i < points.Count; i++) points[i].FuelLevel += amount;
+    internal static void RecordFuelAdded(Ship ship, double amount) {
+        // Diagnostics must not validate/replace a route or create regional state
+        // while shared fuel accounting is committing the refill.
+        if (amount > 0 && States.TryGetValue(ship, out RouteState state)) state.FuelAddedKg += amount;
     }
 
     static bool IsVorbHauler(Ship ship)
@@ -144,16 +135,7 @@ internal static class VorbNavPlanGuard
 
     internal static Ship GetPlanShip(NavData navData) { return navData == null ? null : PlanShip(navData); }
     internal static bool TryGetState(Ship ship, out RouteState state) { return States.TryGetValue(ship, out state); }
-    internal static bool CanRebase(Ship ship) { return ship?.objSS?.NavData != null && IsVorbHauler(ship); }
-
-
-    static bool IsTargetlessAndEmpty(Ship ship)
-    {
-        if (ship == null || ship.IsDocked() || ship.shipScanTarget != null || ship.targetRegID != null || ship.TargetData != null) return false;
-        IReadOnlyList<Ship> dockedShips = ship.GetAllDockedShips();
-        return dockedShips == null || dockedShips.Count == 0;
-    }
-
+    internal static bool OwnsRouteGuard(Ship ship) { return ship?.objSS?.NavData != null && IsVorbHauler(ship); }
     static bool IsInvalidPlan(NavData navData, double epoch, out string reason)
     {
         List<NavDataPoint> points = NavPoints(navData);
@@ -210,48 +192,11 @@ internal static class VorbNavPlanGuard
     }
 }
 
-[HarmonyPatch(typeof(Ship), nameof(Ship.RefuelRCS), new Type[] { typeof(float) })]
-internal static class VorbMaterializedRefuelPatch {
-    [HarmonyPrefix]
-    private static void Prefix(Ship __instance, out double __state) {
-        __state = -1;
-        if (__instance.LoadState > Ship.Loaded.Shallow && VorbNavPlanGuard.CanRebase(__instance)) __state = __instance.GetRCSRemain();
-    }
-    [HarmonyPostfix]
-    private static void Postfix(Ship __instance, double __state) {
-        if (__state >= 0) VorbNavPlanGuard.FuelAdded(__instance, __instance.GetRCSRemain() - __state);
-    }
-}
-
-[HarmonyPatch(typeof(Ship), nameof(Ship.AIRefuel))]
-internal static class VorbAutomaticRefuelPatch {
-    [HarmonyPrefix]
-    private static void Prefix(Ship __instance, out double __state) {
-        __state = __instance.LoadState <= Ship.Loaded.Shallow && VorbNavPlanGuard.CanRebase(__instance) ? __instance.fShallowRCSRemass : -1;
-    }
-    [HarmonyPostfix]
-    private static void Postfix(Ship __instance, double __state) {
-        if (__state >= 0) VorbNavPlanGuard.FuelAdded(__instance, __instance.fShallowRCSRemass - __state);
-    }
-}
-
 [HarmonyPatch(typeof(FlyTo), "HasValidPathTarget")]
 internal static class VorbManualBranchPatch {
     [HarmonyPostfix]
     private static void Postfix(FlyTo __instance, ref bool __result) {
         if (VorbNavPlanGuard.ShouldUseManual(__instance.ShipUs)) __result = false;
-    }
-}
-
-[HarmonyPatch(typeof(TargetData), nameof(TargetData.ApplyToShip))]
-internal static class VorbTargetChangePatch {
-    [HarmonyPrefix]
-    private static void Prefix(Ship ship, out NavigationTargetKey __state) {
-        __state = new NavigationTargetKey(ship);
-    }
-    [HarmonyPostfix]
-    private static void Postfix(Ship ship, NavigationTargetKey __state) {
-        if (!__state.Same(new NavigationTargetKey(ship))) VorbNavPlanGuard.TargetChanged(ship);
     }
 }
 
@@ -264,7 +209,7 @@ internal static class VorbNavFuelPlanGuard
         try
         {
             Ship ship = VorbNavPlanGuard.GetPlanShip(__instance);
-            if (!VorbNavPlanGuard.CanRebase(ship) || !ReferenceEquals(ship.objSS.NavData, __instance)) return true;
+            if (!VorbNavPlanGuard.OwnsRouteGuard(ship) || !ReferenceEquals(ship.objSS.NavData, __instance)) return true;
             if (VorbNavPlanGuard.ValidateCurrentPlan(ship) && ReferenceEquals(ship.objSS.NavData, __instance)) return true;
             __result = false;
             return false;

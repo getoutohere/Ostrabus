@@ -14,6 +14,7 @@
   </PropertyGroup>
 
   <!-- Local Game and Unity Engine References -->
+  <ItemGroup><Reference Include="Vectrosity"><HintPath>$(Managed)/Vectrosity.dll</HintPath><Private>False</Private></Reference></ItemGroup>
   <ItemGroup><Compile Remove="Tests/**/*.cs;Tools/**/*.cs;Build/**/*.cs" /></ItemGroup>
   <ItemGroup>
     <None Update="PdaSettings/Assets/**/*" CopyToOutputDirectory="PreserveNewest" />

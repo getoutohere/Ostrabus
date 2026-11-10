@@ -1,0 +1,3187 @@
+{
+  "schemaVersion": 1,
+  "id": "ostrabus-0.2.2-scavenger",
+  "gameVersion": "1.0.1.10",
+  "assemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+  "baselineCommit": "117e658",
+  "scope": {
+    "status": "partial_explicit_slice",
+    "roles": [
+      "Scav"
+    ],
+    "description": "OKLG scavenger Main/Hold, selection and assistance eligibility; no desired recovery edges added.",
+    "covered": [
+      "Actual Scav Main order",
+      "Hold fuel and help gates",
+      "LowFuel home selection",
+      "Failed target search help",
+      "Injected SOS proximity guard",
+      "ATC dispatch eligibility",
+      "Docked Hold SFF",
+      "Shared FlyTo mixed-mode fuel-accounting witness and patched handoff"
+    ],
+    "opaque": [
+      "Cause/timing of fuel exhaustion",
+      "Numeric trajectories/fuel prediction accuracy",
+      "Complete priority/combat/person/crew behavior",
+      "Full comms scheduling and response selection",
+      "End-to-end retriever arrival/retirement",
+      "Full-loaded versus shallow physical departure",
+      "Missing-home null handling in GenerateNavData"
+    ],
+    "preconditions": [
+      "Ordinary Main paths have no higher-priority intervention unless explicitly modeled.",
+      "Derelict docking/fuel state is a supplied native outcome, not synthesized.",
+      "LowFuel, bingo and GetRCSRemain\u003C1kg are different predicates.",
+      "ATC resolves to OKLG for OKLG examples; vanilla code chooses nearest regional station/fallback ID."
+    ],
+    "notProven": [
+      "Origin of historical stranded ships",
+      "Universal inability to escape through external directives/player help",
+      "All mod interactions or complete effective simulation"
+    ]
+  },
+  "sources": {
+    "scav": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/ScavPilot.cs",
+      "symbol": "ScavPilot .ctor / GetTarget / FFWD / InstaDock",
+      "anchors": [
+        "new Hold(this)",
+        "new StickySequenceCommand(\u0022Main\u0022",
+        "BingoFuelCheck"
+      ],
+      "sha256": "0e6a2cb3345664d6b5a51f85c6f1efbc3662a5249a608a28e28257d00f7ec787"
+    },
+    "hold": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/Hold.cs",
+      "symbol": "Hold RunCommand / CanExecute / ResolveInstantly",
+      "anchors": [
+        "GetRCSRemain() \u003C 1.0",
+        "TIsHasRequestedHelp",
+        "fAIPauseTimer \u003E 0.0"
+      ],
+      "sha256": "9a2a65fc36d99efe28cabaf126c3c9994ad5fa2d81f92417eac3e8c7f4f59fff"
+    },
+    "sticky": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/StickySequenceCommand.cs",
+      "symbol": "StickySequenceCommand RunCommand / SaveData",
+      "anchors": [
+        "_currentChild\u002B\u002B",
+        "return commandStatus;"
+      ],
+      "sha256": "15ee314ea9253a93513ef20b2d519edfd3ef7b1e2cd721373f034a0d6b63317d"
+    },
+    "undock": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/Undock.cs",
+      "symbol": "Undock RunCommand / shallow and loaded departure",
+      "anchors": [
+        "AttemptToUndock",
+        "base.ShipUs.Undock(ship)"
+      ],
+      "sha256": "aa01b4c2829c0231a7e19251e119c14362173bac574780e9bf15fc8e51b0171c"
+    },
+    "target": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/TargetNewIfNone.cs",
+      "symbol": "TargetNewIfNone selection, low-fuel path and RequestHelp",
+      "anchors": [
+        "targetDataDTO.NavData = GenerateNavData",
+        "private bool RequestHelp()",
+        "GetTargetHome().Situ"
+      ],
+      "sha256": "fd7c311b3c45a67bbfec7a8adb0528877ec9f928fc5705700c3388756ca5e7d0"
+    },
+    "fly": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyTo.cs",
+      "symbol": "FlyTo RunCommand and trip accounting",
+      "anchors": [
+        "HandleRCSFuel(blackboard)",
+        "base.ShipUs.IsDocked()"
+      ],
+      "sha256": "bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"
+    },
+    "dock": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/Dock.cs",
+      "symbol": "Dock RunCommand / Cleanup",
+      "anchors": [
+        "base.ShipUs.ClearShipTarget()",
+        "CrewSim.DockAndDespawn"
+      ],
+      "sha256": "37515df3429295135b9b3abcecc4341c3026d118199e7513299c49b9e00f8b95"
+    },
+    "fuel": {
+      "origin": "game",
+      "path": "AIShipManager.cs",
+      "symbol": "AIShipManager LowFuel and BingoFuelCheck",
+      "anchors": [
+        "LowFuelThreshold = 0.25f",
+        "LowFuelDeltaVMulti = 4"
+      ],
+      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+    },
+    "sos": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/SosOutOfFuel.cs",
+      "symbol": "SosOutOfFuel RequestHelp (not in Scav tree)",
+      "anchors": [
+        "SHIPSosStranded",
+        "GetRangeTo(base.ShipUs.shipSituTarget)"
+      ],
+      "sha256": "dd3ab74cc11eb4240d7626955fd27e4c0c1f5a84128c41c77597daade271b545"
+    },
+    "out_of_fuel": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/AmIOutOfFuel.cs",
+      "symbol": "AmIOutOfFuel (not in Scav tree)",
+      "anchors": [
+        "deltaVRemainingRCS \u003E= deltaVNeededToTargetFullTrip"
+      ],
+      "sha256": "fa3fbb57eb90727852be1a42ef6220f6b10bc30b8665e0f8983cbdd7b1792e8a"
+    },
+    "comms": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Comms/Comms.cs",
+      "symbol": "Comms SendMessage interaction availability",
+      "anchors": [
+        "GetAvailableInteractions(captain, captain2)",
+        "return false;"
+      ],
+      "sha256": "3e4449a4cbe7fc920a0dc7af2f1ae3ed084fcb94f321d8f4b49ce01ac5bab867"
+    },
+    "spec": {
+      "origin": "game",
+      "path": "JsonShipSpec.cs",
+      "symbol": "JsonShipSpec Matches nIsDocked",
+      "anchors": [
+        "IntMatchesBool(nIsDocked, ship.IsDocked())"
+      ],
+      "sha256": "f411bfc11712b617ac11204f82a699ba7963077b07ab87befb2b4484dcc97867"
+    },
+    "dispatch": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/DeployHauler.cs",
+      "symbol": "DeployHauler RunCommand",
+      "anchors": [
+        "AIType.HaulerRetriever",
+        "SHIPHaulerTargetNotReachable"
+      ],
+      "sha256": "f9daa0e5532f84fb6a1700969739e997629f3913eca7dcfda76b7e29d8069378"
+    },
+    "controller": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/AIShip.cs",
+      "symbol": "AIShip RunAI / FFWD / command injection",
+      "anchors": [
+        "new OneShotWrapperCommand(command)",
+        "_activeReaction"
+      ],
+      "sha256": "713ed29317fc3512c8923c78e4cbf746d177a0057571d177c76035b2016a3103"
+    },
+    "oneshot": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/OneShotWrapperCommand.cs",
+      "symbol": "OneShotWrapperCommand RunCommand",
+      "anchors": [
+        "_wrappedCommand.RunCommand(blackboard)",
+        "CommandCode.Finished"
+      ],
+      "sha256": "03cc95249c9d460b677f2d1bcee9ef4d1368d539afe9d2bedd1503a289959c11"
+    },
+    "fix_fuel": {
+      "origin": "repo",
+      "path": "Navigation/NavigationFuel.cs",
+      "symbol": "InvalidRcsBudgetPatch / ClearTargetFuelPatch / RetargetFuelPatch",
+      "anchors": [
+        "TripFuelPrediction",
+        "InvalidRcsBudgetPatch"
+      ],
+      "sha256": "dbc8a1c7ebbb52f49c159b674c84032b4703308b0070130bbf5d62e13c2a6065"
+    },
+    "fix_targets": {
+      "origin": "repo",
+      "path": "MiscBugFixes/ShipReplacementTargetsPatch.cs",
+      "symbol": "ShipReplacementTargetsPatch",
+      "anchors": [
+        "Transfer only references",
+        "observer.shipUndock = replacement"
+      ],
+      "sha256": "a8c5c1fcc0b4343adace40e3618c06d6ac62113d340128c57c3ad139d25461c2"
+    },
+    "fix_flightfuel": {
+      "origin": "repo",
+      "path": "MiscBugFixes/AIFlightFuelHandoff.cs",
+      "symbol": "AIFlightFuelHandoff.Planned/Fetched/PhysicallyPaid and optional native SaveData marker",
+      "anchors": [
+        "state.Planned = true;",
+        "Math.Max(previous, now)",
+        "ostrabus.flightfuel.v1"
+      ],
+      "sha256": "073f4ca245f0ba8d4aff987cbbeeaf86cb688ad626b0f3c9788dcb9ed675e5dd"
+    },
+    "nav_fuel": {
+      "origin": "game",
+      "path": "Ostranauts.ShipGUIs.Utilities/NavData.cs",
+      "symbol": "NavData.TimeAdvance absolute planned fuel reconciliation",
+      "anchors": [
+        "double rCSRemain = _shipUs.GetRCSRemain();",
+        "_shipUs.RemoveGasMass((float)num4);"
+      ],
+      "sha256": "bbd69f4666ba775d0998f9b310afe633b407ebe848978c9217c2a7c2d786731a"
+    },
+    "fix_scav_recovery": {
+      "origin": "repo",
+      "path": "MiscBugFixes/ScavEmergencyRecovery.cs",
+      "symbol": "ScavEmergencyRecovery visit, home feasibility and help lifecycle",
+      "anchors": [
+        "StoreHomePlan",
+        "VisitFuel",
+        "SHIPSosStranded"
+      ],
+      "sha256": "b8b70f8b38003a01744bfe46affbe676baed9822ade0610df42b5b508983fcd0"
+    },
+    "replenishment": {
+      "origin": "repo",
+      "path": "Navigation/RcsReplenishment.cs",
+      "symbol": "RcsReplenishment / native refill observers",
+      "anchors": [
+        "internal static bool Rebase",
+        "RcsAutomaticReplenishmentPatch"
+      ],
+      "sha256": "c0927a98b7187b224295e458b647cd9a011b64247f70ce5f9b0623640bd5799d"
+    },
+    "escape_native": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/TargetEscapeStation.cs",
+      "symbol": "RunCommand/SetTarget/ResolveInstantly",
+      "anchors": [
+        "private void SetTarget(Ship target)"
+      ],
+      "sha256": "ec80d4b8a8df559c146ba9f27bcb13a3451d3103e6b5d0c99f444b50f736ff27"
+    },
+    "escape_repair": {
+      "origin": "repo",
+      "path": "Navigation/EscapeTargetPatch.cs",
+      "symbol": "EscapeTargetPatch",
+      "anchors": [
+        "data.ApplyToShip(ship)",
+        "ship.objSS.ResetNavData()"
+      ],
+      "sha256": "d783788c02a27143a2c504852c562741a1931821de59d935bec93f033fae906f"
+    },
+    "avoidance_native": {
+      "origin": "game",
+      "path": "AIShipManager.cs",
+      "symbol": "IsOnCollisionCourse/GetEscapePoint/AIIntercept2",
+      "anchors": [
+        "public static bool IsOnCollisionCourse(",
+        "private static Point GetEscapePoint("
+      ],
+      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+    },
+    "avoidance_repair": {
+      "origin": "repo",
+      "path": "Navigation/AIShipAvoidancePatch.cs",
+      "symbol": "AIShipAvoidance and guarded AIShipAvoidancePatch.Transpiler",
+      "anchors": [
+        "internal static Point SelectEscape(",
+        "internal static bool FutureCollision("
+      ],
+      "sha256": "66e387fb1c6ee519624eb5699bc61fbcae3dd415292f9d58037b5bbf375e505a"
+    },
+    "avoidance_geometry": {
+      "origin": "repo",
+      "path": "Navigation/ConstantAccelerationApproach.cs",
+      "symbol": "ConstantAccelerationApproach.MinimumSquared",
+      "anchors": [
+        "internal static double MinimumSquared("
+      ],
+      "sha256": "1dab09efdcd60b3d8a5b95841da780834752f50dd87078bebd8363cd632207fb"
+    },
+    "avoidance_ephemeris": {
+      "origin": "repo",
+      "path": "Orbital/NativeEphemeris.cs",
+      "symbol": "Detached body position/velocity",
+      "anchors": [
+        "internal static class NativeEphemeris"
+      ],
+      "sha256": "602b2c8fd83fd5d3f62fb194c91b347747f1bd2b973755124da347d5a300775e"
+    },
+    "avoidance_frame": {
+      "origin": "repo",
+      "path": "Orbital/OrbitAcceleration.cs",
+      "symbol": "Detached body frame acceleration",
+      "anchors": [
+        "internal static class OrbitAcceleration"
+      ],
+      "sha256": "3f21742d25891cccb06ebdbe9586a8aeb622c525748058fc060aa715b8bf17c7"
+    },
+    "avoidance_motion": {
+      "origin": "repo",
+      "path": "Orbital/OrbitalMotion.cs",
+      "symbol": "DVector math used by avoidance",
+      "anchors": [
+        "internal readonly struct DVector"
+      ],
+      "sha256": "ef098a02e24b6c59b473579c00ba0f6b279043cb8a07b99fe705dd75d8c553dd"
+    },
+    "station_collision_native": {
+      "origin": "game",
+      "path": "CollisionManager.cs",
+      "symbol": "Ship collision scan/response and projectile/body separation",
+      "anchors": [
+        "public static void CheckCollisions(",
+        "private static void ProcessCollision(Ship a, Ship b"
+      ],
+      "sha256": "f49512841470ef28b14deec8a1dceb803278d527e5aa6184ec309220a61e865b"
+    },
+    "station_collision_policy": {
+      "origin": "repo",
+      "path": "Navigation/StationDockedCollisions.cs",
+      "symbol": "Station docking-chain policy and physical prefix",
+      "anchors": [
+        "internal static bool IsExempt(",
+        "pending.Clear(); visited.Clear(); evaluating = false;"
+      ],
+      "sha256": "a6dc4e7ad7e94c6f74e0191121776b53f6508d95936189a0a4cf1c8e89498449"
+    },
+    "station_collision_scan": {
+      "origin": "repo",
+      "path": "NavConsole/ProximityCollisionPatch.cs",
+      "symbol": "Existing collision/proximity scan with station-attached candidate filtering",
+      "anchors": [
+        "StationDockedCollisions.IgnoreAsObstacle",
+        "hiddenChecks != 1"
+      ],
+      "sha256": "0734bb745bd265599ec5ea5d1bde253c66aef8ee5a97577a186ec72d4abebd4e"
+    }
+  },
+  "evidence": {
+    "review": {
+      "level": "source_review",
+      "artifact": "Navigation/BehaviorGraph/Scavenger/INVESTIGATION.md",
+      "supports": "Reviewed native control flow and shipped data; desired recovery is kept outside the native/effective graph."
+    },
+    "native_hold": {
+      "level": "native_offline",
+      "artifact": "Tests/ScavFuelDiagnosis/RESULT.md",
+      "supports": "Actual ScavPilot Main, Hold and StickySequence bodies: repeated empty-fuel hold; exact 1 kg boundary; help flag; refueling release. Unity/condition boundaries substituted explicitly."
+    },
+    "native_spec": {
+      "level": "native_offline",
+      "artifact": "Tests/ScavFuelDiagnosis/RESULT.md",
+      "supports": "Native JsonShipSpec.Matches rejects attached and accepts detached target for nIsDocked=-1. Not a full comms/dispatch simulation."
+    },
+    "mixed_accounting": {
+      "level": "native_offline",
+      "artifact": "Tests/ScavFuelDiagnosis/FUEL-ACCOUNTING.md",
+      "supports": "Native FlyTo dispatch/accounting and NavData fuel debit reproduce manual/planned/manual duplication. Production patches preserve remaining fuel, subsequent spending, repeated handoffs and vanilla-compatible save/load. Prescribed geometry/collision inputs and substituted steering leaves are explicit."
+    },
+    "recovery_native": {
+      "level": "shipped_assembly_offline",
+      "artifact": "Tests/ScavFuelDiagnosis/RECOVERY.md",
+      "supports": "Actual production patches in bundled Mono: ordinary Hold scope, feasibility exceptions, native SOS routing and failed-send controller retention."
+    },
+    "escape_handoff": {
+      "level": "native_offline_and_source_review",
+      "artifact": "Navigation/ESCAPE-RETARGET.md",
+      "supports": "60 native caller/production-patch checks with explicit world/weapon/health/plan boundaries; whole police dispatch, shared escape leaves, Navy/Blockade controls and allocation. Full combat remains unexpanded."
+    },
+    "avoidance_validation": {
+      "level": "native_offline_and_geometry_tests",
+      "artifact": "Navigation/PLANETARY-AVOIDANCE-AUDIT.md",
+      "supports": "844 checks including production native FlyTo replay for three anchors, original failure controls, motion oracle and allocation. Flight geometry/evasion remain unexpanded external outcomes in this transition slice; no live validation claimed."
+    },
+    "station_traffic_validation": {
+      "level": "native_offline_and_policy_tests",
+      "artifact": "Navigation/STATION-DOCKED-COLLISIONS.md",
+      "supports": "880 assertions: live-link scope, native proximity scan, physical prefix with counting body boundary, free-space/projectile/body controls and native shared FlyTo replay of both patrol and returning hauler. Native impact controls fail; production reaches original targets for three anchors. Full geometry remains unexpanded; no live success claim."
+    }
+  },
+  "variables": {
+    "main": {
+      "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "description": "Actual Scav Main index. Queue commands do not automatically change it.",
+      "kind": "state"
+    },
+    "leaf": {
+      "values": [
+        "hold",
+        "undock",
+        "target",
+        "fly",
+        "dock",
+        "sos",
+        "queue",
+        "external"
+      ],
+      "description": "Active modeled control point, not full controller state.",
+      "kind": "state"
+    },
+    "fuel": {
+      "values": [
+        "lt1",
+        "ge1"
+      ],
+      "description": "GetRCSRemain kilograms, distinct from bingo delta-v and LowFuel.",
+      "kind": "state"
+    },
+    "hold_result": {
+      "values": [
+        "none",
+        "running",
+        "finished",
+        "failure"
+      ],
+      "description": "Native Hold return at the modeled boundary.",
+      "kind": "state"
+    },
+    "request": {
+      "values": [
+        "none",
+        "attempt_player",
+        "attempt_station",
+        "player",
+        "station"
+      ],
+      "description": "Attempting a send does not imply delivery.",
+      "kind": "state"
+    },
+    "registered": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Station SOS paths can unregister caller before rescue succeeds.",
+      "kind": "state"
+    },
+    "help_origin": {
+      "values": [
+        "target",
+        "standalone"
+      ],
+      "description": "RequestHelp inside TargetNewIfNone versus explicitly injected SosOutOfFuel.",
+      "kind": "state"
+    },
+    "docked": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Physical attached group exists.",
+      "kind": "state"
+    },
+    "help": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Captain has ShipRequestedHelp.",
+      "kind": "state"
+    },
+    "rotor": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Positive LiftRotorsThrustStrength.",
+      "kind": "state"
+    },
+    "pause_early": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "fAIPauseTimer \u003E 0 and fAIDockingExpire == 0 at Hold entry.",
+      "kind": "state"
+    },
+    "interrupt": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Higher-priority directive/combat/threat is allowed to preempt Main.",
+      "kind": "state"
+    },
+    "low": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Native LowFuel result: fraction \u003C .25 or delta-v \u003C 4*MaxSpeed.",
+      "kind": "native_result"
+    },
+    "home": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "GetTargetHome returned a nonnull target.",
+      "kind": "native_result"
+    },
+    "plan": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "GenerateNavData returned a route.",
+      "kind": "native_result"
+    },
+    "player_eligible": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Scav player-help distance and player-not-station-docked tests pass.",
+      "kind": "native_result"
+    },
+    "near_target": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "SOS target exists within 5 km; suppress station request.",
+      "kind": "state"
+    },
+    "send_ok": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Native SendMessage availability checks permit SOS.",
+      "kind": "native_result"
+    },
+    "dispatch_ok": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "All station-reply conditions other than IsNotDocked pass.",
+      "kind": "native_result"
+    },
+    "haul_ok": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "A completed native DeployHauler attempt supplied a reachable, non-duplicate retriever. A still-running attempt has no value supplied here.",
+      "kind": "native_result"
+    },
+    "candidate_ok": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Native GetTarget/FindTarget selects and accepts a candidate.",
+      "kind": "native_result"
+    },
+    "transfer_complete": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Fuel transfer/replenishment and help removal actually completed.",
+      "kind": "native_result"
+    },
+    "planned_paid": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "A planned segment has already debited its own fuel for the intervening travel.",
+      "kind": "state"
+    },
+    "duplicate_debit": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Manual accounting charged progress already covered by the planned segment.",
+      "kind": "state"
+    },
+    "stale_debit_exhausts": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Externally established arithmetic: the stale manual charge would exhaust the post-plan tank; true in the native 100/80/30 kg reproduction.",
+      "kind": "native_result"
+    },
+    "manual_watermark": {
+      "values": [
+        "current",
+        "stale"
+      ],
+      "description": "Manual TripFuelDTO.Progress relative to progress already paid by the planned path.",
+      "kind": "state"
+    },
+    "home_affordable": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "One-leg native delta-v predicate including rotor/interregional fusion exceptions, independent of null NavData.",
+      "kind": "native_result"
+    }
+  },
+  "predicates": {
+    "no_help": {
+      "facts": {
+        "help": [
+          "false"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "unaffordable_home": {
+      "facts": {
+        "home_affordable": [
+          "false"
+        ],
+        "plan": [
+          "false"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "target_caller": {
+      "facts": {
+        "help_origin": [
+          "target"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    }
+  },
+  "nodes": {
+    "scav_hold": {
+      "label": "Main[4]: docked Hold",
+      "layer": "control",
+      "sources": [
+        "scav",
+        "hold",
+        "sticky"
+      ],
+      "detail": "The low-fuel branch waits; it does not send SOS or advance to Undock."
+    },
+    "scav_undock": {
+      "label": "Main[0]: Undock",
+      "layer": "control",
+      "sources": [
+        "scav",
+        "undock",
+        "sticky"
+      ],
+      "detail": "Physical departure is native and can need a manned nav console when fully loaded."
+    },
+    "scav_target": {
+      "label": "Main[1]: TargetNewIfNone",
+      "layer": "control",
+      "sources": [
+        "scav",
+        "target",
+        "fuel"
+      ],
+      "detail": "Reached after Undock. None of the low-fuel checks preempt Main[4]."
+    },
+    "scav_fly": {
+      "label": "Main[2]: FlyTo",
+      "layer": "control",
+      "sources": [
+        "scav",
+        "fly"
+      ],
+      "detail": "Fuel reservation/planner results are opaque inputs, not assumed perfect."
+    },
+    "scav_dock": {
+      "label": "Main[3]: Dock",
+      "layer": "control",
+      "sources": [
+        "scav",
+        "dock"
+      ],
+      "detail": "Successful nonstation attachment leads to Hold; station retirement is a separate boundary."
+    },
+    "scav_home_fly": {
+      "label": "Main[2]: low-fuel home target",
+      "layer": "control",
+      "sources": [
+        "target",
+        "fly"
+      ],
+      "detail": "TargetData can be accepted with null NavData and zero DTO FuelCostRCS in low-fuel branch."
+    },
+    "scav_request": {
+      "label": "RequestHelp routing",
+      "layer": "control",
+      "sources": [
+        "target",
+        "sos"
+      ],
+      "detail": "Reached by failed candidate search or an explicitly injected SOS; not by Hold expiry."
+    },
+    "scav_player_send": {
+      "label": "Attempt player SOS",
+      "layer": "control",
+      "sources": [
+        "target",
+        "sos",
+        "comms"
+      ],
+      "detail": ""
+    },
+    "scav_station_send": {
+      "label": "Attempt regional-station SOS",
+      "layer": "control",
+      "sources": [
+        "target",
+        "sos",
+        "comms"
+      ],
+      "detail": "Nearest regional station/fallback ATC ID; OKLG only when that resolves to OKLG."
+    },
+    "scav_wait_player": {
+      "label": "Player-help handoff boundary",
+      "layer": "control",
+      "sources": [
+        "hold",
+        "comms",
+        "target"
+      ],
+      "detail": "Snapshot inside RequestHelp after sending; subsequent caller return/tree scheduling is not expanded. This node does not insert a Hold command. Accepted request marks help; declining does not itself clear it."
+    },
+    "scav_station_reply": {
+      "label": "Station response eligibility",
+      "layer": "control",
+      "sources": [
+        "comms",
+        "spec"
+      ],
+      "detail": "ShipTestThem=IsNotDocked is on dispatch reply, not a universal SOS condition."
+    },
+    "scav_dispatch": {
+      "label": "DeployHauler command",
+      "layer": "control",
+      "sources": [
+        "dispatch",
+        "comms"
+      ],
+      "detail": "Spawning can fail or reject unreachable calls; not guaranteed rescue/refueling."
+    },
+    "scav_retriever": {
+      "label": "Retriever dispatched: external lifecycle",
+      "layer": "control",
+      "sources": [
+        "dispatch"
+      ],
+      "detail": "Continue in retriever model; hauling/retirement is not on-site fuel delivery."
+    },
+    "scav_no_dispatch": {
+      "label": "No hauler dispatch from this reply",
+      "layer": "control",
+      "sources": [
+        "spec",
+        "comms"
+      ],
+      "detail": "Other inverse replies remain possible; no fabricated fallback rescue."
+    },
+    "scav_cleanup": {
+      "label": "Unregister / native cleanup boundary",
+      "layer": "control",
+      "sources": [
+        "target",
+        "sos"
+      ],
+      "detail": "No automatic poof assumed; TryInstantCleanup eligibility/native life cycle not expanded."
+    },
+    "scav_suppressed": {
+      "label": "SOS suppressed within target proximity",
+      "layer": "control",
+      "sources": [
+        "sos",
+        "target"
+      ],
+      "detail": "Standalone SOS returns before contacting ATC within 5 km of existing target."
+    },
+    "scav_queue": {
+      "label": "SFF one-shot Hold",
+      "layer": "control",
+      "sources": [
+        "scav",
+        "controller",
+        "oneshot",
+        "hold"
+      ],
+      "detail": "Docked Hold FFWD ResolveInstantly only resets timer; one-shot does not release Main[4]."
+    },
+    "scav_external": {
+      "label": "Priority intervention / external behavior",
+      "layer": "control",
+      "sources": [
+        "scav",
+        "controller"
+      ],
+      "detail": "Combat, threats, player help and queued directives can change the situation. No automatic emergency branch is invented."
+    },
+    "scav_account_plan": {
+      "label": "Planned segment paid; manual watermark stale",
+      "layer": "accounting",
+      "sources": [
+        "fly",
+        "nav_fuel"
+      ],
+      "detail": "Shared FlyTo accounting boundary. Position/timing/fuel values are explicit native-fixture inputs, not computed by this discrete model."
+    },
+    "scav_account_manual": {
+      "label": "Resume manual fuel accounting",
+      "layer": "accounting",
+      "sources": [
+        "fly"
+      ],
+      "detail": "Native subtracts the stale progress increment; patched FetchFuelData advances the manual watermark before the native debit."
+    }
+  },
+  "edges": [
+    {
+      "id": "hold.empty",
+      "from": "scav_hold",
+      "to": "scav_hold",
+      "event": "hold_expiry",
+      "when": {
+        "facts": {
+          "interrupt": [
+            "false"
+          ],
+          "pause_early": [
+            "false"
+          ],
+          "fuel": [
+            "lt1"
+          ],
+          "rotor": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "hold_result": "running"
+      },
+      "sources": [
+        "scav",
+        "hold",
+        "sticky"
+      ],
+      "evidence": [
+        "review",
+        "native_hold"
+      ],
+      "note": "Expired timer reset to -infinity; next call re-arms it. No SOS, no index change.",
+      "guards": [
+        {
+          "predicate": "no_help",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
+      "id": "hold.help",
+      "from": "scav_hold",
+      "to": "scav_hold",
+      "event": "hold_expiry",
+      "when": {
+        "facts": {
+          "interrupt": [
+            "false"
+          ],
+          "pause_early": [
+            "false"
+          ],
+          "fuel": [
+            "ge1"
+          ],
+          "help": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "hold_result": "running"
+      },
+      "sources": [
+        "hold",
+        "sticky"
+      ],
+      "evidence": [
+        "review",
+        "native_hold"
+      ],
+      "note": "Help condition holds even after \u003E=1 kg is restored.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "hold.rotor_help",
+      "from": "scav_hold",
+      "to": "scav_hold",
+      "event": "hold_expiry",
+      "when": {
+        "facts": {
+          "interrupt": [
+            "false"
+          ],
+          "pause_early": [
+            "false"
+          ],
+          "fuel": [
+            "lt1"
+          ],
+          "rotor": [
+            "true"
+          ],
+          "help": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "hold_result": "running"
+      },
+      "sources": [
+        "hold",
+        "sticky"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "hold.ready",
+      "from": "scav_hold",
+      "to": "scav_undock",
+      "event": "hold_expiry",
+      "when": {
+        "facts": {
+          "interrupt": [
+            "false"
+          ],
+          "pause_early": [
+            "false"
+          ],
+          "fuel": [
+            "ge1"
+          ],
+          "help": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "0",
+        "leaf": "undock",
+        "hold_result": "finished"
+      },
+      "sources": [
+        "scav",
+        "hold",
+        "sticky"
+      ],
+      "evidence": [
+        "review",
+        "native_hold"
+      ],
+      "note": "This is not a homeward-fuel affordability check.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "hold.rotor",
+      "from": "scav_hold",
+      "to": "scav_undock",
+      "event": "hold_expiry",
+      "when": {
+        "facts": {
+          "interrupt": [
+            "false"
+          ],
+          "pause_early": [
+            "false"
+          ],
+          "fuel": [
+            "lt1"
+          ],
+          "rotor": [
+            "true"
+          ],
+          "help": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "0",
+        "leaf": "undock",
+        "hold_result": "finished"
+      },
+      "sources": [
+        "hold",
+        "sticky"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "hold.pause",
+      "from": "scav_hold",
+      "to": "scav_undock",
+      "event": "hold_tick",
+      "when": {
+        "facts": {
+          "interrupt": [
+            "false"
+          ],
+          "pause_early": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "0",
+        "leaf": "undock",
+        "hold_result": "failure"
+      },
+      "sources": [
+        "hold",
+        "sticky"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Failure at last Main child falls through to sequence reset; next pass begins at Undock. Not the ordinary empty Hold expiry.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "hold.sff",
+      "from": "scav_hold",
+      "to": "scav_queue",
+      "event": "sff_hold",
+      "when": {
+        "facts": {
+          "docked": [
+            "true"
+          ],
+          "interrupt": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "leaf": "queue"
+      },
+      "sources": [
+        "scav",
+        "hold",
+        "controller",
+        "oneshot"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "ResolveInstantly resets Hold timer 1..30 and timestamp; no assistance or undock.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "hold.oneshot",
+      "from": "scav_queue",
+      "to": "scav_hold",
+      "event": "queue_tick",
+      "when": {
+        "facts": {
+          "main": [
+            "4"
+          ],
+          "docked": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "leaf": "hold"
+      },
+      "sources": [
+        "scav",
+        "hold",
+        "controller",
+        "oneshot"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "OneShot reports Finished independently of wrapped Hold; Main still at 4.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "hold.interrupt",
+      "from": "scav_hold",
+      "to": "scav_external",
+      "event": "priority_tick",
+      "when": {
+        "facts": {
+          "interrupt": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "leaf": "external"
+      },
+      "sources": [
+        "scav",
+        "controller"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "hold.external_fuel",
+      "from": "scav_hold",
+      "to": "scav_hold",
+      "event": "fuel_restored",
+      "when": {
+        "facts": {
+          "transfer_complete": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "fuel": "ge1",
+        "help": "false"
+      },
+      "sources": [
+        "hold",
+        "comms"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Explicit completed external fuel/help removal, not a built-in automatic rescue.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "undock.wait",
+      "from": "scav_undock",
+      "to": "scav_undock",
+      "event": "departure_pending",
+      "when": {
+        "facts": {
+          "docked": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "undock"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Loaded nav/crew or physical departure can keep Running; no promise of success.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "undock.done",
+      "from": "scav_undock",
+      "to": "scav_target",
+      "event": "undock_finished",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "1",
+        "leaf": "target",
+        "docked": "false"
+      },
+      "sources": [
+        "undock",
+        "scav",
+        "sticky"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "After native departure/cleanup; no old scan/situ target retained in ordinary path.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "target.accept",
+      "from": "scav_target",
+      "to": "scav_fly",
+      "event": "select_candidate",
+      "when": {
+        "facts": {
+          "low": [
+            "false"
+          ],
+          "candidate_ok": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "2",
+        "leaf": "fly"
+      },
+      "sources": [
+        "scav",
+        "target",
+        "fuel"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Scav derelict selection uses outbound BingoFuelCheck; FindTarget free-target branch also tests return reserve. Anchored path planning validates outbound route. Not blanket lack of fuel checks.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "target.fail",
+      "from": "scav_target",
+      "to": "scav_request",
+      "event": "select_candidate",
+      "when": {
+        "facts": {
+          "low": [
+            "false"
+          ],
+          "candidate_ok": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "help_origin": "target",
+        "request": "none"
+      },
+      "sources": [
+        "target"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Failed search reaches RequestHelp; event summarizes native attempts, not a guarantee the first random candidate fails.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "target.home_route",
+      "from": "scav_target",
+      "to": "scav_home_fly",
+      "event": "select_home",
+      "when": {
+        "facts": {
+          "low": [
+            "true"
+          ],
+          "home": [
+            "true"
+          ],
+          "plan": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "2",
+        "leaf": "fly"
+      },
+      "sources": [
+        "target",
+        "scav"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "LowFuel branch takes nearest GetTargetHome, not necessarily station of origin.",
+      "guards": [
+        {
+          "predicate": "unaffordable_home",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
+      "id": "target.home_no_route",
+      "from": "scav_target",
+      "to": "scav_home_fly",
+      "event": "select_home",
+      "when": {
+        "facts": {
+          "low": [
+            "true"
+          ],
+          "home": [
+            "true"
+          ],
+          "plan": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "2",
+        "leaf": "fly"
+      },
+      "sources": [
+        "target",
+        "fly"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Non-null home is accepted even when GenerateNavData fails. Do not invent a RequestHelp transition here.",
+      "guards": [
+        {
+          "predicate": "unaffordable_home",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
+      "id": "home.manual",
+      "from": "scav_home_fly",
+      "to": "scav_home_fly",
+      "event": "navigation_pending",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "target",
+        "fly"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "No native AmIOutOfFuel/SosOutOfFuel preemption in Scav tree. This does not prove physical flight cannot complete.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "fly.arrived",
+      "from": "scav_fly",
+      "to": "scav_dock",
+      "event": "flight_finished",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "3",
+        "leaf": "dock"
+      },
+      "sources": [
+        "fly",
+        "scav",
+        "sticky"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "home.arrived",
+      "from": "scav_home_fly",
+      "to": "scav_dock",
+      "event": "flight_finished",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "3",
+        "leaf": "dock"
+      },
+      "sources": [
+        "fly",
+        "scav",
+        "sticky"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dock.derelict",
+      "from": "scav_dock",
+      "to": "scav_hold",
+      "event": "derelict_docked",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true"
+      },
+      "sources": [
+        "scav",
+        "dock",
+        "sticky"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Native physical docking success supplied externally. This edge neither creates nor consumes fuel.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dock.station",
+      "from": "scav_dock",
+      "to": "scav_cleanup",
+      "event": "station_arrival",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "dock"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Native DockAndDespawn boundary, not an assertion about future spawn/fuel.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "external.sos",
+      "from": "scav_external",
+      "to": "scav_request",
+      "event": "injected_sos",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "leaf": "sos",
+        "help_origin": "standalone",
+        "request": "none"
+      },
+      "sources": [
+        "controller",
+        "sos"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Only an explicit external injected command enters this path; tree does not choose it automatically.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "request.player",
+      "from": "scav_request",
+      "to": "scav_player_send",
+      "event": "route_help",
+      "when": {
+        "facts": {
+          "player_eligible": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "request": "attempt_player"
+      },
+      "sources": [
+        "target",
+        "sos"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "40 km ordinarily, 120 km for close relation or missing captain/spec; player must not be station-docked.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "request.station",
+      "from": "scav_request",
+      "to": "scav_station_send",
+      "event": "route_help",
+      "when": {
+        "facts": {
+          "player_eligible": [
+            "false"
+          ],
+          "near_target": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "request": "attempt_station"
+      },
+      "sources": [
+        "target",
+        "sos"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "request.near",
+      "from": "scav_request",
+      "to": "scav_suppressed",
+      "event": "route_help",
+      "when": {
+        "facts": {
+          "player_eligible": [
+            "false"
+          ],
+          "near_target": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "sos",
+        "target"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Near-target early return precedes station send. For ordinary TargetNew failure both targets were null; relevant here to injected SOS.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "player.delivered",
+      "from": "scav_player_send",
+      "to": "scav_wait_player",
+      "event": "send_result",
+      "when": {
+        "facts": {
+          "send_ok": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "request": "player",
+        "help": "true"
+      },
+      "sources": [
+        "comms",
+        "target",
+        "sos"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Send availability and loot application assumed established; request itself does not undock.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "player.rejected",
+      "from": "scav_player_send",
+      "to": "scav_wait_player",
+      "event": "send_result",
+      "when": {
+        "facts": {
+          "send_ok": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "comms",
+        "target",
+        "sos"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Caller ignores SendMessage false; no fabricated ShipRequestedHelp condition.",
+      "guards": [
+        {
+          "predicate": "target_caller",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
+      "id": "player.decline",
+      "from": "scav_wait_player",
+      "to": "scav_wait_player",
+      "event": "player_declines",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "comms"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Negative interaction does not contain ShipRemoveHelpRequest. Retry/fallback behavior not invented.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "station.delivered",
+      "from": "scav_station_send",
+      "to": "scav_station_reply",
+      "event": "send_result",
+      "when": {
+        "facts": {
+          "send_ok": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "request": "station",
+        "help": "true",
+        "registered": "false"
+      },
+      "sources": [
+        "target",
+        "sos",
+        "comms"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Station send caller unregisters; accepted delivery does not guarantee a retriever.",
+      "guards": [
+        {
+          "predicate": "target_caller",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
+      "id": "station.rejected",
+      "from": "scav_station_send",
+      "to": "scav_cleanup",
+      "event": "send_result",
+      "when": {
+        "facts": {
+          "send_ok": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "registered": "false"
+      },
+      "sources": [
+        "target",
+        "sos",
+        "comms"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Caller still unregisters even if SendMessage returns false.",
+      "guards": [
+        {
+          "predicate": "target_caller",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
+      "id": "station.attached",
+      "from": "scav_station_reply",
+      "to": "scav_no_dispatch",
+      "event": "station_reply",
+      "when": {
+        "facts": {
+          "docked": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "spec",
+        "comms"
+      ],
+      "evidence": [
+        "review",
+        "native_spec"
+      ],
+      "note": "Authored SHIPSOSDispatchHauler requires IsNotDocked.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "station.available",
+      "from": "scav_station_reply",
+      "to": "scav_dispatch",
+      "event": "station_reply",
+      "when": {
+        "facts": {
+          "docked": [
+            "false"
+          ],
+          "dispatch_ok": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "spec",
+        "comms",
+        "dispatch"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "All remaining inverse-response range/condition/loot checks supplied as explicit native outcomes.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "station.unavailable",
+      "from": "scav_station_reply",
+      "to": "scav_no_dispatch",
+      "event": "station_reply",
+      "when": {
+        "facts": {
+          "docked": [
+            "false"
+          ],
+          "dispatch_ok": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "spec",
+        "comms"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dispatch.success",
+      "from": "scav_dispatch",
+      "to": "scav_retriever",
+      "event": "dispatch_attempt",
+      "when": {
+        "facts": {
+          "haul_ok": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "dispatch"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Spawned hauler, duplicate/area/bingo checks and native assignment succeeded. Not a promised arrival.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dispatch.failure",
+      "from": "scav_dispatch",
+      "to": "scav_no_dispatch",
+      "event": "dispatch_attempt",
+      "when": {
+        "facts": {
+          "haul_ok": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "dispatch"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "A completed attempt without a retriever, including rejected/unavailable spawn or failed reachability. A busy departure area returns Running and is outside this terminal event; it is not classified as failed dispatch.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "fuel.planned_paid",
+      "from": "scav_fly",
+      "to": "scav_account_plan",
+      "event": "planned_segment_accounted",
+      "when": {
+        "facts": {
+          "planned_paid": [
+            "true"
+          ],
+          "fuel": [
+            "ge1"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "manual_watermark": "stale"
+      },
+      "sources": [
+        "fly",
+        "nav_fuel"
+      ],
+      "evidence": [
+        "mixed_accounting"
+      ],
+      "note": "A previously established manual ledger and a paid planned segment are scenario preconditions. This does not assert that every FlyTo or collision has such a segment.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "fix.fuel_handoff",
+      "from": "scav_account_plan",
+      "to": "scav_account_manual",
+      "event": "resume_manual_accounting",
+      "when": {
+        "facts": {
+          "manual_watermark": [
+            "stale"
+          ],
+          "stale_debit_exhausts": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "duplicate_debit": "false",
+        "manual_watermark": "current"
+      },
+      "sources": [
+        "fly",
+        "nav_fuel",
+        "fix_flightfuel"
+      ],
+      "evidence": [
+        "mixed_accounting"
+      ],
+      "note": "At planned-to-manual handoff advance the native manual progress watermark without charging travel already paid by NavData; persist an optional handoff marker through native command payloads.",
+      "guards": [],
+      "patch": "flight_fuel_handoff"
+    },
+    {
+      "id": "fix.visit_finish",
+      "from": "scav_hold",
+      "to": "scav_undock",
+      "event": "hold_expiry",
+      "when": {
+        "facts": {
+          "interrupt": [
+            "false"
+          ],
+          "pause_early": [
+            "false"
+          ],
+          "fuel": [
+            "lt1"
+          ],
+          "rotor": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "hold_result": "finished",
+        "main": "0",
+        "leaf": "undock"
+      },
+      "sources": [
+        "scav",
+        "hold",
+        "sticky",
+        "fix_scav_recovery"
+      ],
+      "evidence": [
+        "review",
+        "native_hold",
+        "recovery_native"
+      ],
+      "note": "Finish ordinary empty visits, reject genuinely unaffordable homeward legs and retain the scav controller across SOS sends; native asset eligibility and dispatch remain authoritative.",
+      "guards": [
+        {
+          "predicate": "no_help",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "scav_emergency_recovery"
+    },
+    {
+      "id": "fix.home_route_unaffordable",
+      "from": "scav_target",
+      "to": "scav_request",
+      "event": "select_home",
+      "when": {
+        "facts": {
+          "low": [
+            "true"
+          ],
+          "home": [
+            "true"
+          ],
+          "plan": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "request": "none",
+        "help_origin": "target"
+      },
+      "sources": [
+        "target",
+        "scav",
+        "fix_scav_recovery"
+      ],
+      "evidence": [
+        "review",
+        "recovery_native"
+      ],
+      "note": "Finish ordinary empty visits, reject genuinely unaffordable homeward legs and retain the scav controller across SOS sends; native asset eligibility and dispatch remain authoritative.",
+      "guards": [
+        {
+          "predicate": "unaffordable_home",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "scav_emergency_recovery"
+    },
+    {
+      "id": "fix.home_manual_unaffordable",
+      "from": "scav_target",
+      "to": "scav_request",
+      "event": "select_home",
+      "when": {
+        "facts": {
+          "low": [
+            "true"
+          ],
+          "home": [
+            "true"
+          ],
+          "plan": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "request": "none",
+        "help_origin": "target"
+      },
+      "sources": [
+        "target",
+        "fly",
+        "fix_scav_recovery"
+      ],
+      "evidence": [
+        "review",
+        "recovery_native"
+      ],
+      "note": "Finish ordinary empty visits, reject genuinely unaffordable homeward legs and retain the scav controller across SOS sends; native asset eligibility and dispatch remain authoritative.",
+      "guards": [
+        {
+          "predicate": "unaffordable_home",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "scav_emergency_recovery"
+    },
+    {
+      "id": "fix.station_keep_ai",
+      "from": "scav_station_send",
+      "to": "scav_station_reply",
+      "event": "send_result",
+      "when": {
+        "facts": {
+          "send_ok": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "request": "station",
+        "help": "true",
+        "registered": "true"
+      },
+      "sources": [
+        "target",
+        "sos",
+        "comms",
+        "fix_scav_recovery"
+      ],
+      "evidence": [
+        "review",
+        "recovery_native"
+      ],
+      "note": "Finish ordinary empty visits, reject genuinely unaffordable homeward legs and retain the scav controller across SOS sends; native asset eligibility and dispatch remain authoritative.",
+      "guards": [
+        {
+          "predicate": "target_caller",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "scav_emergency_recovery"
+    },
+    {
+      "id": "fix.station_send_failed",
+      "from": "scav_station_send",
+      "to": "scav_target",
+      "event": "send_result",
+      "when": {
+        "facts": {
+          "send_ok": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "registered": "true"
+      },
+      "sources": [
+        "target",
+        "sos",
+        "comms",
+        "fix_scav_recovery"
+      ],
+      "evidence": [
+        "review",
+        "recovery_native"
+      ],
+      "note": "Finish ordinary empty visits, reject genuinely unaffordable homeward legs and retain the scav controller across SOS sends; native asset eligibility and dispatch remain authoritative.",
+      "guards": [
+        {
+          "predicate": "target_caller",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "scav_emergency_recovery"
+    },
+    {
+      "id": "fix.player_send_failed",
+      "from": "scav_player_send",
+      "to": "scav_target",
+      "event": "send_result",
+      "when": {
+        "facts": {
+          "send_ok": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "registered": "true"
+      },
+      "sources": [
+        "comms",
+        "target",
+        "sos",
+        "fix_scav_recovery"
+      ],
+      "evidence": [
+        "review",
+        "recovery_native"
+      ],
+      "note": "Finish ordinary empty visits, reject genuinely unaffordable homeward legs and retain the scav controller across SOS sends; native asset eligibility and dispatch remain authoritative.",
+      "guards": [
+        {
+          "predicate": "target_caller",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "scav_emergency_recovery"
+    }
+  ],
+  "findings": [
+    {
+      "id": "scav.empty_hold",
+      "kind": "liveness_gap",
+      "severity": "review",
+      "when": {
+        "facts": {
+          "main": [
+            "4"
+          ],
+          "leaf": [
+            "hold"
+          ],
+          "docked": [
+            "true"
+          ],
+          "fuel": [
+            "lt1"
+          ],
+          "rotor": [
+            "false"
+          ],
+          "pause_early": [
+            "false"
+          ],
+          "interrupt": [
+            "false"
+          ],
+          "hold_result": [
+            "running"
+          ],
+          "request": [
+            "none"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "scav",
+        "hold",
+        "sticky"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Conditional repeating native Main hold, not proof every stranded scav got here or that external help can never arrive."
+    },
+    {
+      "id": "scav.help_hold",
+      "kind": "liveness_gap",
+      "severity": "review",
+      "when": {
+        "facts": {
+          "main": [
+            "4"
+          ],
+          "leaf": [
+            "hold"
+          ],
+          "help": [
+            "true"
+          ],
+          "fuel": [
+            "ge1"
+          ],
+          "hold_result": [
+            "running"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "hold"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Fuel alone is insufficient while request condition persists."
+    },
+    {
+      "id": "scav.unplanned_home",
+      "kind": "unchecked_route_result",
+      "severity": "review",
+      "when": {
+        "facts": {
+          "main": [
+            "2"
+          ],
+          "leaf": [
+            "fly"
+          ],
+          "low": [
+            "true"
+          ],
+          "home": [
+            "true"
+          ],
+          "plan": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "target",
+        "fly"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Home target is accepted despite null generated route; this alone does not prove it is physically unreachable."
+    },
+    {
+      "id": "scav.attached_dispatch",
+      "kind": "authored_constraint",
+      "severity": "review",
+      "when": {
+        "facts": {
+          "docked": [
+            "true"
+          ],
+          "request": [
+            "station"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "spec",
+        "comms"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Docked recipients cannot pass dispatch reply. Not a claim that station deliberately promises rescue first."
+    },
+    {
+      "id": "scav.duplicate_fuel_debit",
+      "kind": "accounting_integrity",
+      "severity": "error",
+      "when": {
+        "facts": {
+          "duplicate_debit": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "fly",
+        "nav_fuel"
+      ],
+      "evidence": [
+        "mixed_accounting"
+      ],
+      "note": "Two accounting modes charged overlapping progress. Numeric route generation and collision geometry remain outside the model."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "empty-docked-hold",
+      "start": "scav_hold",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true"
+      },
+      "events": [
+        "hold_expiry",
+        "hold_expiry",
+        "hold_expiry",
+        "hold_expiry"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_hold",
+          "finding": "scav.empty_hold",
+          "without": null,
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_undock",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": "Empty fuel is initial evidence/input. No fuel exhaustion event is invented by graph."
+    },
+    {
+      "id": "one-kg-releases",
+      "start": "scav_hold",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "false",
+        "fuel": "ge1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true"
+      },
+      "events": [
+        "hold_expiry",
+        "undock_finished"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_target",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_target",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": "ge1 includes exact 1 kg; native test separately checks threshold."
+    },
+    {
+      "id": "refuel-alone-with-help-flag",
+      "start": "scav_hold",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "true",
+        "fuel": "ge1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true"
+      },
+      "events": [
+        "hold_expiry",
+        "hold_expiry"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_hold",
+          "finding": "scav.help_hold",
+          "without": null,
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_hold",
+          "finding": "scav.help_hold",
+          "without": null,
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "completed-help-allows-departure",
+      "start": "scav_hold",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "transfer_complete": "true"
+      },
+      "events": [
+        "fuel_restored",
+        "hold_expiry",
+        "undock_finished"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_target",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_target",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "rotor-exception",
+      "start": "scav_hold",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "true",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true"
+      },
+      "events": [
+        "hold_expiry"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_undock",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_undock",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "pause-zero-timer-exception",
+      "start": "scav_hold",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "true",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true"
+      },
+      "events": [
+        "hold_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_undock",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_undock",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "combat-can-interrupt",
+      "start": "scav_hold",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "true",
+        "request": "none",
+        "registered": "true"
+      },
+      "events": [
+        "priority_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_external",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_external",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "sff-does-not-release-main",
+      "start": "scav_hold",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true"
+      },
+      "events": [
+        "sff_hold",
+        "queue_tick",
+        "hold_expiry"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_hold",
+          "finding": "scav.empty_hold",
+          "without": null,
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_undock",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "native-selection-can-succeed",
+      "start": "scav_target",
+      "facts": {
+        "main": "1",
+        "leaf": "target",
+        "docked": "false",
+        "help": "false",
+        "fuel": "ge1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "low": "false",
+        "candidate_ok": "true"
+      },
+      "events": [
+        "select_candidate",
+        "flight_finished",
+        "derelict_docked",
+        "hold_expiry"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_undock",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_undock",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "low-home-planner-failure",
+      "start": "scav_target",
+      "facts": {
+        "main": "1",
+        "leaf": "target",
+        "docked": "false",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "low": "true",
+        "home": "true",
+        "plan": "false",
+        "home_affordable": "true"
+      },
+      "events": [
+        "select_home",
+        "navigation_pending"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_home_fly",
+          "finding": "scav.unplanned_home",
+          "without": null,
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_home_fly",
+          "finding": "scav.unplanned_home",
+          "without": null,
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "low-home-planner-success",
+      "start": "scav_target",
+      "facts": {
+        "main": "1",
+        "leaf": "target",
+        "docked": "false",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "low": "true",
+        "home": "true",
+        "plan": "true",
+        "home_affordable": "true"
+      },
+      "events": [
+        "select_home",
+        "flight_finished",
+        "station_arrival"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_cleanup",
+          "finding": null,
+          "without": "scav.unplanned_home",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_cleanup",
+          "finding": null,
+          "without": "scav.unplanned_home",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "failed-selection-can-call-atc",
+      "start": "scav_target",
+      "facts": {
+        "main": "1",
+        "leaf": "target",
+        "docked": "false",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "low": "false",
+        "candidate_ok": "false",
+        "player_eligible": "false",
+        "near_target": "false",
+        "send_ok": "true",
+        "dispatch_ok": "true",
+        "haul_ok": "true"
+      },
+      "events": [
+        "select_candidate",
+        "route_help",
+        "send_result",
+        "station_reply",
+        "dispatch_attempt"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_retriever",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_retriever",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": "Native station help path exists. Dispatch/arrival is conditional, not guaranteed."
+    },
+    {
+      "id": "near-player-gets-first-request",
+      "start": "scav_target",
+      "facts": {
+        "main": "1",
+        "leaf": "target",
+        "docked": "false",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "low": "false",
+        "candidate_ok": "false",
+        "player_eligible": "true",
+        "near_target": "false",
+        "send_ok": "true",
+        "dispatch_ok": "true",
+        "haul_ok": "true"
+      },
+      "events": [
+        "select_candidate",
+        "route_help",
+        "send_result",
+        "player_declines"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_wait_player",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_wait_player",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "send-failure-still-unregisters",
+      "start": "scav_target",
+      "facts": {
+        "main": "1",
+        "leaf": "target",
+        "docked": "false",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "low": "false",
+        "candidate_ok": "false",
+        "player_eligible": "false",
+        "near_target": "false",
+        "send_ok": "false",
+        "dispatch_ok": "true",
+        "haul_ok": "true"
+      },
+      "events": [
+        "select_candidate",
+        "route_help",
+        "send_result"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_cleanup",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_target",
+          "finding": null,
+          "without": null,
+          "fact": "registered",
+          "value": "true"
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "injected-sos-near-derelict-suppressed",
+      "start": "scav_external",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "player_eligible": "false",
+        "near_target": "true"
+      },
+      "events": [
+        "injected_sos",
+        "route_help"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_suppressed",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_suppressed",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "injected-sos-attached-no-dispatch",
+      "start": "scav_external",
+      "facts": {
+        "main": "4",
+        "leaf": "hold",
+        "docked": "true",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "player_eligible": "false",
+        "near_target": "false",
+        "send_ok": "true"
+      },
+      "events": [
+        "injected_sos",
+        "route_help",
+        "send_result",
+        "station_reply"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_no_dispatch",
+          "finding": "scav.attached_dispatch",
+          "without": null,
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_no_dispatch",
+          "finding": "scav.attached_dispatch",
+          "without": null,
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": "Injected SOS is explicit. Ordinary Main Hold does not reach it."
+    },
+    {
+      "id": "atc-retriever-not-available",
+      "start": "scav_target",
+      "facts": {
+        "main": "1",
+        "leaf": "target",
+        "docked": "false",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "low": "false",
+        "candidate_ok": "false",
+        "player_eligible": "false",
+        "near_target": "false",
+        "send_ok": "true",
+        "dispatch_ok": "true",
+        "haul_ok": "false"
+      },
+      "events": [
+        "select_candidate",
+        "route_help",
+        "send_result",
+        "station_reply",
+        "dispatch_attempt"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_no_dispatch",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_no_dispatch",
+          "finding": null,
+          "without": "scav.empty_hold",
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "mixed-mode-fuel-double-debit",
+      "start": "scav_fly",
+      "facts": {
+        "main": "2",
+        "leaf": "fly",
+        "fuel": "ge1",
+        "planned_paid": "true",
+        "duplicate_debit": "false",
+        "manual_watermark": "current",
+        "stale_debit_exhausts": "true"
+      },
+      "events": [
+        "planned_segment_accounted",
+        "resume_manual_accounting"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_account_manual",
+          "finding": "scav.duplicate_fuel_debit",
+          "without": null,
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_account_manual",
+          "finding": null,
+          "without": "scav.duplicate_fuel_debit",
+          "fact": "fuel",
+          "value": "ge1"
+        }
+      },
+      "note": "Native fixture: 100 -\u003E 80 -\u003E 30 -\u003E 0 kg; patched retains 30 at unchanged position. The final fuel-exhaustion predicate is established by the native numeric test. Attribution to Host Terrapin remains unproved."
+    },
+    {
+      "id": "unaffordable-home-requests-help",
+      "start": "scav_target",
+      "facts": {
+        "main": "1",
+        "leaf": "target",
+        "docked": "false",
+        "help": "false",
+        "fuel": "lt1",
+        "rotor": "false",
+        "pause_early": "false",
+        "interrupt": "false",
+        "request": "none",
+        "registered": "true",
+        "low": "true",
+        "home": "true",
+        "plan": "false",
+        "home_affordable": "false"
+      },
+      "events": [
+        "select_home"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_home_fly",
+          "finding": "scav.unplanned_home",
+          "without": null,
+          "fact": null,
+          "value": null
+        },
+        "effective": {
+          "node": "scav_request",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null
+        }
+      },
+      "note": "No planned-route-null inference: the separate native one-leg feasibility result is supplied explicitly."
+    }
+  ]
+}

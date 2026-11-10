@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/25f0cb0a53ebd7f75ec6486241454d04e2c7e50818be58112633a2216b8fb60c.json.br",
+  "reason": "Reviewed native TargetEscapeStation selection/setter and pilot callers. Production EscapeTargetPatch uses semantic goal comparison and coherent native assignment; no general route policy expansion. 60 native retarget checks including affected roles, Navy/Blockade, cargo/player controls and stable allocation; scope 70, mixed fuel 22, SOS recovery 43, lifecycle 143, priority 93 pass. Recorded unexpanded escape boundary and selectors; game assembly/assets unchanged.",
+  "acceptedUtc": "2026-11-09T22:10:32.2732837Z",
+  "previousSnapshot": "assembly-baselines/f8916b10c952518b26a5c9ac03fe92db27d01f5bc088eb99bc46d1eb16a92b1d.json.br"
+}

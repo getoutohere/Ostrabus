@@ -3,6 +3,8 @@ using HarmonyLib;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using Ostrabus.Hotkeys;
 
 namespace Ostrabus.PdaSettings;
 
@@ -16,6 +18,7 @@ internal sealed class SettingsPanel : MonoBehaviour {
         internal Button Minus, Plus;
         internal Slider Slider;
         internal int Displayed = int.MinValue;
+        internal string DisplayedBinding;
     }
     static readonly AccessTools.FieldRef<GUIPDA, CanvasGroup> Home = AccessTools.FieldRefAccess<GUIPDA, CanvasGroup>("cgHome");
     static SettingsPanel current;
@@ -26,6 +29,7 @@ internal sealed class SettingsPanel : MonoBehaviour {
     Row[] rows;
     RectTransform content;
     float nextRefresh;
+    Row capturing;
 
     internal static void Open(GUIPDA pda) {
         if (pda == null) return;
@@ -71,8 +75,13 @@ internal sealed class SettingsPanel : MonoBehaviour {
         owner = null; home = null; rows = null; content = null; status = null; font = null;
     }
     void OnEnable() { LayoutRows(); }
+    void OnDisable() {
+        if (capturing != null) capturing.DisplayedBinding = null;
+        capturing = null;
+    }
     void OnRectTransformDimensionsChange() { if (isActiveAndEnabled) LayoutRows(); }
     void Update() {
+        if (capturing != null) CaptureShortcut();
         if (Time.unscaledTime < nextRefresh) return;
         nextRefresh = Time.unscaledTime + 0.25f;
         Refresh();
@@ -133,7 +142,13 @@ internal sealed class SettingsPanel : MonoBehaviour {
             image.color = new Color(1, 1, 1, i % 2 == 0 ? 0.055f : 0.025f);
             Text("Title", panel, setting.Title + "  /  " + setting.Lifetime, 15, 8, 5, -8, 23);
             row.Description = Text("Description", panel, setting.Description, 12, 8, 29, -8, 0);
-            if (setting.IsToggle) {
+            if (setting.IsKeyBinding) {
+                var bind = Button("Bind", panel, "", () => BeginCapture(row), 8, 0, 230, 28);
+                row.FirstControl = (RectTransform)bind.transform;
+                row.Value = bind.GetComponentInChildren<TMP_Text>();
+                var reset = Button("Reset", panel, "RESET", () => SaveBinding(row, EquipmentShortcut.Default), 246, 0, 80, 28);
+                row.SecondControl = (RectTransform)reset.transform;
+            } else if (setting.IsToggle) {
                 var toggle = Button("Toggle", panel, "", () => Change(row, row.Setting.Value == 0 ? 1 : 0), 8, 0, 100, 28);
                 row.FirstControl = (RectTransform)toggle.transform;
                 row.Value = toggle.GetComponentInChildren<TMP_Text>();
@@ -148,7 +163,11 @@ internal sealed class SettingsPanel : MonoBehaviour {
                 var area = Box("HandleArea", control, 0, 28);
                 area.offsetMin = new Vector2(7, area.offsetMin.y); area.offsetMax = new Vector2(-7, area.offsetMax.y);
                 var percentageHandle = Box("Handle", area, 3, 22);
-                percentageHandle.sizeDelta = new Vector2(14, 22);
+                // Slider stretches the thumb vertically. Inset that stretch instead
+                // of adding a fixed height to the 28-pixel handle area.
+                percentageHandle.anchorMin = Vector2.zero; percentageHandle.anchorMax = new Vector2(0, 1);
+                percentageHandle.pivot = new Vector2(0.5f, 0.5f);
+                percentageHandle.sizeDelta = new Vector2(14, -6); percentageHandle.anchoredPosition = Vector2.zero;
                 var percentageHandleImage = percentageHandle.gameObject.AddComponent<Image>();
                 percentageHandleImage.color = new Color(0.55f, 0.73f, 0.76f);
                 row.Slider = control.gameObject.AddComponent<Slider>();
@@ -194,6 +213,7 @@ internal sealed class SettingsPanel : MonoBehaviour {
         if (control != null) control.anchoredPosition = new Vector2(control.anchoredPosition.x, -top);
     }
     void Change(Row row, int value) {
+        CancelCapture();
         try {
             row.Setting.Set(value);
             status.text = row.Setting.Title + ": " + row.Setting.Format(value) + " (" + row.Setting.Lifetime.ToLowerInvariant() + ").";
@@ -203,9 +223,51 @@ internal sealed class SettingsPanel : MonoBehaviour {
         }
         Refresh();
     }
+    void BeginCapture(Row row) {
+        CancelCapture();
+        capturing = row;
+        row.Value.text = "PRESS SHORTCUT...";
+        status.text = "Press the new shortcut. Esc cancels. Shift+R and Shift+T are reserved.";
+    }
+    void CancelCapture() {
+        if (capturing != null) capturing.DisplayedBinding = null;
+        capturing = null;
+        Refresh();
+    }
+    void CaptureShortcut() {
+        if (!Application.isFocused) { CancelCapture(); status.text = "Shortcut unchanged."; return; }
+        var keyboard = Keyboard.current;
+        if (keyboard == null) return;
+        if (keyboard.escapeKey.wasPressedThisFrame) {
+            CancelCapture(); status.text = "Shortcut unchanged."; return;
+        }
+        foreach (var key in keyboard.allKeys) {
+            if (!key.wasPressedThisFrame || !CrewShortcut.MainKey(key.keyCode)) continue;
+            SaveBinding(capturing, CrewShortcut.Capture(keyboard, key.keyCode).ToString());
+            return;
+        }
+    }
+    void SaveBinding(Row row, string value) {
+        CancelCapture();
+        try {
+            row.Setting.SetBinding(value);
+            status.text = row.Setting.Title + ": " + row.Setting.BindingValue + " (saved).";
+        } catch (ArgumentException error) { status.text = error.Message; }
+        catch (Exception error) {
+            status.text = "Could not save shortcut. See Player.log.";
+            Ostrabus.OstrabusPlugin.Logger?.LogError("[PdaSettings] " + error);
+        }
+        Refresh();
+    }
     void Refresh() {
         if (rows == null) return;
         foreach (var row in rows) {
+            if (row.Setting.IsKeyBinding) {
+                if (row == capturing) continue;
+                string binding = row.Setting.BindingValue;
+                if (row.DisplayedBinding != binding) { row.DisplayedBinding = binding; row.Value.text = binding; }
+                continue;
+            }
             int value = row.Setting.Value;
             if (row.Displayed == value) continue;
             row.Displayed = value;

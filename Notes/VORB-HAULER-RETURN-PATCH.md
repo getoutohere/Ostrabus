@@ -1,5 +1,11 @@
 # VORB Hauler return patch
 
+Historical diagnosis and live observations. Current shared
+[RCS replenishment](../Navigation/RCS-REPLENISHMENT.md) supersedes the regional
+refill hooks and validation-before-rebasing order described below. General
+deployer recovery now owns empty-home restoration without the VORB shortcut.
+The original evidence is retained; it is not a claim of new live validation.
+
 Status: refactored hooks are installed in the running game. O-QFNF completed a fallback return and O-TK0 completed a normal planned return. The original distant haulers are braking; their eventual arrival and live refuelling conservation remain pending.
 
 ## Observed behavior

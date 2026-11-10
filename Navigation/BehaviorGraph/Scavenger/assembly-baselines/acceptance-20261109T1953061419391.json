@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/abc9d717fb9ee767504361bc4f17eb3d4979753f415bb17b1de0780417724eb1.json.br",
+  "reason": "Reviewed narrow scav recovery against unchanged 1.0.1.10 assembly: native visit release, accepted planned/manual propulsion paths, SOS lifecycle. Production patches pass 43 cumulative bundled-Mono assertions; 79 graph checks pass. Added explicit native dependencies; queue Holds and dispatch outcomes remain native.",
+  "acceptedUtc": "2026-11-09T19:53:06.1403763Z",
+  "previousSnapshot": "assembly-baselines/c027f363cb08ed93232f42218d866eefad9acff2488031c85e4010b5508b4fab.json.br"
+}

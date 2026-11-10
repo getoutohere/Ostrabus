@@ -128,6 +128,7 @@ static class Program {
         h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Equality"), prefix: new HarmonyMethod(typeof(Program), nameof(Equal)));
         h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"), prefix: new HarmonyMethod(typeof(Program), nameof(Unequal)));
         if (args.Length != 0 && args[0] == "ceres") { CeresAuditChecks.Run(); return 0; }
+        if (args.Length != 0 && args[0] == "audit-priority") { CeresAuditChecks.Run(true); return 0; }
         if (args.Length != 0 && args[0] == "lifecycle") { LifecycleChecks.Run(); return 0; }
         h.Patch(AccessTools.PropertyGetter(typeof(Ship), "RCSAccelMax"), prefix: new HarmonyMethod(typeof(Program), nameof(Acceleration)));
         foreach (var method in AccessTools.GetDeclaredMethods(typeof(Ship))) if (method.Name == "CalculateRCSFuelConsumption") h.Patch(method, prefix: new HarmonyMethod(typeof(Program), nameof(Fuel)));

@@ -1,0 +1,416 @@
+{
+    "schemaVersion":  1,
+    "id":  "ostrabus-0.2.2-retriever",
+    "base":  "retriever-1.0.1.10",
+    "patches":  [
+                    {
+                        "id":  "instant_attached",
+                        "classification":  "integrity_fix",
+                        "sources":  [
+                                        "fix_lifecycle"
+                                    ],
+                        "evidence":  [
+                                         "lifecycle"
+                                     ],
+                        "summary":  "Reject already-connected instant station docking inside Dock; the outer retriever callback can still return HaulShip.",
+                        "removes":  [
+                                        "Station cleanup collecting an unrelated connected crew"
+                                    ],
+                        "preserves":  [
+                                          "Explicit legitimate group retirement",
+                                          "Ordinary docking guard semantics"
+                                      ],
+                        "operations":  [
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "sff.already_attached",
+                                               "predicate":  "attached",
+                                               "id":  "fix.instant_dock",
+                                               "to":  "queued_haul",
+                                               "removeSet":  [
+                                                                 "crew",
+                                                                 "retired",
+                                                                 "visible",
+                                                                 "registered"
+                                                             ],
+                                               "set":  {
+                                                           "queue":  "haul_once",
+                                                           "target":  "none"
+                                                       }
+                                           }
+                                       ]
+                    },
+                    {
+                        "id":  "handoff",
+                        "classification":  "integrity_fix",
+                        "sources":  [
+                                        "fix_handoff"
+                                    ],
+                        "evidence":  [
+                                         "retriever_repro"
+                                     ],
+                        "summary":  "Advance verified Main to native HaulShip after out-of-band pickup; suppress disposable one-shot.",
+                        "removes":  [
+                                        "Resuming outbound FlyTo after a successful qualifying pickup"
+                                    ],
+                        "preserves":  [
+                                          "Ordinary hauling",
+                                          "Failed pickup",
+                                          "Player-party exclusion",
+                                          "Unknown-tree fallback"
+                                      ],
+                        "operations":  [
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "sff.pickup",
+                                               "predicate":  "handoff_scope",
+                                               "id":  "fix.handoff",
+                                               "phase":  "after",
+                                               "to":  "haul",
+                                               "set":  {
+                                                           "main":  "4",
+                                                           "queue":  "none"
+                                                       }
+                                           },
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "fix.instant_dock",
+                                               "predicate":  "handoff_scope",
+                                               "phase":  "after",
+                                               "id":  "fix.handoff_after_rejected_redock",
+                                               "to":  "haul",
+                                               "set":  {
+                                                           "queue":  "none",
+                                                           "main":  "4"
+                                                       }
+                                           }
+                                       ]
+                    },
+                    {
+                        "id":  "crew",
+                        "classification":  "integrity_containment",
+                        "sources":  [
+                                        "fix_lifecycle"
+                                    ],
+                        "evidence":  [
+                                         "lifecycle"
+                                     ],
+                        "summary":  "Stop uncrewed human-operated retrievers without adding a new stale/disposal marker.",
+                        "removes":  [
+                                        "Commanded navigation without ready aboard crew in guard scope"
+                                    ],
+                        "preserves":  [
+                                          "Existing crew identities",
+                                          "Visible hull",
+                                          "Pre-existing disposal state"
+                                      ],
+                        "operations":  [
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "load.register",
+                                               "predicate":  "crew_stop",
+                                               "id":  "fix.crew.0",
+                                               "to":  "unregistered",
+                                               "set":  {
+                                                           "registered":  "false",
+                                                           "thrust":  "false",
+                                                           "member_route":  "false",
+                                                           "anchor_stale":  "false"
+                                                       }
+                                           },
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "haul.tick",
+                                               "predicate":  "crew_stop",
+                                               "id":  "fix.crew.1",
+                                               "to":  "unregistered",
+                                               "set":  {
+                                                           "registered":  "false",
+                                                           "thrust":  "false",
+                                                           "member_route":  "false",
+                                                           "anchor_stale":  "false"
+                                                       }
+                                           },
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "fly.plot_connected",
+                                               "predicate":  "crew_stop",
+                                               "id":  "fix.crew.2",
+                                               "to":  "unregistered",
+                                               "set":  {
+                                                           "registered":  "false",
+                                                           "thrust":  "false",
+                                                           "member_route":  "false",
+                                                           "anchor_stale":  "false"
+                                                       }
+                                           },
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "fly.plot_free",
+                                               "predicate":  "crew_stop",
+                                               "id":  "fix.crew.3",
+                                               "to":  "unregistered",
+                                               "set":  {
+                                                           "registered":  "false",
+                                                           "thrust":  "false",
+                                                           "member_route":  "false",
+                                                           "anchor_stale":  "false"
+                                                       }
+                                           }
+                                       ]
+                    },
+                    {
+                        "id":  "depot",
+                        "classification":  "regional_identity_correction",
+                        "sources":  [
+                                        "fix_depot"
+                                    ],
+                        "evidence":  [
+                                         "depot"
+                                     ],
+                        "summary":  "For VORB-home retrievers use the available VORB depot, not VNCA\u0027s regional desk.",
+                        "removes":  [
+                                        "Wrong depot lookup in this authored ownership arrangement"
+                                    ],
+                        "preserves":  [
+                                          "Recent assignments",
+                                          "Native wreck filters",
+                                          "Random candidate choice",
+                                          "Already-towing home branch"
+                                      ],
+                        "operations":  [
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "main.select",
+                                               "predicate":  "vorb_depot",
+                                               "id":  "fix.depot",
+                                               "to":  "candidates",
+                                               "set":  {
+                                                           "depot":  "home"
+                                                       }
+                                           }
+                                       ]
+                    },
+                    {
+                        "id":  "target_binding",
+                        "classification":  "integrity_fix",
+                        "sources":  [
+                                        "fix_target"
+                                    ],
+                        "evidence":  [
+                                         "source"
+                                     ],
+                        "summary":  "Transfer exact references to a replaced logical hull; retain independently owned waypoints.",
+                        "removes":  [
+                                        "Following the obsolete object instance"
+                                    ],
+                        "preserves":  [
+                                          "Destination identity",
+                                          "Unrelated planned waypoints"
+                                      ],
+                        "operations":  [
+                                           {
+                                               "kind":  "replace",
+                                               "edge":  "replace.native",
+                                               "id":  "fix.target",
+                                               "to":  "fly",
+                                               "set":  {
+                                                           "target_current":  "true"
+                                                       }
+                                           }
+                                       ]
+                    },
+                    {
+                        "id":  "reserve",
+                        "classification":  "integrity_fix",
+                        "sources":  [
+                                        "fix_lifecycle"
+                                    ],
+                        "evidence":  [
+                                         "lifecycle"
+                                     ],
+                        "summary":  "Do not select still-connected hidden hulls as detached reserves.",
+                        "removes":  [
+                                        "Premature connected hull reuse"
+                                    ],
+                        "preserves":  [
+                                          "Detached reserve reuse",
+                                          "Faction/POI selection"
+                                      ],
+                        "operations":  [
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "pool.select",
+                                               "predicate":  "attached",
+                                               "id":  "fix.reserve",
+                                               "to":  "reserve_blocked",
+                                               "set":  {
+                                                           "selected_reserve":  "false"
+                                                       }
+                                           }
+                                       ]
+                    },
+                    {
+                        "id":  "sff_travel",
+                        "classification":  "simulation_enhancement",
+                        "sources":  [
+                                        "sff"
+                                    ],
+                        "evidence":  [
+                                         "sff_tests"
+                                     ],
+                        "summary":  "Suppress native instant catchup only for applied bounded travel that has not reached its handoff.",
+                        "removes":  [
+                                        "Instant completion before the corrected trip can arrive"
+                                    ],
+                        "preserves":  [
+                                          "Partial travel",
+                                          "Arrivals actually reached",
+                                          "Uncaptured/plotted/combat native paths"
+                                      ],
+                        "operations":  [
+                                           {
+                                               "kind":  "intercept",
+                                               "edge":  "sff.haul_shortcut",
+                                               "predicate":  "sff_not_ready",
+                                               "id":  "fix.partial_sff",
+                                               "to":  "haul",
+                                               "set":  {
+
+                                                       }
+                                           }
+                                       ]
+                    },
+                    {
+                        "id":  "operator",
+                        "classification":  "operator_repair",
+                        "sources":  [
+                                        "rescue"
+                                    ],
+                        "evidence":  [
+                                         "arrival",
+                                         "live_arrival"
+                                     ],
+                        "summary":  "Explicitly complete an eligible station arrival, preserving accepted original crew; no automatic rescue.",
+                        "removes":  [
+                                        "Only the explicitly requested stranded journey"
+                                    ],
+                        "preserves":  [
+                                          "Autonomous stranding/failure",
+                                          "Native station population transfer",
+                                          "Native hull reuse/cleanup"
+                                      ],
+                        "operations":  [
+                                           {
+                                               "kind":  "add",
+                                               "edge":  "operator.arrive",
+                                               "id":  "operator.arrive",
+                                               "from":  "haul",
+                                               "to":  "retired",
+                                               "event":  "operator_arrival",
+                                               "predicate":  "operator_safe",
+                                               "set":  {
+                                                           "crew":  "station",
+                                                           "visible":  "false",
+                                                           "registered":  "false",
+                                                           "connected":  "false",
+                                                           "retired":  "true",
+                                                           "thrust":  "false"
+                                                       }
+                                           }
+                                       ]
+                    }
+                ],
+    "documentedDependencies":  [
+                                   {
+                                       "id":  "fuel_prediction",
+                                       "sources":  [
+                                                       "fuel_refs"
+                                                   ],
+                                       "status":  "boundary_record_only",
+                                       "reason":  "Retarget and clear-target invalidation are important; numeric budgets and native candidate costing are opaque."
+                                   },
+                                   {
+                                       "id":  "station_return",
+                                       "sources":  [
+                                                       "return"
+                                                   ],
+                                       "status":  "boundary_record_only",
+                                       "reason":  "Native higher priorities precede the persisted Main return branch; ordinary docking stages survive reload. Role-specific callers remain outside this slice."
+                                   },
+                                   {
+                                       "id":  "mixed_mode_fuel",
+                                       "sources":  [
+                                                       "fix_flightfuel"
+                                                   ],
+                                       "status":  "boundary_record_only",
+                                       "reason":  "Shared FlyTo planned/manual fuel handoff is patched and natively tested; its numeric witness is expanded in the scavenger slice, not this retriever motion abstraction."
+                                   },
+                                   {
+                                       "id":  "rcs_replenishment",
+                                       "sources":  [
+                                                       "replenishment"
+                                                   ],
+                                       "status":  "boundary_not_transition_expanded",
+                                       "reason":  "Shared actual-refill route translation is natively tested and expanded in the deployer slice. Numeric loaded-tank debt and refill coincidence are outside this slice."
+                                   },
+                                   {
+                                       "id":  "escape_handoff",
+                                       "sources":  [
+                                                       "escape_native",
+                                                       "escape_repair"
+                                                   ],
+                                       "status":  "boundary_not_transition_expanded",
+                                       "reason":  "Production escape setter uses coherent native assignment and invalidates obsolete routes for semantic goal changes. Native caller evidence: Notes/AI-RETARGET-CALLER-AUDIT.md. Complete combat/retreat is outside this slice; generic ApplyToShip route invalidation has not been generalized. Navy/Blockade already clear routes through TargetNearestStation."
+                                   },
+
+  {
+    "id": "planet_safe_avoidance",
+    "sources": [
+      "avoidance_native",
+      "avoidance_repair",
+      "avoidance_geometry",
+      "avoidance_ephemeris",
+      "avoidance_frame",
+      "avoidance_motion"
+    ],
+    "status": "boundary_not_transition_expanded",
+    "reason": "Shared native evasion rejects past-only warnings and vets opposite dodges against bodies and moving obstacles. No target/retirement policy changes. Full flight geometry remains outside this slice; see Navigation/PLANETARY-AVOIDANCE-AUDIT.md and Tests/PlanetaryNavigationCheck."
+  },
+
+  {
+    "id": "station_docked_traffic",
+    "sources": [
+      "station_collision_native",
+      "station_collision_policy",
+      "station_collision_scan",
+      "avoidance_repair"
+    ],
+    "status": "boundary_not_transition_expanded",
+    "reason": "Saved PDA policy, default on: nonstation hulls connected to stations/apartments are nonhazards while enabled; disabling immediately restores native hull treatment. Enabled hulls are nonhazards for ship contact, AI evasion and proximity scans. Free-space tows, actual stations, weapon/planet hits remain native. Shared-command fixture evidence; no geometric transition model or forced arrival."
+  }
+
+],
+    "notApplicable":  [
+                          {
+                              "id":  "deployer_recovery",
+                              "path":  "Haulers/HaulerRecovery.cs",
+                              "reason":  "Controller requires HaulerDeployer; not retrievers."
+                          },
+                          {
+                              "id":  "ceres_guardrails",
+                              "path":  "CeresNavigation/CeresNavigationGuardrails.cs",
+                              "reason":  "Role/faction-scoped patrol policy; not this local retriever slice. Must be modeled separately, not assumed harmless."
+                          },
+                          {
+                              "id":  "pending_torch",
+                              "path":  "Navigation/TORCH-COURSE-FIX.md",
+                              "reason":  "Uncommitted player torch work is outside this committed retriever overlay."
+                          },
+                          {
+                              "id":  "venus_deployer_navigation",
+                              "path":  "Venus/VorbNavPlanGuard.cs",
+                              "reason":  "IsVorbHauler requires HaulerDeployer, not retrievers; manual/fuel fallback needs the later deployer slice."
+                          }
+                      ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/c027f363cb08ed93232f42218d866eefad9acff2488031c85e4010b5508b4fab.json.br",
+  "reason": "Reviewed shared flight fuel ownership fix, 22 patched native assertions and explicit native/effective accounting witness; Hold recovery remains unchanged and historical attribution remains open.",
+  "acceptedUtc": "2026-11-09T19:06:50.8835251Z",
+  "previousSnapshot": "assembly-baselines/180a28bde04c40792a9d239bf9016885ac826d46249efe277833362564b53d61.json.br"
+}
