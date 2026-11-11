@@ -2,7 +2,7 @@
 
 This preparation was subsequently committed as `191d8d9` ("Improve AI integrity,
 crew controls and navigation UI"). It retained version 0.2.2 and excluded the
-pending torch changes. The current preparation is [0.3.0](RELEASE-0.3.0.md).
+pending torch changes. The current preparation is [0.3.1](RELEASE-0.3.1.md).
 The scope and validation below describe that earlier source snapshot.
 
 ## Included

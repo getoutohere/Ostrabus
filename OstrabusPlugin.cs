@@ -112,7 +112,7 @@ namespace Ostrabus {
         // Harmony ownership. The project, assembly and displayed name are Ostrabus.
         public const string PLUGIN_GUID = "com.ostranauts.template";
         public const string PLUGIN_NAME = "Ostrabus";
-        public const string PLUGIN_VERSION = "0.3.0";
+        public const string PLUGIN_VERSION = "0.3.1";
     }
 }
 
