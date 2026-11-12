@@ -12,13 +12,20 @@ which need not equal the CO's current ID. New items are not inserted into that
 lookup: native membership remains the original hull's array until final commit.
 If a nested callback replaces that array, the lookup is rebuilt for it.
 
-Existing and duplicate/null IDs, new-item serialization, coordinate offsets,
-ASYNCIDENTIFIER tagging, GetJSONSave calls and global save registration retain
-native behavior. The final array still combines the barter copy's current
-layout with newly serialized records and is assigned to both ships. Null
-source records/arrays and null copy layouts retain the native error path.
-Exceptions preserve native partial side effects, including its offset/tag
-behavior; this performance patch does not change error recovery semantics.
+Existing and duplicate/null IDs, new-item serialization, GetJSONSave calls and
+global save registration follow the native operation sequence. The final array
+still combines the barter copy's current layout with newly serialized records
+and is assigned to both ships. Null source records/arrays and null copy layouts
+retain the native error path.
+
+The separately categorized [writeback safety repair](../MiscBugFixes/MULTI-SHIP-BARTER-AUDIT.md)
+is now shared by native and optimized paths: an existing ASYNCIDENTIFIER marker
+is preserved rather than added twice, and a `finally` restores exact temporary
+coordinates on success or failure. The custom `barter-index` feature requires
+`barter-writeback`, including safety when malformed inputs fall back to native
+execution. Serialization exceptions still propagate; this is not a general
+transaction rollback mechanism. Equivalence tests compare the optimization to
+the repaired native method.
 
 The ID set and additions list are borrowed from `BarterWritebackScratch`.
 Each thread retains at most one idle buffer; active and nested calls cannot

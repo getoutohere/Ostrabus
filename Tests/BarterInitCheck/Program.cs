@@ -11,7 +11,7 @@ using Ostranauts.Core.Models;
 using Ostranauts.Ships;
 using UnityEngine;
 
-static class Program {
+static partial class Program {
     sealed class RefComparer : IEqualityComparer<UnityEngine.Object> {
         public bool Equals(UnityEngine.Object a, UnityEngine.Object b) => ReferenceEquals(a, b);
         public int GetHashCode(UnityEngine.Object value) => RuntimeHelpers.GetHashCode(value);
@@ -25,14 +25,17 @@ static class Program {
     static T Empty<T>() => (T)FormatterServices.GetUninitializedObject(typeof(T));
     static void Check(bool ok, string why) { checks++; if (!ok) throw new Exception(why); }
     static DictionaryArray<string, CondOwner> Items(Ship ship) => (DictionaryArray<string, CondOwner>)AccessTools.Field(typeof(Ship), "mapICOs").GetValue(ship);
-    static bool Equal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = ReferenceEquals(__0, __1); return false; }
-    static bool Unequal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = !ReferenceEquals(__0, __1); return false; }
+    static bool Equal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = SameObject(__0, __1); return false; }
+    static bool Unequal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = !SameObject(__0, __1); return false; }
     static bool Shader(ref int __result) { __result = 1; return false; }
     static bool Noop() => false;
     static bool Zero(ref int __result) { __result = 0; return false; }
     static bool Frame(ref int __result) { __result = frame; return false; }
     static bool Budget(ref bool __result) { __result = ++polls % quota == 0; return false; }
-    static bool GetGO(Component __instance, ref GameObject __result) { __result = objects[__instance]; return false; }
+    static bool GetGO(Component __instance, ref GameObject __result) {
+        if (destroyed.Contains(__instance)) throw new NullReferenceException("fixture destroyed Unity component");
+        __result = objects[__instance]; return false;
+    }
     static bool GetTF(GameObject __instance, ref Transform __result) { __result = transforms[__instance]; return false; }
     static bool Component(GameObject __instance, ref CondOwner __result) { __result = components[__instance]; return false; }
     static bool Position(ref Vector3 __result) { __result = Vector3.zero; return false; }
@@ -58,14 +61,15 @@ static class Program {
         events.Add("contain:" + __0.strID); return false;
     }
     static bool Post(CondOwner __instance, Ship.Loaded __0) {
+        if (destroyed.Contains(__instance)) throw new NullReferenceException("fixture destroyed Unity component");
         Check(__0 == Ship.Loaded.Shallow, "Wrong post-load mode");
         if (failPost) throw new InvalidOperationException("fixture failure");
-        events.Add("post:" + __instance.strID); return false;
+        events.Add("post:" + __instance.strID); afterPost?.Invoke(__instance); return false;
     }
     static bool Zones() { events.Add("zones"); return false; }
     static bool Move() { events.Add("move"); return false; }
     static BarterZoneShip Hull(JsonItem[] saved) {
-        events.Clear(); objects.Clear(); transforms.Clear(); components.Clear(); polls = steps = 0;
+        events.Clear(); objects.Clear(); transforms.Clear(); components.Clear(); destroyed.Clear(); polls = steps = 0;
         var ship = Empty<BarterZoneShip>(); ship.json = new JsonShip { aItems = saved, aZones = Array.Empty<JsonZone>() };
         ship.gameObject = Empty<GameObject>(); ship.aTiles = new List<Tile>();
         AccessTools.Field(typeof(Ship), "mapICOs").SetValue(ship, new DictionaryArray<string, CondOwner>());
@@ -124,6 +128,7 @@ static class Program {
                 new[] { new JsonItem { strID = "root", strName = "slots" }, new JsonItem { strID = "accepted", strSlotParentID = "root" }, new JsonItem { strID = "reject", strSlotParentID = "root" } }
             };
             var expected = cases.Select(saved => Run(Hull(saved))).ToArray();
+            CheckNativeDestroyedSnapshot();
             production.CreateClassProcessor(typeof(BarterLocalIndexPatch)).Patch();
             production.CreateClassProcessor(typeof(BarterInitPatch)).Patch();
             for (int i = 0; i < cases.Length; i++) {
@@ -141,6 +146,8 @@ static class Program {
             var broken = Hull(cases[1]); failPost = true;
             try { Run(broken); throw new Exception("Exception swallowed"); }
             catch (InvalidOperationException error) { Check(error.Message == "fixture failure" && !broken.FullyLoaded, "Failure published readiness or changed exception"); }
+            failPost = false;
+            CheckInterruptedInitialization(fixture, production);
             Console.WriteLine(checks + " native/budgeted barter initialization checks passed.");
         } finally { production.UnpatchSelf(); fixture.UnpatchSelf(); }
     }

@@ -1,15 +1,62 @@
 {
   "schemaVersion": 1,
-  "excludedSources": [
-    "MiscBugFixes/TorchCourseFuel.cs",
-    "MiscBugFixes/TorchCourseFuelPatches.cs",
-    "MiscBugFixes/TorchFuelCachePatch.cs"
-  ],
+  "excludedSources": [],
   "sharedPatches": [
     "Ostrabus.NavConsole.ProximityCollisionPatch",
     "Ostrabus.Optimizations.ShipFileProfilePatch"
   ],
   "features": [
+    {
+      "id": "torch-fuel-cache",
+      "title": "Keep torch autopilot fuel checks synchronized with actual tanks",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/TorchFuelCachePatch.cs"
+      ]
+    },
+    {
+      "id": "torch-fuel",
+      "title": "Correct plotted torch fuel consumption and reactor control",
+      "category": "bugfix",
+      "requires": ["torch-fuel-cache"],
+      "patchFiles": [
+        "MiscBugFixes/TorchCourseFuelPatches.cs",
+        "MiscBugFixes/TorchCourseFuelConsumption.cs"
+      ]
+    },
+    {
+      "id": "torch-momentum",
+      "title": "Use incoming velocity when plotting player torch courses",
+      "category": "simulation",
+      "requires": ["torch-fuel"],
+      "patchFiles": [
+        "Navigation/TorchCourses/TorchTransferPlanning.cs"
+      ]
+    },
+    {
+      "id": "torch-towing",
+      "title": "Keep braced tows on native autopilot courses and include their mass",
+      "category": "bugfix",
+      "patchFiles": [
+        "Navigation/Towing/TorchTowPatches.cs"
+      ]
+    },
+    {
+      "id": "saved-inventory-parents",
+      "title": "Restore saved contents before processing damaged parents",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/LoadedInventoryParentPatch.cs"
+      ]
+    },
+    {
+      "id": "trigger-classification",
+      "title": "Restore conservative people-only trigger searches",
+      "category": "performance",
+      "patchFiles": [
+        "Optimizations/TriggerClassificationPatch.cs"
+      ]
+    },
     {
       "id": "tile-cleanup",
       "title": "Retire orphaned tile helper objects",
@@ -59,10 +106,13 @@
     },
     {
       "id": "ai-crew-integrity",
-      "title": "Preserve AI controllers and crews across boarding/load",
+      "title": "Preserve AI controllers and crews across boarding/load/ATC",
       "category": "bugfix",
       "patchFiles": [
-        "MiscBugFixes/AIShipLifecyclePatches.cs"
+        "MiscBugFixes/AIShipLifecyclePatches.cs",
+        "MiscBugFixes/AIControllerIdentity.cs",
+        "MiscBugFixes/ActiveShipRetirement.cs",
+        "MiscBugFixes/PlayerAttachedRegionPatch.cs"
       ]
     },
     {
@@ -257,6 +307,30 @@
       ]
     },
     {
+      "id": "barter-zones",
+      "title": "Group and identify barter zones by ship callsign",
+      "category": "qol",
+      "patchFiles": [
+        "QoL/BarterZones/BarterZonePatches.cs"
+      ]
+    },
+    {
+      "id": "async-ship-loading",
+      "title": "Cancel only the requested ship's background loader",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/AsyncShipLoadingPatch.cs"
+      ]
+    },
+    {
+      "id": "barter-writeback",
+      "title": "Preserve remotely repurchased items and writeback coordinates",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/BarterWritebackSafetyPatch.cs"
+      ]
+    },
+    {
       "id": "mass-accounting",
       "title": "Repair live, stack and nested-container mass accounting",
       "category": "bugfix",
@@ -289,6 +363,14 @@
       "category": "bugfix",
       "patchFiles": [
         "MiscBugFixes/ElectricalAuditLogging.cs"
+      ]
+    },
+    {
+      "id": "signal-boxes",
+      "title": "Repair signal-box gates, wiring and saved message queues",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/SignalBoxes/SignalBoxPatches.cs"
       ]
     },
     {
@@ -428,6 +510,9 @@
       "id": "barter-index",
       "title": "Index barter item lookup and writeback",
       "category": "performance",
+      "requires": [
+        "barter-writeback"
+      ],
       "patchFiles": [
         "Optimizations/BarterLocalIndexPatch.cs",
         "Optimizations/BarterWritebackPatch.cs"
@@ -669,7 +754,8 @@
         "hull-geometry"
       ],
       "patchFiles": [
-        "Navigation/Collisions/PhysicalCollisionPatches.cs"
+        "Navigation/Collisions/PhysicalCollisionPatches.cs",
+        "Navigation/Collisions/HullDockingPatches.cs"
       ],
       "before": [
         "global::Ostrabus.ShipNavigation.Collisions.PhysicalCollisions.Flag = Config.Bind(\"Navigation\", \"HullCollisions\", true, \"Use cached hull geometry for ordinary physical contacts. Weapons remain native.\");"
@@ -959,6 +1045,14 @@
       ]
     },
     {
+      "id": "torchtrace",
+      "title": "On-demand reactor and torch autopilot tracing",
+      "category": "developer",
+      "requires": [ "inspection" ],
+      "stop": [ "global::Ostrabus.Diagnostics.TorchTrace.Stop(\"plugin stopped\");" ],
+      "settings": [ "torchtrace" ]
+    },
+    {
       "id": "load-profiling",
       "title": "Instrument startup and save-load timings",
       "category": "developer",
@@ -994,6 +1088,21 @@
         "global::Ostrabus.Optimizations.SavedJsonLoading.Enabled = Config.Bind(\"Optimizations\", \"ExperimentalSaveJson\", false, \"Experimental compatible save reader. Restart to apply.\").Value;"
       ],
       "experimental": true
+    },
+    {
+      "id": "civilian-visits",
+      "title": "Keep civilian visits and attached retirement valid",
+      "category": "bugfix",
+      "requires": [ "navigation-targets", "ai-crew-integrity" ],
+      "patchFiles": [ "MiscBugFixes/CivilianVisitsPatch.cs" ]
+    },
+    {
+      "id": "civilian-sff-coordinates",
+      "title": "Use both position coordinates for civilian SFF station selection",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/CivilianSffCoordinatesPatch.cs"
+      ]
     }
   ]
 }

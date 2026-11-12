@@ -3,7 +3,8 @@
 Planned: [compact target periapsis/apoapsis readout](TARGET-ORBIT-DISPLAY.md).
 
 [Parallel hull outlines](HULL-OUTLINES.md) replace incomplete/stale nav silhouettes
-with cached exterior perimeters that preserve hull corners and recesses. Useful
+with cached exterior perimeters that preserve hull corners, recesses and relative
+sizes independently of grid orientation. Useful
 onscreen hulls remain detailed based on projected size, with no icon padding or
 fixed 2.5 km cutoff. Physical collision changes remain separate; see
 the [native outline/collision audit](OUTLINES-AUDIT.md).

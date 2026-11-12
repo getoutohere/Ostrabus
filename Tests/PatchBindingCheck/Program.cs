@@ -6,7 +6,8 @@ using HarmonyLib;
 
 static class Program {
     static bool ShaderId(ref int __result) { __result = 1; return false; }
-    static int Main() {
+    static int Main(string[] args) {
+        if (args.Length==1 && args[0]=="hull-interop") return HullInterop.Run();
         var engine = new Harmony("ostrabus.offline.binding.engine");
         engine.Patch(AccessTools.Method(typeof(UnityEngine.Shader), nameof(UnityEngine.Shader.PropertyToID), new[] { typeof(string) }),
             prefix: new HarmonyMethod(typeof(Program), nameof(ShaderId)));

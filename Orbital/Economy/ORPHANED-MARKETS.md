@@ -1,5 +1,13 @@
 # Follow-up: market records without current hulls
 
+Update November 12, 2026: [one concrete creation path is confirmed and repaired](../../MiscBugFixes/FREIGHT-CONTROLLER-IDENTITY.md).
+Station collision recovery adds a competing local scavenger controller to an
+interregional freighter. Local ATC cleanup can then remove its shared hull while
+leaving its cargo market. O-LVKJ's saved duplicate records and surviving 633
+electronics match the reproduced mechanism. Prevention and narrowly scoped saved
+duplicate repair do not refund historical orphans. The other records below remain
+unclassified; this finding does not establish that all 97 have the same cause.
+
 Observed during live economic validation on November 7, 2026, before the first
 three-hour SFF test of the new economic catch-up implementation.
 

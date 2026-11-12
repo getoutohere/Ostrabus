@@ -83,9 +83,15 @@ checked-in fixtures. Build the named project in Release, then pass its
 | `PortraitCompositionCheck` | none | Native portrait cold/warm paths, pixel equivalence, raw channel layouts, fallback handling, buffer allocation and guarded transpiler binding. |
 | `SocialsProfilingCheck` | none | Temporary profiling registration, nested timing, deferred UI capture, native exceptions, timeout and removal of all diagnostic hooks. |
 | `CoursePlotCheck` | none | Native thrust inversion, fine-control increments, limits and course-control patch bindings. |
+| `MultiShipBarterAudit` | none | Native failure reproductions plus corrected multi-ship zone rows, loader ownership/cancellation and buy/sell/rebuy writeback, with optimization and exception controls. |
+| `TorchTowCheck` | none | Native planner, grouped course playback, combined mass, brace-release aborts, save reconstruction and manual/anchored controls. |
 
 Build `Ostrabus.csproj -c Debug` before suites that reference the plugin DLL.
 Run native suites sequentially; the Mono host shares a runtime staging directory.
 For the sensor model and vanilla comparison report, run
 `powershell -NoProfile -ExecutionPolicy Bypass -File Tools/SensorComparison/Run.ps1`.
 Generated reports stay under ignored `obj/`.
+
+The [native torch-course oracle](../Tools/TorchNativeOracle/README.md) also covers
+the fuel/control and momentum-aware player-planning changes, including
+offline SFF, towing, save reconstruction and moving-target convergence tests.

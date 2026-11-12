@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/87233b6c20a19bff0425e39e3b795e964816c5f8d892803ca3a400f1828fc7d1.json.br",
+  "reason": "Native-tested civilian visit selection, retired-target lifecycle, saved Main progress and primitive invalidation marker, priority/SFF ownership, and civilian encounter versus station/hauler retirement boundaries.",
+  "acceptedUtc": "2026-11-12T01:28:35.6657853Z",
+  "previousSnapshot": "assembly-baselines/da1a98ebcba88b7873aeb680bb4281074b8a5a9ed83542f1491eefaa4901d30b.json.br"
+}

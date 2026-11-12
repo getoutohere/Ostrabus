@@ -272,7 +272,7 @@
         "if (!wasStale",
         "DetachedHidden"
       ],
-      "sha256": "8b32b760c10361a5baa7fad8598423ad7102d36b8bfd67564961305ad6f1fabc"
+      "sha256": "3d35726d06dd2067f3169c2b088eb9ef4b156b7a3d05ac52a35006062a4d5a75"
     },
     "fix_target": {
       "origin": "repo",
@@ -282,7 +282,7 @@
         "ReferenceEquals(observer.shipSituTarget",
         "target.Situ = replacement.objSS"
       ],
-      "sha256": "a8c5c1fcc0b4343adace40e3618c06d6ac62113d340128c57c3ad139d25461c2"
+      "sha256": "76eef5c6932b1a87f4de59f7b8c02f8a6df37fe6d67f07b08f8cfe47f96e181c"
     },
     "fix_depot": {
       "origin": "repo",
@@ -343,7 +343,7 @@
         "ClearPrediction(ship)",
         "class RetargetFuelPatch"
       ],
-      "sha256": "dbc8a1c7ebbb52f49c159b674c84032b4703308b0070130bbf5d62e13c2a6065"
+      "sha256": "35e7e8398bbda8440a43820430324b8b93c4ade6494c02aaf19b3e903a064fcc"
     },
     "fix_flightfuel": {
       "origin": "repo",
@@ -459,7 +459,7 @@
         "internal static bool IsExempt(",
         "pending.Clear(); visited.Clear(); evaluating = false;"
       ],
-      "sha256": "a6dc4e7ad7e94c6f74e0191121776b53f6508d95936189a0a4cf1c8e89498449"
+      "sha256": "df32e7ea4018338bcedfab375f390d9999cca71ae0901c5cb1a7c39ca3467d04"
     },
     "station_collision_scan": {
       "origin": "repo",
@@ -2933,14 +2933,16 @@
           "finding": "risk.route_anchor_conflict",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "haul",
           "finding": null,
           "without": "risk.route_anchor_conflict",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Conditional native reproduction. Nonzero first haul thrust and accepted route are explicit assumptions; a blocked later event is reported, not silently invented."
@@ -2996,14 +2998,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "haul",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Ordinary successful steering remains available."
@@ -3059,14 +3063,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "unregistered",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Legitimate stranding is not forced into rescue."
@@ -3126,14 +3132,16 @@
           "finding": "risk.route_anchor_conflict",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": null,
           "finding": "risk.route_anchor_conflict",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Patch intentionally does not claim to fix player-controlled groups; scope exclusion leaves this conditional mechanism reachable."
@@ -3193,7 +3201,8 @@
           "finding": "risk.route_anchor_conflict",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Unknown native layouts fail closed instead of modifying an arbitrary tree."
@@ -3249,14 +3258,16 @@
           "finding": "risk.uncrewed_commands",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "unregistered",
           "finding": null,
           "without": "risk.uncrewed_commands",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Lifecycle guard is containment, not a crew creation or hull disposal rule."
@@ -3312,14 +3323,16 @@
           "finding": null,
           "without": null,
           "fact": "depot",
-          "value": "regional"
+          "value": "regional",
+          "stop": null
         },
         "effective": {
           "node": null,
           "finding": null,
           "without": null,
           "fact": "depot",
-          "value": "home"
+          "value": "home",
+          "stop": null
         }
       },
       "note": "Correct depot identity; native random candidate selection is retained."
@@ -3375,14 +3388,16 @@
           "finding": null,
           "without": null,
           "fact": "depot",
-          "value": "regional"
+          "value": "regional",
+          "stop": null
         },
         "effective": {
           "node": null,
           "finding": null,
           "without": null,
           "fact": "depot",
-          "value": "regional"
+          "value": "regional",
+          "stop": null
         }
       },
       "note": "Other station behavior remains native."
@@ -3438,14 +3453,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "haul",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Applied bounded travel suppresses instant arrival before native handoff range/speed."
@@ -3501,14 +3518,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "deliver",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Capture exclusions remain explicit: SFF gate cannot protect a group it did not capture."
@@ -3564,14 +3583,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "reserve_blocked",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Blocks premature reuse, not every hidden hull."
@@ -3627,14 +3648,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "spawn",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Legitimate reserve reuse remains available."
@@ -3690,14 +3713,16 @@
           "finding": null,
           "without": null,
           "fact": "target_current",
-          "value": "false"
+          "value": "false",
+          "stop": null
         },
         "effective": {
           "node": null,
           "finding": null,
           "without": null,
           "fact": "target_current",
-          "value": "true"
+          "value": "true",
+          "stop": null
         }
       },
       "note": "Exact old-instance references are transferred, not arbitrary waypoint clones."
@@ -3753,14 +3778,16 @@
           "finding": "policy.rejected_crew_deleted",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": null,
           "finding": "policy.rejected_crew_deleted",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Autonomous authored policy is not silently rewritten by an operator rescue API."
@@ -3816,14 +3843,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "retired",
           "finding": null,
           "without": null,
           "fact": "crew",
-          "value": "station"
+          "value": "station",
+          "stop": null
         }
       },
       "note": "Manual operation requires an explicit event; its absence in vanilla is reported as blocked."
@@ -3881,14 +3910,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "flee_flight",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Authored retreat remains a possible conditional path, not a prescribed response to every threat."
@@ -3945,14 +3976,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "fly",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "No fabricated attached tow on failure. The wrapper\u0027s actual failure and sequence resumption require further expansion."
@@ -4008,14 +4041,16 @@
           "finding": "risk.unrelated_crew_transfer",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "haul",
           "finding": null,
           "without": "risk.unrelated_crew_transfer",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Composed inner Dock prefix and outer retriever postfix. Source-grounded conditional inference, not a new combined native-scene measurement."
@@ -4075,7 +4110,8 @@
           "finding": null,
           "without": null,
           "fact": "crew",
-          "value": "station"
+          "value": "station",
+          "stop": null
         }
       },
       "note": "Reference trace given successful later native hauling and acceptance. Does not guarantee every repaired ship reaches home."
@@ -4131,14 +4167,16 @@
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "deliver",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Bounded SFF travel allows native arrival once actual handoff checks pass."

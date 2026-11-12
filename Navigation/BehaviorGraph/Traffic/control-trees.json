@@ -1,0 +1,1261 @@
+{
+  "cargo": {
+    "path": "cargo",
+    "type": "Ostranauts.Ships.Commands.SelectorCommand",
+    "name": "BehaviorTree",
+    "source": "Ostranauts.Ships.Commands/SelectorCommand.cs",
+    "methods": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "method": "CanExecute"
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SelectorCommand",
+        "method": "RunCommand"
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SelectorCommand",
+        "method": "OnExit"
+      }
+    ],
+    "children": [
+      {
+        "path": "cargo/0",
+        "type": "Ostranauts.Ships.Commands.QueuedCommandsNode",
+        "name": "PriorityQueue",
+        "source": "Ostranauts.Ships.Commands/QueuedCommandsNode.cs",
+        "methods": [
+          {
+            "type": "Ostranauts.Ships.Commands.QueuedCommandsNode",
+            "method": "CanExecute"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.QueuedCommandsNode",
+            "method": "RunCommand"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.QueuedCommandsNode",
+            "method": "OnExit"
+          }
+        ],
+        "children": [],
+        "dynamicQueue": true
+      },
+      {
+        "path": "cargo/1",
+        "type": "Ostranauts.Ships.Commands.SequenceCommand",
+        "name": "ThreatResponse",
+        "source": "Ostranauts.Ships.Commands/SequenceCommand.cs",
+        "methods": [
+          {
+            "type": "Ostranauts.Ships.Commands.BaseCommand",
+            "method": "CanExecute"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+            "method": "RunCommand"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+            "method": "OnExit"
+          }
+        ],
+        "children": [
+          {
+            "path": "cargo/1/0",
+            "type": "Ostranauts.Ships.Commands.AreThreatsNearby",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/AreThreatsNearby.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.AreThreatsNearby",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "cargo/1/1",
+            "type": "Ostranauts.Ships.Commands.AmIBeingTargeted",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/AmIBeingTargeted.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.AmIBeingTargeted",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "cargo/1/2",
+            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+            "name": "Health check",
+            "source": "Ostranauts.Ships.Commands/SequenceCommand.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": [
+              {
+                "path": "cargo/1/2/0",
+                "type": "Ostranauts.Ships.Commands.AmIDamaged",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/AmIDamaged.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.AmIDamaged",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "path": "cargo/1/2/1",
+                "type": "Ostranauts.Ships.Commands.SurrenderOffer",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/SurrenderOffer.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.SurrenderOffer",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "path": "cargo/1/3",
+            "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+            "name": "Flee",
+            "source": "Ostranauts.Ships.Commands/StickySequenceCommand.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": [
+              {
+                "path": "cargo/1/3/0",
+                "type": "Ostranauts.Ships.Commands.TargetNearestStation",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/TargetNearestStation.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.TargetNearestStation",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "path": "cargo/1/3/1",
+                "type": "Ostranauts.Ships.Commands.SosThreatApproaching",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/SosThreatApproaching.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.SosThreatApproaching",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "path": "cargo/1/3/2",
+                "type": "Ostranauts.Ships.Commands.FlyTo",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/FlyTo.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.FlyTo",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.FlyTo",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "path": "cargo/1/3/3",
+                "type": "Ostranauts.Ships.Commands.Dock",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/Dock.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.Dock",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.Dock",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "cargo/2",
+        "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+        "name": "Main",
+        "source": "Ostranauts.Ships.Commands/StickySequenceCommand.cs",
+        "methods": [
+          {
+            "type": "Ostranauts.Ships.Commands.BaseCommand",
+            "method": "CanExecute"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+            "method": "RunCommand"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+            "method": "OnExit"
+          }
+        ],
+        "children": [
+          {
+            "path": "cargo/2/0",
+            "type": "Ostranauts.Ships.Commands.TargetNewIfNone",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/TargetNewIfNone.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.TargetNewIfNone",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "cargo/2/1",
+            "type": "Ostranauts.Ships.Commands.FlyTo",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/FlyTo.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.FlyTo",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.FlyTo",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "cargo/2/2",
+            "type": "Ostranauts.Ships.Commands.DockCargoAndDespawn",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/DockCargoAndDespawn.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.DockCargoAndDespawn",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "civilian": {
+    "path": "civilian",
+    "type": "Ostranauts.Ships.Commands.SelectorCommand",
+    "name": "BehaviorTree",
+    "source": "Ostranauts.Ships.Commands/SelectorCommand.cs",
+    "methods": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "method": "CanExecute"
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SelectorCommand",
+        "method": "RunCommand"
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SelectorCommand",
+        "method": "OnExit"
+      }
+    ],
+    "children": [
+      {
+        "path": "civilian/0",
+        "type": "Ostranauts.Ships.Commands.QueuedCommandsNode",
+        "name": "PriorityQueue",
+        "source": "Ostranauts.Ships.Commands/QueuedCommandsNode.cs",
+        "methods": [
+          {
+            "type": "Ostranauts.Ships.Commands.QueuedCommandsNode",
+            "method": "CanExecute"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.QueuedCommandsNode",
+            "method": "RunCommand"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.QueuedCommandsNode",
+            "method": "OnExit"
+          }
+        ],
+        "children": [],
+        "dynamicQueue": true
+      },
+      {
+        "path": "civilian/1",
+        "type": "Ostranauts.Ships.Commands.SequenceCommand",
+        "name": "CombatResponse",
+        "source": "Ostranauts.Ships.Commands/SequenceCommand.cs",
+        "methods": [
+          {
+            "type": "Ostranauts.Ships.Commands.BaseCommand",
+            "method": "CanExecute"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+            "method": "RunCommand"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+            "method": "OnExit"
+          }
+        ],
+        "children": [
+          {
+            "path": "civilian/1/0",
+            "type": "Ostranauts.Ships.Commands.AmIInCombat",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/AmIInCombat.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.AmIInCombat",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "civilian/1/1",
+            "type": "Ostranauts.Ships.Commands.SelectorCommand",
+            "name": "InCombat",
+            "source": "Ostranauts.Ships.Commands/SelectorCommand.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.SelectorCommand",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.SelectorCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": [
+              {
+                "path": "civilian/1/1/0",
+                "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                "name": "Health check",
+                "source": "Ostranauts.Ships.Commands/SequenceCommand.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": [
+                  {
+                    "path": "civilian/1/1/0/0",
+                    "type": "Ostranauts.Ships.Commands.AmIDamaged",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/AmIDamaged.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.AmIDamaged",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "path": "civilian/1/1/0/1",
+                    "type": "Ostranauts.Ships.Commands.SurrenderOffer",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/SurrenderOffer.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.SurrenderOffer",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "path": "civilian/1/1/1",
+                "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                "name": "Defensive Action",
+                "source": "Ostranauts.Ships.Commands/SequenceCommand.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": [
+                  {
+                    "path": "civilian/1/1/1/0",
+                    "type": "Ostranauts.Ships.Commands.DoIHaveDecoys",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/DoIHaveDecoys.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.DoIHaveDecoys",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "path": "civilian/1/1/1/1",
+                    "type": "Ostranauts.Ships.Commands.AreMissilesComingMyWay",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/AreMissilesComingMyWay.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.AreMissilesComingMyWay",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "path": "civilian/1/1/1/2",
+                    "type": "Ostranauts.Ships.Commands.DeployDecoys",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/DeployDecoys.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.DeployDecoys",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "path": "civilian/1/1/2",
+                "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                "name": "Fight",
+                "source": "Ostranauts.Ships.Commands/SequenceCommand.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": [
+                  {
+                    "path": "civilian/1/1/2/0",
+                    "type": "Ostranauts.Ships.Commands.AmIArmed",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/AmIArmed.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.AmIArmed",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "path": "civilian/1/1/2/1",
+                    "type": "Ostranauts.Ships.Commands.SetEngagementProfile",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/SetEngagementProfile.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.SetEngagementProfile",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "path": "civilian/1/1/2/2",
+                    "type": "Ostranauts.Ships.Commands.Undock",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/Undock.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.Undock",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.Undock",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "path": "civilian/1/1/2/3",
+                    "type": "Ostranauts.Ships.Commands.SelectorCommand",
+                    "name": "InCombat",
+                    "source": "Ostranauts.Ships.Commands/SelectorCommand.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.SelectorCommand",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.SelectorCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": [
+                      {
+                        "path": "civilian/1/1/2/3/0",
+                        "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                        "name": "Short range attack",
+                        "source": "Ostranauts.Ships.Commands/SequenceCommand.cs",
+                        "methods": [
+                          {
+                            "type": "Ostranauts.Ships.Commands.BaseCommand",
+                            "method": "CanExecute"
+                          },
+                          {
+                            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                            "method": "RunCommand"
+                          },
+                          {
+                            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                            "method": "OnExit"
+                          }
+                        ],
+                        "children": [
+                          {
+                            "path": "civilian/1/1/2/3/0/0",
+                            "type": "Ostranauts.Ships.Commands.DoIPreferShortRange",
+                            "name": "",
+                            "source": "Ostranauts.Ships.Commands/DoIPreferShortRange.cs",
+                            "methods": [
+                              {
+                                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                                "method": "CanExecute"
+                              },
+                              {
+                                "type": "Ostranauts.Ships.Commands.DoIPreferShortRange",
+                                "method": "RunCommand"
+                              },
+                              {
+                                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                                "method": "OnExit"
+                              }
+                            ],
+                            "children": []
+                          },
+                          {
+                            "path": "civilian/1/1/2/3/0/1",
+                            "type": "Ostranauts.Ships.Commands.KeepWithinFiringDistance",
+                            "name": "",
+                            "source": "Ostranauts.Ships.Commands/KeepWithinFiringDistance.cs",
+                            "methods": [
+                              {
+                                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                                "method": "CanExecute"
+                              },
+                              {
+                                "type": "Ostranauts.Ships.Commands.KeepWithinFiringDistance",
+                                "method": "RunCommand"
+                              },
+                              {
+                                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                                "method": "OnExit"
+                              }
+                            ],
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "path": "civilian/1/1/2/3/1",
+                        "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                        "name": "Long range attack",
+                        "source": "Ostranauts.Ships.Commands/SequenceCommand.cs",
+                        "methods": [
+                          {
+                            "type": "Ostranauts.Ships.Commands.BaseCommand",
+                            "method": "CanExecute"
+                          },
+                          {
+                            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                            "method": "RunCommand"
+                          },
+                          {
+                            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+                            "method": "OnExit"
+                          }
+                        ],
+                        "children": [
+                          {
+                            "path": "civilian/1/1/2/3/1/0",
+                            "type": "Ostranauts.Ships.Commands.KeepAtDistance",
+                            "name": "",
+                            "source": "Ostranauts.Ships.Commands/KeepAtDistance.cs",
+                            "methods": [
+                              {
+                                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                                "method": "CanExecute"
+                              },
+                              {
+                                "type": "Ostranauts.Ships.Commands.KeepAtDistance",
+                                "method": "RunCommand"
+                              },
+                              {
+                                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                                "method": "OnExit"
+                              }
+                            ],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "path": "civilian/1/1/3",
+                "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+                "name": "Flee",
+                "source": "Ostranauts.Ships.Commands/StickySequenceCommand.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": [
+                  {
+                    "path": "civilian/1/1/3/0",
+                    "type": "Ostranauts.Ships.Commands.TargetEscapeStation",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/TargetEscapeStation.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.TargetEscapeStation",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "path": "civilian/1/1/3/1",
+                    "type": "Ostranauts.Ships.Commands.Undock",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/Undock.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.Undock",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.Undock",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "path": "civilian/1/1/3/2",
+                    "type": "Ostranauts.Ships.Commands.FlyTo",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/FlyTo.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.FlyTo",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.FlyTo",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "path": "civilian/1/1/3/3",
+                    "type": "Ostranauts.Ships.Commands.Dock",
+                    "name": "",
+                    "source": "Ostranauts.Ships.Commands/Dock.cs",
+                    "methods": [
+                      {
+                        "type": "Ostranauts.Ships.Commands.Dock",
+                        "method": "CanExecute"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.Dock",
+                        "method": "RunCommand"
+                      },
+                      {
+                        "type": "Ostranauts.Ships.Commands.BaseCommand",
+                        "method": "OnExit"
+                      }
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "civilian/2",
+        "type": "Ostranauts.Ships.Commands.SequenceCommand",
+        "name": "ThreatResponse",
+        "source": "Ostranauts.Ships.Commands/SequenceCommand.cs",
+        "methods": [
+          {
+            "type": "Ostranauts.Ships.Commands.BaseCommand",
+            "method": "CanExecute"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+            "method": "RunCommand"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.SequenceCommand",
+            "method": "OnExit"
+          }
+        ],
+        "children": [
+          {
+            "path": "civilian/2/0",
+            "type": "Ostranauts.Ships.Commands.AreThreatsNearby",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/AreThreatsNearby.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.AreThreatsNearby",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "civilian/2/1",
+            "type": "Ostranauts.Ships.Commands.AmIBeingTargeted",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/AmIBeingTargeted.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.AmIBeingTargeted",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "civilian/2/2",
+            "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+            "name": "Flee",
+            "source": "Ostranauts.Ships.Commands/StickySequenceCommand.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": [
+              {
+                "path": "civilian/2/2/0",
+                "type": "Ostranauts.Ships.Commands.TargetNearestStation",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/TargetNearestStation.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.TargetNearestStation",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "path": "civilian/2/2/1",
+                "type": "Ostranauts.Ships.Commands.SosThreatApproaching",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/SosThreatApproaching.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.SosThreatApproaching",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "path": "civilian/2/2/2",
+                "type": "Ostranauts.Ships.Commands.Undock",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/Undock.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.Undock",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.Undock",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "path": "civilian/2/2/3",
+                "type": "Ostranauts.Ships.Commands.FlyTo",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/FlyTo.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.FlyTo",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.FlyTo",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "path": "civilian/2/2/4",
+                "type": "Ostranauts.Ships.Commands.Dock",
+                "name": "",
+                "source": "Ostranauts.Ships.Commands/Dock.cs",
+                "methods": [
+                  {
+                    "type": "Ostranauts.Ships.Commands.Dock",
+                    "method": "CanExecute"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.Dock",
+                    "method": "RunCommand"
+                  },
+                  {
+                    "type": "Ostranauts.Ships.Commands.BaseCommand",
+                    "method": "OnExit"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "civilian/3",
+        "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+        "name": "Main",
+        "source": "Ostranauts.Ships.Commands/StickySequenceCommand.cs",
+        "methods": [
+          {
+            "type": "Ostranauts.Ships.Commands.BaseCommand",
+            "method": "CanExecute"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+            "method": "RunCommand"
+          },
+          {
+            "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+            "method": "OnExit"
+          }
+        ],
+        "children": [
+          {
+            "path": "civilian/3/0",
+            "type": "Ostranauts.Ships.Commands.Undock",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/Undock.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.Undock",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.Undock",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "civilian/3/1",
+            "type": "Ostranauts.Ships.Commands.TargetNewIfNone",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/TargetNewIfNone.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.TargetNewIfNone",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "civilian/3/2",
+            "type": "Ostranauts.Ships.Commands.FlyTo",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/FlyTo.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.FlyTo",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.FlyTo",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "civilian/3/3",
+            "type": "Ostranauts.Ships.Commands.Dock",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/Dock.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.Dock",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.Dock",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          },
+          {
+            "path": "civilian/3/4",
+            "type": "Ostranauts.Ships.Commands.Hold",
+            "name": "",
+            "source": "Ostranauts.Ships.Commands/Hold.cs",
+            "methods": [
+              {
+                "type": "Ostranauts.Ships.Commands.Hold",
+                "method": "CanExecute"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.Hold",
+                "method": "RunCommand"
+              },
+              {
+                "type": "Ostranauts.Ships.Commands.BaseCommand",
+                "method": "OnExit"
+              }
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}

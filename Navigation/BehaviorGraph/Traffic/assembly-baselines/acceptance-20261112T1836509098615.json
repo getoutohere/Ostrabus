@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/18b45abf1ddf7753c076459da5646fb1c6a8a664f581ed39557bacd9badc7242.json.br",
+  "reason": "Include reviewed repository controller-identity patch source alongside native collision, registration, restore and cleanup dependencies; 191 native fixture assertions reproduce the defect and verify prevention, saved repair and conserved delivery. Repository source is fingerprinted separately from native IL.",
+  "acceptedUtc": "2026-11-12T18:36:50.9074203Z",
+  "previousSnapshot": "assembly-baselines/4fce2fc4a3e344d540e907e81f69eeada506d81db01c7ab35158ec21df8fdea4.json.br"
+}

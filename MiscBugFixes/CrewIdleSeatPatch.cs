@@ -17,7 +17,9 @@ internal static class CrewIdleSeatPatch {
     static readonly AccessTools.FieldRef<Interaction, CondOwner> StoredUs = AccessTools.FieldRefAccess<Interaction, CondOwner>("objUsTemp");
     static readonly AccessTools.FieldRef<Interaction, CondOwner> StoredThem = AccessTools.FieldRefAccess<Interaction, CondOwner>("objThemTemp");
     sealed class Probe {
-        internal double Next;
+        internal double Next, Last;
+        internal int Cursor;
+        internal string ShipId;
         internal readonly List<AutoTask> Tasks = new List<AutoTask>();
         internal readonly List<AutoTask> Patch = new List<AutoTask>();
         internal readonly List<AutoTask> Repair = new List<AutoTask>();
@@ -39,7 +41,13 @@ internal static class CrewIdleSeatPatch {
             !crew.OwnsShip(crew.ship.strRegID)) return true;
         Probe probe = Probes.GetValue(crew, _ => new Probe());
         double now = StarSystem.fEpoch;
+        if (probe.ShipId != crew.ship.strRegID || now < probe.Last) {
+            probe.Cursor = 0;
+            probe.Next = now;
+            probe.ShipId = crew.ship.strRegID;
+        }
         if (now < probe.Next && probe.Next - now <= 30) return true;
+        probe.Last = now;
         probe.Next = now + 30;
         bool available;
         try { available = HasAutomaticWork(crew, probe); }
@@ -89,17 +97,29 @@ internal static class CrewIdleSeatPatch {
         else if (restore < patch) Merge(probe, probe.Restore, probe.Patch, probe.Repair);
         else Merge(probe, probe.Patch, probe.Restore, probe.Repair);
         List<AutoTask> ranked = probe.Tasks;
+        if (ranked.Count == 0) { probe.Cursor = 0; return false; }
+        if (probe.Cursor >= ranked.Count) probe.Cursor = 0;
         Pathfinder path = crew.Pathfinder;
         Tile destination = path?.tilDest;
         CondOwner targetBefore = path?.coDest;
         float range = path?.fRangeGoal ?? 0;
         try {
-            // Match the native ProcessAutoTasks probe limit and its cooldown/ranking.
+            // This observation must not write native recently-tried cooldowns.
+            // Unlike real ProcessAutoTasks, that would suppress work before it
+            // is dispatched. Keep its two-candidate budget, but advance through
+            // the freshly ranked list so a failed leading pair cannot starve
+            // usable work behind it. Only a numeric cursor survives this probe.
+            int start = probe.Cursor;
             for (int i = 0; i < Math.Min(2, ranked.Count); i++) {
-                var interaction = DataHandler.GetInteraction(ranked[i].strIA);
+                int index = (start + i) % ranked.Count;
+                probe.Cursor = (index + 1) % ranked.Count;
+                var interaction = DataHandler.GetInteraction(ranked[index].strIA);
                 if (interaction == null) continue;
                 interaction.bHumanOnly = false;
-                if (interaction.Triggered(crew, ranked[i].co, bStats: false, bIgnoreItems: false, bCheckPath: true, bFetchItems: false)) return true;
+                if (interaction.Triggered(crew, ranked[index].co, bStats: false, bIgnoreItems: false, bCheckPath: true, bFetchItems: false)) {
+                    probe.Cursor = 0;
+                    return true;
+                }
             }
             return false;
         } finally {

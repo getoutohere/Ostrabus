@@ -19,7 +19,8 @@ static partial class Program {
         public void Reset() => throw new NotSupportedException();
         public void Dispose() { Disposed = true; }
     }
-    public static void Main() {
+    public static void Main(string[] args) {
+        if (args.Length > 0 && args[0] == "scheduler") { SchedulerTiming.Run(); return; }
         Check(!WorkTrace.Enabled && Count() == 0, "Diagnostics should start without simulation hooks");
         foreach (string name in new[] { "ACTAlarmO2Install", "ACTTV01OffUninstall", "ACTFeedItemTV", "ACTReloadItemN2", "ACTHaulItem", "EquipItem" }) {
             var interaction = (Interaction)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(Interaction));

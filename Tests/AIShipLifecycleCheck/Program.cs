@@ -71,6 +71,9 @@ static partial class Program {
         boundary.Patch(AccessTools.Method(typeof(UnityEngine.Debug),nameof(UnityEngine.Debug.LogWarning),new[]{typeof(object)}),prefix:new HarmonyMethod(typeof(Program),nameof(Quiet)));
         try {
             StarSystem.fEpoch=65632375306.5815;
+            if (args.Length > 0 && args[0] == "freight-recovery") { CheckFreightRecovery(); return; }
+            if (args.Length > 0 && args[0] == "controller-inspection") { CheckControllerInspection(); return; }
+            if (args.Length > 0 && args[0] == "controller-identity") { CheckControllerIdentity(args.Length>1?args[1]:null); return; }
             if (args.Length > 0 && args[0] == "rescue") { CheckHaulerRescue(); return; }
             if (args.Length > 0 && args[0] == "instant-dock") { CheckPhysicalInstantDock(); return; }
             if (args.Length > 0 && args[0] == "arrival") { CheckStationArrival(); return; }

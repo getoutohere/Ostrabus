@@ -34,6 +34,16 @@ internal static class InvalidRcsBudgetPatch {
 internal static class ClearTargetFuelPatch {
     [HarmonyPrefix]
     internal static void Prefix(Ship __instance) => NavigationFuel.ClearPrediction(__instance);
+    [HarmonyPostfix]
+    internal static void Postfix(Ship __instance) {
+        // Shallow GetJSON clones json and only overwrites optional references
+        // when non-null. Native ClearShipTarget must clear its saved copy too.
+        JsonShip saved = __instance.json;
+        if (saved == null) return;
+        saved.strScanTargetID = null;
+        saved.strTargetRegID = null;
+        saved.objSituScanTarget = null;
+    }
 }
 
 [HarmonyPatch(typeof(TargetData), nameof(TargetData.ApplyToShip))]

@@ -1,0 +1,411 @@
+{
+  "schemaVersion": 1,
+  "id": "ostrabus-current-target-lifecycle",
+  "base": "target-lifecycle-1.0.1.10",
+  "patches": [
+    {
+      "id": "replacement_references",
+      "classification": "reference_integrity_fix",
+      "sources": [
+        "fix_targets"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "summary": "Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes.",
+      "removes": [
+        "Dangling exact references after DestroyAndReload."
+      ],
+      "preserves": [
+        "Owned waypoints.",
+        "Existing route and fuel state.",
+        "Unrelated destination choices."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "dispatch.replace_true",
+          "id": "fix.dispatch.replace_true",
+          "set": {
+            "scan_ref": "current",
+            "situation": "coherent"
+          },
+          "to": "dispatch"
+        },
+        {
+          "kind": "replace",
+          "edge": "dispatch.replace_false",
+          "id": "fix.dispatch.replace_false",
+          "set": {
+            "scan_ref": "current"
+          },
+          "to": "dispatch"
+        },
+        {
+          "kind": "replace",
+          "edge": "planned.replace_true",
+          "id": "fix.planned.replace_true",
+          "set": {
+            "scan_ref": "current",
+            "situation": "coherent"
+          },
+          "to": "planned"
+        },
+        {
+          "kind": "replace",
+          "edge": "planned.replace_false",
+          "id": "fix.planned.replace_false",
+          "set": {
+            "scan_ref": "current"
+          },
+          "to": "planned"
+        },
+        {
+          "kind": "replace",
+          "edge": "manual.replace_true",
+          "id": "fix.manual.replace_true",
+          "set": {
+            "scan_ref": "current",
+            "situation": "coherent"
+          },
+          "to": "manual"
+        },
+        {
+          "kind": "replace",
+          "edge": "manual.replace_false",
+          "id": "fix.manual.replace_false",
+          "set": {
+            "scan_ref": "current"
+          },
+          "to": "manual"
+        },
+        {
+          "kind": "replace",
+          "edge": "dock.replace_true",
+          "id": "fix.dock.replace_true",
+          "set": {
+            "scan_ref": "current",
+            "situation": "coherent"
+          },
+          "to": "dock"
+        },
+        {
+          "kind": "replace",
+          "edge": "dock.replace_false",
+          "id": "fix.dock.replace_false",
+          "set": {
+            "scan_ref": "current"
+          },
+          "to": "dock"
+        }
+      ]
+    },
+    {
+      "id": "target_lifetime",
+      "classification": "reference_integrity_fix",
+      "sources": [
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "summary": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "removes": [
+        "Destroyed vessel or restored missing ship remaining a flight destination.",
+        "Shallow saved optional fields resurrecting a cleared target."
+      ],
+      "preserves": [
+        "Same-ID replacement including nested transactions and native exception propagation.",
+        "Hidden live ships and occupied ports.",
+        "Independent coordinate and stellar-object destinations.",
+        "Unrelated navigation, momentum, fuel and native behavior selection.",
+        "Projectile combat teardown and whole-world teardown are excluded."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "dispatch.retired_shared",
+          "id": "fix.lifetime.dispatch.retired_shared",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dispatch.retired_copy",
+          "id": "fix.lifetime.dispatch.retired_copy",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dispatch.saved_removed",
+          "id": "fix.lifetime.dispatch.saved_removed",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "planned.retired_shared",
+          "id": "fix.lifetime.planned.retired_shared",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "planned.retired_copy",
+          "id": "fix.lifetime.planned.retired_copy",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "planned.saved_removed",
+          "id": "fix.lifetime.planned.saved_removed",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "manual.retired_shared",
+          "id": "fix.lifetime.manual.retired_shared",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "manual.retired_copy",
+          "id": "fix.lifetime.manual.retired_copy",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "manual.saved_removed",
+          "id": "fix.lifetime.manual.saved_removed",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dock.retired_shared",
+          "id": "fix.lifetime.dock.retired_shared",
+          "to": "dock",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dock.retired_copy",
+          "id": "fix.lifetime.dock.retired_copy",
+          "to": "dock",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dock.saved_removed",
+          "id": "fix.lifetime.dock.saved_removed",
+          "to": "dock",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dispatch.destroyed_true",
+          "id": "fix.lifetime.dispatch.destroyed_true",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dispatch.destroyed_false",
+          "id": "fix.lifetime.dispatch.destroyed_false",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "planned.destroyed_true",
+          "id": "fix.lifetime.planned.destroyed_true",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "planned.destroyed_false",
+          "id": "fix.lifetime.planned.destroyed_false",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "manual.destroyed_true",
+          "id": "fix.lifetime.manual.destroyed_true",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "manual.destroyed_false",
+          "id": "fix.lifetime.manual.destroyed_false",
+          "to": "dispatch",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dock.destroyed_true",
+          "id": "fix.lifetime.dock.destroyed_true",
+          "to": "dock",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dock.destroyed_false",
+          "id": "fix.lifetime.dock.destroyed_false",
+          "to": "dock",
+          "set": {
+            "goal": "none",
+            "scan_ref": "none",
+            "situation": "none",
+            "plan": "none",
+            "lock": "free",
+            "branch": "undispatched"
+          }
+        }
+      ]
+    }
+  ],
+  "documentedDependencies": [],
+  "notApplicable": []
+}

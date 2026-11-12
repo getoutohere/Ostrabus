@@ -739,7 +739,7 @@
                               },
                     "fuel":  {
                                  "path":  "Navigation/NavigationFuel.cs",
-                                 "sha256":  "dbc8a1c7ebbb52f49c159b674c84032b4703308b0070130bbf5d62e13c2a6065",
+                                 "sha256":  "35e7e8398bbda8440a43820430324b8b93c4ade6494c02aaf19b3e903a064fcc",
                                  "symbol":  "RetargetFuelPatch",
                                  "origin":  "repo",
                                  "anchors":  [
@@ -784,96 +784,104 @@
                                                       ],
                                           "sha256":  "d783788c02a27143a2c504852c562741a1931821de59d935bec93f033fae906f"
                                       },
-
-  "avoidance_native": {
-    "origin": "game",
-    "path": "AIShipManager.cs",
-    "symbol": "IsOnCollisionCourse/GetEscapePoint/AIIntercept2",
-    "anchors": [
-      "public static bool IsOnCollisionCourse(",
-      "private static Point GetEscapePoint("
-    ],
-    "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
-  },
-  "avoidance_repair": {
-    "origin": "repo",
-    "path": "Navigation/AIShipAvoidancePatch.cs",
-    "symbol": "AIShipAvoidance and guarded AIShipAvoidancePatch.Transpiler",
-    "anchors": [
-      "internal static Point SelectEscape(",
-      "internal static bool FutureCollision("
-    ],
-    "sha256": "66e387fb1c6ee519624eb5699bc61fbcae3dd415292f9d58037b5bbf375e505a"
-  },
-  "avoidance_geometry": {
-    "origin": "repo",
-    "path": "Navigation/ConstantAccelerationApproach.cs",
-    "symbol": "ConstantAccelerationApproach.MinimumSquared",
-    "anchors": [
-      "internal static double MinimumSquared("
-    ],
-    "sha256": "1dab09efdcd60b3d8a5b95841da780834752f50dd87078bebd8363cd632207fb"
-  },
-  "avoidance_ephemeris": {
-    "origin": "repo",
-    "path": "Orbital/NativeEphemeris.cs",
-    "symbol": "Detached body position/velocity",
-    "anchors": [
-      "internal static class NativeEphemeris"
-    ],
-    "sha256": "602b2c8fd83fd5d3f62fb194c91b347747f1bd2b973755124da347d5a300775e"
-  },
-  "avoidance_frame": {
-    "origin": "repo",
-    "path": "Orbital/OrbitAcceleration.cs",
-    "symbol": "Detached body frame acceleration",
-    "anchors": [
-      "internal static class OrbitAcceleration"
-    ],
-    "sha256": "3f21742d25891cccb06ebdbe9586a8aeb622c525748058fc060aa715b8bf17c7"
-  },
-  "avoidance_motion": {
-    "origin": "repo",
-    "path": "Orbital/OrbitalMotion.cs",
-    "symbol": "DVector math used by avoidance",
-    "anchors": [
-      "internal readonly struct DVector"
-    ],
-    "sha256": "ef098a02e24b6c59b473579c00ba0f6b279043cb8a07b99fe705dd75d8c553dd"
-  },
-
-  "station_collision_native": {
-    "origin": "game",
-    "path": "CollisionManager.cs",
-    "symbol": "Ship collision scan/response and projectile/body separation",
-    "anchors": [
-      "public static void CheckCollisions(",
-      "private static void ProcessCollision(Ship a, Ship b"
-    ],
-    "sha256": "f49512841470ef28b14deec8a1dceb803278d527e5aa6184ec309220a61e865b"
-  },
-  "station_collision_policy": {
-    "origin": "repo",
-    "path": "Navigation/StationDockedCollisions.cs",
-    "symbol": "Station docking-chain policy and physical prefix",
-    "anchors": [
-      "internal static bool IsExempt(",
-      "pending.Clear(); visited.Clear(); evaluating = false;"
-    ],
-    "sha256": "a6dc4e7ad7e94c6f74e0191121776b53f6508d95936189a0a4cf1c8e89498449"
-  },
-  "station_collision_scan": {
-    "origin": "repo",
-    "path": "NavConsole/ProximityCollisionPatch.cs",
-    "symbol": "Existing collision/proximity scan with station-attached candidate filtering",
-    "anchors": [
-      "StationDockedCollisions.IgnoreAsObstacle",
-      "hiddenChecks != 1"
-    ],
-    "sha256": "0734bb745bd265599ec5ea5d1bde253c66aef8ee5a97577a186ec72d4abebd4e"
-  }
-
-},
+                    "avoidance_native":  {
+                                             "origin":  "game",
+                                             "path":  "AIShipManager.cs",
+                                             "symbol":  "IsOnCollisionCourse/GetEscapePoint/AIIntercept2",
+                                             "anchors":  [
+                                                             "public static bool IsOnCollisionCourse(",
+                                                             "private static Point GetEscapePoint("
+                                                         ],
+                                             "sha256":  "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+                                         },
+                    "avoidance_repair":  {
+                                             "origin":  "repo",
+                                             "path":  "Navigation/AIShipAvoidancePatch.cs",
+                                             "symbol":  "AIShipAvoidance and guarded AIShipAvoidancePatch.Transpiler",
+                                             "anchors":  [
+                                                             "internal static Point SelectEscape(",
+                                                             "internal static bool FutureCollision("
+                                                         ],
+                                             "sha256":  "66e387fb1c6ee519624eb5699bc61fbcae3dd415292f9d58037b5bbf375e505a"
+                                         },
+                    "avoidance_geometry":  {
+                                               "origin":  "repo",
+                                               "path":  "Navigation/ConstantAccelerationApproach.cs",
+                                               "symbol":  "ConstantAccelerationApproach.MinimumSquared",
+                                               "anchors":  [
+                                                               "internal static double MinimumSquared("
+                                                           ],
+                                               "sha256":  "1dab09efdcd60b3d8a5b95841da780834752f50dd87078bebd8363cd632207fb"
+                                           },
+                    "avoidance_ephemeris":  {
+                                                "origin":  "repo",
+                                                "path":  "Orbital/NativeEphemeris.cs",
+                                                "symbol":  "Detached body position/velocity",
+                                                "anchors":  [
+                                                                "internal static class NativeEphemeris"
+                                                            ],
+                                                "sha256":  "602b2c8fd83fd5d3f62fb194c91b347747f1bd2b973755124da347d5a300775e"
+                                            },
+                    "avoidance_frame":  {
+                                            "origin":  "repo",
+                                            "path":  "Orbital/OrbitAcceleration.cs",
+                                            "symbol":  "Detached body frame acceleration",
+                                            "anchors":  [
+                                                            "internal static class OrbitAcceleration"
+                                                        ],
+                                            "sha256":  "3f21742d25891cccb06ebdbe9586a8aeb622c525748058fc060aa715b8bf17c7"
+                                        },
+                    "avoidance_motion":  {
+                                             "origin":  "repo",
+                                             "path":  "Orbital/OrbitalMotion.cs",
+                                             "symbol":  "DVector math used by avoidance",
+                                             "anchors":  [
+                                                             "internal readonly struct DVector"
+                                                         ],
+                                             "sha256":  "ef098a02e24b6c59b473579c00ba0f6b279043cb8a07b99fe705dd75d8c553dd"
+                                         },
+                    "station_collision_native":  {
+                                                     "origin":  "game",
+                                                     "path":  "CollisionManager.cs",
+                                                     "symbol":  "Ship collision scan/response and projectile/body separation",
+                                                     "anchors":  [
+                                                                     "public static void CheckCollisions(",
+                                                                     "private static void ProcessCollision(Ship a, Ship b"
+                                                                 ],
+                                                     "sha256":  "f49512841470ef28b14deec8a1dceb803278d527e5aa6184ec309220a61e865b"
+                                                 },
+                    "station_collision_policy":  {
+                                                     "origin":  "repo",
+                                                     "path":  "Navigation/StationDockedCollisions.cs",
+                                                     "symbol":  "Station docking-chain policy and physical prefix",
+                                                     "anchors":  [
+                                                                     "internal static bool IsExempt(",
+                                                                     "pending.Clear(); visited.Clear(); evaluating = false;"
+                                                                 ],
+                                                     "sha256":  "df32e7ea4018338bcedfab375f390d9999cca71ae0901c5cb1a7c39ca3467d04"
+                                                 },
+                    "station_collision_scan":  {
+                                                   "origin":  "repo",
+                                                   "path":  "NavConsole/ProximityCollisionPatch.cs",
+                                                   "symbol":  "Existing collision/proximity scan with station-attached candidate filtering",
+                                                   "anchors":  [
+                                                                   "StationDockedCollisions.IgnoreAsObstacle",
+                                                                   "hiddenChecks != 1"
+                                                               ],
+                                                   "sha256":  "0734bb745bd265599ec5ea5d1bde253c66aef8ee5a97577a186ec72d4abebd4e"
+                                               },
+                    "shared_target_lifetime":  {
+                                                   "origin":  "repo",
+                                                   "path":  "MiscBugFixes/ShipReplacementTargetsPatch.cs",
+                                                   "symbol":  "Replacement-aware target lifetime completion and restore validation",
+                                                   "anchors":  [
+                                                                   "internal static void Complete(Replacement state, bool stellarConversion",
+                                                                   "internal static void Removed(",
+                                                                   "internal static void Restored("
+                                                               ],
+                                                   "sha256":  "76eef5c6932b1a87f4de59f7b8c02f8a6df37fe6d67f07b08f8cfe47f96e181c"
+                                               }
+                },
     "evidence":  {
                      "review":  {
                                     "supports":  "Cross-home source/caller/asset review and explicit native scope fixture; not a full-world state graph.",
@@ -890,20 +898,17 @@
                                             "artifact":  "Navigation/ESCAPE-RETARGET.md",
                                             "supports":  "60 native caller/production-patch checks with explicit world/weapon/health/plan boundaries; whole police dispatch, shared escape leaves, Navy/Blockade controls and allocation. Full combat remains unexpanded."
                                         },
-
-  "avoidance_validation": {
-    "level": "native_offline_and_geometry_tests",
-    "artifact": "Navigation/PLANETARY-AVOIDANCE-AUDIT.md",
-    "supports": "844 checks including production native FlyTo replay for three anchors, original failure controls, motion oracle and allocation. Flight geometry/evasion remain unexpanded external outcomes in this transition slice; no live validation claimed."
-  },
-
-  "station_traffic_validation": {
-    "level": "native_offline_and_policy_tests",
-    "artifact": "Navigation/STATION-DOCKED-COLLISIONS.md",
-    "supports": "880 assertions: live-link scope, native proximity scan, physical prefix with counting body boundary, free-space/projectile/body controls and native shared FlyTo replay of both patrol and returning hauler. Native impact controls fail; production reaches original targets for three anchors. Full geometry remains unexpanded; no live success claim."
-  }
-
-},
+                     "avoidance_validation":  {
+                                                  "level":  "native_offline_and_geometry_tests",
+                                                  "artifact":  "Navigation/PLANETARY-AVOIDANCE-AUDIT.md",
+                                                  "supports":  "844 checks including production native FlyTo replay for three anchors, original failure controls, motion oracle and allocation. Flight geometry/evasion remain unexpanded external outcomes in this transition slice; no live validation claimed."
+                                              },
+                     "station_traffic_validation":  {
+                                                        "level":  "native_offline_and_policy_tests",
+                                                        "artifact":  "Navigation/STATION-DOCKED-COLLISIONS.md",
+                                                        "supports":  "880 assertions: live-link scope, native proximity scan, physical prefix with counting body boundary, free-space/projectile/body controls and native shared FlyTo replay of both patrol and returning hauler. Native impact controls fail; production reaches original targets for three anchors. Full geometry remains unexpanded; no live success claim."
+                                                    }
+                 },
     "schemaVersion":  1,
     "assemblySha256":  "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
     "scenarios":  [

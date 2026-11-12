@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using HarmonyLib;
+using Ostranauts.Core;
 using Ostranauts.Core.Models;
 using Ostranauts.Ships;
 using UnityEngine;
@@ -24,6 +26,18 @@ internal static class BarterInitPatch {
     }
 
     internal static IEnumerator Initialize(BarterZoneShip ship, int iteratorCounter) {
+        var world = CrewSim.system;
+        var saved = ship.json;
+        var work = InitializeCore(ship, iteratorCounter);
+        try {
+            // A yield can cross world teardown or destruction/replacement of this
+            // offscreen copy. Never resume its work against a different lifetime.
+            while (ship.gameObject != null && saved != null && ReferenceEquals(ship.json, saved)
+                && ReferenceEquals(CrewSim.system, world) && work.MoveNext()) yield return work.Current;
+        } finally { (work as IDisposable)?.Dispose(); }
+    }
+
+    static IEnumerator InitializeCore(BarterZoneShip ship, int iteratorCounter) {
         var subItems = new List<JsonItem>();
         var saved = new List<JsonItem>(ship.json.aItems);
         ship.gameObject.SetActive(true);
@@ -79,8 +93,9 @@ internal static class BarterInitPatch {
             var snapshot = Items(ship).Values.ToArray();
             foreach (var co in snapshot) {
                 if (BarterFrameBudget.Exhausted()) yield return null;
+                if (co == null) continue;
                 co.PostGameLoad(Ship.Loaded.Shallow);
-                SetLayer(co.gameObject);
+                if (co != null) SetLayer(co.gameObject);
             }
             // Same index algorithm as the synchronous patch, with yield points.
             var index = BarterLocalIndexPatch.Populate(ship, paced: true);
@@ -108,6 +123,18 @@ internal static class BarterInitPatch {
 
     // Malformed data retains the native error path used by the index patch.
     internal static void NativeIndex(BarterZoneShip ship) => Index(ship);
+}
+
+// DataHandler.Init destroys every remaining registered CO. Async copies and
+// their coroutines must be unloaded before those components become invalid.
+[HarmonyPatch(typeof(DataHandler), nameof(DataHandler.Init))]
+internal static class BarterResetPatch {
+    static readonly FieldInfo Existing = AccessTools.Field(typeof(MonoSingleton<AsyncShipLoader>), "_instance");
+    [HarmonyPriority(Priority.First)]
+    static void Prefix() {
+        var loader = (AsyncShipLoader)Existing.GetValue(null);
+        if (loader != null) loader.Unload();
+    }
 }
 
 internal static class BarterFrameBudget {

@@ -25,6 +25,13 @@ The graph does not let a successful target string imply successful navigation.
 Command, member route and group-anchor motion are separate. Native physics/fuel
 reproductions are linked, not reimplemented by these small discrete traces.
 
+November 11 working-tree update: [docked course playback](../Towing/README.md)
+now repairs the member-route/group-anchor handoff and torch tow mass. Its explicit
+brace-release abort is additional user policy. This numerical movement repair is
+outside the baseline graph's discrete transition overlays; do not interpret the
+existing vanilla failure trace as the effective motion of a build with this
+feature enabled.
+
 ## Overlap and behavioral restrictions
 
 - VORB retrieval depot correction preserves native candidate filtering and
@@ -46,6 +53,18 @@ reproductions are linked, not reimplemented by these small discrete traces.
   interaction or conclude those controllers are interchangeable.
 
 ## Investigation candidates, not automatic patch requests
+
+Confirmed coverage failure: the [O-ZY3A target-retirement investigation](Scavenger/TARGET-RETIREMENT-INVESTIGATION.md)
+reproduces a divergent native route after a retriever destroys a scavenger's
+destination. Single-actor slices and opaque flight outcomes omitted that
+cross-role transition; all existing fingerprints and scenarios still pass.
+Permanent target removal is distinct from the modeled same-ID replacement.
+The [target-lifecycle expansion](TargetLifecycle/README.md) now exposes that
+interleaving in vanilla, including saved missing targets and finite routes left
+assigned to removed hulls. Its effective overlay repairs those lifetimes,
+backed by production-hook native tests. The assembly-derived
+`coverage` command reports absent role/command source bindings independently of
+passing scenario checks. Full semantic coverage remains open.
 
 1. Hidden returned hulls retain angular state; ResetShipState alone does not reset
    it. How do each role's spawn and first steering path handle reuse? Live arrival
@@ -96,3 +115,59 @@ and wider system reference.
 Every expansion should name which existing paths it removes. Desirable emergence
 comes from reliable agents making consequential choices, including failure; graph
 integrity contracts must not prescribe that all agents come home successfully.
+
+## Cargo and civilian expansion
+
+[Traffic](Traffic/README.md) now maps freight, PASS and civilian visitors. Actual
+constructor trees include their priority/combat branches; the lifecycle projection
+covers selection, handoff, retirement, reserve reuse, ATC and SFF with explicit
+native-result inputs. Its [investigation](Traffic/INVESTIGATION.md) separates
+confirmed defects from delivery/policy questions. The effective graph now includes
+the two native-tested repairs: civilian SFF X/Y lookup and exception-safe asteroid
+Ship-to-stellar conversion. The conversion repair corrects our first removal hook's
+regression; the broader delivery and policy questions remain open.
+
+The [player-connected cleanup investigation](Traffic/REGIONAL-CLEANUP.md) now
+establishes another native defect through normal region selection, registration
+and Update. Departing local buckets destroy connected AI hulls and remaining
+aboard COs after skipping relocation. Direct/chained, full/shallow and four
+roles reproduce it; unchanged-region, INTERREGIONAL and station-body controls
+survive. The runtime repair now extends the exemption to hull destruction and
+temporarily schedules retained controllers interregionally, restoring local
+membership after detachment. The effective model includes that lifetime, backed
+by native queue/save restoration and crewless faction-capture controls.
+
+The assembly inventory now reports 8 of 13 pilot types and 38 of 70 command types
+with unbound execution entrypoints, down from 10 and 55. These are binding counts,
+not percentages of semantic coverage. Arena, player AutoPilot, blockade, missile,
+navy, pirate, police and station roles still lack complete entrypoint bindings.
+Police-specific reproductions elsewhere do not amount to a complete police model.
+The population/ATC slice above has therefore progressed, not been closed.
+
+Hidden-hull civilian visits now have a native-tested effective repair: eligibility,
+retired/restored visit invalidation, saved primitive markers, priority/SFF ownership
+and physical encounter protection. Native hauler tow delivery and station-only
+parking remain available. The [visit audit](Traffic/HIDDEN-VISIT-INVESTIGATION.md)
+records the 82 production assertions and the boundaries of the offline fixture.
+
+## 0.4.0 source-reference review
+
+The retriever lifecycle source fingerprint now includes registration-time stale
+timer cancellation. The transition projection is unchanged: this bookkeeping and
+its worker interleavings are tested separately by `Tests/StaleShipDiagnosis`.
+The registration change preserves crew validation and cancels retirement only
+when a valid controller is newly registered, retaining later failure markers.
+
+The retriever, scavenger and deployer station-collision references now include
+the extracted `HasStationConnection` helper used by towing departure previews.
+`IsExempt` still gates the same station-chain predicate with the existing setting;
+the extraction changes neither collision policy nor the modeled transitions.
+Native hull and towing checks cover the shared helper and station/free-flight
+mass distinction. Source fingerprints and derived graphs were refreshed after
+review; accepted native dependency snapshots retain their prior history.
+
+The traffic audit also exposed missing dependency declarations for seven existing
+visit/retention predicates. Their mappings now name the owning patch and native
+control, queue, hull and blackboard groups. Recursive predicate dependencies
+remain transitive. This repairs update-detection coverage; no transition or
+runtime behavior changes. All five source/assembly audits are rerun before staging.

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup><Compile Include="../TorchCalculator/TorchModel.cs" Link="TorchModel.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../../MiscBugFixes/TorchFuelCachePatch.cs" Link="TorchFuelCachePatch.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../../MiscBugFixes/TorchCourseFuel*.cs" Link="%(Filename)%(Extension)" /></ItemGroup>
+  <ItemGroup><Compile Include="../../Navigation/Towing/*.cs" Link="Towing/%(Filename)%(Extension)" /></ItemGroup>
+  <ItemGroup><Compile Include="../../Navigation/TorchCourses/*.cs" Link="TorchCourses/%(Filename)%(Extension)" /></ItemGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(Game)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

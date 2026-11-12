@@ -23,6 +23,8 @@ try {
     $run=Join-Path $repo ('obj\CustomBuilder\tests-'+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $run -Force | Out-Null
     $cases=[ordered]@{
+        'torch-cache'=@('torch-fuel-cache'); 'torch-fuel'=@('torch-fuel');
+        'torch-momentum'=@('torch-momentum'); 'torch-tow'=@('torch-towing');
         door=@('door-autoclose'); range=@('proximity-range'); station=@('station-docked');
         outlines=@('hull-outlines'); collisions=@('hull-collisions');
         pda=@('pda-settings','crew-hotkeys'); orbit=@('orbital'); coast=@('coast');

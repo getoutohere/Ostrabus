@@ -201,7 +201,7 @@
         "TripFuelPrediction",
         "InvalidRcsBudgetPatch"
       ],
-      "sha256": "dbc8a1c7ebbb52f49c159b674c84032b4703308b0070130bbf5d62e13c2a6065"
+      "sha256": "35e7e8398bbda8440a43820430324b8b93c4ade6494c02aaf19b3e903a064fcc"
     },
     "fix_targets": {
       "origin": "repo",
@@ -211,7 +211,7 @@
         "Transfer only references",
         "observer.shipUndock = replacement"
       ],
-      "sha256": "a8c5c1fcc0b4343adace40e3618c06d6ac62113d340128c57c3ad139d25461c2"
+      "sha256": "76eef5c6932b1a87f4de59f7b8c02f8a6df37fe6d67f07b08f8cfe47f96e181c"
     },
     "fix_flightfuel": {
       "origin": "repo",
@@ -348,7 +348,7 @@
         "internal static bool IsExempt(",
         "pending.Clear(); visited.Clear(); evaluating = false;"
       ],
-      "sha256": "a6dc4e7ad7e94c6f74e0191121776b53f6508d95936189a0a4cf1c8e89498449"
+      "sha256": "df32e7ea4018338bcedfab375f390d9999cca71ae0901c5cb1a7c39ca3467d04"
     },
     "station_collision_scan": {
       "origin": "repo",
@@ -2448,14 +2448,16 @@
           "finding": "scav.empty_hold",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_undock",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Empty fuel is initial evidence/input. No fuel exhaustion event is invented by graph."
@@ -2485,14 +2487,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_target",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "ge1 includes exact 1 kg; native test separately checks threshold."
@@ -2522,14 +2526,16 @@
           "finding": "scav.help_hold",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_hold",
           "finding": "scav.help_hold",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2561,14 +2567,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_target",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2597,14 +2605,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_undock",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2633,14 +2643,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_undock",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2669,14 +2681,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_external",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2707,14 +2721,16 @@
           "finding": "scav.empty_hold",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_undock",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2748,14 +2764,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_undock",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2789,14 +2807,16 @@
           "finding": "scav.unplanned_home",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_home_fly",
           "finding": "scav.unplanned_home",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2831,14 +2851,16 @@
           "finding": null,
           "without": "scav.unplanned_home",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_cleanup",
           "finding": null,
           "without": "scav.unplanned_home",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2878,14 +2900,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_retriever",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Native station help path exists. Dispatch/arrival is conditional, not guaranteed."
@@ -2924,14 +2948,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_wait_player",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -2969,14 +2995,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_target",
           "finding": null,
           "without": null,
           "fact": "registered",
-          "value": "true"
+          "value": "true",
+          "stop": null
         }
       },
       "note": ""
@@ -3008,14 +3036,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_suppressed",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -3050,14 +3080,16 @@
           "finding": "scav.attached_dispatch",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_no_dispatch",
           "finding": "scav.attached_dispatch",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "Injected SOS is explicit. Ordinary Main Hold does not reach it."
@@ -3097,14 +3129,16 @@
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_no_dispatch",
           "finding": null,
           "without": "scav.empty_hold",
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": ""
@@ -3131,14 +3165,16 @@
           "finding": "scav.duplicate_fuel_debit",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_account_manual",
           "finding": null,
           "without": "scav.duplicate_fuel_debit",
           "fact": "fuel",
-          "value": "ge1"
+          "value": "ge1",
+          "stop": null
         }
       },
       "note": "Native fixture: 100 -\u003E 80 -\u003E 30 -\u003E 0 kg; patched retains 30 at unchanged position. The final fuel-exhaustion predicate is established by the native numeric test. Attribution to Host Terrapin remains unproved."
@@ -3171,14 +3207,16 @@
           "finding": "scav.unplanned_home",
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         },
         "effective": {
           "node": "scav_request",
           "finding": null,
           "without": null,
           "fact": null,
-          "value": null
+          "value": null,
+          "stop": null
         }
       },
       "note": "No planned-route-null inference: the separate native one-leg feasibility result is supplied explicitly."

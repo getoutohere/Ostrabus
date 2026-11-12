@@ -1,485 +1,503 @@
 {
-    "schemaVersion":  1,
-    "description":  "Scavenger slice explicit native method bindings and authored help/dispatch conditions. All overloads selected; transitive native dependencies conservatively followed.",
-    "bindings":  {
-                     "scav":  [
-                                  {
-                                      "type":  "Ostranauts.Ships.AIPilots.ScavPilot",
-                                      "methods":  [
-                                                      ".ctor",
-                                                      "GetTarget",
-                                                      "ScavCanDockWith",
-                                                      "GetTargetHome",
-                                                      "FFWD",
-                                                      "InstaDock"
-                                                  ]
-                                  }
-                              ],
-                     "hold":  [
-                                  {
-                                      "type":  "Ostranauts.Ships.Commands.Hold",
-                                      "methods":  [
-                                                      "RunCommand",
-                                                      "CanExecute",
-                                                      "ResolveInstantly"
-                                                  ]
-                                  }
-                              ],
-                     "sticky":  [
-                                    {
-                                        "type":  "Ostranauts.Ships.Commands.StickySequenceCommand",
-                                        "methods":  [
-                                                        "RunCommand",
-                                                        "get_SaveData",
-                                                        "set_SaveData",
-                                                        "OnExit"
-                                                    ]
-                                    }
-                                ],
-                     "undock":  [
-                                    {
-                                        "type":  "Ostranauts.Ships.Commands.Undock",
-                                        "methods":  [
-                                                        "RunCommand",
-                                                        "CanExecute",
-                                                        "ResolveInstantly",
-                                                        "Cleanup"
-                                                    ]
-                                    }
-                                ],
-                     "target":  [
-                                    {
-                                        "type":  "Ostranauts.Ships.Commands.TargetNewIfNone",
-                                        "methods":  [
-                                                        "RunCommand",
-                                                        "FindTarget",
-                                                        "GenerateNavData",
-                                                        "GetNeededFuel",
-                                                        "RequestHelp",
-                                                        "GetRequestDistance"
-                                                    ]
-                                    }
-                                ],
-                     "fly":  [
-                                 {
-                                     "type":  "Ostranauts.Ships.Commands.FlyTo",
-                                     "methods":  [
-                                                     "RunCommand",
-                                                     "CanExecute",
-                                                     "HandleRCSFuel",
-                                                     "ApplyTripFuel"
-                                                 ]
-                                 }
-                             ],
-                     "dock":  [
-                                  {
-                                      "type":  "Ostranauts.Ships.Commands.Dock",
-                                      "methods":  [
-                                                      "RunCommand",
-                                                      "CanExecute",
-                                                      "Cleanup",
-                                                      "ResolveInstantly"
-                                                  ]
-                                  }
-                              ],
-                     "fuel":  [
-                                  {
-                                      "type":  "AIShipManager",
-                                      "methods":  [
-                                                      "LowFuel",
-                                                      "BingoFuelCheck",
-                                                      "GetDeltaVNeededToTargetFullTrip"
-                                                  ]
-                                  }
-                              ],
-                     "sos":  [
-                                 {
-                                     "type":  "Ostranauts.Ships.Commands.SosOutOfFuel",
-                                     "methods":  [
-                                                     "RunCommand",
-                                                     "RequestHelp",
-                                                     "GetRequestDistance"
-                                                 ]
-                                 }
-                             ],
-                     "out_of_fuel":  [
-                                         {
-                                             "type":  "Ostranauts.Ships.Commands.AmIOutOfFuel",
-                                             "methods":  [
-                                                             "RunCommand"
-                                                         ]
-                                         }
-                                     ],
-                     "comms":  [
-                                   {
-                                       "type":  "Ostranauts.Ships.Comms.Comms",
-                                       "methods":  [
-                                                       "SendMessage",
-                                                       "GetAvailableInteractions",
-                                                       "GetCaptain"
-                                                   ]
-                                   }
-                               ],
-                     "spec":  [
-                                  {
-                                      "type":  "JsonShipSpec",
-                                      "methods":  [
-                                                      "Matches"
-                                                  ]
-                                  }
-                              ],
-                     "dispatch":  [
-                                      {
-                                          "type":  "Ostranauts.Ships.Commands.DeployHauler",
-                                          "methods":  [
-                                                          "RunCommand",
-                                                          "set_SaveData"
-                                                      ]
-                                      }
-                                  ],
-                     "controller":  [
-                                        {
-                                            "type":  "Ostranauts.Ships.AIPilots.AIShip",
-                                            "methods":  [
-                                                            "RunAI",
-                                                            "FFWD",
-                                                            "AddCommand",
-                                                            "AddCommandLoot"
-                                                        ]
-                                        }
-                                    ],
-                     "oneshot":  [
-                                     {
-                                         "type":  "Ostranauts.Ships.Commands.OneShotWrapperCommand",
-                                         "methods":  [
-                                                         "RunCommand"
-                                                     ]
-                                     }
-                                 ],
-                     "fix_fuel":  [
-                                      {
-                                          "type":  "Ship",
-                                          "methods":  [
-                                                          "get_DeltaVRemainingRCS",
-                                                          "ClearShipTarget"
-                                                      ]
-                                      }
-                                  ],
-                     "fix_targets":  [
-                                         {
-                                             "type":  "CrewSim",
-                                             "methods":  [
-                                                             "DestroyAndReload"
-                                                         ]
-                                         }
-                                     ],
-                     "fix_flightfuel":  [
-                                            {
-                                                "type":  "Ostranauts.Ships.Commands.FlyTo",
-                                                "methods":  [
-                                                                "RunCommand",
-                                                                "FetchFuelData",
-                                                                "get_SaveData",
-                                                                "set_SaveData",
-                                                                "ApplyTripFuel"
-                                                            ]
-                                            }
-                                        ],
-                     "nav_fuel":  [
-                                      {
-                                          "type":  "Ostranauts.ShipGUIs.Utilities.NavData",
-                                          "methods":  [
-                                                          "TimeAdvance"
-                                                      ]
-                                      }
-                                  ],
-                     "fix_scav_recovery":  [
-                                               {
-                                                   "methods":  [
-                                                                   ".ctor"
-                                                               ],
-                                                   "type":  "Ostranauts.Ships.AIPilots.ScavPilot"
-                                               },
-                                               {
-                                                   "methods":  [
-                                                                   "RunCommand"
-                                                               ],
-                                                   "type":  "Ostranauts.Ships.Commands.Hold"
-                                               },
-                                               {
-                                                   "methods":  [
-                                                                   "RunCommand",
-                                                                   "GenerateNavData",
-                                                                   "RequestHelp",
-                                                                   "GetRequestDistance"
-                                                               ],
-                                                   "type":  "Ostranauts.Ships.Commands.TargetNewIfNone"
-                                               },
-                                               {
-                                                   "methods":  [
-                                                                   "RunCommand"
-                                                               ],
-                                                   "type":  "Ostranauts.Ships.Commands.AmIOutOfFuel"
-                                               }
-                                           ],
-                     "replenishment":  [
-                                           {
-                                               "type":  "Ship",
-                                               "methods":  [
-                                                               "AIRefuel",
-                                                               "RefuelRCS",
-                                                               "GetRCSRemain",
-                                                               "SyncFuel"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.ShipGUIs.Utilities.NavData",
-                                               "methods":  [
-                                                               "TimeAdvance",
-                                                               "GetNavDataPoints"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "StarSystem",
-                                               "methods":  [
-                                                               "GetShipOwner"
-                                                           ]
-                                           }
-                                       ],
-                     "escape_native":  [
-                                           {
-                                               "type":  "Ostranauts.Ships.Commands.TargetEscapeStation",
-                                               "methods":  [
-                                                               "RunCommand",
-                                                               "SetTarget",
-                                                               "ResolveInstantly"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.AIPilots.AIShip",
-                                               "methods":  [
-                                                               "RunAI"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.Commands.InitiateAgainstBiggestThreat",
-                                               "methods":  [
-                                                               "RunCommand"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.AIPilots.PolicePilot",
-                                               "methods":  [
-                                                               ".ctor"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.AIPilots.ScavPilot",
-                                               "methods":  [
-                                                               ".ctor"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.AIPilots.CivilianPilot",
-                                               "methods":  [
-                                                               ".ctor"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.AIPilots.PiratePilot",
-                                               "methods":  [
-                                                               ".ctor"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.AIPilots.NavyPilot",
-                                               "methods":  [
-                                                               ".ctor"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.AIPilots.BlockadePilot",
-                                               "methods":  [
-                                                               ".ctor"
-                                                           ]
-                                           }
-                                       ],
-                     "escape_repair":  [
-                                           {
-                                               "type":  "Ostranauts.Ships.Commands.TargetEscapeStation",
-                                               "methods":  [
-                                                               "SetTarget"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.TargetData",
-                                               "methods":  [
-                                                               "ApplyToShip"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "ShipSitu",
-                                               "methods":  [
-                                                               "ResetNavData"
-                                                           ]
-                                           },
-                                           {
-                                               "type":  "Ostranauts.Ships.Commands.TargetNearestStation",
-                                               "methods":  [
-                                                               "RunCommand"
-                                                           ]
-                                           }
-                                       ],
-
-  "avoidance_native": [
+  "schemaVersion": 1,
+  "description": "Scavenger slice explicit native method bindings and authored help/dispatch conditions. All overloads selected; transitive native dependencies conservatively followed.",
+  "bindings": {
+    "scav": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.ScavPilot",
+        "methods": [
+          ".ctor",
+          "GetTarget",
+          "ScavCanDockWith",
+          "GetTargetHome",
+          "FFWD",
+          "InstaDock"
+        ]
+      }
+    ],
+    "hold": [
+      {
+        "type": "Ostranauts.Ships.Commands.Hold",
+        "methods": [
+          "RunCommand",
+          "CanExecute",
+          "ResolveInstantly"
+        ]
+      }
+    ],
+    "sticky": [
+      {
+        "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+        "methods": [
+          "RunCommand",
+          "get_SaveData",
+          "set_SaveData",
+          "OnExit"
+        ]
+      }
+    ],
+    "undock": [
+      {
+        "type": "Ostranauts.Ships.Commands.Undock",
+        "methods": [
+          "RunCommand",
+          "CanExecute",
+          "ResolveInstantly",
+          "Cleanup"
+        ]
+      }
+    ],
+    "target": [
+      {
+        "type": "Ostranauts.Ships.Commands.TargetNewIfNone",
+        "methods": [
+          "RunCommand",
+          "FindTarget",
+          "GenerateNavData",
+          "GetNeededFuel",
+          "RequestHelp",
+          "GetRequestDistance"
+        ]
+      }
+    ],
+    "fly": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyTo",
+        "methods": [
+          "RunCommand",
+          "CanExecute",
+          "HandleRCSFuel",
+          "ApplyTripFuel"
+        ]
+      }
+    ],
+    "dock": [
+      {
+        "type": "Ostranauts.Ships.Commands.Dock",
+        "methods": [
+          "RunCommand",
+          "CanExecute",
+          "Cleanup",
+          "ResolveInstantly"
+        ]
+      }
+    ],
+    "fuel": [
+      {
+        "type": "AIShipManager",
+        "methods": [
+          "LowFuel",
+          "BingoFuelCheck",
+          "GetDeltaVNeededToTargetFullTrip"
+        ]
+      }
+    ],
+    "sos": [
+      {
+        "type": "Ostranauts.Ships.Commands.SosOutOfFuel",
+        "methods": [
+          "RunCommand",
+          "RequestHelp",
+          "GetRequestDistance"
+        ]
+      }
+    ],
+    "out_of_fuel": [
+      {
+        "type": "Ostranauts.Ships.Commands.AmIOutOfFuel",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "comms": [
+      {
+        "type": "Ostranauts.Ships.Comms.Comms",
+        "methods": [
+          "SendMessage",
+          "GetAvailableInteractions",
+          "GetCaptain"
+        ]
+      }
+    ],
+    "spec": [
+      {
+        "type": "JsonShipSpec",
+        "methods": [
+          "Matches"
+        ]
+      }
+    ],
+    "dispatch": [
+      {
+        "type": "Ostranauts.Ships.Commands.DeployHauler",
+        "methods": [
+          "RunCommand",
+          "set_SaveData"
+        ]
+      }
+    ],
+    "controller": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.AIShip",
+        "methods": [
+          "RunAI",
+          "FFWD",
+          "AddCommand",
+          "AddCommandLoot"
+        ]
+      }
+    ],
+    "oneshot": [
+      {
+        "type": "Ostranauts.Ships.Commands.OneShotWrapperCommand",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "fix_fuel": [
+      {
+        "type": "Ship",
+        "methods": [
+          "get_DeltaVRemainingRCS",
+          "ClearShipTarget"
+        ]
+      }
+    ],
+    "fix_targets": [
+      {
+        "type": "Ship",
+        "methods": [
+          "Destroy",
+          "CheckTargets",
+          "ClearShipTarget",
+          "GetJSON"
+        ]
+      },
+      {
+        "type": "CrewSim",
+        "methods": [
+          "DestroyAndReload"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Undock",
+        "methods": [
+          "AttemptToUnMoor"
+        ]
+      },
+      {
+        "type": "StarSystem",
+        "methods": [
+          "CreateStellarObject"
+        ]
+      }
+    ],
+    "fix_flightfuel": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyTo",
+        "methods": [
+          "RunCommand",
+          "FetchFuelData",
+          "get_SaveData",
+          "set_SaveData",
+          "ApplyTripFuel"
+        ]
+      }
+    ],
+    "nav_fuel": [
+      {
+        "type": "Ostranauts.ShipGUIs.Utilities.NavData",
+        "methods": [
+          "TimeAdvance"
+        ]
+      }
+    ],
+    "fix_scav_recovery": [
+      {
+        "methods": [
+          ".ctor"
+        ],
+        "type": "Ostranauts.Ships.AIPilots.ScavPilot"
+      },
+      {
+        "methods": [
+          "RunCommand"
+        ],
+        "type": "Ostranauts.Ships.Commands.Hold"
+      },
+      {
+        "methods": [
+          "RunCommand",
+          "GenerateNavData",
+          "RequestHelp",
+          "GetRequestDistance"
+        ],
+        "type": "Ostranauts.Ships.Commands.TargetNewIfNone"
+      },
+      {
+        "methods": [
+          "RunCommand"
+        ],
+        "type": "Ostranauts.Ships.Commands.AmIOutOfFuel"
+      }
+    ],
+    "replenishment": [
+      {
+        "type": "Ship",
+        "methods": [
+          "AIRefuel",
+          "RefuelRCS",
+          "GetRCSRemain",
+          "SyncFuel"
+        ]
+      },
+      {
+        "type": "Ostranauts.ShipGUIs.Utilities.NavData",
+        "methods": [
+          "TimeAdvance",
+          "GetNavDataPoints"
+        ]
+      },
+      {
+        "type": "StarSystem",
+        "methods": [
+          "GetShipOwner"
+        ]
+      }
+    ],
+    "escape_native": [
+      {
+        "type": "Ostranauts.Ships.Commands.TargetEscapeStation",
+        "methods": [
+          "RunCommand",
+          "SetTarget",
+          "ResolveInstantly"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.AIShip",
+        "methods": [
+          "RunAI"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.InitiateAgainstBiggestThreat",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.PolicePilot",
+        "methods": [
+          ".ctor"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.ScavPilot",
+        "methods": [
+          ".ctor"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.CivilianPilot",
+        "methods": [
+          ".ctor"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.PiratePilot",
+        "methods": [
+          ".ctor"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.NavyPilot",
+        "methods": [
+          ".ctor"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.BlockadePilot",
+        "methods": [
+          ".ctor"
+        ]
+      }
+    ],
+    "escape_repair": [
+      {
+        "type": "Ostranauts.Ships.Commands.TargetEscapeStation",
+        "methods": [
+          "SetTarget"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.TargetData",
+        "methods": [
+          "ApplyToShip"
+        ]
+      },
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "ResetNavData"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TargetNearestStation",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "avoidance_native": [
+      {
+        "type": "AIShipManager",
+        "methods": [
+          "IsOnCollisionCourse",
+          "GetEscapePoint",
+          "AIIntercept2"
+        ]
+      },
+      {
+        "type": "CollisionManager",
+        "methods": [
+          "WillCollide",
+          "GetCollisionDistanceAU"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.FlyTo",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToManual",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.HaulShip",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "avoidance_repair": [],
+    "avoidance_geometry": [],
+    "avoidance_ephemeris": [],
+    "avoidance_frame": [],
+    "avoidance_motion": [],
+    "station_collision_native": [
+      {
+        "type": "CollisionManager",
+        "methods": [
+          "CheckCollisions",
+          "ProcessCollision",
+          "CheckProjectileCollisions"
+        ]
+      },
+      {
+        "type": "Ship",
+        "methods": [
+          "IsDocked",
+          "IsStation",
+          "IsSubStation",
+          "IsGroundStation"
+        ]
+      }
+    ],
+    "station_collision_policy": [],
+    "station_collision_scan": []
+  },
+  "predicateSources": {
+    "no_help": [
+      "fix_scav_recovery",
+      "hold"
+    ],
+    "unaffordable_home": [
+      "fix_scav_recovery",
+      "fuel"
+    ],
+    "target_caller": [
+      "fix_scav_recovery",
+      "target"
+    ]
+  },
+  "assets": [
     {
-      "type": "AIShipManager",
-      "methods": [
-        "IsOnCollisionCourse",
-        "GetEscapePoint",
-        "AIIntercept2"
+      "id": "help_hold",
+      "path": "condtrigs/condtrigs.json",
+      "entry": "TIsHasRequestedHelp",
+      "sources": [
+        "hold"
       ]
     },
     {
-      "type": "CollisionManager",
-      "methods": [
-        "WillCollide",
-        "GetCollisionDistanceAU"
+      "id": "sos_atc",
+      "path": "interactions/interactions_ship_to_ship.json",
+      "entry": "SHIPSosStranded",
+      "sources": [
+        "comms",
+        "target",
+        "sos"
       ]
     },
     {
-      "type": "Ostranauts.Ships.Commands.FlyTo",
-      "methods": [
-        "RunCommand"
+      "id": "sos_player",
+      "path": "interactions/interactions_ship_to_ship.json",
+      "entry": "SHIPSosAskPlayer",
+      "sources": [
+        "comms",
+        "target",
+        "sos"
       ]
     },
     {
-      "type": "Ostranauts.Ships.Commands.FlyToManual",
-      "methods": [
-        "RunCommand"
+      "id": "hauler_reply",
+      "path": "interactions/interactions_ship_to_ship.json",
+      "entry": "SHIPSOSDispatchHauler",
+      "sources": [
+        "comms",
+        "dispatch",
+        "spec"
       ]
     },
     {
-      "type": "Ostranauts.Ships.Commands.HaulShip",
-      "methods": [
-        "RunCommand"
+      "id": "not_docked",
+      "path": "shipspecs/shipspecs.json",
+      "entry": "IsNotDocked",
+      "sources": [
+        "spec"
+      ]
+    },
+    {
+      "id": "hauler_command",
+      "path": "loot/loot.json",
+      "entry": "CMDDeployHauler",
+      "sources": [
+        "dispatch",
+        "comms"
+      ]
+    },
+    {
+      "id": "decline",
+      "path": "interactions/interactions_ship_to_ship.json",
+      "entry": "SHIPSosAskPlayerNegative",
+      "sources": [
+        "comms"
+      ]
+    },
+    {
+      "id": "transfer_done",
+      "path": "interactions/interactions_ship_to_ship.json",
+      "entry": "SHIPTransferFuelComplete",
+      "sources": [
+        "comms"
       ]
     }
-  ],
-  "avoidance_repair": [],
-  "avoidance_geometry": [],
-  "avoidance_ephemeris": [],
-  "avoidance_frame": [],
-  "avoidance_motion": [],
-
-  "station_collision_native": [
-    {
-      "type": "CollisionManager",
-      "methods": [
-        "CheckCollisions",
-        "ProcessCollision",
-        "CheckProjectileCollisions"
-      ]
-    },
-    {
-      "type": "Ship",
-      "methods": [
-        "IsDocked",
-        "IsStation",
-        "IsSubStation",
-        "IsGroundStation"
-      ]
-    }
-  ],
-  "station_collision_policy": [],
-  "station_collision_scan": []
-
-},
-    "predicateSources":  {
-                             "no_help":  [
-                                             "fix_scav_recovery",
-                                             "hold"
-                                         ],
-                             "unaffordable_home":  [
-                                                       "fix_scav_recovery",
-                                                       "fuel"
-                                                   ],
-                             "target_caller":  [
-                                                   "fix_scav_recovery",
-                                                   "target"
-                                               ]
-                         },
-    "assets":  [
-                   {
-                       "id":  "help_hold",
-                       "path":  "condtrigs/condtrigs.json",
-                       "entry":  "TIsHasRequestedHelp",
-                       "sources":  [
-                                       "hold"
-                                   ]
-                   },
-                   {
-                       "id":  "sos_atc",
-                       "path":  "interactions/interactions_ship_to_ship.json",
-                       "entry":  "SHIPSosStranded",
-                       "sources":  [
-                                       "comms",
-                                       "target",
-                                       "sos"
-                                   ]
-                   },
-                   {
-                       "id":  "sos_player",
-                       "path":  "interactions/interactions_ship_to_ship.json",
-                       "entry":  "SHIPSosAskPlayer",
-                       "sources":  [
-                                       "comms",
-                                       "target",
-                                       "sos"
-                                   ]
-                   },
-                   {
-                       "id":  "hauler_reply",
-                       "path":  "interactions/interactions_ship_to_ship.json",
-                       "entry":  "SHIPSOSDispatchHauler",
-                       "sources":  [
-                                       "comms",
-                                       "dispatch",
-                                       "spec"
-                                   ]
-                   },
-                   {
-                       "id":  "not_docked",
-                       "path":  "shipspecs/shipspecs.json",
-                       "entry":  "IsNotDocked",
-                       "sources":  [
-                                       "spec"
-                                   ]
-                   },
-                   {
-                       "id":  "hauler_command",
-                       "path":  "loot/loot.json",
-                       "entry":  "CMDDeployHauler",
-                       "sources":  [
-                                       "dispatch",
-                                       "comms"
-                                   ]
-                   },
-                   {
-                       "id":  "decline",
-                       "path":  "interactions/interactions_ship_to_ship.json",
-                       "entry":  "SHIPSosAskPlayerNegative",
-                       "sources":  [
-                                       "comms"
-                                   ]
-                   },
-                   {
-                       "id":  "transfer_done",
-                       "path":  "interactions/interactions_ship_to_ship.json",
-                       "entry":  "SHIPTransferFuelComplete",
-                       "sources":  [
-                                       "comms"
-                                   ]
-                   }
-               ]
+  ]
 }

@@ -8,19 +8,25 @@ using LitJson;
 using Ostranauts.Core;
 using Ostranauts.Ships;
 using Ostranauts.Ships.AIPilots;
+using Ostranauts.Ships.Commands;
 using Ostranauts.ShipGUIs.Utilities;
 using UnityEngine;
 
 // Execute the native unload/replacement and target restoration code. Only Unity
 // presentation, asset materialization and item serialization are fixture boundaries.
-static class LifecycleChecks {
+static partial class LifecycleChecks {
     static int checks;
     static GameObject go;
     static Transform transform;
+    static ShipSitu validationProbe;
     static T Empty<T>() => (T)FormatterServices.GetUninitializedObject(typeof(T));
     static void Field(object target, string name, object value) => AccessTools.Field(target.GetType(), name).SetValue(target, value);
     static void Check(bool ok, string reason) { checks++; if (!ok) throw new Exception(reason); }
     static bool Quiet() => false;
+    static bool StopAfterValidation(ShipSitu __instance) {
+        if (ReferenceEquals(__instance, validationProbe)) throw new InvalidOperationException("offline: manual target validation passed");
+        return true;
+    }
     static bool ExpectedGuardWarning(object message) => !message.ToString().StartsWith("[VORB Nav Guard] Rejected route for guard-hauler:", StringComparison.Ordinal);
     static bool TransformOf(ref Transform __result) { __result = transform; return false; }
     static bool Find(ref GameObject __result) { __result = go; return false; }
@@ -70,7 +76,7 @@ static class LifecycleChecks {
         AccessTools.Field(singleton, "_instance").SetValue(null, FormatterServices.GetUninitializedObject(type));
         Patch(h, type, endpoint, nameof(Quiet));
     }
-    internal static int Run() {
+    internal static int Run(string capturedLayout = null, bool trafficConversion = false, bool regionCleanup = false) {
         var h = new Harmony("offline.ai-target.lifecycle");
         try {
             go = Empty<GameObject>(); transform = Empty<Transform>();
@@ -142,6 +148,7 @@ static class LifecycleChecks {
                 Console.WriteLine(id + ": native unload cleared shared target; native reload resolved new ship but retained broken snapshot.");
             }
             h.CreateClassProcessor(typeof(Ostrabus.MiscBugFixes.ShipReplacementTargetsPatch)).Patch();
+            RetirementBoundary(system, h);
             foreach (string role in new[] { "salvager", "hauler", "interplanetary-cargo", "player-torch", "long-distance" }) {
                 string id = "station-" + role;
                 var live = new ShipSitu(false) { bIsBO = true, strBOPORShip = id, vPosx = 2, vVelX = 1.4e-7 };
@@ -180,9 +187,73 @@ static class LifecycleChecks {
                 Check(JsonMapper.ToJson(route.GetJSON()) == routeBefore, role + ": reload fixture changed route");
             }
             GuardIntegration(crewSim, system, h);
+            TargetLifetimeRepair(crewSim, system, h, capturedLayout);
+            if (regionCleanup) RegionCleanupReachability(h);
+            if (trafficConversion) TrafficConversion(system, h);
             Console.WriteLine(checks + " native target lifecycle checks passed.");
             return checks;
         } finally { h.UnpatchSelf(); }
+    }
+    static void RetirementBoundary(StarSystem system, Harmony h) {
+        foreach (bool independentWaypoint in new[] { false, true }) {
+            string id = "retired-target-" + independentWaypoint;
+            var live = new ShipSitu(false) { bBOLocked = true, strBOPORShip = "Sol", vPosx = 2, vVelX = 1.4e-7 };
+            var targetShip = ShipAt(id, live); system.dictShips[id] = targetShip;
+            var observer = ShipAt("retirement-observer-" + independentWaypoint, new ShipSitu(false));
+            system.dictShips[observer.strRegID] = observer;
+            var data = new TargetData(targetShip);
+            if (independentWaypoint) data.Situ = new ShipSitu(live, false) { vBOOffsetx = 1e-7 };
+            data.ApplyToShip(observer);
+            var situation = data.Situ;
+            var route = new NavData(observer);
+            route.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false), 100, 0, 0));
+            route.AddNavDataPoint(new NavDataPoint(2000, new ShipSitu(false) { vPosx = 2 }, 50, 0, 0));
+            observer.objSS.NavData = route;
+            targetShip.Destroy();
+            Check(system.GetShipByRegID(id) == null && targetShip.bDestroyed && targetShip.objSS == null,
+                "Permanent native destruction did not remove the target");
+            Check(ReferenceEquals(observer.shipScanTarget, targetShip) && ReferenceEquals(data.Ship, targetShip),
+                "Existing replacement repair unexpectedly handles permanent removal");
+            Check(ReferenceEquals(observer.shipSituTarget, situation) && data.HasValidTarget,
+                "Destroyed target did not retain a nominally valid situation");
+            Check((situation.strBOPORShip != null) == independentWaypoint,
+                "Destruction did not distinguish a shared situation from an independently owned waypoint");
+            var pilot = new Program.Pilot { ShipUs = observer };
+            var flight = new Ostranauts.Ships.Commands.FlyTo(pilot);
+            Check((bool)AccessTools.Method(typeof(Ostranauts.Ships.Commands.FlyTo), "HasValidPathTarget").Invoke(flight, null),
+                "Planned dispatch unexpectedly rejected the destroyed target");
+            Check(ReferenceEquals(observer.objSS.NavData, route), "Removal unexpectedly invalidated the observer route");
+
+            // Native restoration resolves the missing Ship to null but preserves
+            // its serialized situation. A destroyed-Ship-only guard misses this.
+            observer.json = new JsonShip { strScanTargetID = id, strTargetRegID = id,
+                objSituScanTarget = JsonMapper.ToObject<JsonShipSitu>(JsonMapper.ToJson(situation.GetJSON())) };
+            observer.CheckTargets();
+            Check(observer.shipScanTarget == null && observer.targetRegID == id && observer.shipSituTarget != null,
+                "Saved missing target did not retain its named situation after CheckTargets");
+            Check((bool)AccessTools.Method(typeof(Ostranauts.Ships.Commands.FlyTo), "HasValidPathTarget").Invoke(flight, null),
+                "Planned dispatch unexpectedly rejected the restored missing target");
+
+            // Abort only when native manual target validation has finished and
+            // is about to update the retained destination for steering.
+            var update = AccessTools.Method(typeof(ShipSitu), nameof(ShipSitu.UpdateTime));
+            var probe = AccessTools.Method(typeof(LifecycleChecks), nameof(StopAfterValidation));
+            h.Patch(update, prefix: new HarmonyMethod(probe));
+            validationProbe = observer.shipSituTarget;
+            bool passedValidation = false;
+            try { new FlyToManual(pilot).RunCommand(new Blackboard()); }
+            catch (InvalidOperationException ex) { passedValidation = ex.Message == "offline: manual target validation passed"; }
+            finally { validationProbe = null; h.Unpatch(update, probe); }
+            Check(passedValidation && observer.targetRegID == id && observer.shipSituTarget != null,
+                "Restored missing target did not bypass native manual destroyed-Ship validation");
+
+            data.ApplyToShip(observer);
+            var manual = new Ostranauts.Ships.Commands.FlyToManual(pilot);
+            var result = manual.RunCommand(new Blackboard());
+            Check(result.Status == CommandCode.Failure && observer.shipScanTarget == null && observer.shipSituTarget == null && observer.TargetData == null,
+                "Native manual flight did not clear the permanently removed ship and fail normally");
+        }
+        Console.WriteLine("Permanent target removal: native planned dispatch accepts dead references and restored missing targets; native manual flight clears dead references.");
     }
     static void GuardIntegration(CrewSim crewSim, StarSystem system, Harmony h) {
         h.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.RetargetFuelPatch)).Patch();

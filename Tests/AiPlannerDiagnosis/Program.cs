@@ -129,7 +129,12 @@ static class Program {
         h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"), prefix: new HarmonyMethod(typeof(Program), nameof(Unequal)));
         if (args.Length != 0 && args[0] == "ceres") { CeresAuditChecks.Run(); return 0; }
         if (args.Length != 0 && args[0] == "audit-priority") { CeresAuditChecks.Run(true); return 0; }
-        if (args.Length != 0 && args[0] == "lifecycle") { LifecycleChecks.Run(); return 0; }
+        if (args.Length != 0 && args[0] == "lifecycle") { LifecycleChecks.Run(args.Length > 1 ? args[1] : null); return 0; }
+        if (args.Length != 0 && args[0] == "traffic") { TrafficChecks.Run(); return 0; }
+        if (args.Length != 0 && args[0] == "hidden-visits") { TrafficChecks.Run(true); return 0; }
+        if (args.Length != 0 && args[0] == "civilian-visits") { TrafficChecks.Run(false, true); return 0; }
+        if (args.Length != 0 && args[0] == "traffic-conversion") { LifecycleChecks.Run(null, true); return 0; }
+        if (args.Length != 0 && args[0] == "region-cleanup") { LifecycleChecks.Run(null, false, true); return 0; }
         h.Patch(AccessTools.PropertyGetter(typeof(Ship), "RCSAccelMax"), prefix: new HarmonyMethod(typeof(Program), nameof(Acceleration)));
         foreach (var method in AccessTools.GetDeclaredMethods(typeof(Ship))) if (method.Name == "CalculateRCSFuelConsumption") h.Patch(method, prefix: new HarmonyMethod(typeof(Program), nameof(Fuel)));
         h.Patch(AccessTools.Method(typeof(StarSystem), "GetGreatestGravBO"), prefix: new HarmonyMethod(typeof(Program), nameof(Gravity)));
@@ -139,6 +144,7 @@ static class Program {
         h.Patch(AccessTools.Method(typeof(CollisionManager), "GetCollisionDistanceAU", new[] { typeof(ShipSitu), typeof(ShipSitu) }), prefix: new HarmonyMethod(typeof(Program), nameof(Collision)));
         h.Patch(AccessTools.Method(typeof(FlyToPath), "PlanTrip4Sub"), postfix: new HarmonyMethod(typeof(Program), nameof(Planned)));
         CrewSim.system = Empty<StarSystem>(); reference = Empty<BodyOrbit>(); reference.strName = "linear-station";
+        if (args.Length != 0 && args[0] == "retired-target") return AuditRetiredTarget(args[1], double.Parse(args[2], CultureInfo.InvariantCulture));
         if (args.Length != 0 && args[0] == "recovery") {
             h.Unpatch(AccessTools.PropertyGetter(typeof(Ship), "RCSAccelMax"), HarmonyPatchType.Prefix, h.Id);
             foreach (var method in AccessTools.GetDeclaredMethods(typeof(Ship))) if (method.Name == "CalculateRCSFuelConsumption") h.Unpatch(method, HarmonyPatchType.Prefix, h.Id);
@@ -165,6 +171,47 @@ static class Program {
         }
         File.WriteAllText("obj/AI-PLANNER-DIAGNOSIS.json", JsonConvert.SerializeObject(outcomes, Formatting.Indented));
         Console.WriteLine(checks + " native AI planner diagnosis checks passed.");
+        return 0;
+    }
+    static int AuditRetiredTarget(string path, double speed) {
+        // Real saved kinematics, native planner and situation copying. The same
+        // prescribed acceleration, gravity, fuel and collision fixture boundaries
+        // as the original diagnosis apply; this does not replay a whole sortie.
+        JToken saved = JToken.Parse(File.ReadAllText(path));
+        if (saved is JArray array) saved = array[0];
+        JToken first = saved["objSS"]["jnd"]["aPoints"][0];
+        JArray points = (JArray)saved["objSS"]["jnd"]["aPoints"];
+        var target = new ShipSitu(saved["objSituScanTarget"].ToObject<JsonShipSitu>());
+        var vessel = Empty<Ship>();
+        AccessTools.Field(typeof(Ship), "<objSS>k__BackingField").SetValue(vessel, new ShipSitu(first["ObjSS"].ToObject<JsonShipSitu>()));
+        vessel.fShallowRCSRemass = Number(first["FuelLevel"]);
+        vessel.shipSituTarget = target;
+        double epoch = Number(first["ArrivalTime"]);
+        Check(target.bBOLocked && !target.bIsBO && target.strBOPORShip == null,
+            "Captured target must be an anchored ship situation with its body reference removed");
+        double before = target.vPosx;
+        target.UpdateTime(epoch + 100000);
+        Check(target.vPosx == before && target.vVelX != 0, "Retired target must retain velocity while its position stays frozen");
+        Check(new TargetData(target).HasValidTarget, "Native target validity unexpectedly rejects the retired situation");
+        iterations.Clear();
+        NavData broken = PlanCurrent(vessel, epoch, speed);
+        double duration = broken.Destination.ArrivalTime - broken.Origin.ArrivalTime;
+        double capturedDuration = Number(points[points.Count - 1]["ArrivalTime"]) - epoch;
+        Check(duration > 1e17 && iterations.Count == 11, "Native retired-target replay did not reproduce divergent planning");
+        Check(Math.Abs(duration / capturedDuration - 1) < 2e-8, "Native replay differs from captured route duration");
+        var brokenIterations = iterations.ToArray();
+        // A diagnostic control only: a genuinely destroyed ship must be discarded,
+        // not rebound to this artificial moving body in a production repair.
+        target.strBOPORShip = "linear-station";
+        iterations.Clear();
+        NavData control = PlanCurrent(vessel, epoch, speed);
+        double controlDuration = control.Destination.ArrivalTime - control.Origin.ArrivalTime;
+        Check(controlDuration > 0 && controlDuration < 86400, "Consistent-motion control did not converge");
+        File.WriteAllText("obj/ConsoleIssues/retired-target-planner-replay.json", JsonConvert.SerializeObject(new {
+            duration, capturedDuration, controlDuration, brokenIterations, controlIterations = iterations.ToArray()
+        }, Formatting.Indented));
+        Console.WriteLine("Retired-target replay: " + duration.ToString("G12") + " s; captured: " + capturedDuration.ToString("G12") +
+            " s; consistent-motion control: " + controlDuration.ToString("F2") + " s. " + checks + " checks passed.");
         return 0;
     }
     internal sealed class Pilot : IAICharacter {

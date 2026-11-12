@@ -124,7 +124,7 @@
       "anchors": [
         "NavigationFuel.ClearPrediction(ship)"
       ],
-      "sha256": "dbc8a1c7ebbb52f49c159b674c84032b4703308b0070130bbf5d62e13c2a6065"
+      "sha256": "35e7e8398bbda8440a43820430324b8b93c4ade6494c02aaf19b3e903a064fcc"
     },
     "ship": {
       "origin": "game",
@@ -238,7 +238,7 @@
         "internal static bool IsExempt(",
         "pending.Clear(); visited.Clear(); evaluating = false;"
       ],
-      "sha256": "a6dc4e7ad7e94c6f74e0191121776b53f6508d95936189a0a4cf1c8e89498449"
+      "sha256": "df32e7ea4018338bcedfab375f390d9999cca71ae0901c5cb1a7c39ca3467d04"
     },
     "station_collision_scan": {
       "origin": "repo",
@@ -249,6 +249,17 @@
         "hiddenChecks != 1"
       ],
       "sha256": "0734bb745bd265599ec5ea5d1bde253c66aef8ee5a97577a186ec72d4abebd4e"
+    },
+    "shared_target_lifetime": {
+      "origin": "repo",
+      "path": "MiscBugFixes/ShipReplacementTargetsPatch.cs",
+      "symbol": "Replacement-aware target lifetime completion and restore validation",
+      "anchors": [
+        "internal static void Complete(Replacement state, bool stellarConversion",
+        "internal static void Removed(",
+        "internal static void Restored("
+      ],
+      "sha256": "76eef5c6932b1a87f4de59f7b8c02f8a6df37fe6d67f07b08f8cfe47f96e181c"
     }
   },
   "evidence": {
@@ -1230,14 +1241,16 @@
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "none"
+          "value": "none",
+          "stop": null
         },
         "effective": {
           "node": "free",
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "home"
+          "value": "home",
+          "stop": null
         }
       },
       "note": ""
@@ -1261,14 +1274,16 @@
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "none"
+          "value": "none",
+          "stop": null
         },
         "effective": {
           "node": "fly",
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "home"
+          "value": "home",
+          "stop": null
         }
       },
       "note": ""
@@ -1291,14 +1306,16 @@
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "old"
+          "value": "old",
+          "stop": null
         },
         "effective": {
           "node": "changed",
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "none"
+          "value": "none",
+          "stop": null
         }
       },
       "note": ""
@@ -1322,14 +1339,16 @@
           "finding": null,
           "without": null,
           "fact": "fuel",
-          "value": "refill_erased"
+          "value": "refill_erased",
+          "stop": null
         },
         "effective": {
           "node": "plotted",
           "finding": null,
           "without": null,
           "fact": "fuel",
-          "value": "refill_preserved"
+          "value": "refill_preserved",
+          "stop": null
         }
       },
       "note": ""
@@ -1352,14 +1371,16 @@
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "invalid"
+          "value": "invalid",
+          "stop": null
         },
         "effective": {
           "node": "manual",
           "finding": null,
           "without": null,
           "fact": "fallback",
-          "value": "true"
+          "value": "true",
+          "stop": null
         }
       },
       "note": "Supplied invalid route tests containment only."
@@ -1382,14 +1403,16 @@
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "valid"
+          "value": "valid",
+          "stop": null
         },
         "effective": {
           "node": "plotted",
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "valid"
+          "value": "valid",
+          "stop": null
         }
       },
       "note": ""
@@ -1415,14 +1438,16 @@
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "none"
+          "value": "none",
+          "stop": null
         },
         "effective": {
           "node": "free",
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "home"
+          "value": "home",
+          "stop": null
         }
       },
       "note": ""
@@ -1446,14 +1471,16 @@
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "none"
+          "value": "none",
+          "stop": null
         },
         "effective": {
           "node": "fly",
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "home"
+          "value": "home",
+          "stop": null
         }
       },
       "note": ""
@@ -1476,14 +1503,16 @@
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "old"
+          "value": "old",
+          "stop": null
         },
         "effective": {
           "node": "changed",
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "old"
+          "value": "old",
+          "stop": null
         }
       },
       "note": ""
@@ -1507,14 +1536,16 @@
           "finding": null,
           "without": null,
           "fact": "fuel",
-          "value": "refill_erased"
+          "value": "refill_erased",
+          "stop": null
         },
         "effective": {
           "node": "plotted",
           "finding": null,
           "without": null,
           "fact": "fuel",
-          "value": "refill_preserved"
+          "value": "refill_preserved",
+          "stop": null
         }
       },
       "note": ""
@@ -1537,14 +1568,16 @@
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "invalid"
+          "value": "invalid",
+          "stop": null
         },
         "effective": {
           "node": "plotted",
           "finding": null,
           "without": null,
           "fact": "fallback",
-          "value": "false"
+          "value": "false",
+          "stop": null
         }
       },
       "note": "Supplied invalid route tests containment only."
@@ -1567,14 +1600,16 @@
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "valid"
+          "value": "valid",
+          "stop": null
         },
         "effective": {
           "node": "plotted",
           "finding": null,
           "without": null,
           "fact": "route",
-          "value": "valid"
+          "value": "valid",
+          "stop": null
         }
       },
       "note": ""
@@ -1598,14 +1633,16 @@
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "none"
+          "value": "none",
+          "stop": null
         },
         "effective": {
           "node": "idle",
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "none"
+          "value": "none",
+          "stop": null
         }
       },
       "note": ""
@@ -1630,14 +1667,16 @@
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "none"
+          "value": "none",
+          "stop": null
         },
         "effective": {
           "node": "fly",
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "home"
+          "value": "home",
+          "stop": null
         }
       },
       "note": "Whole native selector/Main/AI witness exists in scope mode; physical flight is a fixture."
@@ -1662,14 +1701,16 @@
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "none"
+          "value": "none",
+          "stop": null
         },
         "effective": {
           "node": "fly",
           "finding": null,
           "without": null,
           "fact": "target",
-          "value": "home"
+          "value": "home",
+          "stop": null
         }
       },
       "note": "Same native failure/idle retry as other homes after removing the VORB-only early target shortcut; physical flight is a fixture."

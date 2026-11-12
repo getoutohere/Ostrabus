@@ -49,7 +49,7 @@ internal static class DetachedReserveHullPatch {
 
 internal static class CrewedAIControl {
     static readonly AccessTools.FieldRef<Ship,List<PersonSpec>> People = AccessTools.FieldRefAccess<Ship,List<PersonSpec>>("aPeople");
-    const AIType NeedsCrew = AIType.Civilian | AIType.Scav | AIType.Police | AIType.Pirate | AIType.Navy |
+    internal const AIType NeedsCrew = AIType.Civilian | AIType.Scav | AIType.Police | AIType.Pirate | AIType.Navy |
         AIType.Blockade | AIType.HaulerCargo | AIType.HaulerDeployer | AIType.HaulerRetriever;
     internal static bool Allow(AIShip ai, bool fastForward = false) {
         if (ai == null || (ai.AIType & NeedsCrew) == 0) return true;
@@ -120,7 +120,13 @@ internal static class CrewedAIControl {
 // Station, Missile and Arena controllers retain their native control policy.
 [HarmonyPatch(typeof(AIShipManager),nameof(AIShipManager.AddAIToDict))]
 internal static class CrewedAIRegistrationPatch {
-    static void Postfix(AIShip __0) { CrewedAIControl.Allow(__0); }
+    static void Prefix(AIShip __0, out bool __state) {
+        __state = __0?.Ship != null && AIShipManager.dictAIs != null &&
+            ReferenceEquals(AIShipManager.GetAIShipByRegID(__0.Ship.strRegID), __0);
+    }
+    static void Postfix(AIShip __0, bool __state) {
+        if (CrewedAIControl.Allow(__0) && !__state) ActiveShipRetirement.Reactivated(__0);
+    }
 }
 
 [HarmonyPatch]

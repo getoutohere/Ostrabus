@@ -1,5 +1,12 @@
 # Hull-shaped physical collisions
 
+Docking uses the same cached hull bounds, repairing premature impacts outside
+clamp range and overlapping native docked placement. See the [saved-pair
+reproduction and repair](DOCKING-COMPATIBILITY.md) and [radius consumer audit](CONSUMER-AUDIT.md).
+The consolidated repair also covers native safe placement, group merging,
+tethering, inspection handoffs and AI prediction. Offline validation passes;
+live validation of this follow-up is pending.
+
 Optional simulation enhancement, enabled by default. **MOD SETTINGS → Hull-shaped
 collisions** changes saved BepInEx `[Navigation] HullCollisions` live. Off restores
 the native circle branch immediately. No reload or save migration is required.
@@ -26,10 +33,28 @@ separate station-docked hull exemption remains authoritative, including chains.
 Free-space towing groups retain native group mass and translation handling.
 
 ShipSitu.Size, GetCollisionDistanceAU, WillCollide, projectile scans, railgun/PDC
-hit tests, DamageRay, weapon accuracy, AI avoidance and proximity distances are
+hit tests, DamageRay, weapon accuracy and proximity distances are
 unchanged. Native damage, relative-speed severity, crew effects, collision
 events, grace and momentum rules remain in ProcessCollision. Contact normal and
 separating displacement are its only revised geometric inputs.
+
+Docking-specific calls in `GUIDockSys.CanDock`, `ConvertShipToRing` and `SetUI`
+use the cached hull-radius sum rather than the shared native circle helper.
+`Ship.PlaceAtAirlocks` uses that sum plus its original 10 m gap, preserving its
+selected-port orientation and native formation/group handling. Positioning
+remains the game's bounding-circle approximation; this does not replace its
+interior-grid port alignment with a second layout system. The existing 10-percent
+clamp margin, clearance, port availability, alignment, crime and fees remain
+native. Large hulls retain a positive docking-ring interpolation window.
+
+`BaseCommand.GetHandOffDistance` receives the same corrected bounds for ordinary
+free-ship targets, preserving native multipliers and behavior. This keeps AI
+flight/docking handoffs outside the enlarged collision envelope. Shared radius
+helpers and weapon targeting remain untouched. These docking
+changes belong to this same optional feature and revert on disable. Station and
+station-connected docking retain native geometry even when the separate station
+collision exemption is disabled; reciprocal saved/runtime links cover a group
+that has not yet been reconstructed.
 
 ## Shared geometry and performance
 
@@ -37,8 +62,19 @@ The [outline worker](../../NavConsole/HULL-OUTLINES.md) builds a rectangle cover
 of the same filled exterior. This is a decomposition, not one convex envelope:
 bays and separate components remain empty, enclosed holes stay filled, and the
 rectangle union matches the perimeter. Coordinates use identical normalization,
-native radius and grid/ship rotation. The X-only sizing defect is not silently
-changed. Sensor uncertainty affects observation, not physical contact positions.
+the cached two-dimensional footprint radius and grid/ship rotation. Ordinary
+hulls use one common 40-map-metres-per-tile scale, correcting the X-only sizing
+distortion in both outlines and physical contacts. Native radius fields remain
+untouched. Stations retain their original scale. Sensor uncertainty affects
+observation, not physical contact positions.
+
+Physical broad-phase candidates use the corrected radius as well, allowing a
+real hull contact outside the old native circles. Once geometry is ready, the
+exact same radius feeds rendering and the contact solver. Geometry publication
+or resizing resets incompatible motion history, including within the same game
+epoch, so it cannot invent a swept collision. Missing geometry retains native
+physical handling. The optional model's off/SFF physical paths and shared
+weapon/planetary radius helpers still use native radii.
 
 A vertical-edge sweep merges runs across adjacent bands. Scratch lists/maps are
 reused; immutable piece/BVH arrays are produced only for changed raw geometry.
@@ -98,6 +134,22 @@ native normalization and overlap. IL structure/local types/counts are checked;
 unknown versions fail binding explicitly. Shared helpers/body/weapon paths are
 unpatched.
 
+Movement/docking integration uses five Harmony classes over eighteen native/mod
+methods. Guarded local-expression transpilers preserve native decisions. GUI
+queries read cached numeric bounds, with no item scan, worker wait,
+extra Update loop or persistent actor cache. The common `ShipSitu.PlaceOrbitPosition` also
+uses corrected bounds, so undock pushback cannot reset a valid dock separation
+to old circles. Its anonymous arguments require one allocation-free registry
+pass during explicit placement only; group anchors bound all attached members.
+Native pushback impulse, locking guards and safe-search control flow remain
+native. Safe searches snapshot derived bounds once and exclude their own group's
+members after anchor relocation; scratch capacity is reused and actor keys are
+cleared afterward. AI prediction uses numeric scratch situations with the same
+bounds and the native predictor; existing planet-safe evasion receives matching
+clearance within that query. See the audit for exclusions and test boundaries.
+A published radius remains readable during native
+shallow/full reconstruction; cold queries use the two-dimensional grid bound.
+
 Workers own no Ship/CO/Unity objects. Prepared actor references clear/restore in
 finalizers, including exceptions. Numeric shape references clear in finally.
 Weak caches reset through the existing outline save/scene/shutdown path. No
@@ -124,3 +176,20 @@ and the bounce multiplier; it does not emulate Unity impact VFX, full damage or
 the complete crew response. Full-plugin binding checks verify coexistence.
 PDA registry tests cover both saved-toggle directions. Live collision feel and
 world side effects remain to be observed after deployment.
+
+The saved Stellar Magnificence/Prophet reproduction now allows native clamps at
+1962.82 m and native placement at 1794.38 m, clear of their approximately 1720 m
+geometric contact. Two fixtures add 378 checks for actual native CanDock/ring/
+placement/handoff paths, selected port orientations, shallow/full/grid/rotation
+combinations, native group anchor/removal, disabled mode, station chains and a
+ring larger than the native 10 km normalization. The archive SHA is unchanged.
+
+Follow-up pushback checks execute native `ShipSitu.PushbackFrom` and its safe
+coordinate scan, confirming corrected separation and the original 5 m/s kick.
+Group-anchor placement and native group propagation keep attached hulls clear.
+The consumer suite adds 61 assertions, including full two-group pushback, a
+four-member merge, safe-search failure/exception paths, native mooring gates,
+AI prediction and placement-history invalidation. The saved-pair run totals
+1,356 integration assertions. Full-plugin AI interop also passes both patch
+installation orders; a hull-only custom package binds nine selected classes with
+zero frame callbacks. These are offline results, not a live-scene certification.

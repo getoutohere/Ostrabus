@@ -4,6 +4,11 @@ Capture an ordinary trip without prescribed maneuvers or repeated save loads.
 This is a diagnostic recorder, not a gameplay feature or simulation correction.
 It never activates automatically.
 
+For continuous reactor controls, heat, module state and tank debit inspection,
+use the independent [torch burn trace](../Diagnostics/README.md#torch-burn-diagnostics).
+It shares the bounded writer, with a separate file format and optional detached
+`Diagnostic` payload. Normal flight-journal rows omit that payload entirely.
+
 ## API
 
 | Route | Behavior |

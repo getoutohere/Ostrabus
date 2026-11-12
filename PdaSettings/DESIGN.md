@@ -44,6 +44,7 @@ unknown-app fallback returns to Home. No game-save dependency is introduced.
 | Orbital coasting | This session | `CoastIntegration.SetEnabled` |
 | Super fast forward correction | This session | `SffSimulation.Enabled` |
 | Work diagnostics | This session | `WorkTrace.SetEnabled` |
+| Torch burn diagnostics | This session | `TorchTrace.SetEnabled` |
 
 Show the setting's lifetime in each row. Explain that coasting/SFF require Orbital
 to be enabled, but allow their preferences to be set independently, as the console

@@ -26,8 +26,8 @@ internal static class StationDockedCollisions {
         ship.Classification != Ship.TypeClassification.SignalBeacon &&
         (ship.IsStation(bIgnoreDocks:true) || ship.IsSubStation() || ship.IsGroundStation());
 
-    internal static bool IsExempt(Ship ship) {
-        if (!Enabled) return false;
+    internal static bool IsExempt(Ship ship) => Enabled && HasStationConnection(ship);
+    internal static bool HasStationConnection(Ship ship) {
         var registry = CrewSim.system?.dictShips;
         if (ReferenceEquals(ship, null) || ship.bDestroyed || ship.objSS == null || ActualStation(ship) ||
             string.IsNullOrEmpty(ship.strRegID) || registry == null || !ship.IsDocked() || evaluating) return false;

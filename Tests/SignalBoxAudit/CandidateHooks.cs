@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Text;
 using HarmonyLib;
 using Ostranauts.Electrical;
+using Ostrabus.MiscBugFixes.SignalBoxes;
 
 static partial class Program {
+    static bool productionTesting;
     static readonly HashSet<Electrical> candidateBoxes = new HashSet<Electrical>();
     static readonly Dictionary<Electrical, List<ElectricalSignal>> candidateRetries = new Dictionary<Electrical, List<ElectricalSignal>>();
     static readonly HashSet<Electrical> candidateDormant = new HashSet<Electrical>();
@@ -13,14 +15,21 @@ static partial class Program {
     static readonly AccessTools.FieldRef<Ship, bool> CompletedElectricalLoad = AccessTools.FieldRefAccess<Ship, bool>("_bDoneLoading");
     static bool Authoritative(Ship ship) => ship != null && !ship.bDestroyed && ship.LoadState == Ship.Loaded.Full && CompletedElectricalLoad(ship) &&
         CrewSim.system?.dictShips != null && ship.strRegID != null && CrewSim.system.dictShips.TryGetValue(ship.strRegID, out var current) && ReferenceEquals(current, ship);
-    static bool EndpointTemporary(Ship ship, string id) => !Authoritative(ship) || candidateSwitches.ContainsKey((ship, id));
+    static bool EndpointTemporary(Ship ship, string id) => productionTesting ? SignalBoxRepair.EndpointTemporary(ship, id) : !Authoritative(ship) || candidateSwitches.ContainsKey((ship, id));
     static bool EndpointTemporary(Electrical owner, string id) => owner.isInitialising ||
         !ReferenceEquals(owner.coSelf.ship, owner.coShip) || EndpointTemporary(owner.coShip, id);
-    static void SwitchBegin(Ship ship, string id) { candidateSwitches.TryGetValue((ship, id), out int depth); candidateSwitches[(ship, id)] = depth + 1; }
-    static void SwitchEnd(Ship ship, string id) { if (candidateSwitches[(ship, id)] <= 1) candidateSwitches.Remove((ship, id)); else candidateSwitches[(ship, id)]--; }
+    static void SwitchBegin(Ship ship, string id) {
+        if (productionTesting) { SignalBoxRepair.TrackSwitch(ship, id); return; }
+        candidateSwitches.TryGetValue((ship, id), out int depth); candidateSwitches[(ship, id)] = depth + 1;
+    }
+    static void SwitchEnd(Ship ship, string id) {
+        if (productionTesting) { SignalBoxRepair.EndModeSwitch(new SignalBoxRepair.ModeScope { Ship = ship, Id = id }); return; }
+        if (candidateSwitches[(ship, id)] <= 1) candidateSwitches.Remove((ship, id)); else candidateSwitches[(ship, id)]--;
+    }
     static bool Candidate(Electrical e) => candidateBoxes.Contains(e);
     static Electrical Box() {
         var e = Device(); candidateBoxes.Add(e);
+        if (productionTesting) { e.coSelf.strCODef = "ItmElectricalBox01"; conditions[e.coSelf.strID].Add("IsElectricalBox"); }
         Set(e.coShip, "nLoadState", Ship.Loaded.Full);
         CompletedElectricalLoad(e.coShip) = true;
         e.coShip.strRegID = "ship-" + e.coSelf.strID;
@@ -86,6 +95,7 @@ static partial class Program {
         CandidatePersist(__instance);
     }
     static void WakeCandidate(Electrical owner) {
+        if (productionTesting) { SignalBoxRepair.Wake(owner.coShip); return; }
         if (candidateDormant.Remove(owner)) ScheduleCandidate(owner);
     }
     static void CandidatePersist(Electrical __instance) {

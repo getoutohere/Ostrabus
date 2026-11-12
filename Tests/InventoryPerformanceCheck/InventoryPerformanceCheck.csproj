@@ -3,8 +3,11 @@
   <ItemGroup>
     <Compile Include="../../Optimizations/InventoryScratch.cs" Link="InventoryScratch.cs" />
     <Compile Include="../../Optimizations/BarterWritebackPatch.cs" Link="BarterWritebackPatch.cs" />
+    <Compile Include="../../MiscBugFixes/BarterWritebackSafety.cs" Link="BarterWritebackSafety.cs" />
+    <Compile Include="../../MiscBugFixes/BarterWritebackSafetyPatch.cs" Link="BarterWritebackSafetyPatch.cs" />
     <Compile Include="../../Optimizations/SaveRemainingIdsPatch.cs" Link="SaveRemainingIdsPatch.cs" />
     <Compile Include="../../Optimizations/ContainedItemRemovalPatch.cs" Link="ContainedItemRemovalPatch.cs" />
+    <Compile Include="../../MiscBugFixes/LoadedInventoryParentPatch.cs" Link="LoadedInventoryParentPatch.cs" />
     <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
     <Reference Include="UnityEngine.UIModule"><HintPath>$(Managed)/UnityEngine.UIModule.dll</HintPath></Reference>
@@ -13,5 +16,5 @@
     <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'"><Compile Remove="AllocationOnlyProgram.cs" /></ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'"><Compile Remove="Program.cs;RemainingChecks.cs;RemovalChecks.cs" /></ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'"><Compile Remove="Program.cs;RemainingChecks.cs;RemovalChecks.cs;LoadedParentChecks.cs" /></ItemGroup>
 </Project>

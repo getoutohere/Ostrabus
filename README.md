@@ -15,18 +15,26 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 
 ### Bug fixes
 
+- [Signal boxes](MiscBugFixes/SignalBoxes/README.md): repair gate updates, effective outputs, disconnections and saved message queues while preserving wiring across temporary reconstruction.
+- [Saved inventory](MiscBugFixes/SAVED-INVENTORY-PARENTS.md): restore saved contents beneath damaged parents before native destruction recipes transfer or drop them.
 - [Tile helper memory leak](MiscBugFixes/TILE-HELPER-CLEANUP.md): properly retire grid helper COs during tile and async-hull destruction, releasing stale registry entries and old ship references.
 - [Comms channel display](Optimizations/COMMS-HISTORY.md): show the newest 100 stored messages chronologically instead of the oldest 100.
 - [Shallow refueling](RefuelRCSPatch.cs): replenish RCS fuel instead of incorrectly adding the fuel to ship mass.
 - [AI flight fuel accounting](MiscBugFixes/AI-FLIGHT-FUEL-HANDOFF.md): prevent navigation-mode and loaded-state handoffs from charging the same travel twice, including across save/load.
 - [AI RCS replenishment](Navigation/RCS-REPLENISHMENT.md): preserve actual refills in stored route budgets across AI roles and stations without changing planned consumption.
 - [Scav emergency recovery](MiscBugFixes/SCAV-EMERGENCY-RECOVERY.md): release empty scavengers from ordinary visits, reject unaffordable homeward legs and preserve their controllers while native SOS interactions handle assistance.
-- [Torch autopilot fuel (pending playtesting)](Navigation/TORCH-COURSE-FIX.md): documented work in progress on fuel budgets, FLOW/coast control and cache synchronization; related implementation and harness files may be absent from this commit.
+- [Torch autopilot fuel checks](MiscBugFixes/TorchFuelCachePatch.cs): synchronize cached fuel with actual tanks so affordable braking legs do not disengage autopilot.
+- [Torch course consumption](Navigation/TORCH-COURSE-FIX.md): calculate fuel and reactor controls from the planned burn/coast phases, including previews and SFF without double charging.
+- [Torch towing](Navigation/Towing/README.md): execute plotted courses for braced tow groups, account for their mass and preview station departures without counting the station.
 - [Ranged self-hits](MiscBugFixes/RangedShooterExclusionPatch.cs): exclude the shooter from character hit processing without blocking damage to intended targets or objects downrange.
 - [Meat duplication](MiscBugFixes/MeatScrapPatches.cs): destroy loose meat through the native default recipe instead of spawning another batch of loose meat.
 - [PDC ammunition](MiscBugFixes/PDC-CONVERSION-AMMO.md): prevent installation, uninstallation and other PDC conversions from generating another starting magazine before transferring existing ammunition.
-- [AI navigation targets](MiscBugFixes/ShipReplacementTargetsPatch.cs): preserve destination references when target ships are unloaded and reconstructed, preventing runaway route calculations.
-- [AI crew lifecycle](Navigation/CREWLESS-AI.md): prevent instant station cleanup during ship-to-ship docking and premature hull reuse; stop crewless AI thrust while preserving the visible hull.
+- [AI navigation targets](MiscBugFixes/ShipReplacementTargetsPatch.cs): preserve destinations across ship reconstruction and asteroid representation changes, and discard destroyed or missing saved targets before their stale routes can continue.
+- [Civilian SFF station selection](MiscBugFixes/CivilianSffCoordinatesPatch.cs): use X/Y position instead of X/X when choosing a regional station during fast-forward.
+- [Civilian rendezvous](Navigation/BehaviorGraph/Traffic/HIDDEN-VISIT-INVESTIGATION.md): exclude hidden hulls, release visits whose destinations retire, and preserve physically docked encounters.
+- [AI crew lifecycle](Navigation/CREWLESS-AI.md): prevent premature cleanup/reuse and crewless thrust; preserve player-connected faction ships and their controllers across ATC changes ([regional cleanup](Navigation/BehaviorGraph/Traffic/REGIONAL-CLEANUP.md)).
+- [AI retirement](MiscBugFixes/ACTIVE-SHIP-STALE-CLEANUP.md): cancel obsolete disposal timers on valid hull reactivation and save restoration so active ships and living crews are not deleted as stale.
+- [AI controller identity](MiscBugFixes/FREIGHT-CONTROLLER-IDENTITY.md): stop station collisions giving active freighters a second local controller that can destroy their hull and strand cargo; repair demonstrated saved duplicates.
 - [Hauler returns](Haulers/README.md): restore home targets after derelict release, cancel abandoned thrust, and preserve the retrieval stage after SFF pickups.
 - [VORB collection](Venus/HAULER-RETRIEVAL-AUDIT.md): let VORB retrievers use their home depot's assignments and wreck ownership instead of VNCA's regional station.
 - [Navy target selection](Navigation/NavyCandidateFuelPatch.cs): reject unaffordable candidates before selection, closing the single-candidate and all-rejected fuel-check bypasses.
@@ -42,6 +50,8 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 - [Ship-view rotation](MiscBugFixes/ShipRotationPatch.cs): check whether the ship being rotated is docked, rather than an unrelated ship occupied by the captain.
 - [Docking clearance](MiscBugFixes/DockingGridPrecisionPatch.cs): eliminate phantom obstructions caused by tiny coordinate errors in docking-fit checks.
 - [Remote barter](MiscBugFixes/BarterRemovalPatch.cs): remove sold items from unloaded ship inventories instead of crediting the sale while leaving the item available to sell again.
+- [Remote repurchases](MiscBugFixes/MULTI-SHIP-BARTER-AUDIT.md): preserve already-marked delivered items during writeback and restore temporary coordinates even if serialization fails.
+- [Background ship loading](MiscBugFixes/MULTI-SHIP-BARTER-AUDIT.md): unloading one inventory, preview or rating copy cancels only its own loading job, preserving other ships' barter inventories.
 - [Container mass](MiscBugFixes/STACK-REMOVAL-MASS.md): prevent repeated mass subtraction during nested removals and preserve mass changes made through remote barter copies.
 - [Mass propagation](MiscBugFixes/MASS-BOOKKEEPING-AUDIT.md): conserve mass during stack merges and propagate live item/body mass changes to owners and character encumbrance.
 - [Door auto-close](MiscBugFixes/DOOR-AUTO-CLOSE.md): preserve the auto-close setting through power loss and restoration.
@@ -52,6 +62,10 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 
 ### Simulation improvements
 
+- [Torch course planning](Navigation/TORCH-INITIAL-VELOCITY.md): use existing velocity in player torch trajectories instead of cancelling it before starting a new transfer.
+
+- [Torch course momentum (pending playtesting)](Navigation/TORCH-INITIAL-VELOCITY.md): preserve useful incoming velocity with vector burn/coast/brake planning and reject unconverged arrivals; full development build only, excluded from custom builds and the current public commit.
+
 - [EM propagation](EMPropagation/README.md): use inverse-square EM falloff for player and AI reception, independently toggleable in PDA settings.
 - [Contact position estimates](Sensors/README.md): replace distant-contact jitter with sensor-based range/bearing uncertainty and acquired transponder ranging, independently toggleable in PDA settings.
 - [Micrometeoroid detection and defense](Micrometeoroids/README.md): replace the unconditional 50% defense bypass with diminishing sensor contributions and PDC interception based on projectile speed and rounds fired; missed bursts still consume ammo.
@@ -60,13 +74,14 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 - [Prize ships](ShipboardAction/README.md): let victors assign a spare healthy crew member to return a captured, flyable ship home for disposal, while keeping captains on their original ships.
 - [Ceres navigation](CeresNavigation/README.md): apply a homeward fuel reserve to patrol selection and chase retreat decisions.
 - [Station docking traffic](Navigation/STATION-DOCKED-COLLISIONS.md): ships attached to a station through docking/tether chains do not cause ship collisions, AI evasions or proximity warnings; free-space tows remain physical obstacles.
-- [Hull-shaped collisions](Navigation/Collisions/README.md): optionally use cached exterior hulls and swept contact geometry for free-ship impacts, preserving native weapon hits and impact damage rules.
+- [Hull-shaped collisions](Navigation/Collisions/README.md): optionally use cached hull geometry for free-ship impacts, AI clearance and consistent docking/placement bounds, preserving native weapon hits and impact damage rules.
 - [Free coasting](Orbital/README.md): reduce timestep-dependent orbital drift with velocity-Verlet integration and consistent native orbital coordinates.
 - [Super Fast Forward](Orbital/SFF-IMPLEMENTATION.md): replace hours-long constant-acceleration jumps with orbital coasting and partial AI travel while retaining native plotted courses and combat handling.
 - [VORB wreck variety](Venus/README.md): default to 50% Venus-specific wrecks, adjustable from 0–100% in the PDA settings app.
 
 ### Performance enhancements
 
+- [Trigger searches](Optimizations/TRIGGER-CLASSIFICATION.md): restore conservative people-only search classification without changing authored condition evaluation.
 - [Socials portraits](Optimizations/SOCIALS-FIRST-OPEN.md): compose uncached portraits through borrowed pixel buffers, a streamlined blend loop and one bulk write, reducing a measured first opening from 5.75 to 0.52 seconds.
 - [Autonomous target selection](Optimizations/AUTONOMOUS-DISEMBARK.md): exclude needs, leisure and social targets on other ships when disembarking is forbidden, before sampling and evaluating candidates.
 - [Remote barter loading](Optimizations/BARTER-FINALIZATION.md): replace repeated inventory scans with an item-ID lookup and spread offscreen reconstruction/finalization across frames to reduce post-transit freezes.
@@ -81,7 +96,8 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 
 ### Quality of life
 
-- [Nav hull outlines](NavConsole/HULL-OUTLINES.md): draw cached exterior hull perimeters with corners and recesses intact, background updates, and unpadded detail selected by screen size instead of a fixed zoom cutoff.
+- [Multiple-ship barter zones](QoL/BarterZones/README.md): identify sell-list zones by ship callsign and sort them by callsign and zone name, keeping identically named zones accessible.
+- [Nav hull outlines](NavConsole/HULL-OUTLINES.md): draw cached exterior hull perimeters with consistent sizing, corners and recesses intact, background updates, and unpadded detail selected by screen size instead of a fixed zoom cutoff.
 - [Socials contact filtering](QoL/Socials/README.md): hide construction drones from the contact list without changing their relationships or simulation.
 - [Venus dolly handling](Venus/DOLLY-ENCUMBRANCE.md): reduce dolly-and-payload encumbrance by 90% on Venus aerostats and their docked ships to approximate wheeled handling.
 - [Alternative autotask](AlternativeWork/README.md): favor nearby, reachable, supplied work and prevent crew from reserving jobs on vessels their permissions forbid them to enter.

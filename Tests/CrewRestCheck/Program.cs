@@ -22,8 +22,10 @@ static class Program {
     static List<CondOwner> inventoryResult, worldResult;
     static Interaction fallback;
     static bool nativeSelection;
-    static string queuedName, unavailableName;
+    static string queuedName, queuedTarget, unavailableName;
     static readonly List<string> validated = new List<string>();
+    static readonly List<string> validatedTargets = new List<string>();
+    static readonly HashSet<string> unusableTargets = new HashSet<string>();
     static T Empty<T>() => (T)FormatterServices.GetUninitializedObject(typeof(T));
     static void Set(object obj, string name, object value) => AccessTools.Field(obj.GetType(), name).SetValue(obj, value);
     static void Check(bool ok, string reason) { checks++; if (!ok) throw new Exception(reason); }
@@ -62,17 +64,18 @@ static class Program {
         return ia;
     }
     static bool InteractionDefinition(string strName, ref Interaction __result) { __result = IA(strName); return false; }
-    static bool Validate(Interaction __instance, bool bCheckPath, bool bFetchItems, ref bool __result) {
+    static bool Validate(Interaction __instance, CondOwner __1, bool bCheckPath, bool bFetchItems, ref bool __result) {
         Check(nativeSelection || !bFetchItems, "Read-only seat probe requested material fetching");
         if (__instance.strName == "ACTChairSitEnd") { __result = true; return false; }
         Check(bCheckPath, "Restore probe skipped native path validation");
         probes++;
         validated.Add(__instance.strName);
+        validatedTargets.Add(__1.strID);
         path.tilDest = Empty<Tile>(); path.fRangeGoal = 123; path.coDest = item;
         if (throwProbe) throw new InvalidOperationException("fixture validation failure");
-        __result = usable && __instance.strName != unavailableName; return false;
+        __result = usable && __instance.strName != unavailableName && !unusableTargets.Contains(__1.strID); return false;
     }
-    static bool Queue(Interaction objInteraction, ref bool __result) { queuedName = objInteraction.strName; __result = true; return false; }
+    static bool Queue(CondOwner objTarget, Interaction objInteraction, ref bool __result) { queuedName = objInteraction.strName; queuedTarget=objTarget.strID; __result = true; return false; }
     static IEnumerable<CodeInstruction> ReplyCode() {
         yield return new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Program), nameof(fallback)));
         yield return new CodeInstruction(OpCodes.Ret);
@@ -83,7 +86,7 @@ static class Program {
         fallback = IA(current.strName);
         return current.GetReply();
     }
-    static void Next() { StarSystem.fEpoch += 31; probes = scans = 0; validated.Clear(); }
+    static void Next() { StarSystem.fEpoch += 31; probes = scans = 0; validated.Clear(); validatedTargets.Clear(); }
     static void SleepChecks() {
         var pack = CO("pack", "IsContainer"); var eva = CO("eva", "IsEVASuit");
         var bunk = CO("bunk", "IsBed01"); var med = CO("medical", "IsBedMedical"); var mod = CO("modded-bed");
@@ -209,6 +212,79 @@ static class Program {
         Check(Named(triggers, "TNoDiscomfortsSitting")["aForbids"].Values<string>().Contains("DcOxygen03"), "Native oxygen-related seat exit changed");
         Check(Harmony.GetPatchInfo(AccessTools.Method(typeof(PledgeSurviveO2), "IsEmergency")) == null, "Oxygen emergency handling patched");
     }
+    static void ProbeProgressChecks() {
+        candidates.Clear();unusableTargets.Clear();unavailableName=null;usable=true;
+        var recent=(Dictionary<string,double>)AccessTools.Field(typeof(CondOwner),"dictRecentlyTried").GetValue(actor);recent.Clear();
+        object table=AccessTools.Field(typeof(CrewIdleSeatPatch),"Probes").GetValue(null);
+        AccessTools.Method(table.GetType(),"Remove").Invoke(table,new object[]{actor});
+        for(int i=0;i<4;i++) {
+            var target=CO("progress-"+i);Set(target,"bCanUndamage",true);target.aInteractions=new List<string>{"ACTItemUndamage"};candidates.Add(target);
+        }
+        var ranked=new List<AutoTask>();
+        foreach(var target in candidates) AccessTools.Method(typeof(CondOwner),"InsertUndamage").Invoke(actor,new object[]{target,"ACTItemUndamage",false,1d,ranked});
+        var order=ranked.Select(task=>task.co.strID).ToArray();
+        unusableTargets.Add(order[0]);unusableTargets.Add(order[1]);
+        Next();Check(ReferenceEquals(Renew(IA("ACTChairSitAllow")),fallback),"Blocked leading pair incorrectly ended sitting");
+        Check(probes==2&&validatedTargets.SequenceEqual(order.Take(2)),"First pass did not use the native top-ranked pair");
+        var other=CO("independent-probe-crew","IsPlayerCrew");other.jsShiftLast=actor.jsShiftLast;
+        company.mapRoster[other.strID]=new JsonCompanyRules{bRestorePermission=true};Set(other,"dictRecentlyTried",new Dictionary<string,double>());
+        Next();Check(ReferenceEquals(Renew(IA("ACTChairSitAllow",us:other)),fallback)&&validatedTargets.SequenceEqual(order.Take(2)),"One crew's probe cursor affected another crew member");
+        company.mapRoster.Remove(other.strID);
+        Next();Check(Renew(IA("ACTChairSitAllow")).strName=="ACTChairSitEnd","Repeated failed leading pair starved usable restoration work beyond it");
+        Check(probes==1&&validatedTargets.SequenceEqual(order.Skip(2).Take(1)),"Second pass did not advance to the next ranked candidate");
+        Check(recent.Count==0,"Sitting probe changed native failed-attempt cooldowns");
+        var scratch=new Harmony("offline.crewrest.progress-native");scratch.CreateClassProcessor(typeof(AutoTaskScratchPatch)).Patch();
+        try {
+            nativeSelection=true;queuedName=queuedTarget=null;
+            var native=AccessTools.Method(typeof(CondOwner),"ProcessAutoTasks");
+            Check(!(bool)native.Invoke(actor,null)&&queuedName==null,"Probe forced native dispatch past its own blocked top pair");
+            Check(recent.ContainsKey(order[0]+"ACTItemUndamage")&&recent.ContainsKey(order[1]+"ACTItemUndamage"),"Native dispatch did not own failed-attempt cooldowns");
+            Check((bool)native.Invoke(actor,null)&&queuedTarget==order[2],"Native work selection could not dispatch the discovered later candidate");
+        } finally {nativeSelection=false;recent.Clear();scratch.UnpatchSelf();}
+
+        // All blocked candidates must be revisited, not blacklisted forever.
+        unusableTargets.UnionWith(order);AccessTools.Method(table.GetType(),"Remove").Invoke(table,new object[]{actor});
+        var seen=new HashSet<string>();var destination=path.tilDest;var targetBefore=path.coDest;float rangeBefore=path.fRangeGoal;
+        for(int pass=0;pass<4;pass++) {
+            Next();Check(ReferenceEquals(Renew(IA("ACTChairSitAllow")),fallback)&&probes==2,"All-blocked rotation exceeded its budget or made the crew get up");
+            seen.UnionWith(validatedTargets);
+            Check(path.tilDest==destination&&path.coDest==targetBefore&&path.fRangeGoal==rangeBefore,"Rotating failed probes changed the sitting path");
+        }
+        Check(seen.SetEquals(order),"Full failed rotation did not cover every candidate");
+        unusableTargets.Remove(order[0]);bool recovered=false;
+        for(int pass=0;pass<2&&!recovered;pass++) {Next();recovered=Renew(IA("ACTChairSitAllow")).strName=="ACTChairSitEnd";Check(probes<=2,"Retry exceeded probe budget");}
+        Check(recovered,"Previously blocked work was permanently excluded");
+
+        // A changed candidate set is ranked fresh; the cursor holds no target.
+        unusableTargets.UnionWith(order);AccessTools.Method(table.GetType(),"Remove").Invoke(table,new object[]{actor});
+        Next();Renew(IA("ACTChairSitAllow"));
+        var remaining=candidates.Single(co=>co.strID==order[0]);candidates.Clear();candidates.Add(remaining);unusableTargets.Remove(remaining.strID);
+        Next();Check(Renew(IA("ACTChairSitAllow")).strName=="ACTChairSitEnd"&&probes==1,"Candidate removal left a stale or out-of-range cursor");
+
+        // Exhaustion resets so newly introduced work starts at native priority.
+        candidates.Clear();Next();Check(ReferenceEquals(Renew(IA("ACTChairSitAllow")),fallback)&&probes==0,"Empty candidate list did work or ended sitting");
+        candidates.Add(remaining);Next();Check(Renew(IA("ACTChairSitAllow")).strName=="ACTChairSitEnd","Fresh work after an empty list was skipped");
+
+        // Context changes must not inherit the previous ship's cursor/throttle.
+        candidates.Clear();
+        for(int i=0;i<4;i++) {var co=CO("context-"+i);Set(co,"bCanUndamage",true);co.aInteractions=new List<string>{"ACTItemUndamage"};candidates.Add(co);}
+        unusableTargets.Clear();unusableTargets.UnionWith(candidates.Select(co=>co.strID));
+        AccessTools.Method(table.GetType(),"Remove").Invoke(table,new object[]{actor});
+        Next();Renew(IA("ACTChairSitAllow"));var firstPair=validatedTargets.ToArray();
+        var secondShip=Empty<Ship>();secondShip.strRegID="another-ship";Set(actor,"_objShip",secondShip);
+        probes=scans=0;validatedTargets.Clear();
+        Renew(IA("ACTChairSitAllow"));
+        Check(probes==2&&validatedTargets.SequenceEqual(firstPair),"Ship change inherited a foreign cursor or probe throttle");
+        Set(actor,"_objShip",ship);
+        Next();Renew(IA("ACTChairSitAllow"));
+        StarSystem.fEpoch-=10;probes=scans=0;validatedTargets.Clear();Renew(IA("ACTChairSitAllow"));
+        Check(probes==2&&validatedTargets.SequenceEqual(firstPair),"Backward simulation time retained stale cursor/throttle state");
+        Check(recent.Count==0,"Rotating probes wrote native cooldown bookkeeping");
+        object[] lookup={actor,null};AccessTools.Method(table.GetType(),"TryGetValue").Invoke(table,lookup);
+        foreach(var field in lookup[1].GetType().GetFields(System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic))
+            if(field.GetValue(lookup[1]) is ICollection list) Check(list.Count==0,"Progress state retains candidate objects: "+field.Name);
+        candidates.Clear();unusableTargets.Clear();
+    }
     static void WorkCategoryChecks() {
         candidates.Clear();
         var repair = CO("repair-only", "pristine"); Set(repair, "bCanRepair", true);
@@ -306,7 +382,7 @@ static class Program {
         company.mapRoster[actor.strID] = new JsonCompanyRules { bRestorePermission = true };
         actor.jsShiftLast = Empty<JsonShift>(); actor.jsShiftLast.nID = 2;
         Set(actor, "dictRecentlyTried", new Dictionary<string, double>());
-        SleepChecks(); SeatChecks(); WorkCategoryChecks(); AssetChecks();
+        SleepChecks(); SeatChecks(); WorkCategoryChecks(); ProbeProgressChecks(); AssetChecks();
         Console.WriteLine(checks + " crew sleep/idle-seat checks passed.");
         return 0;
     }

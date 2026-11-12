@@ -54,6 +54,7 @@ internal static class SettingsRegistry {
         new Setting("orbital", "Orbital correction", "Correct gravity around moving bodies.", "This session", () => OrbitalSimulation.Enabled ? 1 : 0, value => OrbitalSimulation.SetEnabled(value != 0)),
         new Setting("coast", "Orbital coasting", "Reduce orbit drift at high time acceleration. Requires Orbital.", "This session", () => CoastIntegration.Enabled ? 1 : 0, value => CoastIntegration.SetEnabled(value != 0)),
         new Setting("sff", "Super fast forward", "Preserve orbits and limit AI travel during SFF. Requires Orbital.", "This session", () => SffSimulation.Enabled ? 1 : 0, value => SffSimulation.Enabled = value != 0),
-        new Setting("worktrace", "Work diagnostics", "Trace work selection and execution.", "This session", () => WorkTrace.Enabled ? 1 : 0, value => WorkTrace.SetEnabled(value != 0))
+        new Setting("worktrace", "Work diagnostics", "Trace work selection and execution.", "This session", () => WorkTrace.Enabled ? 1 : 0, value => WorkTrace.SetEnabled(value != 0)),
+        new Setting("torchtrace", "Torch burn diagnostics", "Record reactor controls, heat, thrust and fuel during flight.", "This session", () => TorchTrace.Enabled ? 1 : 0, value => TorchTrace.SetEnabled(value != 0))
     };
 }

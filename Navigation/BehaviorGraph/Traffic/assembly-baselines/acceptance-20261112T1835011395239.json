@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/4fce2fc4a3e344d540e907e81f69eeada506d81db01c7ab35158ec21df8fdea4.json.br",
+  "reason": "Reviewed native station collision, cross-region controller lookup, saved restore and regional cleanup against shipped C# and assets; 191 controller identity regression assertions reproduce duplicate registration and orphan cargo, then verify prevention, narrow saved repair and conserved native delivery.",
+  "acceptedUtc": "2026-11-12T18:35:01.1378834Z",
+  "previousSnapshot": "assembly-baselines/87233b6c20a19bff0425e39e3b795e964816c5f8d892803ca3a400f1828fc7d1.json.br"
+}

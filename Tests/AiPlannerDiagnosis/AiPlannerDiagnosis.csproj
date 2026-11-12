@@ -2,6 +2,11 @@
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
   <ItemGroup>
     <Compile Include="../../MiscBugFixes/ShipReplacementTargetsPatch.cs" Link="ShipReplacementTargetsPatch.cs" />
+    <Compile Include="../../MiscBugFixes/CivilianSffCoordinatesPatch.cs" Link="CivilianSffCoordinatesPatch.cs" />
+    <Compile Include="../../MiscBugFixes/PlayerAttachedRegionPatch.cs" Link="PlayerAttachedRegionPatch.cs" />
+    <Compile Include="../../MiscBugFixes/AIShipLifecyclePatches.cs" Link="AIShipLifecyclePatches.cs" />
+    <Compile Include="../../MiscBugFixes/ActiveShipRetirement.cs" Link="ActiveShipRetirement.cs" />
+    <Compile Include="../../MiscBugFixes/CivilianVisitsPatch.cs" Link="CivilianVisitsPatch.cs" />
     <Compile Include="../../MiscBugFixes/NavigationTargetRecovery.cs" Link="NavigationTargetRecovery.cs" />
     <Compile Include="../../Venus/VorbNavPlanGuard.cs" Link="VorbNavPlanGuard.cs" />
     <Compile Include="../../CeresNavigation/CeresNavigationGuardrails.cs" Link="CeresNavigationGuardrails.cs" />

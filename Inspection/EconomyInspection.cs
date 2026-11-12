@@ -11,7 +11,7 @@ namespace Ostrabus.Inspection;
 
 // Main-thread, request-scoped reads only. In particular, do not call the singleton
 // accessor, Producer.IsReady, GetTradeRoute, lazy price/mass getters or UpdateTime.
-internal static class EconomyInspection {
+internal static partial class EconomyInspection {
     static readonly System.Reflection.FieldInfo Singleton = AccessTools.Field(typeof(MonoSingleton<MarketManager>), "_instance");
     static readonly System.Reflection.FieldInfo TradeClock = AccessTools.Field(typeof(AIShipManager), "fTimeOfNextTradeCheck");
     static readonly AccessTools.FieldRef<MarketManager, Dictionary<string, ShipMarket>> Markets = AccessTools.FieldRefAccess<MarketManager, Dictionary<string, ShipMarket>>("_market");
@@ -27,7 +27,6 @@ internal static class EconomyInspection {
     static readonly AccessTools.FieldRef<Producer, int> Batch = AccessTools.FieldRefAccess<Producer, int>("_outputPerRun");
     static readonly AccessTools.FieldRef<MarketActorConfig, List<Producer>> ActorRecipes = AccessTools.FieldRefAccess<MarketActorConfig, List<Producer>>("_productionMaps");
     static readonly AccessTools.FieldRef<MarketActorConfig, string> ActorName = AccessTools.FieldRefAccess<MarketActorConfig, string>("_name");
-    static readonly AccessTools.FieldRef<AIShip, Ship> RawShip = AccessTools.FieldRefAccess<AIShip, Ship>("_shipUs");
     static readonly AccessTools.FieldRef<NavData, List<NavDataPoint>> Points = AccessTools.FieldRefAccess<NavData, List<NavDataPoint>>("_navPoints");
     static readonly AccessTools.FieldRef<DataCoCollection, double> UnitPrice = AccessTools.FieldRefAccess<DataCoCollection, double>("_avgPrice");
     static readonly AccessTools.FieldRef<DataCoCollection, double> UnitMass = AccessTools.FieldRefAccess<DataCoCollection, double>("_avgMass");
@@ -58,18 +57,21 @@ internal static class EconomyInspection {
                 "lastSffEconomy", global::Ostrabus.Orbital.Economy.SffEconomy.Snapshot(),
                 "routes", new[] { "/economy/stations", "/economy/markets", "/economy/freight", "/economy/hubs",
                     "/economy/stations/{id}/stock", "/economy/stations/{id}/production", "/economy/stations/{id}/actors",
-                    "/economy/stations/{id}/freight", "/economy/stations/{id}/trade/{category}", "/economy/freight/{id}/manifest" },
+                    "/economy/stations/{id}/freight", "/economy/stations/{id}/trade/{category}", "/economy/freight/{id}/manifest",
+                    "/economy/audit", "/economy/markets/{id}/audit" },
                 "note", "Read-only raw market state. Commodity prices are cached native values. No production, route selection, random roll, prediction, repair or synchronization is executed."));
         }
         string[] parts = path.Split('/');
         if (parts.Length < 3 || parts[1] != "economy") return Error(404, "Unknown economy endpoint.");
         string section = parts[2];
         if (parts.Length == 3) {
+            if (section == "audit") return AuditPage(markets,ControllerInspection.Capture(began),offset,limit,began);
             if (section == "hubs") return Page(HubRows(manager), offset, limit, began);
             if (section == "markets" || section == "stations" || section == "freight") {
-                bool indexIncomplete = false;
-                var pilots = section == "freight" ? PilotIndex(began, out indexIncomplete) : null;
-                return Page(MarketRows(markets, section, pilots, indexIncomplete), offset, limit, began);
+                var pilots = section == "freight" ? ControllerInspection.Capture(began) : null;
+                var reply=Page(MarketRows(markets,section,pilots),offset,limit,began);
+                if (pilots != null && reply.Status == 200) ((Dictionary<string,object>)reply.Body)["aiIndexIncomplete"]=!pilots.Complete;
+                return reply;
             }
             return Error(404, "Unknown economy collection.");
         }
@@ -83,20 +85,26 @@ internal static class EconomyInspection {
                 "production", "/economy/markets/" + Uri.EscapeDataString(id) + "/production",
                 "actors", "/economy/markets/" + Uri.EscapeDataString(id) + "/actors",
                 "freight", "/economy/markets/" + Uri.EscapeDataString(id) + "/freight",
-                "manifest", "/economy/markets/" + Uri.EscapeDataString(id) + "/manifest");
-            if (section == "freight") data["flight"] = Flight(Hull(id), PilotIndex(began, out bool incomplete), incomplete);
+                "manifest", "/economy/markets/" + Uri.EscapeDataString(id) + "/manifest",
+                "audit", "/economy/markets/" + Uri.EscapeDataString(id) + "/audit");
+            if (section == "freight") {
+                var pilots=ControllerInspection.Capture(began);
+                data["flight"] = Flight(id,Hull(id),pilots);
+            }
             return new InspectionApi.Reply(200, data);
         }
         if (parts.Length == 5) {
             switch (parts[4]) {
+                case "audit": return new InspectionApi.Reply(200,Audit(id,market,ControllerInspection.Capture(began),began));
                 case "stock": return Page(StockRows(market), offset, limit, began);
                 case "production": return Page(ProductionRows(market), offset, limit, began);
                 case "actors": return Page(ActorRows(market), offset, limit, began);
                 case "manifest": return Manifest(market, offset, limit, began);
                 case "freight": {
-                    var pilots = PilotIndex(began, out bool incomplete);
-                    var reply = Page(MarketRows(markets, "freight", pilots, incomplete, id), offset, limit, began);
-                    ((Dictionary<string, object>)reply.Body)["aiIndexIncomplete"] = incomplete;
+                    var pilots = ControllerInspection.Capture(began);
+                    bool incomplete = !pilots.Complete;
+                    var reply = Page(MarketRows(markets, "freight", pilots, id), offset, limit, began);
+                    if (reply.Status == 200) ((Dictionary<string, object>)reply.Body)["aiIndexIncomplete"] = incomplete;
                     return reply;
                 }
             }
@@ -140,7 +148,7 @@ internal static class EconomyInspection {
             "blockadeConditionPresent", blockadePresent,
             "note", "Counts and quantities use cached aggregate market dictionaries. /actors and /manifest expose backing inventories for consistency checks.");
     }
-    static IEnumerable<object> MarketRows(Dictionary<string, ShipMarket> markets, string section, Dictionary<Ship, AIShip> pilots, bool indexIncomplete, string stationId = null) {
+    static IEnumerable<object> MarketRows(Dictionary<string, ShipMarket> markets, string section, ControllerInspection pilots, string stationId = null) {
         foreach (var entry in markets) {
             var market = entry.Value;
             if (market == null) { yield return section == "markets" ? Map("id", entry.Key, "invalidMarket", true) : null; continue; }
@@ -152,16 +160,16 @@ internal static class EconomyInspection {
                 if (!pod && !podsIncomplete) { yield return null; continue; }
             }
             bool incoming = stationId != null && ship?.shipScanTarget?.strRegID == stationId;
-            bool home = stationId != null && ship != null && pilots != null && pilots.TryGetValue(ship, out var ai) && ai.HomeStation == stationId;
+            bool home = stationId != null && ship != null && pilots != null && pilots.HomeMatches(entry.Key,stationId);
             bool origin = stationId != null && ship?.origin == stationId;
             if (stationId != null && !incoming && !home && !origin) { yield return null; continue; }
             var row = Summary(entry.Key, market);
             if (section == "freight") {
                 row["hasCargoPod"] = pod ? (object)true : null;
                 row["podScanIncomplete"] = podsIncomplete;
-                row["flight"] = Flight(ship, pilots, indexIncomplete);
+                row["flight"] = Flight(entry.Key,ship,pilots);
                 if (stationId != null) {
-                    row["incoming"] = incoming; row["homeMatchesStation"] = home; row["originMatchesStation"] = origin;
+                    row["incoming"] = incoming; row["homeMatchesStation"] = home ? (object)true : pilots != null && !pilots.Complete ? null : (object)false; row["originMatchesStation"] = origin;
                 }
             }
             yield return row;
@@ -307,46 +315,34 @@ internal static class EconomyInspection {
         return new InspectionApi.Reply(200, Map("items", rows, "nextOffset", more ? (object)(offset + rows.Count) : null,
             "budgetLimited", more && Expired(began), "note", "Actual virtual MarketItem entries, not spawned physical COs. Slot offsets are live and may change between requests."));
     }
-    static Dictionary<Ship, AIShip> PilotIndex(long began, out bool incomplete) {
-        incomplete = false; var index = new Dictionary<Ship, AIShip>(); int examined = 0;
-        if (AIShipManager.dictAIs == null) return index;
-        foreach (var region in AIShipManager.dictAIs.Values) {
-            if (region == null) continue;
-            foreach (var ai in region) {
-                if (++examined > 4096 || (examined > 1 && Expired(began))) { incomplete = true; return index; }
-                if (ai == null) continue;
-                var ship = RawShip(ai);
-                if (ship != null) index[ship] = ai;
-            }
-        }
-        return index;
-    }
-    static object Flight(Ship ship, Dictionary<Ship, AIShip> pilots, bool indexIncomplete) {
-        if (ship == null) return null;
-        bool found = pilots != null && pilots.TryGetValue(ship, out _);
-        var pilot = found ? pilots[ship] : null;
-        var course = ship.objSS?.NavData;
+    static object Flight(string id, Ship ship, ControllerInspection pilots) {
+        var registrations=pilots?.Snapshot(id,ship);
+        var pilot = pilots?.Single(id,ship);
+        var course = ship?.objSS?.NavData;
         var points = course == null ? null : Points(course);
         double? arrival = points?.Count > 0 ? points[points.Count - 1]?.ArrivalTime : null;
-        bool cargo = pilot?.AIType == AIType.HaulerCargo;
-        var target = ship.shipScanTarget?.objSS;
+        bool cargo = pilot?.AICharacter?.AIType == AIType.HaulerCargo;
+        var target = ship?.shipScanTarget?.objSS;
         double? distance = null;
-        if (ship.objSS != null && target != null) {
+        if (ship?.objSS != null && target != null) {
             double dx = ship.objSS.vPosx - target.vPosx, dy = ship.objSS.vPosy - target.vPosy;
             distance = Math.Sqrt(dx * dx + dy * dy) * 149597870.7;
         }
-        return Map("registered", found ? (object)true : indexIncomplete ? null : (object)false,
+        return Map("registered", registrations?["registered"], "controllers", registrations,
             "pilotType", pilot?.AICharacter?.GetType().Name, "home", pilot?.HomeStation,
-            "storedHullOrigin", ship.origin,
-            "activeCommand", pilot?.ActiveCommandName, "cargoPilot", pilot == null ? null : (object)cargo,
-            "destination", ship.shipScanTarget?.strRegID, "targetRegId", ship.targetRegID,
-            "storedDistanceToDestinationKm", distance, "aiDetails", "/ships/" + Uri.EscapeDataString(ship.strRegID) + "/ai",
-            "targetReferenceMatches", ship.shipScanTarget == null ? null : (object)ReferenceEquals(ship.shipSituTarget, ship.shipScanTarget.objSS),
+            "storedHullOrigin", ship?.origin,
+            "activeCommand", CommandName(pilot), "cargoPilot", pilot == null ? null : (object)cargo,
+            "destination", ship?.shipScanTarget?.strRegID, "targetRegId", ship?.targetRegID,
+            "storedDistanceToDestinationKm", distance, "aiDetails", "/ships/" + Uri.EscapeDataString(id) + "/ai",
+            "targetReferenceMatches", ship?.shipScanTarget == null ? null : (object)ReferenceEquals(ship.shipSituTarget, ship.shipScanTarget.objSS),
             "planPoints", points?.Count ?? 0, "planArrivalEpoch", arrival, "secondsUntilPlanEnd", arrival - StarSystem.fEpoch,
-            "planEndIsDeliveryEta", false, "torchCapable", ship.fFusionThrustMax > 0,
-            "rcsFuelKg", ship.fShallowRCSRemass, "rcsCapacityKg", ship.fShallowRCSRemassMax,
-            "fuelCacheCurrent", ship.LoadState <= Ship.Loaded.Shallow,
-            "note", "A cargo pod alone does not imply NPC freight: player cargo and parked hulls can have markets too. Plan end can precede final docking; it is not a promised delivery time.");
+            "planEndIsDeliveryEta", false, "torchCapable", ship == null ? null : (object)(ship.fFusionThrustMax > 0),
+            "rcsFuelKg", ship?.fShallowRCSRemass, "rcsCapacityKg", ship?.fShallowRCSRemassMax,
+            "fuelCacheCurrent", ship == null ? null : (object)(ship.LoadState <= Ship.Loaded.Shallow),
+            "note", "Singular pilot fields are null when controller selection is ambiguous or the registry scan is incomplete. A cargo pod alone does not imply NPC freight. Plan end is not a promised delivery time.");
+    }
+    static string CommandName(AIShip ai) {
+        try { return ai?.ActiveCommandName; } catch (NullReferenceException) { return null; }
     }
     static IEnumerable<object> TradeRows(MarketManager manager, string id, ShipMarket market, string category) {
         var local = Commodity(market, category);

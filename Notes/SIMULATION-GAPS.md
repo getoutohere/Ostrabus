@@ -10,7 +10,9 @@ Two related failures require separate treatment:
 
 - **Active hulls retain obsolete disposal markers.** Reusing a retired hull does
   not cancel IsStale. Advancing time can therefore delete an active crewed ship.
-  This is a confirmed lifecycle defect; no runtime fix is implemented yet.
+  Fixed 2026-11-11 at crew-validated registration, including saved controllers;
+  the background worker rechecks cancelled/refreshed timers before marking.
+  Pre-existing committed removal flags are deliberately not revived.
 - **Crew preservation is conditional, while destruction is unconditional.**
   TryRecycleCrew needs a station with capacity and a matching hull faction.
   Empty hull factions make relocation impossible, even when the pilot has valid

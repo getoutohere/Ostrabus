@@ -2,6 +2,38 @@
 
 Always enabled through the plugin's normal Harmony lifecycle. No update loop or saved state.
 
+## AI retirement timestamps
+
+`ActiveShipRetirement` cancels obsolete IsStale markers when valid visible crewed
+AI hulls are newly registered, including restored saved controllers. Its worker
+write guard prevents a background cleanup scan from committing a cancelled or
+refreshed timer. Genuine retirement, later command-failure cleanup and existing
+removal flags remain native. Registration extends the existing crew-lifecycle
+hook; one additional transpiler handles the final stale mark, with no per-frame
+scan or retained game objects. Included with `ai-crew-integrity` in custom builds.
+See [evidence and validation](ACTIVE-SHIP-STALE-CLEANUP.md).
+
+## AI controller identity
+
+`AIControllerIdentity.cs` makes unsaved reuse-or-create registration find the
+existing controller for the exact hull across regional buckets. Station collision
+recovery consequently cannot give an interregional freighter a second local
+controller whose regional cleanup destroys its hull and strands cargo. A narrow
+load-time repair retains the original cargo record for proven saved duplicates.
+Native mission policy, explicit saved/autopilot setup and historical orphaned
+stock are unchanged. Included with `ai-crew-integrity` in custom builds.
+See [evidence, boundaries and validation](FREIGHT-CONTROLLER-IDENTITY.md).
+
+## Saved inventory below damaged parents
+
+`LoadedInventoryParentPatch` prevents load-time damage culling from skipping a
+saved parent before its contents are reconstructed. Native damage, slotting,
+destruction recipes and mode-switch transfer/drop behavior remain authoritative.
+See [evidence, scope and validation](SAVED-INVENTORY-PARENTS.md).
+
+The separate [plot-reference audit](PLOT-REFERENCE-AUDIT.md) is investigation only;
+no plot asset corrections are shipped yet.
+
 ## Comms channel window
 
 `CommsDisplayPatch` corrects the native oldest-100 selection to show the newest
@@ -11,9 +43,9 @@ retention](../Optimizations/COMMS-HISTORY.md) for the separate cleanup policy.
 
 ## Torch autopilot fuel cache
 
-**Pending in-game playtesting.** The following describes the local Debug
-implementation, not a confirmed shipped feature. Related patch sources and the
-native test harness may be omitted from a commit while this documentation remains.
+Included in 0.4.0 following ordinary and braced interplanetary live burns,
+including powered SFF, coast and final braking. Module notes distinguish those
+observations from automatic-arrival and moored-preview cases tested offline.
 
 `TorchFuelCachePatch` refreshes the reactor's reactant totals and the ship's
 normalized fuel budget after native `FusionIC.SetReactants` reconciles the tanks.
@@ -25,7 +57,7 @@ See [investigation and native-assembly validation](../Navigation/TORCH-FUEL-INVE
 
 `TorchCourseFuel.cs` and `TorchCourseFuelPatches.cs` additionally correct fuel
 budgeting and reactor control for supported player-plotted torch courses. They
-preserve native trajectories and skill benefits, idle during true coast, and
+preserve native waypoint playback and skill benefits, idle during true coast, and
 cancel safely on unexpected hardware/fuel changes. Profiles are weakly keyed;
 normal native waypoint/plot-FLOW data supports save/reload without custom saved
 types. See [scope, lifecycle and validation](../Navigation/TORCH-COURSE-FIX.md).
@@ -42,6 +74,20 @@ Police inspection officers may temporarily board the connected target without
 losing their patrol controller; navigation waits for their return. An explicit
 inspection API can recover patrols stranded by the earlier own-hull crew guard.
 See [police inspection correction and recovery](../Navigation/POLICE-INSPECTION-CONTROLLER.md).
+
+`PlayerAttachedRegionPatch.cs` extends native player-connection protection to the
+whole ATC cleanup transaction. Connected faction ships survive without ownership
+transfer; their existing controllers use native global scheduling until detachment
+restores physical regional membership. Unregistered crewless hulls gain no new
+controller. Two hooks, no frame callback, native primitive save data. See the
+[native reproduction, repair and scheduling checks](../Navigation/BehaviorGraph/Traffic/REGIONAL-CLEANUP.md).
+
+`CivilianVisitsPatch.cs` rejects new rendezvous with hidden reserve/vendor hulls,
+revalidates retired/restored ordinary visits and lets native AI choose the next
+trip. Combat, queued orders, SFF ownership and physically docked encounters retain
+their control; civilian encounter retirement is blocked without preventing native
+hauler tow deliveries or station-only parking. No Update callback or new behavior
+controller. See [design and native tests](../Navigation/BehaviorGraph/Traffic/HIDDEN-VISIT-INVESTIGATION.md).
 
 ## PDC conversion ammunition
 
@@ -127,7 +173,16 @@ ranged modes, unchanged downstream damage, allocation and instruction preservati
 It also verifies that opt-in personnel tracing respects and reports the cover
 fix and can be removed without disturbing the permanent patches.
 
-## Navigation references after shallow replacement
+## Navigation target lifetimes
+
+`CivilianSffCoordinatesPatch.cs` separately corrects the two regional lookup
+arguments in `CivilianPilot.FFWD`: native code supplies X twice when an Undock
+has no remembered partner, or a free positive-fuel Hold chooses a regional station.
+A guarded transpiler changes only each second X load to Y. Candidate selection,
+instant-docking success/failure, remembered partners, attached/empty-fuel Hold,
+and existing flight routes remain native. The `traffic` harness has 64 checks,
+including native wrong-station reproduction and corrected branch/outcome controls.
+Custom builds expose it as the independent `civilian-sff-coordinates` bugfix.
 
 `ShipReplacementTargetsPatch.cs` fixes native `CrewSim.DestroyAndReload` leaving
 other ships targeting the destroyed instance. Its shared ShipSitu has its orbital
@@ -136,9 +191,42 @@ diverge. After replacement, exact references to the old ship/situation transfer
 to the new instance. Existing routes and independent offset waypoints remain
 unchanged; there are no travel distance/duration limits or recurring checks.
 
+The same feature now handles permanent destruction and targets restored from a
+save whose named ship is gone. Destroying a registered nonprojectile vessel
+clears affected navigation, stationkeeping, combat and undocking references.
+An affected flight loses its obsolete route, RCS/torch thrust input and fuel
+prediction, then returns control to native AI on its normal update. Position,
+velocity, fuel and crew are preserved. A scanned-only contact disappearing does
+not cancel an unrelated coordinate course. Native ClearShipTarget also clears
+the corresponding optional saved JSON fields, preventing shallow serialization
+from restoring the old goal.
+
+Normal same-ID replacement defers this cleanup until the replacement transaction
+finishes, then transfers references without cancelling routes. A finally path
+restores the suppression scope across nested transactions and exceptions. Hidden
+ships, occupied ports, live named destinations and coordinate/stellar-object
+goals remain distinct. Projectile teardown and whole-world teardown are excluded
+from fleet scans. There is no periodic fleet poll or per-flight-tick validation.
+
+Native asteroid unmooring also replaces representations: `Undock.AttemptToUnMoor`
+destroys an unvisited asteroid Ship and recreates its stellar object under the
+same ID. The conversion scope defers lifetime cleanup until the native operation
+finishes. Successful conversion preserves independent/copied goals and routes,
+rebinds references to the old ShipSitu, and drops obsolete Ship/auxiliary references.
+Failed conversion still invalidates the actually lost destination and propagates
+the native exception. Nested scopes restore their prior context. This corrects a
+regression in the first permanent-removal implementation, with no saved schema or
+new behavioral policy. `traffic-conversion` now passes 303 native lifecycle checks.
+
 The bundled-Mono lifecycle harness reproduces the native failure and checks the
-production patch: 123 checks pass, including route preservation and JSON reload.
-Already-corrupted saved targets can be recovered explicitly:
+production patch: 276 checks pass with the captured O-ZY3A input, including
+permanent removal, native failure continuation, saved recovery, nested/failed
+replacement, unchanged-target zero allocation and weak-reference release.
+See the [native test instructions](../Tests/AiPlannerDiagnosis/TARGET-LIFETIME.md)
+and [cross-actor model](../Navigation/BehaviorGraph/TargetLifecycle/README.md).
+Missing destinations in existing saves recover automatically during native
+target restoration. Older malformed references to destinations that still exist
+retain their explicit recovery command:
 
 - `navfix` or `navfix dryrun`: report eligible and skipped vessels without changes.
 - `navfix apply`: rebind eligible targets, discard their old routes, and stop old
@@ -230,6 +318,10 @@ fixtures cover half/whole-tile errors and unchanged transforms. Native engine
 access is substituted in those fixtures; this is not a live docking test.
 
 ## Unloaded barter item removal
+
+The [multiple-ship barter audit and repairs](MULTI-SHIP-BARTER-AUDIT.md) cover
+scoped async-loader cancellation and item-loss prevention during repurchase.
+Callsign grouping/zone row identity is a separate [QoL feature](../QoL/BarterZones/README.md).
 
 `BarterRemovalPatch` redirects `Ship.RemoveCO(CondOwner, bool)` to the native
 `BarterZoneShip.RemoveCO` implementation when the instance is a barter copy.
@@ -330,9 +422,11 @@ Autonomous unsecured chair/stool sitting yields to usable automatic patch, repai
 or restoration work during work shifts, with native duty priorities. Native ProcessAutoTasks scratch
 buffers are kept distinct across calls, preventing mixed-category priority errors
 after repeated scans. Scratch target references are cleared on exit.
+Bounded sitting probes advance past failed candidates instead of repeatedly
+checking only the same leading pair; actual work dispatch remains native.
 Manual sitting, secured seating and nav use are protected;
 native emergencies remain intact. See [CREW-REST.md](CREW-REST.md) for scope,
-performance and 599 offline checks. These corrections are always on, independent
+performance and 696 offline checks. These corrections are always on, independent
 of altwork.
 
 ## Door auto-close after power loss
@@ -376,6 +470,16 @@ refreshes crew encumbrance/status without causing maneuver wear. Always on; no
 new polling loop, saved data or retained ship references. See
 [DOCKED-GRAVITY.md](DOCKED-GRAVITY.md) for the cause, scope and 47 offline checks.
 
+## Signal-box behavior
+
+`SignalBoxes/SignalBoxPatches.cs` repairs native gate scheduling, effective output,
+disconnect delivery, queue persistence and endpoint reconstruction boundaries.
+Native gate math, power checks, delays and conversion policy remain authoritative.
+The fixes are always on in the full build and selectable as `signal-boxes` in
+custom builds. They add no Update hook or saved schema. See
+[SignalBoxes/README.md](SignalBoxes/README.md) for scope, lifetime, compatibility
+and 4,980 offline assertions, including actual production hooks.
+
 ## Electrical connection audit logging
 
 `ElectricalAuditLogging` routes the native `Removed N faulty connections!` message
@@ -402,6 +506,7 @@ the optional `worktrace` diagnostic switch.
 
 `Tests/SignalBoxAudit` verifies native traversal/removal/persistence remain intact,
 records both missing and moved endpoints, and checks log-only routing with GUI
-Unity logging enabled. The underlying signal-box faults remain documented in
-[SIGNAL-BOX-AUDIT.md](SIGNAL-BOX-AUDIT.md), not repaired by this logging change.
+Unity logging enabled. This feature only changes logging; the independent
+[signal-box repairs](SignalBoxes/README.md) now address the behavior findings in
+[SIGNAL-BOX-AUDIT.md](SIGNAL-BOX-AUDIT.md). Both features are tested together.
 

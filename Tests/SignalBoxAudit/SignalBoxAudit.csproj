@@ -2,8 +2,12 @@
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
   <ItemGroup>
     <Compile Include="../../MiscBugFixes/ElectricalAuditLogging.cs" Link="ElectricalAuditLogging.cs" />
+    <Compile Include="../../MiscBugFixes/SignalBoxes/*.cs" Link="SignalBoxes/%(Filename)%(Extension)" />
     <Reference Include="Assembly-CSharp"><HintPath>$(Game)/Ostranauts_Data/Managed/Assembly-CSharp.dll</HintPath></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Game)/Ostranauts_Data/Managed/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="Unity.TextMeshPro"><HintPath>$(Managed)/Unity.TextMeshPro.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(Managed)/UnityEngine.UI.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.UIModule"><HintPath>$(Managed)/UnityEngine.UIModule.dll</HintPath></Reference>
     <Reference Include="0Harmony"><HintPath>$(Game)/BepInEx/core/0Harmony.dll</HintPath></Reference>
   </ItemGroup>
 </Project>

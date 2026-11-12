@@ -20,7 +20,7 @@ internal static class HullPresentation {
             (!ReferenceEquals(draw, Own(nav)) && (draw.shipInfo == null || draw.shipInfo.shipSignature <= 80))) return false;
         var panel = Panel(nav);
         if (panel == null) return native;
-        double radiusSquared = HullZoom.RadiusSquared(draw.ship.objSS.Size, XX(nav), XY(nav));
+        double radiusSquared = HullZoom.RadiusSquared(HullDisplay.Radius(draw.ship), XX(nav), XY(nav));
         if (!HullZoom.Show(radiusSquared, ReferenceEquals(draw.lineBody, draw.lineBodySilhouette))) return false;
         nav.SolarToCanvas(draw.ship.objSS.vPosx, draw.ship.objSS.vPosy, out double x, out double y);
         var rect = panel.rect;

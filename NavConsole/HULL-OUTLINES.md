@@ -14,9 +14,48 @@ separate optional [hull collision model](../Navigation/Collisions/README.md)
 reuses its filled geometry. The earlier convex envelope was rejected
 because it obscured recognizable exterior geometry.
 
-Native map position, radius normalization, clockwise grid compensation and
-contact identification/visibility remain authoritative. ShipSitu.Size and all
-shared combat/radius helpers are unchanged.
+Native map position, clockwise grid compensation and contact
+identification/visibility remain authoritative. Ordinary ship hulls share one
+footprint scale; stations retain native radius normalization. ShipSitu.Size and
+all shared combat/radius helpers are unchanged.
+
+## Consistent hull sizing
+
+The native `SilhouetteUtility.GetSilhouetteLength` measures only X extent and
+`ShipSitu.SetSize` multiplies that length by 20. Fitting every outline into that
+radius makes a horizontally arranged ship appear much larger than an equivalent
+vertical hull. The saved Stellar Magnificence/Missing Magpie pair demonstrated
+500 m versus 960 m native radii despite comparable overall hull lengths.
+
+For ordinary non-station hulls, the already-computed envelope supplies the
+farthest exterior point from its bounding-box center. Its cached radius times
+**40 map metres per tile** sets both outline axes. This retains the game's
+deliberately exaggerated navigation scale, approximately its previous scale for
+long horizontal hulls; these are not the physical 0.32 m tile dimensions. A
+quarter turn cannot change apparent size, and doubling a hull doubles its drawn
+dimensions. Uniform growth now changes the drawing revision even when normalized
+contours match. Interior salvage still avoids unnecessary captures.
+
+Visibility and viewport tests use the same cached radius. Before first capture,
+the saved header's two-dimensional grid diagonal (current live grid dimensions
+for a materialized hull) supplies a cheap conservative
+visibility/warmup estimate; missing dimensions fall back to the native radius.
+No item scan, additional worker job, per-frame allocation or Harmony hook is
+added. Stations, substations, body orbits and non-ship classifications retain
+native sizing. No radius is written to a ship or save.
+
+The optional physical hull collision model uses this same corrected scale for
+its broad phase, contact geometry and response. Its broad phase also admits
+contact outside the old X-only native circles. Disabling it still restores
+native circular collisions, which can disagree with a detailed hull outline.
+Planetary impacts and weapon hit tests continue to read unchanged native radii.
+With hull collisions enabled, docking/tether range, placement, safe searches and
+native flight-to-docking handoffs use cached corrected bounds. AI prediction and
+its existing safe-evasion check receive matching hull/group enclosures without
+altering the shared combat predictor; see the [consumer audit](../Navigation/Collisions/CONSUMER-AUDIT.md).
+The offline suite compares
+native `WillCollide` results before/after geometry publication and verifies that
+the shared radius fields/helpers were not modified.
 
 ## Outline visibility and scale
 
@@ -114,7 +153,7 @@ inside filled holes without an all-pairs contour scan.
 Input buffers and contour workspace are reused. Up to four numeric buffers are
 pooled; reset releases that pool/workspace when safe. Output arrays are allocated
 when the raw perimeter changes. Identical results reuse the immutable outline;
-equivalent normalized drawings retain their drawing version. Steady drawing does
+equivalent normalized drawings with the same footprint size retain their drawing version. Steady drawing does
 not queue work, rebuild a polygon or upload unchanged Vectrosity points.
 The renderer adopts independent edge pairs in Discrete mode. Before editing the
 shared point buffer, native `VectorLine.Resize(0)` synchronizes the empty list
@@ -158,8 +197,8 @@ clean/dirty status, input count, missing definitions, rectangle-cover piece/erro
 counts and optional physical collision query statistics. It does work only
 on request through the existing inspection dispatcher.
 
-[Tests/HullOutlinesCheck](../Tests/HullOutlinesCheck/README.md) runs **60,677**
-geometry/ownership/concurrency checks and **834** snapshot/native-integration
+[Tests/HullOutlinesCheck](../Tests/HullOutlinesCheck/README.md) runs **60,687**
+geometry/ownership/concurrency checks and **1,102** default snapshot/native-integration
 checks under bundled Mono. The pure worker suite also runs on .NET 8. They
 also run 12,465 filled-cover/contact/sweep checks (12,466 on CoreCLR including
 the warmed allocation check); see the separate collision model documentation.

@@ -34,15 +34,3 @@ flowchart TD
   n_plotted -->|"invalid_route_supplied"| n_plotted
   n_fly -->|"native_station_arrival"| n_done
 ```
-
-## motion
-
-```mermaid
-flowchart TD
-```
-
-## lifecycle
-
-```mermaid
-flowchart TD
-```

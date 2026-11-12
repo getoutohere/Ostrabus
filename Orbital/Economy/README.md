@@ -141,3 +141,6 @@ current hull; 95 had cached stock and none had recipes. These pre-existing recor
 were exposed by the new API, not created by this skip. Their cleanup and economic
 consequences need a separate lifecycle investigation; validation did not prune them.
 See [orphaned market follow-up](ORPHANED-MARKETS.md) for evidence and investigation scope.
+The later [controller identity repair](../../MiscBugFixes/FREIGHT-CONTROLLER-IDENTITY.md)
+prevents station collisions enrolling interregional cargo hulls for local cleanup.
+It is a general AI bugfix, independent of this SFF economy feature.

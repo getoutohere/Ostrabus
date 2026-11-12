@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/343f8850a0ad43a064612a869c2de3dcc5ae334b20e81c184be033200ef05638.json.br",
+  "reason": "Reviewed target lifetime boundary selector coverage: native Destroy, CheckTargets and GetJSON explicitly bound; shared deployer dependency references the tested cross-actor model.",
+  "acceptedUtc": "2026-11-11T21:53:31.8988908Z",
+  "previousSnapshot": "assembly-baselines/d1ab56e4ec7c4ef9720e69fdd2d038b628a5fab7bf580b3374d421ff71d9a260.json.br"
+}

@@ -36,6 +36,7 @@ internal static class BarterLocalIndexPatch {
         // Match the native snapshot: serializing an item must not change iteration.
         foreach (var co in items.Values.ToList()) {
             if (paced && BarterFrameBudget.Exhausted()) yield return null;
+            if (paced && co == null) continue;
             if (ids.Contains(co.strID)) continue;
             var added = ship.GetJsonItem(co);
             var previous = ship.json.aItems;

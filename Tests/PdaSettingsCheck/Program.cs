@@ -15,6 +15,7 @@ static class Program {
     static object Get(object obj) => AccessTools.Property(obj.GetType(), "Value").GetValue(obj);
     static void Set(object obj, int value) => AccessTools.Method(obj.GetType(), "Set").Invoke(obj, new object[] { value });
     static void Check(bool ok, string reason) { checks++; if (!ok) throw new Exception(reason); }
+    static void TracePath(ref string path) { path = Path.GetFullPath("obj/pda-trace-" + Guid.NewGuid().ToString("N") + ".jsonl"); }
     static ConfigEntry<T> Config<T>(T value) {
         var config = (ConfigEntry<T>)FormatterServices.GetUninitializedObject(typeof(ConfigEntry<T>));
         AccessTools.Field(config.GetType(), "_typedValue").SetValue(config, value);
@@ -67,7 +68,18 @@ static class Program {
         var all = (Array)AccessTools.Field(Type("PdaSettings.SettingsRegistry"), "All").GetValue(null);
         var settings = new Dictionary<string, object>();
         foreach (var setting in all) Check(settings.TryAdd((string)Field(setting, "Id"), setting), "Duplicate setting ID");
-        Check(settings.Count == 15, "Settings missing");
+        Check(settings.Count == 16, "Settings missing");
+        Check((int)Get(settings["torchtrace"]) == 0 && (string)Field(settings["torchtrace"], "Lifetime") == "This session", "Torch trace must default off and remain session-only");
+        var traceType = Type("Diagnostics.TorchTrace");
+        harmony.Patch(AccessTools.Method(traceType,"Start"),prefix:new HarmonyMethod(typeof(Program),nameof(TracePath)));
+        Set(settings["torchtrace"],1);
+        Check((int)Get(settings["torchtrace"]) == 1,"PDA trace toggle did not install diagnostics");
+        Set(settings["torchtrace"],0);
+        Check((int)Get(settings["torchtrace"]) == 0,"PDA trace toggle did not stop diagnostics");
+        var traceSession = AccessTools.Field(traceType,"session").GetValue(null);
+        var traceWriter = Field(traceSession,"Writer");
+        var traceTask = (System.Threading.Tasks.Task)AccessTools.Property(traceWriter.GetType(),"Completion").GetValue(traceWriter);
+        Check(traceTask.Wait(10000) && AccessTools.Property(traceWriter.GetType(),"Error").GetValue(traceWriter) == null,"PDA trace writer failed to drain");
         var binding = settings["equipment_shortcut"];
         Check((bool)AccessTools.Property(binding.GetType(), "IsKeyBinding").GetValue(binding), "Shortcut lacks capture control");
         Check((string)AccessTools.Property(binding.GetType(), "BindingValue").GetValue(binding) == "Shift+F", "Wrong default shortcut");

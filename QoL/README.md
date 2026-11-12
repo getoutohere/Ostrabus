@@ -3,6 +3,10 @@
 Quality-of-life changes to game behavior, separate from corrective MiscBugFixes patches.
 Each feature has its own subdirectory and namespace.
 
+- [Multiple-ship barter zones](BarterZones/README.md): prefix sale groups with
+  callsigns, sort by ship/zone and keep same-named zones independently accessible.
+  Personal inventory ordering and saved zone names remain unchanged. Always on.
+
 - [Socials contact visibility](Socials/README.md): hide construction drones from
   the contact list using their character types, preserving social state. Always on.
 

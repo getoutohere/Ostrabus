@@ -15,12 +15,16 @@ static class Program {
             query = args.FirstOrDefault() is "scenario" or "search" or "node" or "source" or "evidence" or "patch";
             root = Path.GetFullPath(Environment.CurrentDirectory);
             while (!File.Exists(Path.Combine(root, "Ostrabus.csproj"))) root = Directory.GetParent(root)?.FullName ?? throw new Exception("Run from within the repository.");
+            if (args.FirstOrDefault() == "coverage") {
+                BehaviorCoverage.Run(root, args);
+                return;
+            }
             folder = Path.Combine(root, "Navigation", "BehaviorGraph");
             string modelName=args.Contains("--model") ? args.ElementAtOrDefault(Array.IndexOf(args,"--model")+1) ?? throw new Exception("Missing model name.") : "retriever";
-            Check(modelName is "retriever" or "scavenger" or "deployer","Unknown model: "+modelName);
+            Check(modelName is "retriever" or "scavenger" or "deployer" or "target-lifecycle" or "traffic","Unknown model: "+modelName);
             bool retriever=modelName=="retriever";
             Check(retriever || args.FirstOrDefault()!="assembly-self-test","Run assembly-self-test on the default retriever fixture model; slice audits use --model.");
-            if(!retriever)folder=Path.Combine(folder,modelName=="scavenger" ? "Scavenger" : "Deployer");
+            if(!retriever)folder=Path.Combine(folder,modelName switch { "scavenger" => "Scavenger", "deployer" => "Deployer", "traffic" => "Traffic", _ => "TargetLifecycle" });
             var vanilla = Read<Model>(Path.Combine(folder, retriever ? "retriever.vanilla.json" : "vanilla.json"));
             var overlay = Read<Overlay>(Path.Combine(folder, retriever ? "ostrabus.overlay.json" : "overlay.json"));
             bool assemblyCommand=args.FirstOrDefault()?.StartsWith("assembly-",StringComparison.Ordinal)==true;
@@ -33,6 +37,7 @@ static class Program {
                 gameRoot = Path.GetFullPath(args.ElementAtOrDefault(at+1) ?? throw new Exception("Missing game source root."));
             }
             VerifySources(vanilla, gameRoot);
+            if (modelName == "traffic") TrafficTrees.Verify(folder, vanilla);
             if(args.Contains("--assembly")) {
                 string file=args.ElementAtOrDefault(Array.IndexOf(args,"--assembly")+1) ?? throw new Exception("Missing assembly path.");
                 Check(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(file))).Equals(vanilla.AssemblySha256,StringComparison.OrdinalIgnoreCase),"Game assembly fingerprint differs; review model against this version.");
@@ -45,6 +50,7 @@ static class Program {
                 File.WriteAllText(Path.Combine(folder, "VANILLA.md"), Render(vanilla).TrimEnd()+"\n");
                 File.WriteAllText(Path.Combine(folder, "EFFECTIVE.md"), Render(effective).TrimEnd()+"\n");
                 File.WriteAllText(Path.Combine(folder, "AUDIT.md"), Audit(vanilla, effective, overlay).TrimEnd()+"\n");
+                if (modelName == "traffic") File.WriteAllText(Path.Combine(folder, "CONTROL-TREES.md"), TrafficTrees.Render(folder).TrimEnd()+"\n");
                 Console.WriteLine("Generated effective graph, vanilla/effective diagrams and audit.");
             } else if (command == "scenario") {
                 string id = args.ElementAtOrDefault(1) ?? throw new Exception("scenario requires an ID.");
@@ -190,6 +196,7 @@ static class Program {
             if(expect.Finding!=null) {Check(result.Findings.Contains(expect.Finding),scenario.Id+": expected finding missing: "+expect.Finding);count++;}
             if(expect.Without!=null) {Check(!result.Findings.Contains(expect.Without),scenario.Id+": unexpected finding: "+expect.Without);count++;}
             if(expect.Fact!=null) {Check(result.Facts.GetValueOrDefault(expect.Fact)==expect.Value,scenario.Id+": unexpected final fact.");count++;}
+            if(expect.Stop!=null) {Check(result.Stop==expect.Stop,scenario.Id+": unexpected trace termination: "+result.Stop);count++;}
         }
         if(vanilla.Edges.Any(e=>e.Id=="sff.pickup")) {
             var absent=new Scenario { Start="fly", Facts=new(), Events=new[] { "sff_pickup" } };
@@ -208,6 +215,13 @@ static class Program {
             var seed=vanilla.Scenarios.Single(s=>s.Id=="sff-pickup-conflict");
             Check(Search(vanilla,seed,"risk.route_anchor_conflict",8).Witness!=null,"Bounded search missed the known native witness.");count++;
             Check(Search(effective,seed,"risk.route_anchor_conflict",8).Witness==null,"Bounded search found an unexpected modeled patched witness.");count++;
+        }
+        if (vanilla.Id == "target-lifecycle-1.0.1.10") {
+            var seed = vanilla.Scenarios.Single(s => s.Id == "retriever-retires-outbound-scav-target");
+            foreach (string finding in new[] { "target.retained_goal", "target.divergent_route" }) {
+                Check(Search(vanilla, seed, finding, 6).Witness != null, "Target-lifetime search missed the native " + finding + " witness."); count++;
+                Check(Search(effective, seed, finding, 6).Witness == null, "Target-lifetime search found a repaired " + finding + " witness."); count++;
+            }
         }
         return count;
     }
@@ -255,6 +269,7 @@ static class Program {
         var b=new StringBuilder("<!-- Generated by Tools/AIBehaviorGraph. Edit JSON sources, not this file. -->\n\n# "+m.Id+"\n\nPartial control-point graph, not a full state machine. Edge guards and effects are in JSON. Operator events are explicit, never autonomous defaults.\n\n");
         foreach(var view in m.Nodes.ContainsKey("scav_hold") ? new[]{"flow"} : new[] { "flow", "motion", "lifecycle" }) {
             var edges=m.Edges.Where(e=>view=="motion" ? e.From is "path" or "group" or "queued_haul" || e.To is "path" or "group" or "queued_haul" || e.Id=="fix.handoff" : view=="lifecycle" ? new[]{"retired","reserve","spawn","load","replacement","unregistered","operator","reserve_blocked"}.Contains(e.From) || new[]{"retired","unregistered","reserve_blocked"}.Contains(e.To) : !new[]{"path","group","reserve","spawn","load","replacement"}.Contains(e.From) && !new[]{"path","group","reserve","spawn","load","replacement"}.Contains(e.To)).ToArray();
+            if (edges.Length == 0) continue;
             b.AppendLine("## "+view+"\n\n```mermaid\nflowchart TD");
             foreach(string id in edges.SelectMany(e=>new[]{e.From,e.To}).Distinct()) b.AppendLine("  n_"+id+"[\""+m.Nodes[id].Label.Replace("\"","'")+"\"]");
             foreach(var e in edges) b.AppendLine("  n_"+e.From+" -->|\""+e.Event+(e.Patch.Length>0 ? " / "+e.Patch : "")+(e.Guards.Count>0 ? " [conditional]" : "")+"\"| n_"+e.To);
@@ -295,7 +310,7 @@ sealed class Edge {
 }
 sealed class Finding {public string Id {get;set;}="";public string Kind {get;set;}="";public string Severity {get;set;}="";public Condition When {get;set;}=new();public string[] Sources {get;set;}=Array.Empty<string>();public string[] Evidence {get;set;}=Array.Empty<string>();public string Note {get;set;}="";}
 sealed class Scenario {public string Id {get;set;}="";public string Start {get;set;}="";public Dictionary<string,string> Facts {get;set;}=new();public string[] Events {get;set;}=Array.Empty<string>();public Dictionary<string,Expectation> Expect {get;set;}=new();public string Note {get;set;}="";}
-sealed class Expectation {public string? Node {get;set;}public string? Finding {get;set;}public string? Without {get;set;}public string? Fact {get;set;}public string? Value {get;set;}}
+sealed class Expectation {public string? Node {get;set;}public string? Finding {get;set;}public string? Without {get;set;}public string? Fact {get;set;}public string? Value {get;set;}public string? Stop {get;set;}}
 sealed class Trace {public string Node {get;set;}="";public Dictionary<string,string> Facts {get;set;}=new();public List<string> Edges {get;set;}=new();public List<string> Findings {get;set;}=new();public List<string> UnknownChecks {get;set;}=new();public string Stop {get;set;}="";}
 sealed class SearchResult {public string Interpretation {get;set;}="Conditional bounded search with fixed external outcomes; no witness is not a safety proof.";public int Bound {get;set;}public int Visited {get;set;}public int UnknownEdges {get;set;}public int UnknownFindings {get;set;}public bool BoundReached {get;set;}public bool StateLimitReached {get;set;}public Trace? Witness {get;set;}}
 sealed class Overlay {public int SchemaVersion {get;set;}public string Id {get;set;}="";public string Base {get;set;}="";public List<Patch> Patches {get;set;}=new();public List<Dependency> DocumentedDependencies {get;set;}=new();public JsonElement NotApplicable {get;set;}}

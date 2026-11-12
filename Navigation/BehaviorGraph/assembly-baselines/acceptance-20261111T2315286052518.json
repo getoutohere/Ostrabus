@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/1ad9ae43f16e1b26cde525936663131e03a07f5b20c1d8c1b81989d2acc3859b.json.br",
+  "reason": "Native-tested civilian FFWD coordinate correction and exception-safe asteroid representation lifetime repair; reviewed added conversion dependencies and updated effective traffic outcomes.",
+  "acceptedUtc": "2026-11-11T23:15:28.6035648Z",
+  "previousSnapshot": "assembly-baselines/2c6ce5afaf9b93a7fa4995d2c0ef147ce99cec6eb3687a19560c077582c5b4ed.json.br"
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/03bf3105f846fec1492afd491cdd0d5eafb74b1ad04f8401bb90657c3d92421b.json.br",
+  "reason": "Reviewed 1.0.1.10 cargo/PASS/civilian native constructor trees, role selectors and FFWD, market and region lifetimes, 13 selected assets and current patch boundaries; unresolved findings and confirmed conversion regression retained.",
+  "acceptedUtc": "2026-11-11T22:47:21.3330967Z",
+  "previousSnapshot": null
+}

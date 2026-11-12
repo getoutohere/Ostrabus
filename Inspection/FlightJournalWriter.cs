@@ -18,6 +18,7 @@ internal sealed class FlightJournalWriter {
     readonly Task worker;
     readonly Action<FlightJournalData.Record> release;
     readonly long byteLimit;
+    readonly string format, units;
     long sequence, accepted, dropped, written, bytes;
     int accepting = 1;
     string error;
@@ -45,8 +46,10 @@ internal sealed class FlightJournalWriter {
     internal string Error => Volatile.Read(ref error);
     internal bool Finished => worker.IsCompleted;
     internal Task Completion => worker;
-    internal FlightJournalWriter(string path, long limit = ByteLimit, Action<FlightJournalData.Record> releaseRecord = null) {
+    internal FlightJournalWriter(string path, long limit = ByteLimit, Action<FlightJournalData.Record> releaseRecord = null,
+        string format = "ostrabus-flight-journal", string units = "AU, seconds, kg; fuel fields explicitly cached/raw") {
         Path = path; byteLimit = limit; release = releaseRecord ?? FlightJournalData.Release;
+        this.format = format; this.units = units;
         worker = Task.Factory.StartNew(Write, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
     internal bool Enqueue(FlightJournalData.Record record) {
@@ -81,7 +84,7 @@ internal sealed class FlightJournalWriter {
             using (var writer = new StreamWriter(bounded, new UTF8Encoding(false), 65536) { NewLine = "\n" }) {
                 var settings = new JsonSerializerSettings { FloatFormatHandling = FloatFormatHandling.String };
                 var serializer = JsonSerializer.Create(settings);
-                const string header = "{\"format\":\"ostrabus-flight-journal\",\"version\":1,\"units\":\"AU, seconds, kg; fuel fields explicitly cached/raw\"}";
+                string header = JsonConvert.SerializeObject(new { format, version = 1, units });
                 writer.WriteLine(header); writer.Flush(); bounded.Limit = byteLimit - 1024;
                 foreach (var record in queue.GetConsumingEnumerable()) {
                     try {

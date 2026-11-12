@@ -11,8 +11,9 @@ using Ostranauts.Ships.AIPilots;
 
 // Run native retirement, reserve selection, reset, registration, stale sweep and
 // crew-recycling decisions. Replace Unity controls, condition storage and Task
-// scheduling only; no production patches and no live process are involved.
-static class Program {
+// scheduling only. Run the unpatched reproduction, then actual production hooks;
+// no live process is involved.
+static partial class Program {
     static int checks;
     static readonly Dictionary<CondOwner,Dictionary<string,double>> values = new Dictionary<CondOwner,Dictionary<string,double>>();
     static readonly List<string> messages = new List<string>();
@@ -27,7 +28,12 @@ static class Program {
     }
     static bool Equal(UnityEngine.Object __0,UnityEngine.Object __1,ref bool __result) { __result=ReferenceEquals(__0,__1); return false; }
     static bool Unequal(UnityEngine.Object __0,UnityEngine.Object __1,ref bool __result) { __result=!ReferenceEquals(__0,__1); return false; }
-    static bool GetAmount(CondOwner __instance,string __0,ref double __result) { __result=Amount(__instance,__0); return false; }
+    static Action<CondOwner,string> onRead;
+    static bool GetAmount(CondOwner __instance,string __0,ref double __result) {
+        __result=Amount(__instance,__0);
+        onRead?.Invoke(__instance,__0);
+        return false;
+    }
     static bool Has(CondOwner __instance,string __0,ref bool __result) { __result=Amount(__instance,__0)>0; return false; }
     static bool Store(CondOwner __instance,string __0,double __1) { Write(__instance,__0,__1); return false; }
     static bool Zero(CondOwner __instance,string __0) { Write(__instance,__0,0); return false; }
@@ -103,7 +109,8 @@ static class Program {
             ((List<JsonFaction>)AccessTools.Field(typeof(Ship),"aFactions").GetValue(ship)).Add(new JsonFaction{strName="DifferentFaction"});
             Check(!Recycle(ship),"Unmatched hull faction also prevents recycling");
             ReplayTwoHourSkips();
-            Console.WriteLine(checks+" native stale-lifecycle checks passed. Production behavior unchanged.");
+            RepairChecks();
+            Console.WriteLine(checks+" native stale-lifecycle and repair checks passed.");
         } finally { boundary.UnpatchSelf(); }
     }
     static void ReplayTwoHourSkips() {
@@ -134,5 +141,9 @@ static class Program {
         ((Dictionary<string,Ship>)AccessTools.Field(typeof(Ship),"aDocked").GetValue(police)).Clear();
         Sweep();Check(scav.bRemove && police.bRemove,"Separating exposes both expired markers without a new failure or injury");
     }
-    static void SetManagerQueue() => AccessTools.Field(typeof(AIShipManager),"_aIQueue").SetValue(null,new AIShipQueue());
+    static void SetManagerQueue() {
+        // Keep the native readonly queue identity: Mono can embed its address
+        // in already-JITted registration/unregistration code.
+        ((AIShipQueue)AccessTools.Field(typeof(AIShipManager),"_aIQueue").GetValue(null)).Clear();
+    }
 }

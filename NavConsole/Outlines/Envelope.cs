@@ -12,6 +12,10 @@ internal readonly struct HullPoint : IEquatable<HullPoint> {
 }
 
 internal sealed class Envelope {
+    // Keep the native map's exaggerated hull scale: a long horizontal hull
+    // has radius approximately 20 * tile length, or 40 map metres per tile.
+    // Apply that one scale to both axes instead of fitting each hull to Size.
+    internal const double MapMetresPerTile = 40;
     readonly HullPoint[] points;
     readonly int[] ends;
     readonly double centerX, centerY, radius;
@@ -19,6 +23,7 @@ internal sealed class Envelope {
     internal readonly string CollisionError;
     internal int Count => points.Length;
     internal int Loops => ends.Length;
+    internal float MapRadius => (float)(radius * MapMetresPerTile);
     internal Envelope(HullPoint[] source, int count) {
         points = new HullPoint[count]; Array.Copy(source, points, count);
         ends = count >= 3 ? new[] { count } : Array.Empty<int>();
@@ -58,6 +63,7 @@ internal sealed class Envelope {
     }
     internal bool SameDrawing(Envelope other) {
         if (other == null || other.Count != Count || other.Loops != Loops) return false;
+        if (Math.Abs(radius - other.radius) > 1e-9) return false;
         for (int i = 0; i < Loops; i++) if (ends[i] != other.ends[i]) return false;
         for (int i = 0; i < Count; i++) {
             var a = Unit(i); var b = other.Unit(i);

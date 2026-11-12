@@ -23,6 +23,30 @@ The third slice covers [deploying-hauler scope](Deployer/README.md): ordinary
 release/empty recovery, shared refill accounting and VORB-specific route guards.
 Select `--model deployer`. It records outstanding coverage gaps explicitly.
 
+The [shared target-lifecycle model](TargetLifecycle/README.md) connects actors:
+a retriever can remove another ship's destination during flight. It exposes
+the O-ZY3A failure in vanilla, including the save/load variant, and models the
+native-tested removal/restoration repair in the current overlay. Select it with
+`--model target-lifecycle`.
+
+The [cargo/PASS/civilian model](Traffic/README.md) adds native constructor trees,
+traffic selection, market handoffs, visits, retirement, reserve reuse, ATC and SFF
+paths. Select `--model traffic`. Its effective graph now includes native-tested
+coordinate and asteroid-conversion repairs; unresolved home-dispatch, reserve
+reuse and freight handoff findings remain explicit.
+
+Completeness has not been established. Inventory native pilot types and commands
+independently of the scenarios we chose to write:
+
+```powershell
+dotnet run --project Tools/AIBehaviorGraph -c Release -- coverage --assembly <Assembly-CSharp.dll>
+```
+
+This reads shipped assembly metadata and compares role/command entrypoints with
+all declared source bindings. `--require-bound` fails if any are missing. A
+binding is only a review reference; passing that minimum gate would not prove
+branch or cross-actor coverage. Scenario validation is not a completeness gate.
+
 The [retarget caller audit](../../Notes/AI-RETARGET-CALLER-AUDIT.md) separately
 reproduces stale-route retreat through the native police tree. The implemented
 escape-setter repair is catalogued as an unexpanded dependency; full

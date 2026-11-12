@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/439328a257d8991309be2c8fe0b1d1cb88bf1c3653d22dd47afde9af7c9d2c49.json.br",
+  "reason": "Established player-connected local cleanup reachability through native ATC selection, registration and Update in 44 cases; added ownership/docking/caller and recycle-asset dependencies. Confirmed defect remains in current effective model.",
+  "acceptedUtc": "2026-11-12T00:09:48.2024045Z",
+  "previousSnapshot": "assembly-baselines/95d4716edac60b97390d9482985e7a34fe579ef9a80643fd63ed920297d548c5.json.br"
+}

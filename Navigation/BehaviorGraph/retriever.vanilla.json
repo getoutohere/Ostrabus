@@ -272,7 +272,7 @@
                                                           "if (!wasStale",
                                                           "DetachedHidden"
                                                       ],
-                                          "sha256":  "8b32b760c10361a5baa7fad8598423ad7102d36b8bfd67564961305ad6f1fabc"
+                                          "sha256":  "3d35726d06dd2067f3169c2b088eb9ef4b156b7a3d05ac52a35006062a4d5a75"
                                       },
                     "fix_target":  {
                                        "origin":  "repo",
@@ -282,7 +282,7 @@
                                                        "ReferenceEquals(observer.shipSituTarget",
                                                        "target.Situ = replacement.objSS"
                                                    ],
-                                       "sha256":  "a8c5c1fcc0b4343adace40e3618c06d6ac62113d340128c57c3ad139d25461c2"
+                                       "sha256":  "76eef5c6932b1a87f4de59f7b8c02f8a6df37fe6d67f07b08f8cfe47f96e181c"
                                    },
                     "fix_depot":  {
                                       "origin":  "repo",
@@ -343,7 +343,7 @@
                                                       "ClearPrediction(ship)",
                                                       "class RetargetFuelPatch"
                                                   ],
-                                      "sha256":  "dbc8a1c7ebbb52f49c159b674c84032b4703308b0070130bbf5d62e13c2a6065"
+                                      "sha256":  "35e7e8398bbda8440a43820430324b8b93c4ade6494c02aaf19b3e903a064fcc"
                                   },
                     "fix_flightfuel":  {
                                            "origin":  "repo",
@@ -461,7 +461,7 @@
       "internal static bool IsExempt(",
       "pending.Clear(); visited.Clear(); evaluating = false;"
     ],
-    "sha256": "a6dc4e7ad7e94c6f74e0191121776b53f6508d95936189a0a4cf1c8e89498449"
+    "sha256": "df32e7ea4018338bcedfab375f390d9999cca71ae0901c5cb1a7c39ca3467d04"
   },
   "station_collision_scan": {
     "origin": "repo",

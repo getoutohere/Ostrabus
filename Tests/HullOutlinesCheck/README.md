@@ -1,5 +1,35 @@
 # Parallel hull outline checks
 
+The optional `docking-pair <archive> <firstId> <firstSavedPortId> <secondId>
+<secondSavedPortId>` mode reproduces the original [docking integration
+regression and validates its repair](../../Navigation/Collisions/DOCKING-COMPATIBILITY.md)
+using native placement, saved port rotations and production hull geometry. Saved port IDs
+must exist in that archive; a later live conversion may have changed their IDs.
+It writes a detached report under ignored `obj/HullPreview/` and verifies the
+source archive remains unchanged.
+
+The default suite adds 189 docking assertions using actual native CanDock,
+ring math, PlaceAtAirlocks, handoff, group anchor/removal and saved/live port
+rotation paths. It preserves clearance/alignment failures and tests loading/grid
+changes, feature-off fallback, station groups/restored links, cold bounds and
+large-ring normalization. The saved-pair mode repeats these against the real
+pair for 378 docking assertions total. Actual native PushbackFrom/safe-coordinate
+execution reproduces and repairs the undock radius reset, preserving its 5 m/s
+kick. Group-anchor placement is propagated through the native docking group.
+Unity curve evaluation, shader IDs, mass
+and selected-crew services are explicit fixtures; docking radius and pose math
+are native with the production hooks. Scene/mesh upload remains a live check.
+
+The consumer audit adds 61 checks for actual native safe-coordinate searches,
+random/belt spawn rejection, exceptions releasing all scope references, complete
+group PushbackFrom, two-group undocking, a four-member merge, native tether range
+and velocity gates, inspection range versus native flight handoff, actual AI
+prediction, warmed candidate allocations, and short relocation invalidation.
+Controls restore old self-group radius reads or omit invalidation to reproduce
+the corresponding failures. Saved-pair mode totals 1,356 integration assertions.
+`Tests/PatchBindingCheck`'s `hull-interop` mode additionally executes the full
+plugin's actual AI/evasion/hull composition in both patch installation orders.
+
 Production sources are linked directly into both harnesses. No game assets or
 save files are written, and the running game is not contacted.
 
@@ -12,7 +42,7 @@ dotnet run --project Tests/SaveJsonCompatibility/Host -c Release -- Tests/HullOu
 ```
 
 The standalone .NET 8 suite compiles Envelope/ContourBuilder/HullWorker without
-any Unity/game reference. Its **60,677 checks** exercise actual concurrent calculation and an
+any Unity/game reference. Its **60,687 checks** exercise actual concurrent calculation and an
 independent outside-air flood-fill oracle on 200 generated hulls, ordering/duplicate
 invariance, concave bays, exterior loops, enclosed holes/nested islands,
 normalization, immutable result reuse, queue bounds, stale reservation identity,
@@ -20,7 +50,7 @@ worker/scheduler failures and cancellation during calculation. A controlled
 builder barrier proves that main-thread cache operations finish while calculation
 is blocked, and that its subsequently released stale result cannot publish.
 
-The Mono harness repeats those checks on the shipped runtime and adds **834**
+The Mono harness repeats those checks on the shipped runtime and adds **1,102**
 checks for shallow JSON overrides, installed/contained/placeholder filtering,
 cardinal rotations, six shipped hull assets resolved through native DataCO
 construction, current materialized socket grids and root-relative coordinates.
@@ -80,6 +110,19 @@ such a fixture. No input archive is rewritten.
 Unity Vectrosity mesh upload and visual presentation are not emulated. Full-plugin
 PatchBindingCheck validates coexistence with all other installed Harmony patches.
 `GET /ui/hulls` supplies live observability without installing diagnostic hooks.
+
+Sizing checks compare horizontal/vertical hulls, proportional enlargement and
+worker revisions for uniformly resized geometry. Native-runtime checks verify
+that the rendered edge and physical contact use the same radius even outside
+the original circle, native AI `WillCollide` results and radius fields remain
+identical, stations keep their scale, and 10,000 cached size reads allocate zero
+bytes. The API reports native and corrected radii separately.
+
+Supply a save archive and **two** ship IDs after the DLL argument to compare
+their actual installed footprints read-only, including a quarter-turn replay
+of each and an unchanged archive SHA. This mode prints dimensions/radii and
+does not export a preview. The Stellar Magnificence/Missing Magpie reproduction
+has native radii 500/960 m and corrected footprint radii 1129.25/996.39 m.
 
 See [production behavior and ownership](../../NavConsole/HULL-OUTLINES.md) and
 the separate [native defect diagnosis](../NavOutlineDiagnosis/README.md).

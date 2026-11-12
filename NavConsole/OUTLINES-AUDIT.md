@@ -92,6 +92,12 @@ Changing ShipSitu.Size or that collision rule also affects navigation,
 avoidance, proximity and docking offsets. This investigation does not propose
 silently changing them as part of a visual repair.
 
+Follow-up: the [implemented sizing correction](HULL-OUTLINES.md#consistent-hull-sizing)
+now uses the cached two-dimensional footprint at a common map scale for ordinary
+hull outlines and the optional physical collision model. Native Size and shared
+avoidance/weapon/planetary helpers remain unchanged. Stations keep native sizing.
+The preceding section records the original native behavior and scope decision.
+
 ## Implemented scope
 
 The user requested actual exterior hull detail, excluding enclosed interior

@@ -84,6 +84,7 @@ namespace Ostrabus {
             SceneManager.sceneUnloaded -= global::Ostrabus.QoL.AutoVents.AutoVentControl.SceneUnloaded;
             global::Ostrabus.QoL.AutoVents.AutoVentControl.Stop();
             global::Ostrabus.Diagnostics.WorkTrace.Stop();
+            global::Ostrabus.Diagnostics.TorchTrace.Stop("plugin stopped");
             SceneManager.sceneUnloaded -= global::Ostrabus.Diagnostics.WorkTrace.SceneUnloaded;
             global::Ostrabus.Optimizations.LoadProfiling.Stop();
             SceneManager.sceneUnloaded -= global::Ostrabus.Orbital.OrbitalSimulation.SceneUnloaded;
@@ -112,7 +113,7 @@ namespace Ostrabus {
         // Harmony ownership. The project, assembly and displayed name are Ostrabus.
         public const string PLUGIN_GUID = "com.ostranauts.template";
         public const string PLUGIN_NAME = "Ostrabus";
-        public const string PLUGIN_VERSION = "0.3.1";
+        public const string PLUGIN_VERSION = "0.4.0";
     }
 }
 

@@ -1,9 +1,13 @@
 # Background economy inspection
 
-All routes are GET-only, run on the existing Unity-thread inspection pump, and
+Inspection routes are GET-only, run on the existing Unity-thread inspection pump, and
 return the usual `generation`, simulation `epoch`, capture time and `inspectionMs`
 envelope. The detached result contains no game objects. No new Harmony hooks,
 polling, history, save fields or ordinary-frame scans are installed.
+
+Separate [explicit freight recovery tools](FREIGHT-RECOVERY.md) preview with GET and
+mutate only on confirmed POST: stage a live freighter for native AI arrival, or
+credit an absent hull's cargo to a specified destination and remove stale records.
 
 ## Routes
 
@@ -21,8 +25,12 @@ polling, history, save fields or ordinary-frame scans are installed.
 | `/economy/markets/{id}/trade/{category}` | Per-counterpart import/export supply/demand pairing before hub redirection and stochastic/flight checks. |
 | `/economy/freight` | Markets with cargo pods, paired with available raw AI registration, home/origin/destination, course endpoint and stored fuel/range fields. |
 | `/economy/stations/{id}/freight` | Related pod-equipped markets: currently targeting this station, or matching its pilot home/hull origin. Fields identify which match applied. |
+| `/economy/audit` | Paged current-state consistency audit of registered markets, associated hulls/controllers and cached versus backing stock counts. |
+| `/economy/markets/{id}/audit` | Direct audit, including unresolved hulls; also accepts `/freight/{id}/audit` and valid station aliases. |
+| `GET/POST /economy/freight/{id}/approach[/{stationId}]` | Preview/complete travel to the existing destination and resume native arrival; POST requires `confirm=APPROACH`. |
+| `GET/POST /economy/freight/{id}/recover/{stationId}` | Preview/credit surviving orphan cargo to an explicit destination; POST requires `confirm=RECOVER`. |
 
-The stock, production, actors, manifest, trade and related-freight views also accept
+The stock, production, actors, manifest, audit, trade and related-freight views also accept
 `/economy/stations/{id}/...` and `/economy/freight/{id}/...`. Station-prefixed paths
 validate the station-body flag; market paths remain available for nonstation cargo.
 
@@ -82,6 +90,56 @@ These items are economic inventory, not necessarily physical COs in a cargo room
 
 ## Bounds and side effects
 
+### Controller and inventory consistency
+
+`GET /ai/controllers` enumerates raw regional entries; `GET /ships/{id}/controllers`
+filters by stored hull call sign, including references to absent/replaced hulls.
+Both use normal `offset`/`limit` paging. Entries report region/slot, role, home,
+active command, broken entries and exact identity against the world registry.
+The direct response distinguishes repeated registration of one controller from
+multiple controllers sharing the current hull. `liveHull*` counts refer to the
+exact current registry object; destroyed state is reported separately.
+
+Existing `/ships/{id}/ai` and freight `flight.controllers` summaries now retain
+all observed registrations, with at most 32 detail rows. Follow the dedicated
+controller route for further pages. Singular home/pilot/command fields are null
+when current controllers conflict or the scan is incomplete; the API never chooses
+an authoritative controller. Stale same-ID objects do not override a unique current
+controller. Station freight association considers every observed current controller
+home rather than whichever one happened to be indexed last. An incomplete station
+freight index can omit unknown home-only matches; `aiIndexIncomplete` reports that.
+
+Audit `observations` distinguish unresolved/destroyed hulls, market-ID mismatches,
+duplicate current-hull registrations, stale controller hull references and stock
+cache discrepancies. Missing hulls do not establish cargo loss, invalid markets,
+legitimate retirement or safe pruning/refunding. A current snapshot cannot prove
+past deliveries; compare external snapshots or saved evidence for that question.
+
+`stockComparison` reads the native cached stock dictionary and sums backing
+`MarketActorConfig.Stock` list lengths by dictionary key, matching native
+`GetStockTotals` arithmetic without calling it or flattening manifests. It does
+not inspect every item's contents, provenance, mass or category label. Null backing
+data, time/size limits or unavailable dictionaries make `complete` false and
+`matches`/`mismatchCount` null. Observed totals are lower/partial totals in that case.
+Only a complete comparison reports definite matching stock or category mismatches.
+
+Per-market comparison caps are 512 actors, 4,096 work units (cache entries, actors
+and actor stock entries), 256 categories per side and 64 reported mismatches.
+Controller capture stops after 4,096 entries or the cooperative inspection budget.
+`scanComplete` false means controller counts are lower bounds and absence/uniqueness
+is unknown. A null controller-page `nextOffset` alone does not prove a complete
+census: check `scanComplete`, retry or query the hull directly. Collection rows and
+controller detail pages use the usual response limit. Pagination skips earlier
+markets without comparing their stock; large offsets may return 503 on budget
+exhaustion, so direct IDs are preferable for follow-up checks.
+
+These are request-scoped reads. No recurring hooks, recording toggles, diagnostic
+history, save fields or retained game-object collections are added. Existing flight
+journal/event recording is unchanged. An external client can poll these GET routes
+and write detached readings to disk without enabling an in-game trace.
+
+### Existing request budget
+
 Pages share the existing cooperative 1 ms main-thread budget; one bounded row is
 allowed for forward progress. Recipe inputs are limited to 32 per row, commodity
 role inference to 128 recipes/32 inputs, actor stock summaries and hub members to
@@ -103,5 +161,10 @@ rounding with native behavior, inspect shortage and freight scenarios, check bac
 versus cached inventories, pagination/bounds, detached item data and missing-singleton
 handling. Guards reject calls to production, route selection, lazy price/mass helpers,
 position advancement, trader synchronization and the repairing AI ship getter.
-The combined economic/inspection suite passes 1,412 checks; the existing 4,850 orbital
-checks also remain available. No live game reload is needed to run these checks.
+The combined economic/inspection suite passes 1,476 checks. An additional 13
+full-plugin controller route/identity checks run through `AIShipLifecycleCheck`
+mode `controller-inspection`. They cover ambiguous and stale references, missing
+hulls, malformed routes, detached responses and repairing-getter guards. Nested
+navigation/combat snapshots are stubbed only in that routing fixture; controller
+selection and response construction are production code. No live game reload is
+needed to run these checks.

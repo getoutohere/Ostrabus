@@ -109,6 +109,28 @@ static class CoreChecks {
         var buffer=worker.Rent(geometry.Length);Array.Copy(geometry,buffer,geometry.Length);worker.Submit(ticket,buffer,geometry.Length);
     }
     static bool Ready(HullWorker worker,HullWorker.Entry entry)=>worker.Read(entry,out _,out _,out bool clean,out _)&&clean;
+    static void Sizing() {
+        var builder=new EnvelopeBuilder();
+        var wide=builder.Build(Box(0,0,50,20),4,null);
+        var tall=builder.Build(Box(0,0,20,50),4,null);
+        var large=builder.Build(Box(0,0,100,40),4,null);
+        Check(wide.MapRadius==tall.MapRadius,"Turning a hull sideways changes its map size");
+        Check(Math.Abs(large.MapRadius/wide.MapRadius-2)<1e-6,"Map magnification differs between hulls");
+        Check(!wide.SameDrawing(large),"Uniform hull growth was discarded as an unchanged drawing");
+        Check(wide.SameDrawing(builder.Build(Box(100,-100,50,20),4,null)),"Moving the local grid changed hull scale");
+        double minX=double.PositiveInfinity,maxX=double.NegativeInfinity,minY=minX,maxY=maxX;
+        for(int i=0;i<wide.Count;i++) {
+            var p=wide.Unit(i);
+            minX=Math.Min(minX,p.X*wide.MapRadius);maxX=Math.Max(maxX,p.X*wide.MapRadius);
+            minY=Math.Min(minY,p.Y*wide.MapRadius);maxY=Math.Max(maxY,p.Y*wide.MapRadius);
+        }
+        Check(Math.Abs(maxX-minX-50*Envelope.MapMetresPerTile)<.001&&Math.Abs(maxY-minY-20*Envelope.MapMetresPerTile)<.001,"Outline rescaled the axes independently");
+        var manual=new Manual();var worker=new HullWorker(manual.Queue);var entry=worker.Create();
+        Submit(worker,entry,Box(0,0,50,20));manual.Drain();worker.Read(entry,out _,out long before,out _,out _);
+        worker.Dirty(entry);Submit(worker,entry,Box(0,0,100,40));manual.Drain();worker.Read(entry,out _,out long after,out _,out _);
+        Check(after>before,"Resizing an identical shape did not invalidate its renderer version");
+        worker.Reset(true);
+    }
     static void QueueAndOwnership() {
         var manual=new Manual();var worker=new HullWorker(manual.Queue);var entry=worker.Create();
         var geometry=Box(0,0,20,10);Submit(worker,entry,geometry);
@@ -192,7 +214,7 @@ static class CoreChecks {
     }
     internal static void Run() {
         CollisionChecks.Run();
-        Geometry();Zoom();QueueAndOwnership();FailuresAndTickets();
+        Geometry();Sizing();Zoom();QueueAndOwnership();FailuresAndTickets();
         InFlight((w,e)=>w.Dirty(e),"mutation");InFlight((w,e)=>w.Retire(e),"destruction");
         InFlight((w,e)=>w.Reset(),"reload");InFlight((w,e)=>w.Reset(true),"shutdown");
         Console.WriteLine(checks+" hull geometry/ownership/queue/concurrency checks passed.");

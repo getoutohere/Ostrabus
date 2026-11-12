@@ -15,13 +15,7 @@ try {
         root = Directory.GetParent(root)?.FullName ?? throw new Exception("Repository root not found.");
 
     string catalogFile = Path.Combine(root, "CustomBuilder", "features.json");
-    var catalog = File.Exists(catalogFile) ? Files.Read<Catalog>(catalogFile) : new Catalog {
-        ExcludedSources = [
-            "MiscBugFixes/TorchCourseFuel.cs",
-            "MiscBugFixes/TorchCourseFuelPatches.cs",
-            "MiscBugFixes/TorchFuelCachePatch.cs"
-        ]
-    };
+    var catalog = File.Exists(catalogFile) ? Files.Read<Catalog>(catalogFile) : new Catalog();
     var declarations = Inventory.Scan(root, catalog);
 
     if (command == "inventory") {

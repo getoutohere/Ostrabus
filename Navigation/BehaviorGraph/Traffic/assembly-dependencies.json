@@ -1,0 +1,781 @@
+{
+  "schemaVersion": 1,
+  "description": "Cargo/PASS/civilian role trees and reviewed traffic/lifecycle boundaries; all exported native node methods have declared bindings.",
+  "bindings": {
+    "cargo": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.HaulerCargoPilot",
+        "methods": [
+          ".ctor",
+          "GetTarget",
+          "FFWD",
+          "CreateAIShip",
+          "MaxSpeed"
+        ]
+      }
+    ],
+    "civilian": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.CivilianPilot",
+        "methods": [
+          ".ctor",
+          "GetTarget",
+          "GetTargetHome",
+          "FFWD",
+          "CreateAIShip",
+          "CanDockWith",
+          "InstaDock",
+          "MaxSpeed"
+        ]
+      }
+    ],
+    "base_character": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.BaseCharacter",
+        "methods": [
+          ".ctor",
+          "GetTargetHome",
+          "AssignCaptain"
+        ]
+      }
+    ],
+    "controller": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.AIShip",
+        "methods": [
+          ".ctor",
+          "SetupAI",
+          "RunAI",
+          "FFWD",
+          "AddCommand",
+          "FindShipForFaction",
+          "ResetShipState",
+          "AddCrew",
+          "GetBehaviorTreeSaveData",
+          "LoadBehaviorTreeSave"
+        ]
+      }
+    ],
+    "manager": [
+      {
+        "type": "AIShipManager",
+        "methods": [
+          "CheckTradeRoutes",
+          "CanReachTarget",
+          "GetCargoShipForRoute",
+          "SpawnPassShip",
+          "SpawnFactionShips",
+          "HandleTransits",
+          "Update",
+          "FFWD",
+          "RegionCleanup",
+          "AIShipCleanup",
+          "CrewCleanup",
+          "GetShipType",
+          "RunAIQueue",
+          "UnregisterShip",
+          "AddAIToShip",
+          "AddAIToDict",
+          "Init",
+          "GetJSONAIShipSave",
+          "GetShipsOfTypeForRegion",
+          "GetJSONSave",
+          "ApplySaveData",
+          "TryGetAIShip"
+        ]
+      }
+    ],
+    "market": [
+      {
+        "type": "Ostranauts.Trading.MarketManager",
+        "methods": [
+          "Run",
+          "UpdateMarket",
+          "GetTradeRoute",
+          "RegisterAICargoHauler",
+          "UnregisterCargoShip",
+          "UnregisterShip",
+          "GetShipMarket"
+        ]
+      }
+    ],
+    "crew": [
+      {
+        "type": "CrewSim",
+        "methods": [
+          "DockAndDespawn",
+          "DestroyAndReload",
+          "GetSelectedCrew"
+        ]
+      }
+    ],
+    "ship": [
+      {
+        "type": "Ship",
+        "methods": [
+          "Destroy",
+          "CheckTargets",
+          "GetJSON",
+          "ClearShipTarget",
+          "IsStation",
+          "Dock",
+          "UnMoorFrom",
+          "IsDockedWithPlayer",
+          "GetAllDockedShips",
+          "set_HideFromSystem"
+        ]
+      }
+    ],
+    "world": [
+      {
+        "type": "StarSystem",
+        "methods": [
+          "GetNearestStationRegional",
+          "GetNearestStation",
+          "GetShipsForOwner",
+          "PostShipLoad",
+          "CleanupStaleShips",
+          "CreateStellarObject",
+          "SpawnShipFromStellarObject",
+          "RemoveShip"
+        ]
+      }
+    ],
+    "target": [
+      {
+        "type": "Ostranauts.Ships.TargetData",
+        "methods": [
+          ".ctor",
+          "ApplyToShip",
+          "get_HasValidTarget"
+        ]
+      }
+    ],
+    "cmd_SelectorCommand": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SelectorCommand",
+        "methods": [
+          "RunCommand",
+          "OnExit"
+        ]
+      }
+    ],
+    "cmd_QueuedCommandsNode": [
+      {
+        "type": "Ostranauts.Ships.Commands.QueuedCommandsNode",
+        "methods": [
+          "CanExecute",
+          "RunCommand",
+          "OnExit"
+        ]
+      }
+    ],
+    "cmd_SequenceCommand": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SequenceCommand",
+        "methods": [
+          "RunCommand",
+          "OnExit"
+        ]
+      }
+    ],
+    "cmd_AreThreatsNearby": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.AreThreatsNearby",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_AmIBeingTargeted": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.AmIBeingTargeted",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_AmIDamaged": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.AmIDamaged",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_SurrenderOffer": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SurrenderOffer",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_StickySequenceCommand": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.StickySequenceCommand",
+        "methods": [
+          "RunCommand",
+          "OnExit",
+          ".ctor",
+          "GetSaveData",
+          "LoadSaveData"
+        ]
+      }
+    ],
+    "cmd_TargetNearestStation": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TargetNearestStation",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_SosThreatApproaching": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SosThreatApproaching",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_FlyTo": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyTo",
+        "methods": [
+          "CanExecute",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "OnExit"
+        ]
+      }
+    ],
+    "cmd_Dock": [
+      {
+        "type": "Ostranauts.Ships.Commands.Dock",
+        "methods": [
+          "CanExecute",
+          "RunCommand",
+          "ResolveInstantly"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "OnExit"
+        ]
+      }
+    ],
+    "cmd_TargetNewIfNone": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TargetNewIfNone",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_DockCargoAndDespawn": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.DockCargoAndDespawn",
+        "methods": [
+          "RunCommand",
+          "ResolveInstantly"
+        ]
+      }
+    ],
+    "cmd_AmIInCombat": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.AmIInCombat",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_DoIHaveDecoys": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.DoIHaveDecoys",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_AreMissilesComingMyWay": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.AreMissilesComingMyWay",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_DeployDecoys": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.DeployDecoys",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_AmIArmed": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.AmIArmed",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_SetEngagementProfile": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SetEngagementProfile",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_Undock": [
+      {
+        "type": "Ostranauts.Ships.Commands.Undock",
+        "methods": [
+          "CanExecute",
+          "RunCommand",
+          "AttemptToUnMoor"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "OnExit"
+        ]
+      }
+    ],
+    "cmd_DoIPreferShortRange": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.DoIPreferShortRange",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_KeepWithinFiringDistance": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.KeepWithinFiringDistance",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_KeepAtDistance": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.KeepAtDistance",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_TargetEscapeStation": [
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "CanExecute",
+          "OnExit"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TargetEscapeStation",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "cmd_Hold": [
+      {
+        "type": "Ostranauts.Ships.Commands.Hold",
+        "methods": [
+          "CanExecute",
+          "RunCommand",
+          "ResolveInstantly"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.BaseCommand",
+        "methods": [
+          "OnExit"
+        ]
+      }
+    ],
+    "patch_lifetime": [],
+    "patch_fuel": [],
+    "patch_crew": [],
+    "patch_identity": [],
+    "patch_sff": [],
+    "patch_economy": [],
+    "patch_economy_hooks": [],
+    "patch_loading": [],
+    "patch_return": [],
+    "cmd_FlyToPath": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToPath",
+        "methods": [
+          ".ctor",
+          "RunCommand",
+          "PlanTrip4",
+          "IsInterregionalPath"
+        ]
+      }
+    ],
+    "cmd_OneShotWrapperCommand": [
+      {
+        "type": "Ostranauts.Ships.Commands.OneShotWrapperCommand",
+        "methods": [
+          ".ctor",
+          "RunCommand",
+          "CanExecute",
+          "OnExit",
+          "GetSaveData",
+          "LoadSaveData"
+        ]
+      }
+    ],
+    "cmd_FlyToManual": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToManual",
+        "methods": [
+          ".ctor",
+          "RunCommand"
+        ]
+      }
+    ],
+    "patch_civilian_coordinates": [],
+    "collision_region": [
+      {
+        "type": "CollisionManager",
+        "methods": [
+          "RefreshCurrentRegion",
+          "CheckCollisions",
+          "ProcessCollision"
+        ]
+      }
+    ],
+    "patch_region_retention": [],
+    "blackboard": [
+      {
+        "type": "Ostranauts.Core.Blackboard",
+        "methods": [
+          "GetJson",
+          "LoadSavedData",
+          "Get",
+          "Set",
+          "HasKey",
+          "Remove"
+        ]
+      }
+    ],
+    "ai_queue": [
+      {
+        "type": "Ostranauts.Ships.AIShipQueue",
+        "methods": [
+          "Count",
+          "Fill",
+          "Enqueue",
+          "Dequeue",
+          "Clear"
+        ]
+      }
+    ],
+    "patch_visits": []
+  },
+  "predicateSources": {
+    "bounded_pending": [
+      "patch_sff"
+    ],
+    "economic_owned": [
+      "patch_economy"
+    ],
+    "economic_dispatch": [
+      "patch_economy"
+    ],
+    "retained_detached": [
+      "patch_region_retention", "manager", "ship"
+    ],
+    "visit_priority_other": [
+      "patch_visits", "controller", "ai_queue", "cmd_QueuedCommandsNode"
+    ],
+    "ordinary_visit": [
+      "patch_visits", "civilian", "controller", "cmd_StickySequenceCommand",
+      "cmd_AmIInCombat", "cmd_AreThreatsNearby"
+    ],
+    "deferred_visit": [
+      "patch_visits", "civilian"
+    ],
+    "hidden_visit": [
+      "patch_visits", "ship"
+    ],
+    "marked_visit": [
+      "patch_visits", "blackboard"
+    ],
+    "civilian_attached": [
+      "patch_visits", "controller", "ship"
+    ]
+  },
+  "assets": [
+    {
+      "id": "npc_prunable",
+      "path": "condtrigs/condtrigs.json",
+      "entry": "TIsNPCPrunable",
+      "sources": [
+        "manager"
+      ]
+    },
+    {
+      "id": "traffic_people",
+      "path": "condtrigs/condtrigs.json",
+      "entry": "TIsTrafficAI",
+      "sources": [
+        "manager"
+      ]
+    },
+    {
+      "id": "station_dropoff",
+      "path": "condtrigs/condtrigs.json",
+      "entry": "TIsValidStationDropOff",
+      "sources": [
+        "crew"
+      ]
+    },
+    {
+      "id": "pass_hulls",
+      "path": "loot/loot.json",
+      "entry": "RandomPassShip",
+      "sources": [
+        "manager",
+        "cargo"
+      ]
+    },
+    {
+      "id": "civilian_hulls",
+      "path": "loot/loot.json",
+      "entry": "RandomCivilianShip",
+      "sources": [
+        "civilian"
+      ]
+    },
+    {
+      "id": "regional_cargo",
+      "path": "loot/loot.json",
+      "entry": "RegionalCargoShip4Pods",
+      "sources": [
+        "manager",
+        "cargo"
+      ]
+    },
+    {
+      "id": "interregional_cargo",
+      "path": "loot/loot.json",
+      "entry": "InterregionalCargoShip4Pods",
+      "sources": [
+        "manager",
+        "cargo"
+      ]
+    },
+    {
+      "id": "civilian_ccre",
+      "path": "loot/loot.json",
+      "entry": "RandomCivilianShipCCRE",
+      "sources": [
+        "civilian"
+      ]
+    },
+    {
+      "id": "civilian_galcon",
+      "path": "loot/loot.json",
+      "entry": "RandomCivilianShipGalileanConfederacy",
+      "sources": [
+        "civilian"
+      ]
+    },
+    {
+      "id": "regional_cargo8",
+      "path": "loot/loot.json",
+      "entry": "RegionalCargoShip8Pods",
+      "sources": [
+        "manager",
+        "cargo"
+      ]
+    },
+    {
+      "id": "regional_cargo36",
+      "path": "loot/loot.json",
+      "entry": "RegionalCargoShip36Pods",
+      "sources": [
+        "manager",
+        "cargo"
+      ]
+    },
+    {
+      "id": "interregional_cargo8",
+      "path": "loot/loot.json",
+      "entry": "InterregionalCargoShip8Pods",
+      "sources": [
+        "manager",
+        "cargo"
+      ]
+    },
+    {
+      "id": "interregional_cargo36",
+      "path": "loot/loot.json",
+      "entry": "InterregionalCargoShip36Pods",
+      "sources": [
+        "manager",
+        "cargo"
+      ]
+    },
+    {
+      "id": "oklg_recycle_stations",
+      "path": "loot/loot.json",
+      "entry": "TXTOKLGRecycleStations",
+      "sources": [
+        "manager"
+      ]
+    }
+  ]
+}

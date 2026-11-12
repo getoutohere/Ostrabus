@@ -42,9 +42,20 @@ static partial class Program {
         co.mapGUIPropMaps["Electrical"] = Gpm(e);
         e.status = e.bOverride = true; e.isInitialising = false; e.fTimeToNextAudit = 10000;
         registry[co.strID] = co; conditions[co.strID] = new HashSet<string> { "IsPowered" };
+        if (productionTesting) {
+            co.mapConds = new Dictionary<string, Condition>();
+            ship.strRegID = "production-ship-" + serial;
+            Set(ship, "nLoadState", Ship.Loaded.Full);
+            CompletedElectricalLoad(ship) = true;
+            CrewSim.system.dictShips[ship.strRegID] = ship;
+        }
         return e;
     }
-    static void Input(Electrical e, string origin, bool on) => e.inputConnections[origin] = new ElectricalConnection(origin, on ? SignalType.On : SignalType.Off);
+    static void Input(Electrical e, string origin, bool on) {
+        e.inputConnections[origin] = new ElectricalConnection(origin, on ? SignalType.On : SignalType.Off);
+        if (productionTesting && registry.TryGetValue(origin, out var source) && source.Electrical != null)
+            source.Electrical.outputConnections[e.coSelf.strID] = new ElectricalConnection(e.coSelf.strID, SignalType.On);
+    }
     static void Tick(Electrical e) { StarSystem.fEpoch += 1; e.ResolveSignalQueue(); }
     static void Init(Electrical e) => AccessTools.Method(typeof(Electrical), "InitGPMValues").Invoke(e, null);
     public static void Main() {
@@ -141,6 +152,7 @@ static partial class Program {
         CheckAuditLogging();
         CheckOffscreenPersistence();
         CheckCandidateFixes();
+        CheckCandidateFixes(production: true);
         h.UnpatchSelf();
         Console.WriteLine("Signal-box audit: " + checks + " checks; " + findings.Count + " reproduced findings; logging routing verified. No live game or save changed.");
     }

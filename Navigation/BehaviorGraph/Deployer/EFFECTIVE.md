@@ -41,15 +41,3 @@ flowchart TD
   n_plotted -->|"invalid_route_supplied / vorb_scope [conditional]"| n_manual
   n_plotted -->|"add_fuel / shared_replenishment"| n_refill
 ```
-
-## motion
-
-```mermaid
-flowchart TD
-```
-
-## lifecycle
-
-```mermaid
-flowchart TD
-```

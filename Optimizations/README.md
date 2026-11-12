@@ -3,6 +3,11 @@
 Harmony patches for simulation and save/load costs, plus bounded profiling telemetry. Each optimization is isolated
 here so it can be reviewed or disabled independently.
 
+[Trigger classification](TRIGGER-CLASSIFICATION.md) repairs the metadata used to
+choose people-only searches. It removes a false recursion failure and retains
+general searches for mixed alternatives, negation and unresolved dependencies.
+Native JSON predicates and interaction evaluation remain authoritative.
+
 [Comms history](COMMS-HISTORY.md) removes old transcript entries after full save
 loading and before the main-thread save snapshot, preserving unread incoming
 messages, in-flight deliveries and each conversation's last reply context.

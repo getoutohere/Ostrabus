@@ -25,16 +25,25 @@ the normal `bin/Debug` plugin or changes the maintained gameplay source.
 | `bugfixes` | Bug repairs only |
 | `bugfixes-qol` | Bug repairs and quality of life |
 | `bugfixes-performance` | Bug repairs and optimizations |
-| `recommended` | Bug repairs, quality of life and optimizations; menu default |
-| `full` | All nonexperimental consumer features, including simulation changes |
+| `recommended` | Bug repairs, quality of life, optimizations, all simulation changes except Ceres navigation guardrails, and legacy maintenance commands; menu default |
+| `full` | All nonexperimental consumer features, including every simulation change and legacy maintenance commands |
 | `developer` | Full consumer selection plus API/debugging/profiling tools |
 | `empty` | No features; useful as a starting point or composition control |
 
 All presets exclude experiments; `save-json` can be selected explicitly.
 Hidden support features are included through dependencies. These groupings are
 packaging choices, not a promise of compatibility with future game patches.
-The two torch-autopilot changes pending playtesting remain excluded from custom
-builds, as they are from the current public commit.
+Recommended includes `massfix` through `legacy-commands` and `navfix` through
+`navigation-targets` so existing saves can be repaired. Other developer diagnostics
+remain excluded. Ceres guardrails are still individually selectable and included
+in Full; Recommended excludes the stable `ceres-navigation` ID, regardless of its
+current menu number.
+Torch features are individually selectable: `torch-fuel-cache` repairs fuel checks;
+`torch-fuel` adds course consumption/reactor control and requires that cache fix;
+`torch-momentum` adds momentum-aware player trajectories and requires `torch-fuel`
+for its shared nav-console planning scope/integration. `torch-towing` remains
+independent. Bugfix presets include the fuel and towing repairs; Recommended and
+Full also include the momentum-aware simulation improvement.
 
 Run commands from the repository root:
 
@@ -104,6 +113,10 @@ parked-hull collision policy, render geometry and physical collision covers, cor
 gravity/coasting/SFF/economy, and mixed legacy command/social patches. The original
 files are not rewritten. Native asset behavior and gameplay algorithms remain
 owned by their existing modules.
+Barter presentation (`barter-zones`) is QoL; scoped loader cancellation
+(`async-ship-loading`) and item persistence (`barter-writeback`) are independent
+bugfix features. The optional `barter-index` optimization requires writeback
+safety so its native fallback and optimized path have the same guarantees.
 Selected hooks retain the normal compiler's registration order, including equal
 Harmony priorities; the builder does not alphabetize their execution order.
 

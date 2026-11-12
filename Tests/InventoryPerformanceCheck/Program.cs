@@ -104,6 +104,9 @@ static partial class Program {
         return Json(new { error, source = original.json.aItems, copy = copy.json.aItems, coordinates, calls = events.ToArray(), saves = DataHandler.dictCOSaves.Values.ToArray(), shared = ReferenceEquals(original.json.aItems, copy.json.aItems) });
     }
     static void WriteChecks(Harmony production) {
+        // Compare the optimized path against the native mechanism with the
+        // separately selectable persistence repair, not its former item-loss bug.
+        production.CreateClassProcessor(typeof(Ostrabus.MiscBugFixes.BarterWritebackSafetyPatch)).Patch();
         var expected = Enumerable.Range(0, 10).Select(WriteCase).ToArray();
         var saved = Enumerable.Range(0, 8000).Select(i => new JsonItem { strID = "item-" + i.ToString("D8") }).ToArray();
         Reset(); Ship original = Empty<Ship>(); original.json = new JsonShip { aItems = saved };
@@ -139,6 +142,7 @@ static partial class Program {
             Prefix(fixture, typeof(Transform), "get_position", nameof(GetPosition)); Prefix(fixture, typeof(Transform), "set_position", nameof(SetPosition));
             Prefix(fixture, typeof(Ship), "GetJsonItem", nameof(SerializeItem)); Prefix(fixture, typeof(CondOwner), "GetJSONSave", nameof(SerializeCO));
             WriteChecks(production); RemainingChecks(production, fixture); RemovalChecks(production, fixture);
+            LoadedParentChecks(production);
             Console.WriteLine(checks + " inventory performance equivalence/lifecycle/allocation checks passed.");
         } finally { production.UnpatchSelf(); fixture.UnpatchSelf(); }
     }

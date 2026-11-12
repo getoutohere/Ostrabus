@@ -1,0 +1,44 @@
+[
+  {
+    "strName": "MVOL",
+    "strCustomPrefabPathOptional": null,
+    "aConnections": [
+      { "strTargetRegID": "MVOL" },
+      {
+        "strTargetRegID": "MVOL_Med",
+        "ctKioskOrigin": "TIsTransitLiftExpress",
+        "ctKioskDestination": "TIsTransitLiftExpress"
+      },
+      {
+        "strTargetRegID": "MVOL_Lab",
+        "ctKioskOrigin": "TIsTransitLiftExpress",
+        "ctKioskDestination": "TIsTransitLiftExpress"
+      },
+      {
+        "strLabelNameOptional": "Private Residence",
+        "ctUserOptional": "TIsHomeownerMVOL",
+        "strTargetRegID": "MVOL|",
+        "ctKioskOrigin": "TIsTransitLiftExpress",
+        "ctKioskDestination": "TIsTransit"
+      }
+    ]
+  },
+  {
+    "strName": "MVOL|",
+    "strCustomPrefabPathOptional": null,
+    "aConnections": [
+      {
+        "strLabelNameOptional": "Upsilon Docking",
+        "strTargetRegID": "MVOL",
+        "ctKioskOrigin": "TIsTransit",
+        "ctKioskDestination": "TIsTransitLiftExpress"
+      },
+      {
+        "strLabelNameOptional": "Private Residence",
+        "strTargetRegID": "MVOL|",
+        "ctKioskOrigin": "TIsTransit",
+        "ctKioskDestination": "TIsTransit"
+      }
+    ]
+  }
+]

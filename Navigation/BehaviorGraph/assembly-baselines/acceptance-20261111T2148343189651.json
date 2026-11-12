@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/4049df05c72c3346813e0d0bab100216b554f0b9c45991550d21e918caeebcd2.json.br",
+  "reason": "Reviewed shared target lifetime repair: 276 native lifecycle checks; typed cross-actor model and current source/method bindings, without claiming complete behavior coverage.",
+  "acceptedUtc": "2026-11-11T21:48:34.3173371Z",
+  "previousSnapshot": "assembly-baselines/021efb74eccc4b4435c24be3aa41b0153c4c796ad5bc5d602cd4b0a40e74531d.json.br"
+}

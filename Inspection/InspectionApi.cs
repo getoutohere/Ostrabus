@@ -59,6 +59,13 @@ internal sealed class InspectionApi : IDisposable {
     }
 
     static Reply Error(int status, string message) { return new Reply(status, SnapshotJson.Map("error", message)); }
+    static bool TorchTraceControl(string path) => path == "/torch/trace/start" || path == "/torch/trace/stop";
+    static Reply ControlTorchTrace(string path) {
+        try {
+            global::Ostrabus.Diagnostics.TorchTrace.SetEnabled(path.EndsWith("/start",StringComparison.Ordinal));
+            return new Reply(200,global::Ostrabus.Diagnostics.TorchTrace.Snapshot());
+        } catch (InvalidOperationException ex) { return Error(409,ex.Message); }
+    }
     static long Now { get { return Stopwatch.GetTimestamp(); } }
     void SceneChanged(Scene oldScene, Scene newScene) { Invalidate(); }
     void SceneUnloaded(Scene scene) { Invalidate(); }
@@ -117,10 +124,11 @@ internal sealed class InspectionApi : IDisposable {
             else if (TransitProfileInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) && http.HttpMethod != "POST") { reply = Error(405, "Transit profiling controls require POST."); }
             else if (SocialsProfileInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) && http.HttpMethod != "POST") { reply = Error(405, "Socials profiling controls require POST."); }
             else if (FlightJournal.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) && http.HttpMethod != "POST") { reply = Error(405, "Flight journal controls require POST."); }
+            else if (TorchTraceControl(http.Url?.AbsolutePath.TrimEnd('/')) && http.HttpMethod != "POST") { reply = Error(405, "Torch trace controls require POST."); }
             else if (http.Url?.AbsolutePath.TrimEnd('/') == global::Ostrabus.Micrometeoroids.MeteorTest.Route && http.HttpMethod != "POST") { reply = Error(405, "Micrometeoroid test strikes require POST."); }
             else if (PersonnelCombatRequest.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) && http.HttpMethod != "POST") { reply = Error(405, "Personnel trace controls require POST."); }
             else if (ShipPruning.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) && http.HttpMethod != "POST") { reply = Error(405, "Ship pruning requires POST."); }
-            else if (http.HttpMethod != "GET" && !(http.HttpMethod == "POST" && (http.Url?.AbsolutePath.TrimEnd('/') == "/derelicts/prune" || http.Url?.AbsolutePath.TrimEnd('/') == global::Ostrabus.Micrometeoroids.MeteorTest.Route || MemoryInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || TransitProfileInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || SocialsProfileInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || ShipPruning.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || ShipAIRecovery.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || ShipRefueling.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || HaulerRescue.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || ShipArrival.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || PersonnelCombatRequest.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || FlightJournal.IsControl(http.Url?.AbsolutePath.TrimEnd('/'))))) { reply = Error(405, "GET is required except explicit pruning, recovery and diagnostic control POST routes."); }
+            else if (http.HttpMethod != "GET" && !(http.HttpMethod == "POST" && (http.Url?.AbsolutePath.TrimEnd('/') == "/derelicts/prune" || http.Url?.AbsolutePath.TrimEnd('/') == global::Ostrabus.Micrometeoroids.MeteorTest.Route || MemoryInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || TransitProfileInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || SocialsProfileInspection.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || ShipPruning.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || ShipAIRecovery.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || ShipRefueling.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || HaulerRescue.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || ShipArrival.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || FreightRecovery.IsRoute(http.Url?.AbsolutePath.TrimEnd('/')) || PersonnelCombatRequest.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || FlightJournal.IsControl(http.Url?.AbsolutePath.TrimEnd('/')) || TorchTraceControl(http.Url?.AbsolutePath.TrimEnd('/'))))) { reply = Error(405, "GET is required except explicit pruning, recovery and diagnostic control POST routes."); }
             else if (http.Url.AbsolutePath.Length > 256) { reply = Error(400, "Path too long."); }
             else if (!ParsePage(http.QueryString["offset"], 0, http.Url.AbsolutePath.TrimEnd('/') == "/console" || http.Url.AbsolutePath.StartsWith("/economy/", StringComparison.Ordinal) ? 1048576 : 10000, out int offset) ||
                      !ParsePage(http.QueryString["limit"], 25, 50, out int limit) || limit == 0 ||
@@ -133,6 +141,7 @@ internal sealed class InspectionApi : IDisposable {
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/profiling/transit") { reply = new Reply(200, global::Ostrabus.Optimizations.TransitProfiling.Snapshot()); }
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/profiling/socials") { reply = new Reply(200, global::Ostrabus.Optimizations.SocialsProfiling.Snapshot()); }
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/flight") { reply = new Reply(200, FlightJournal.Snapshot()); }
+            else if (http.Url.AbsolutePath.TrimEnd('/') == "/torch/trace") { reply = new Reply(200, global::Ostrabus.Diagnostics.TorchTrace.Snapshot()); }
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/events/docking") { reply = new Reply(200, DockingInspection.Read(since, limit)); }
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/events/ai") { reply = new Reply(200, InspectionEventHistory.Read(since, limit, shipFilter, "ai")); }
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/events/combat") { reply = new Reply(200, InspectionEventHistory.Read(since, limit, shipFilter, "combat")); }
@@ -143,7 +152,7 @@ internal sealed class InspectionApi : IDisposable {
             else {
                 var request = new Request {
                     Path = http.Url.AbsolutePath.TrimEnd('/'), Method = http.HttpMethod, Offset = offset, Limit = limit, RadiusKm = radius,
-                    StationId = stationId, MinDistanceKm = minDistanceKm, MaxShips = maxShips, Confirm = pruneId != null ? http.QueryString["confirm"] : confirm,
+                    StationId = stationId, MinDistanceKm = minDistanceKm, MaxShips = maxShips, Confirm = pruneId != null || FreightRecovery.IsRoute(http.Url.AbsolutePath.TrimEnd('/')) ? http.QueryString["confirm"] : confirm,
                     ShipId = pruneId ?? shipFilter, Since = since, DryRun = dryRun, Force = force,
                     CoId = coId, TraceSeconds = traceSeconds,
                     FuelTargetKg = fuelTarget,
@@ -224,7 +233,7 @@ internal sealed class InspectionApi : IDisposable {
         minDistanceKm = 0;
         maxShips = 5;
         string path = http.Url.AbsolutePath.TrimEnd('/');
-        if (ShipPruning.IsRoute(path)) return true;
+        if (ShipPruning.IsRoute(path) || FreightRecovery.IsRoute(path)) return true;
         bool preview = path == "/derelicts" && http.HttpMethod == "GET";
         bool prune = path == "/derelicts/prune" && http.HttpMethod == "POST";
         if (!preview && !prune) {
@@ -282,15 +291,23 @@ internal sealed class InspectionApi : IDisposable {
                     request.Completion.TrySetResult(SocialsProfileInspection.Control(request.Path));
                 } else if (request.Path == "/flight/stop" && request.Method == "POST") {
                     request.Completion.TrySetResult(FlightJournal.Control(request.Path));
+                } else if (request.Path == "/torch/trace/stop" && request.Method == "POST") {
+                    request.Completion.TrySetResult(ControlTorchTrace(request.Path));
                 } else if (!ready) { request.Completion.TrySetResult(Error(503, "Game is not ready.")); }
                 else {
                     InspectionApi.Reply reply;
                     if (request.Path == "/orbital") {
                         reply = new Reply(200, global::Ostrabus.Orbital.OrbitalSimulation.Snapshot());
+                    } else if (FreightRecovery.IsRoute(request.Path)) {
+                        reply = FreightRecovery.Run(request.Path,request.Method == "POST",request.Confirm);
                     } else if (request.Path == "/economy" || request.Path.StartsWith("/economy/", StringComparison.Ordinal)) {
                         reply = EconomyInspection.Query(request.Path, request.Offset, request.Limit, start);
                     } else if (FlightJournal.IsControl(request.Path) && request.Method == "POST") {
                         reply = FlightJournal.Control(request.Path);
+                    } else if (TorchTraceControl(request.Path) && request.Method == "POST") {
+                        reply = ControlTorchTrace(request.Path);
+                    } else if (request.Path == "/torch/reactor") {
+                        reply = new Reply(200,global::Ostrabus.Diagnostics.TorchTrace.Inspect(request.ShipId));
                     } else if (MemoryInspection.IsControl(request.Path) && request.Method == "POST") {
                         reply = MemoryInspection.Control(request.Path);
                     } else if (TransitProfileInspection.IsControl(request.Path) && request.Method == "POST") {
@@ -353,6 +370,7 @@ internal sealed class InspectionApi : IDisposable {
     }
 
     public void Dispose() {
+        global::Ostrabus.Diagnostics.TorchTrace.Stop("inspection stopped");
         FlightJournal.Stop(false);
         global::Ostrabus.Optimizations.TransitProfiling.Stop();
         global::Ostrabus.Optimizations.SocialsProfiling.Stop();

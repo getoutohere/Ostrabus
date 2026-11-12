@@ -114,6 +114,7 @@ static partial class EconomyChecks {
         using (var context = SffEconomy.Begin(CrewSim.system, 21600, true)) { StarSystem.fEpoch += 21600; context.Run(); }
         check(Inspect("/economy")["lastSffEconomy"]["records"][0]["cargo"]["Metal"].Value<int>() == 56,
             "Actual SFF cargo reports serialize through the inspection encoder");
+        ConsistencyChecks(check);
     }
 }
 namespace Ostrabus.Inspection {

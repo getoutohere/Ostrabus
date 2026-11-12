@@ -1,6 +1,7 @@
 # Vanilla signal-box audit
 
-November 5, 2026. Signal behavior fixes are not implemented. Diagnostic routing
+November 5, 2026 original audit. At that point, signal behavior fixes were not
+implemented. Diagnostic routing
 is implemented separately in ElectricalAuditLogging.cs: faulty-connection reports
 and endpoint context go to Player.log and `/logs`, without player-console spam.
 Native audit decisions remain unchanged. No live save was changed. The installed
@@ -10,8 +11,13 @@ with seven reproduced behavior findings.
 November 9 follow-up: the current assembly still reproduces all seven findings.
 [Offline candidate fixes and their limits](../Tests/SignalBoxAudit/CANDIDATES.md)
 now pass 2,484 combined checks, including reconstruction authority and vanilla
-conversion preservation. They remain test-only; signal behavior in the
-production plugin is still unchanged.
+conversion preservation. At that point, they remained test-only.
+
+November 10: [production repairs](SignalBoxes/README.md) now address these findings.
+The harness preserves the native reproductions, then tests independent prototypes
+and actual production hooks: **4,941 assertions pass**. This document retains the
+original evidence; implementation scope, save compatibility and current limits
+are in the linked module notes.
 
 Relevant definitions: `ItmElectricalBox01` and its Off/Damaged variants use
 `Electrical,Electrical`; `GUIBreaker` wires its knob to `Electrical.SetGateMode`,
@@ -83,13 +89,14 @@ normal serialization can export its runtime GPM, and finding 7 remains a separat
 real failure mode. No gameplay patch or manual live reproduction was needed.
 
 Evidence: `obj/ELECTRICAL-AUDIT-LIVE.txt`, `obj/ELECTRICAL-AUDIT-SHIP.json`,
-`obj/ELECTRICAL-OFFSCREEN-PERSISTENCE.txt`. Production behavior is unchanged.
+`obj/ELECTRICAL-OFFSCREEN-PERSISTENCE.txt`. This was a logging-only investigation;
+the later functional repair defers audits on related temporary copies.
 
 Suggested priorities: explicit disconnect delivery; correct initial/re-enabled
 effective output (gate and main override); reevaluation after configuration/input
 changes; outgoing-queue persistence; compatible connection-label handling.
-Keep pending power/delay behavior intact. These behavior fixes remain proposed
-work, not implemented; logging redirection is the only production audit change.
+Keep pending power/delay behavior intact. These priorities were implemented in
+the November 10 repair, alongside reconstruction and native conversion handling.
 
 ## 1. Gate knob changes do not reevaluate output
 
@@ -218,7 +225,8 @@ which kind occurred. A successful input removal additionally exposes finding 5's
 missing reevaluation.
 
 Fix boundary: distinguish explicit disconnection/permanent removal from temporary
-unavailability before pruning; keep the HVAC-only reinstall exception separate.
+unavailability before pruning; preserve the native conversion contract described
+above (the earlier HVAC-only restriction was superseded).
 The aggregate player-console message can be moved to diagnostic logging while
 preserving endpoint IDs, ship, load state and reason. Suppressing text alone is
 not a correctness fix, and globally disabling connection audits would retain

@@ -18,6 +18,19 @@ static class SelfTest {
 
         Plan Make(params string[] ids) => Inventory.Plan(catalog, new Profile { Features = ids }, declarations);
         string Read(string file) => File.ReadAllText(Path.Combine(root, file));
+        Check(Make("barter-index").Included.Contains("barter-writeback"), "optimized barter includes writeback safety");
+        Check(Make("torch-fuel-cache").Patches.Length == 1, "fuel cache remains independently selectable");
+        var torchFuel = Make("torch-fuel");
+        Check(torchFuel.Included.Contains("torch-fuel-cache"), "course fuel includes accurate native fuel caches");
+        Check(torchFuel.Patches.All(patch => patch.Type != "Ostrabus.ShipNavigation.TorchCourses.TorchTransferKernelPatch"),
+            "fuel correction does not enable momentum-aware trajectories implicitly");
+        var momentum = Make("torch-momentum");
+        Check(momentum.Included.Contains("torch-fuel") && momentum.Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.TorchCourses.TorchTransferKernelPatch"),
+            "momentum trajectories include their UI scope and fuel/control integration");
+        Check(!Make("torch-towing").Included.Contains("torch-fuel"), "braced towing stays independent of fuel/controller changes");
+        Check(catalog.Features.Single(feature => feature.Id == "barter-zones").Category == "qol", "barter presentation is QoL");
+        Check(catalog.Features.Single(feature => feature.Id == "async-ship-loading").Category == "bugfix" &&
+            catalog.Features.Single(feature => feature.Id == "barter-writeback").Category == "bugfix", "barter lifecycle and persistence are bugfixes");
 
         Reject(() => Make("not-a-feature"), "unknown feature");
         Reject(() => Inventory.Resolve(new Catalog {
@@ -46,10 +59,33 @@ static class SelfTest {
             Check(profile.Features.All(id => !catalog.Features.Single(feature => feature.Id == id).Experimental),
                 "preset excludes experiments");
             if (preset != "developer")
-                Check(profile.Features.All(id => catalog.Features.Single(feature => feature.Id == id).Category != "developer"),
+                Check(profile.Features.All(id => catalog.Features.Single(feature => feature.Id == id).Category != "developer" ||
+                    (id == "legacy-commands" && preset is "recommended" or "full")),
                     "preset excludes diagnostics");
             _ = Inventory.Plan(catalog, profile, declarations);
         }
+
+        var recommended = Presets.Create(catalog, "recommended");
+        var recommendedPlan = Inventory.Plan(catalog, recommended, declarations);
+        foreach (var feature in catalog.Features.Where(feature => feature.Category == "simulation" && !feature.Hidden && !feature.Experimental))
+            Check(recommended.Features.Contains(feature.Id) == (feature.Id != "ceres-navigation"),
+                "recommended simulation selection: " + feature.Id);
+        Check(!recommendedPlan.Included.Contains("ceres-navigation"), "recommended dependencies do not restore Ceres guardrails");
+        Check(recommendedPlan.Included.Contains("legacy-commands"), "recommended includes massfix maintenance commands");
+        Check(recommendedPlan.Included.Contains("navigation-targets"), "recommended includes navfix recovery");
+        Check(Make("navigation-targets").Patches.Any(patch => patch.Type == "Ostrabus.MiscBugFixes.ShipStellarConversionTargetsPatch"),
+            "target lifetimes include atomic asteroid conversion");
+        var civilianCoordinates = Make("civilian-sff-coordinates");
+        Check(civilianCoordinates.Patches.Length == 1 && civilianCoordinates.TickCalls == 0,
+            "civilian coordinate repair has one independent transpiler and no frame callback");
+        var civilianVisits = Make("civilian-visits");
+        Check(civilianVisits.TickCalls == 0 && civilianVisits.Included.Contains("navigation-targets") && civilianVisits.Included.Contains("ai-crew-integrity"),
+            "civilian visit lifetime includes saved-target and connected-hull protection without a frame callback");
+        var visitPatches = declarations.Where(declaration => declaration.File == "MiscBugFixes/CivilianVisitsPatch.cs").Select(declaration => declaration.Type).ToArray();
+        Check(visitPatches.Length == 6 && visitPatches.All(type => civilianVisits.Patches.Any(patch => patch.Type == type)),
+            "civilian visits cover selection, Main, retirement, registration, SFF and attached retirement");
+        var full = Inventory.Plan(catalog, Presets.Create(catalog, "full"), declarations);
+        Check(recommendedPlan.Included.All(id => full.Included.Contains(id)), "full remains a superset of recommended");
 
         string plugin = Read("OstrabusPlugin.cs");
         foreach (string[] ids in new[] {
@@ -70,7 +106,8 @@ static class SelfTest {
 
         string registry = Read("PdaSettings/SettingsRegistry.cs");
         foreach (string[] ids in new[] {
-            new[] { "pda-settings", "crew-hotkeys" }, new[] { "pda-settings" }, new[] { "crew-hotkeys" }
+            new[] { "pda-settings", "crew-hotkeys" }, new[] { "pda-settings" }, new[] { "crew-hotkeys" },
+            new[] { "pda-settings", "torchtrace" }
         }) {
             var plan = Make(ids);
             string generated = Composition.Settings(registry, plan);

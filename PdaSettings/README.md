@@ -24,6 +24,11 @@ for the combinations.
 **Venus-specific wrecks** is a saved 0–100% slider (default 50%) for new VORB
 hauler deployments. The remaining probability uses the general wreck pool.
 
+**Torch burn diagnostics** is a session-only recorder, default off. Enable before
+engaging a course, disable after arrival; reactor/autopilot data is written under
+`BepInEx/TorchTraces`. Switching off removes its temporary observer hooks.
+See [trace fields, APIs and bounds](../Diagnostics/README.md#torch-burn-diagnostics).
+
 See [DESIGN.md](DESIGN.md) and [IMPLEMENTATION.md](IMPLEMENTATION.md) for the design,
 entry points, packaging and validation status.
 

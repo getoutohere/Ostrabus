@@ -1,7 +1,9 @@
 # Offline signal-box fix candidates
 
-November 9, 2026. **Prototypes only; no production gameplay hooks added.**
-The plugin project excludes Tests. Existing diagnostic routing is unchanged.
+November 9, 2026 prototype record. These candidates remain independent, test-only
+hooks excluded from the plugin. November 10:
+[production repairs](../../MiscBugFixes/SignalBoxes/README.md) are now implemented
+and run as a separate harness phase after the prototypes are removed.
 
 Run the harness using the commands in
 [the audit](../../MiscBugFixes/SIGNAL-BOX-AUDIT.md). Output is captured locally in
@@ -36,9 +38,10 @@ runtime messages remain pending. Saving before delivery must not lose them.
 
 ## Executed checks
 
-**2,484 total checks pass:** the original 67 audit/logging/offscreen checks plus
-**2,417 candidate checks**. Original native failures are reproduced before installing
-the candidates, so the baseline remains independently observable.
+The original/prototype phases pass **2,484 checks**: 67 audit/logging/offscreen
+checks plus **2,417 candidate checks**. A further **2,496 production checks** bring
+the current total to **4,980**. Original native failures are reproduced before
+installing the candidates, so the baseline remains independently observable.
 
 - All four gates, all two-input boolean combinations, master/branch permissions,
   powered/unpowered dispatch and later power restoration.
@@ -74,8 +77,9 @@ not meet this condition. IDs in saved layouts are not treated as proof of life.
 Missing/non-electrical endpoints in that settled routing domain can retire a
 disconnect and be pruned normally. Temporary absence instead defers pruning/delivery
 and parks the durable queue; native UpdateManual does not poll the missing endpoint.
-Completion events wake the waiting sender. The tests invoke that wake at the modeled
-completion boundary; installing those lifecycle hooks remains a production step.
+Completion events wake the waiting sender. Prototype tests invoke that wake at the
+modeled completion boundary; the production phase also tests installed lifecycle
+hooks, including native mode-switch success/exception completion.
 
 239 added authority checks cover all combinations of None/Shallow/Edit/Full,
 completion/teardown flags, present/missing/non-electrical endpoint and mode-switch
@@ -101,20 +105,20 @@ decoy/missile launchers), and each installed/loose pair is checked. Loose signal
 boxes and loose fusion laser arrays do not have Electrical: their vanilla conversion
 disconnects. This model does not invent universal uninstall/reinstall preservation.
 
-## Remaining production work
+## Production follow-through and remaining limits
 
-The distinction is now modeled and regression-tested; it is no longer an open
-missing-endpoint heuristic. Production still needs scoped ModeSwitch entry/finalizer
-and reconstruction/GPM-completion wake hooks, definition-based signal-box membership,
-and lifetime/performance validation. This remains test-only work as requested.
+The production module now implements scoped ModeSwitch entry/finalizer,
+reconstruction/GPM-completion wake hooks, definition-based relationship scope and
+weak lifecycle state. Its phase also covers immediate resave of incoming messages,
+idempotent queue initialization, reciprocal cleanup persistence and settled ghost
+inputs. See the module notes for hook counts, cost and validation boundaries.
 
 **Labels:** rejection is the tested conservative option. A lossless escaped format
 would need compatibility behavior for vanilla readers and existing saves. Already
 truncated/ambiguous labels cannot be reliably reconstructed from damaged text.
 
 **Performance/lifetime:** temporary fixture membership/retry collections are cleared
-in finally. They must not become permanent strong-reference registries in the plugin.
-Production should use lifecycle-scoped or weak state, avoid new per-update scans,
-and serialize outgoing state on actual mutations rather than introducing polling.
-The offline StringBuilder/retry implementation is a correctness prototype, not a
-measured allocation/performance verdict.
+in finally. Production uses weak state and pooled dispatch scratch, has no new
+Update hook or missing-endpoint polling, and serializes outgoing state on mutations.
+Weak-reference collection is checked with the actual helpers. Neither the prototype
+nor this test suite is a measured allocation/performance verdict for live gameplay.

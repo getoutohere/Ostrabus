@@ -60,6 +60,22 @@ does not publish readiness; native AsyncShipLoader still owns unloading and
 physical destruction. The scheduler retains only a frame number and deadline,
 with no global reference to the copy, iterator or inventory.
 
+Lifetime repair: `DataHandler.Init` can destroy registered COs while an offscreen
+barter coroutine is still paused. A captured live exception reached
+`CondOwner.PostGameLoad` on a destroyed Unity component after the reset's
+"Destroying leftover CO" messages. The reset now calls `Unload` on the existing
+AsyncShipLoader before native CO cleanup. This cancels all pending offscreen jobs
+and destroys their copies through native mechanisms; it does not instantiate a
+loader or write old copies into a new world.
+
+The paced iterator additionally checks its original world, JsonShip and live
+GameObject before every resume, and disposes nested work on invalidation.
+Post-load and paced-index snapshots skip destroyed components; a component
+consumed during its own post-load is not dereferenced again for layer changes.
+Valid load ordering and the final readiness gate remain unchanged. Exceptions
+from live items still propagate. This adds one reset hook, no frame observer,
+and one small outer iterator per copy rather than per-item cancellation objects.
+
 `GUITradeBase.GetZones` asks `AsyncShipLoader.GetShip`, which returns false until
 `FullyLoaded`. If the loader still knows that ship, GetZones sets `bZonesLoading`;
 the trade UI shows the existing remote-zones-not-loaded message. Saving changed
@@ -95,3 +111,12 @@ yields, cancellation both before and during reconstruction, and propagated
 exceptions. These validate scheduling and operation equivalence, not live
 rendering performance. The temporary transit profiler recognizes both native
 and optimized iterators and remains completely unhooked unless started.
+
+The lifetime regression expansion executes the actual native `DataHandler.Init`
+and `AsyncShipLoader.Unload`, with Unity stop/destruction boundaries modeled by
+the fixture. It verifies cancellation before remaining-CO cleanup, cleared loader
+cache, repeated reset, absence of singleton creation, world/JSON/hierarchy
+invalidation during a yield, destroyed snapshot entries and self-consumed items.
+It also reproduces the native destroyed-snapshot exception before applying the
+repair. The initialization suite passes 16,894 checks; related multi-ship barter,
+index equivalence and temporary transit-profiler suites pass 274, 19 and 19 checks.

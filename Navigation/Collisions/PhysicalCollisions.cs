@@ -20,9 +20,9 @@ internal static class PhysicalCollisions {
         internal readonly float Radius;
         internal readonly int Grid;
         internal readonly bool Docked;
-        internal Sample(Ship ship,double epoch) {
+        internal Sample(Ship ship,double epoch,float radius) {
             var situ=ship.objSS;Epoch=epoch;X=situ.vPosx;Y=situ.vPosy;VX=situ.vVelX;VY=situ.vVelY;
-            Grid=ship.nGridRotation;Radius=situ.Size;Angle=situ.fRot-Grid*Math.PI/180;Docked=ship.bDocked;
+            Grid=ship.nGridRotation;Radius=radius;Angle=situ.fRot-Grid*Math.PI/180;Docked=ship.bDocked;
         }
     }
     internal readonly struct Prepared {
@@ -57,11 +57,14 @@ internal static class PhysicalCollisions {
         a.Classification==Ship.TypeClassification.Default&&b.Classification==Ship.TypeClassification.Default&&
         !StationDockedCollisions.ActualStation(a)&&!StationDockedCollisions.ActualStation(b)?float.Epsilon:distance;
     static double Turn(double value){value%=Math.PI*2;if(value>Math.PI)value-=Math.PI*2;if(value< -Math.PI)value+=Math.PI*2;return value;}
-    static Track Observe(Ship ship,double epoch) {
-        var track=tracks.GetValue(ship,Create);var now=new Sample(ship,epoch);
+    static Track Observe(Ship ship,double epoch,float radius) {
+        var track=tracks.GetValue(ship,Create);var now=new Sample(ship,epoch,radius);
         if(!track.Initialized||epoch<track.Latest.Epoch){track.Latest=now;track.Initialized=true;track.HasPrevious=false;}
         else if(epoch>track.Latest.Epoch){track.Previous=track.Latest;track.Latest=now;track.HasPrevious=true;}
-        else track.Latest=now;
+        else {
+            if (now.Radius != track.Latest.Radius || now.Grid != track.Latest.Grid) track.HasPrevious=false;
+            track.Latest=now;
+        }
         if(track.HasPrevious) {
             var before=track.Previous;double dt=epoch-before.Epoch;
             double dx=(now.X-before.X)*MetresPerAU,dy=(now.Y-before.Y)*MetresPerAU;
@@ -94,7 +97,7 @@ internal static class PhysicalCollisions {
         prepared=default;bool native=nativeDistance<nativeRadius;
         if(!Enabled||GUIFFWD.Active||a==null||b==null||a.objSS==null||b.objSS==null||
             a.Classification!=Ship.TypeClassification.Default||b.Classification!=Ship.TypeClassification.Default||a.objSS.bIsBO||b.objSS.bIsBO)return native;
-        double epoch=StarSystem.fEpoch;var ta=Observe(a,epoch);var tb=Observe(b,epoch);var path=Path(ta,tb,epoch);
+        double epoch=StarSystem.fEpoch;var ta=Observe(a,epoch,HullDisplay.Radius(a));var tb=Observe(b,epoch,HullDisplay.Radius(b));var path=Path(ta,tb,epoch);
         double radius=path.RA+path.RB;
         var future=path.End+new HullContact.Vec((ta.Latest.VX-tb.Latest.VX)*MetresPerAU,(ta.Latest.VY-tb.Latest.VY)*MetresPerAU)*2;
         bool candidate=Closest(path.Start,path.End)<=radius*radius;
@@ -103,6 +106,13 @@ internal static class PhysicalCollisions {
         if(StationDockedCollisions.ActualStation(a)||StationDockedCollisions.ActualStation(b))return native;
         if(!StationDockedCollisions.ShipCollision(a,b))return false;
         bool readyA=HullDisplay.Geometry(a,out var ga),readyB=HullDisplay.Geometry(b,out var gb);
+        if (readyA && readyB) {
+            float ra=HullDisplay.Radius(a,ga),rb=HullDisplay.Radius(b,gb);
+            if (ra!=path.RA || rb!=path.RB) {
+                ta=Observe(a,epoch,ra);tb=Observe(b,epoch,rb);path=Path(ta,tb,epoch);
+                radius=path.RA+path.RB;candidate=Closest(path.Start,path.End)<=radius*radius;
+            }
+        }
         if(!candidate)return false;
         queries++;
         if(!readyA||!readyB){fallbacks++;return native;}
@@ -122,6 +132,19 @@ internal static class PhysicalCollisions {
     }
     static void Forget(Ship ship) {
         if(ship!=null&&tracks.TryGetValue(ship,out var track)){track.Initialized=false;track.HasPrevious=false;}
+    }
+    internal static void Displaced(Ship ship) {
+        if (!Enabled || ship == null) return;
+        Forget(ship);
+        var group=ship.DockGroup;
+        if (group != null) foreach (var member in group.DockedShips) Forget(member?.Ship);
+    }
+    internal static void DisplacedSitu(ShipSitu situ) {
+        if (!Enabled || situ == null) return;
+        var registry=CrewSim.system?.dictShips;
+        if (registry == null) return;
+        foreach (var ship in registry.Values) if (ship != null &&
+            (ReferenceEquals(ship.objSS,situ) || ReferenceEquals(ship.DockGroup?.Anchor,situ))) {Displaced(ship);return;}
     }
     static void Rebase(Ship ship) {
         Forget(ship);

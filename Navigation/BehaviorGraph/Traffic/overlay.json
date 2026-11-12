@@ -1,0 +1,535 @@
+{
+  "schemaVersion": 1,
+  "id": "ostrabus-traffic-current",
+  "base": "traffic-1.0.1.10",
+  "patches": [
+    {
+      "id": "cargo_loading",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_loading"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "summary": "Clear fully accepted cloned input lists before origin remainder return.",
+      "removes": [
+        "Clear fully accepted cloned input lists before origin remainder return."
+      ],
+      "preserves": [
+        "Native overflow/remainder behavior."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "load.accepted",
+          "id": "fix.load.accepted",
+          "to": "t_pick",
+          "set": {
+            "stock": "conserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "bounded_catchup",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_sff"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "summary": "Suppress native instant catch-up for a captured/applied party that has not reached a valid handoff.",
+      "removes": [
+        "Suppress native instant catch-up for a captured/applied party that has not reached a valid handoff."
+      ],
+      "preserves": [
+        "Uncaptured/native fallback.",
+        "Existing routes and combat exclusions.",
+        "Toggles."
+      ],
+      "operations": [
+        {
+          "kind": "intercept",
+          "edge": "skip.native",
+          "id": "fix.skip.bounded",
+          "predicate": "bounded_pending",
+          "phase": "before",
+          "to": "t_fly",
+          "set": {}
+        }
+      ]
+    },
+    {
+      "id": "economic_catchup",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_economy",
+        "patch_economy_hooks"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "summary": "Manage eligible real freight chronologically, suppress its duplicated native FFWD and replay due dispatch opportunities.",
+      "removes": [
+        "Manage eligible real freight chronologically, suppress its duplicated native FFWD and replay due dispatch opportunities."
+      ],
+      "preserves": [
+        "PASS has no cargo market and is excluded.",
+        "Loaded, combat, connected and unprepared freight retain native paths.",
+        "Native production/dispatch choices and rollback."
+      ],
+      "operations": [
+        {
+          "kind": "intercept",
+          "edge": "skip.native",
+          "id": "fix.skip.economic",
+          "predicate": "economic_owned",
+          "phase": "before",
+          "to": "t_economy",
+          "set": {}
+        },
+        {
+          "kind": "intercept",
+          "edge": "skip.dispatch_native",
+          "id": "fix.dispatch.all",
+          "predicate": "economic_dispatch",
+          "phase": "before",
+          "to": "t_sff",
+          "set": {
+            "dispatch_done": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crew_integrity",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_crew"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "summary": "Stop and unregister uncrewed execution without introducing a stale disposal marker.",
+      "removes": [
+        "Stop and unregister uncrewed execution without introducing a stale disposal marker."
+      ],
+      "preserves": [
+        "Existing stale status.",
+        "Crewed traffic and legitimate police boarding exception."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "crew.native",
+          "id": "fix.crew.missing",
+          "to": "t_uncrewed",
+          "set": {
+            "registry": "retired",
+            "goal": "none",
+            "nav": "none"
+          }
+        }
+      ]
+    },
+    {
+      "id": "permanent_goal_removal",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_lifetime",
+        "patch_fuel"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "summary": "Invalidate a removed ship goal and old course; native behavior resumes.",
+      "removes": [
+        "Invalidate a removed ship goal and old course; native behavior resumes."
+      ],
+      "preserves": [
+        "Live hidden destinations.",
+        "Independent coordinate/stellar goals, including native representation conversion.",
+        "No forced route or station-return policy."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "flight.target_removed",
+          "id": "fix.goal.removed",
+          "to": "t_root",
+          "set": {
+            "goal": "none",
+            "goal_state": "absent",
+            "nav": "none",
+            "leaf": "none"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stellar_conversion_scope",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_lifetime"
+      ],
+      "evidence": [
+        "conversion_native"
+      ],
+      "summary": "Resolve target lifetimes after native asteroid Ship-to-stellar conversion; preserve successful logical destinations and clean up real failure.",
+      "removes": [
+        "Transient Ship destruction no longer invalidates a surviving stellar goal."
+      ],
+      "preserves": [
+        "Native unmooring and stellar creation.",
+        "Independent/copied waypoints, existing routes, fuel and momentum.",
+        "Failed conversion remains real destination removal; exceptions and nested scopes retain native behavior."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "conversion.complete",
+          "id": "fix.conversion.complete",
+          "to": "t_pick",
+          "set": {
+            "other_goal": "asteroid",
+            "other_route": "preserved"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "conversion.failed",
+          "id": "fix.conversion.failed",
+          "to": "t_unresolved",
+          "set": {
+            "other_goal": "cleared",
+            "other_route": "cleared"
+          }
+        }
+      ]
+    },
+    {
+      "id": "civilian_coordinates",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_civilian_coordinates"
+      ],
+      "evidence": [
+        "role_native"
+      ],
+      "summary": "Use actual Y for the second regional-station coordinate in both native civilian FFWD branches.",
+      "removes": [
+        "X/X lookup can select a different regional station from X/Y."
+      ],
+      "preserves": [
+        "Native candidate selection, remembered partners, docking eligibility and outcomes.",
+        "Existing-route handling, attached/empty Hold and all nonregional target paths."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "skip.civ_undock",
+          "id": "fix.skip.civ_undock",
+          "to": "t_sff_queue",
+          "set": {
+            "regional_lookup": "correct"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "skip.civ_hold_free",
+          "id": "fix.skip.civ_hold_free",
+          "to": "t_sff_queue",
+          "set": {
+            "regional_lookup": "correct"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "skip.civ_undock_failed",
+          "id": "fix.skip.civ_undock_failed",
+          "to": "t_sff_queue",
+          "set": {
+            "regional_lookup": "correct"
+          }
+        }
+      ]
+    },
+    {
+      "id": "player_connected_region_retention",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_region_retention",
+        "blackboard",
+        "ai_queue"
+      ],
+      "evidence": [
+        "region_native"
+      ],
+      "summary": "Extend the native player-connection exemption to hull destruction; temporarily use native global scheduling, then restore physical regional membership at queue refill after detachment.",
+      "removes": [
+        "Unconditional destruction after skipping player-connected crew relocation and undocking.",
+        "Retained controllers becoming unscheduled or permanently global after detachment."
+      ],
+      "preserves": [
+        "Native recursive ownership/docking predicate and station-body handling.",
+        "Same controller, crew, pilot, home, orders, routes, motion and fuel; no forced departure.",
+        "Native queue priority, genuine interregional freight and primitive save serialization.",
+        "Unregistered crewless captures retain native derelict cleanup protection without inventing a controller."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "atc.player_group",
+          "id": "fix.atc.player_group",
+          "to": "t_fly",
+          "removeSet": [
+            "hull",
+            "crew"
+          ],
+          "set": {
+            "registry": "interregional",
+            "retained_local": "true"
+          }
+        },
+        {
+          "kind": "intercept",
+          "edge": "queue.interregional_refill",
+          "id": "fix.queue.retained_detached",
+          "predicate": "retained_detached",
+          "phase": "before",
+          "to": "t_fly",
+          "set": {
+            "registry": "local",
+            "retained_local": "false"
+          }
+        }
+      ]
+    },
+    {
+      "id": "civilian_visit_lifetime",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_visits"
+      ],
+      "evidence": [
+        "visit_native"
+      ],
+      "summary": "Reject new hidden civilian rendezvous; invalidate retired/restored ordinary visits, defer to native combat/priority ownership, and protect physical civilian encounters from retirement.",
+      "removes": [
+        "Selecting administrative reserve/vendor hulls as new space rendezvous.",
+        "Continuing a retired/reused ordinary visit with its obsolete route and fuel estimate.",
+        "Retiring a hull while a civilian encounter remains physically attached."
+      ],
+      "preserves": [
+        "Native Main children, order, sticky/save paths and random/low-fuel selection.",
+        "Combat, reaction, queued/explicit commands, passenger/freight destinations and player navigation.",
+        "Motion and spent fuel; visible empty/derelict visits and detached reserve supply.",
+        "Native station-only parking and hauler tow-delivery retirement."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "ship.hidden",
+          "id": "fix.visit.hidden_choice",
+          "to": "t_station",
+          "removeSet": [
+            "goal",
+            "goal_state",
+            "targeted_reserve",
+            "leaf"
+          ],
+          "set": {}
+        },
+        {
+          "kind": "intercept",
+          "edge": "visit.retired",
+          "id": "fix.visit.retire_active",
+          "predicate": "ordinary_visit",
+          "phase": "before",
+          "to": "t_undock",
+          "set": {
+            "goal": "none",
+            "nav": "none",
+            "leaf": "undock",
+            "main": "0",
+            "targeted_reserve": "false",
+            "visit_pending": "false"
+          },
+          "removeSet": []
+        },
+        {
+          "kind": "intercept",
+          "edge": "visit.retired",
+          "id": "fix.visit.retire_deferred",
+          "predicate": "deferred_visit",
+          "phase": "before",
+          "to": "t_fly",
+          "set": {
+            "visit_pending": "true"
+          },
+          "removeSet": []
+        },
+        {
+          "kind": "intercept",
+          "edge": "visit.revalidate",
+          "id": "fix.visit.revalidate.hidden",
+          "predicate": "hidden_visit",
+          "phase": "before",
+          "to": "t_undock",
+          "set": {
+            "goal": "none",
+            "nav": "none",
+            "leaf": "undock",
+            "main": "0",
+            "targeted_reserve": "false",
+            "visit_pending": "false"
+          },
+          "removeSet": []
+        },
+        {
+          "kind": "intercept",
+          "edge": "visit.revalidate",
+          "id": "fix.visit.revalidate.marked",
+          "predicate": "marked_visit",
+          "phase": "before",
+          "to": "t_undock",
+          "set": {
+            "goal": "none",
+            "nav": "none",
+            "leaf": "undock",
+            "main": "0",
+            "targeted_reserve": "false",
+            "visit_pending": "false"
+          },
+          "removeSet": []
+        },
+        {
+          "kind": "intercept",
+          "edge": "visit.sff",
+          "id": "fix.visit.sff.hidden",
+          "predicate": "hidden_visit",
+          "phase": "before",
+          "to": "t_undock",
+          "set": {
+            "goal": "none",
+            "nav": "none",
+            "leaf": "undock",
+            "main": "0",
+            "targeted_reserve": "false",
+            "visit_pending": "false"
+          },
+          "removeSet": []
+        },
+        {
+          "kind": "intercept",
+          "edge": "visit.sff",
+          "id": "fix.visit.sff.marked",
+          "predicate": "marked_visit",
+          "phase": "before",
+          "to": "t_undock",
+          "set": {
+            "goal": "none",
+            "nav": "none",
+            "leaf": "undock",
+            "main": "0",
+            "targeted_reserve": "false",
+            "visit_pending": "false"
+          },
+          "removeSet": []
+        },
+        {
+          "kind": "intercept",
+          "edge": "retire.hide",
+          "id": "fix.visit.attached_retire",
+          "predicate": "civilian_attached",
+          "phase": "before",
+          "to": "t_hold",
+          "set": {},
+          "removeSet": [
+            "hull",
+            "registry",
+            "crew",
+            "goal"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "controller_identity",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_identity"
+      ],
+      "evidence": [
+        "controller_identity_native"
+      ],
+      "summary": "Unsaved registration reuses an existing controller across regions rather than enrolling the same hull under a second role.",
+      "removes": [
+        "Cross-region collision fallback creating an additional local controller for an active interregional freighter."
+      ],
+      "preserves": [
+        "Original role, region, home, behavior/blackboard state, route, fuel and manifest.",
+        "Native fallback creation when no controller exists and explicit saved/player-autopilot setup."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "collision.cargo_duplicate",
+          "id": "fix.collision.reuse_controller",
+          "to": "t_fly",
+          "set": {
+            "registry": "interregional"
+          }
+        }
+      ]
+    }
+  ],
+  "documentedDependencies": [
+    {
+      "id": "native_economy_tests",
+      "sources": [
+        "patch_economy",
+        "market"
+      ],
+      "status": "native_tested_numeric_boundary",
+      "reason": "Tests/OrbitalCheck/EconomyChecks executes event ordering, loading, partial trips and delivery; this role model does not calculate physics or production recipes."
+    },
+    {
+      "id": "native_target_lifecycle",
+      "sources": [
+        "patch_lifetime"
+      ],
+      "status": "expanded_in_shared_model",
+      "reason": "TargetLifecycle models permanent removal and reconstruction. Traffic adds the missing Ship-to-stellar conversion interleaving."
+    },
+    {
+      "id": "station_return_intent",
+      "sources": [
+        "patch_return"
+      ],
+      "status": "explicit_optional_boundary",
+      "reason": "StationReturn is an optional saved directive using native FlyTo/Dock; ordinary cargo Main and market loading do not imply it."
+    },
+    {
+      "id": "full_npc_socials",
+      "sources": [
+        "crew",
+        "civilian"
+      ],
+      "status": "unexpanded_character_simulation",
+      "reason": "People may transfer during a nonstation visit; character-level pledges, permissions and agendas remain native. No prisoner-transfer policy is inferred."
+    },
+    {
+      "id": "collision_duplicate_save_repair",
+      "sources": [
+        "patch_identity",
+        "manager"
+      ],
+      "status": "native_harness_boundary",
+      "reason": "ApplySaveData removes only the unique original INTERREGIONAL cargo plus local Scav/Police fallback pattern with matching native cargo ownership/origin. Native restore and unchanged captured payloads are tested; ambiguous histories/missing hulls and historical orphan refunds are excluded."
+    }
+  ],
+  "notApplicable": []
+}

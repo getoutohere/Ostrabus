@@ -76,6 +76,9 @@ angular acceleration of 0.01 rad/s² produces 36 rad/s spin. No production motio
 patches are installed. Native UpdateDockedShips synchronization clears the stale
 anchor inputs without deleting the accumulated momentum, confirming why the
 ordinary steering path behaves differently.
+The November 11 [docked-course repair](../Navigation/Towing/README.md) now fixes
+this shared movement handoff for an unambiguous free-group course. It does not
+replace the retriever's authored HaulShip stage or its separate handoff repair.
 FlyToPath also keeps a non-null route running without an affordability rejection
 equivalent to the player's autopilot fuel check.
 

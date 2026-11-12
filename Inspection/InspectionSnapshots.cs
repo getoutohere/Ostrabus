@@ -8,13 +8,18 @@ namespace Ostrabus.Inspection;
 
 internal static class InspectionSnapshots {
     static readonly AccessTools.FieldRef<Ship, double> ShallowMass = AccessTools.FieldRefAccess<Ship, double>("fShallowMass");
-    static readonly AccessTools.FieldRef<AIShip, Ship> AIShipRaw = AccessTools.FieldRefAccess<AIShip, Ship>("_shipUs");
     static bool OverBudget(long start) { return Stopwatch.GetTimestamp() - start >= Stopwatch.Frequency / 1000; }
     static Dictionary<string, object> Map(params object[] pairs) { return SnapshotJson.Map(pairs); }
     static InspectionApi.Reply Reply(int status, object body) { return new InspectionApi.Reply(status, body); }
 
     internal static InspectionApi.Reply Query(string path, int offset, int limit, long start, double radiusKm = 500) {
         var ships = CrewSim.system.dictShips;
+        if (path == "/ai/controllers") return ControllerInspection.Capture(start).Page(offset,limit);
+        if (path.StartsWith("/ships/",StringComparison.Ordinal) && path.EndsWith("/controllers",StringComparison.Ordinal)) {
+            if (path.Length<=19) return Reply(400,Map("error","Expected a ship registry ID."));
+            string id=Uri.UnescapeDataString(path.Substring(7,path.Length-7-12));
+            return ControllerInspection.Capture(start).Page(offset,limit,id);
+        }
         if (path == "/player") { return Reply(200, PlayerInspection.Player()); }
         if (path == "/ui/scrollbacks") { return Reply(200, global::Ostrabus.NavConsole.Scrollbacks.Snapshot()); }
         if (path == "/ui/hulls") { return Reply(200, global::Ostrabus.NavConsole.Outlines.HullDisplay.Inspect()); }
@@ -150,24 +155,19 @@ internal static class InspectionSnapshots {
     }
 
     static object AI(Ship ship, long start) {
-        int examined = 0;
-        if (AIShipManager.dictAIs != null) {
-            foreach (var region in AIShipManager.dictAIs) {
-                if (region.Value == null) { continue; }
-                foreach (var ai in region.Value) {
-                    if (++examined > 512 || OverBudget(start)) { return Map("registered", null, "incomplete", true, "examined", examined - 1); }
-                    // AIShip.Ship can reacquire destroyed ships; read its backing field instead.
-                    if (ai == null || !ReferenceEquals(AIShipRaw(ai), ship)) { continue; }
-                    return Map("registered", true, "region", region.Key, "homeStation", ai.HomeStation,
-                        "activeCommand", ai.ActiveCommandName, "aiPauseTimer", ship.fAIPauseTimer, "aiDockingExpire", ship.fAIDockingExpire,
-                        "navigation", NavigationInspection.ShipRoute(ship, start),
-                        "commands", NavigationInspection.Commands(ai, start),
-                        "haulerRecovery", Ostrabus.Haulers.HaulerRecovery.Snapshot(ship),
-                        "combat", CombatInspection.AI(ship, ai, start));
-                }
-            }
-        }
-        return Map("registered", false, "incomplete", false, "examined", examined,
-            "navigation", NavigationInspection.ShipRoute(ship, start));
+        var index=ControllerInspection.Capture(start);
+        var data=index.Snapshot(ship.strRegID,ship);
+        var ai=index.Single(ship.strRegID,ship);
+        data["region"]=index.Region(ai);
+        data["homeStation"]=ai?.HomeStation;
+        data["activeCommand"]=null;
+        if (ai != null) try { data["activeCommand"]=ai.ActiveCommandName; } catch (NullReferenceException) { }
+        data["incomplete"]=!index.Complete;data["examined"]=index.Scanned;
+        data["aiPauseTimer"]=ship.fAIPauseTimer;data["aiDockingExpire"]=ship.fAIDockingExpire;
+        data["navigation"]=NavigationInspection.ShipRoute(ship,start,index);
+        data["commands"]=NavigationInspection.Commands(ai,start);
+        data["haulerRecovery"]=Ostrabus.Haulers.HaulerRecovery.Snapshot(ship);
+        data["combat"]=ai == null ? null : CombatInspection.AI(ship,ai,start);
+        return data;
     }
 }

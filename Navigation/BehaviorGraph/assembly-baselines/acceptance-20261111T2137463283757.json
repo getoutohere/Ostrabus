@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/021efb74eccc4b4435c24be3aa41b0153c4c796ad5bc5d602cd4b0a40e74531d.json.br",
+  "reason": "Reviewed shared target lifetime repair: 275 native lifecycle checks with captured recovery, replacement and saved-field boundaries; source and method bindings updated without claiming complete behavior coverage.",
+  "acceptedUtc": "2026-11-11T21:37:46.3267092Z",
+  "previousSnapshot": "assembly-baselines/777591592c715fa3b73c4f699874bb973215d0dd8390d5933c9dada6309ff764.json.br"
+}

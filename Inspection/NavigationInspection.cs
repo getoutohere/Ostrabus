@@ -36,7 +36,7 @@ internal static class NavigationInspection {
     static Dictionary<string, object> Map(params object[] pairs) { return SnapshotJson.Map(pairs); }
     static string Limit(string value) { return value == null || value.Length <= 256 ? value : value.Substring(0, 256) + "[truncated]"; }
 
-    internal static object ShipRoute(Ship ship, long start) {
+    internal static object ShipRoute(Ship ship, long start, ControllerInspection controllers=null) {
         if (ship == null) { return null; }
         ShipSitu current = ship.objSS;
         TargetData targetData = ship.TargetData;
@@ -54,7 +54,7 @@ internal static class NavigationInspection {
             "currentMotion", Motion(current),
             "motionRelativeToScanTarget", RelativeMotion(current, ship.shipScanTarget?.objSS, ship.shipScanTarget?.strRegID),
             "currentNavPlan", NavPlan(current?.NavData, StarSystem.fEpoch, start),
-            "stationReturn", StationReturnForInspection(ship),
+            "stationReturn", StationReturnForInspection(ship,controllers ?? ControllerInspection.Capture(start)),
             "vorbNavigationGuard", VorbGuardForInspection(ship),
             "propulsion", PropulsionForInspection(ship),
             "lowFuelPolicy", Map("tankFractionThreshold", AIShipManager.LowFuelThreshold,
@@ -63,8 +63,8 @@ internal static class NavigationInspection {
                 "note", "Game thresholds only. LowFuel was not called because it may scan fuel canisters for full/edit ships."));
     }
 
-    static object StationReturnForInspection(Ship ship) {
-        var ai = AIShipManager.dictAIs == null ? null : AIShipManager.GetAIShipByRegID(ship.strRegID);
+    static object StationReturnForInspection(Ship ship, ControllerInspection controllers) {
+        var ai = controllers.Single(ship.strRegID,ship);
         var board = ai?.Blackboard;
         return board == null ? null : Map("destinationShipId", board.Get<string>(global::Ostrabus.ShipNavigation.StationReturn.DestinationKey),
             "docking", board.Get<bool>(global::Ostrabus.ShipNavigation.StationReturn.DockingKey));

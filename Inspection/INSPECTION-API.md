@@ -45,6 +45,12 @@ request bodies, or persistent connections are exposed.
 | `/economy/freight` | Cargo-pod markets with raw AI/home/destination/course/fuel state; player cargo and parked hulls are identified, not assumed to be NPC deliveries. |
 | `/economy/stations/{id}/freight` | Related freight with explicit incoming, pilot-home and hull-origin matches. |
 | `/economy/hubs` | Native stored trade hub memberships, without executing redirection or stochastic route selection. |
+| `/economy/audit` | Paged, request-only market/hull/controller consistency and cached-versus-backing stock checks. Missing hulls are observations, not inferred losses or pruning candidates. |
+| `/economy/markets/{id}/audit` | Direct consistency check; also accepts station/freight aliases. Explicit completeness flags distinguish unknown results from matching stock. |
+| `GET/POST /economy/freight/{id}/approach[/{stationId}]` | Stage a live freighter 10 km from its existing target and resume its saved native docking step. POST requires `confirm=APPROACH`; see [freight recovery](FREIGHT-RECOVERY.md). |
+| `GET/POST /economy/freight/{id}/recover/{stationId}` | Credit an absent hull's surviving cargo once and clean orphaned records. Explicit destination and `confirm=RECOVER` required for POST. No hull or NPC is deleted. |
+| `/ai/controllers` | Paged raw regional AI entries, including duplicates, null entries and stale hull references; no controller is repaired or selected. |
+| `/ships/{id}/controllers` | All registrations for a call sign with duplicate/distinct-controller counts and exact hull identity checks. Works when the hull is absent. |
 | `/flight` | Detached flight-journal status, file path, written/dropped counts, errors and recent event metadata. Available during loading. |
 | `POST /flight/start` | Start a bounded, event-driven journal with a baseline, SFF and ATC transition captures and warning/error logs. |
 | `POST /flight/mark` | Capture a flight checkpoint, e.g. after engaging the course. |

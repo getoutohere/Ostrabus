@@ -98,7 +98,7 @@ internal static class HullDisplay {
         if (result!=null && clean) {
             Report(source, null);
             var stamp = applied.GetValue(draw, CreateApplied);
-            float radius = ship.objSS.Size;
+            float radius = Radius(ship, result);
             if (ReferenceEquals(stamp.Entry, source.Entry) && stamp.Version == version && stamp.Radius == radius && stamp.Rotation == ship.nGridRotation) return;
             Assign(draw, result, radius, ship.nGridRotation);
             stamp.Entry = source.Entry; stamp.Version = version; stamp.Radius = radius; stamp.Rotation = ship.nGridRotation;
@@ -110,6 +110,18 @@ internal static class HullDisplay {
         var source=sources.GetValue(ship,Create);
         Request(ship,source,out result,out _,out bool clean,out _);
         return clean&&result?.Collision!=null;
+    }
+    internal static float Radius(Ship ship, Envelope result = null) {
+        float native = ship.objSS.Size;
+        if (ship.Classification != Ship.TypeClassification.Default || ship.objSS.bIsBO ||
+            global::Ostrabus.ShipNavigation.StationDockedCollisions.ActualStation(ship)) return native;
+        if (result == null && sources.TryGetValue(ship, out var source)) worker.Read(source.Entry, out result, out _, out _, out _);
+        if (result?.Count >= 3 && result.MapRadius > 0 && !float.IsInfinity(result.MapRadius)) return result.MapRadius;
+        // Header dimensions only bootstrap visibility/broad-phase warmup. The
+        // installed footprint replaces this estimate as soon as it is cached.
+        double cols = ship.json?.nCols ?? 0, rows = ship.json?.nRows ?? 0;
+        if (ship.LoadState >= Ship.Loaded.Edit && ship.nCols > 0 && ship.nRows > 0) { cols=ship.nCols; rows=ship.nRows; }
+        return cols > 0 && rows > 0 ? (float)(Math.Sqrt(cols*cols + rows*rows) * (Envelope.MapMetresPerTile * .5)) : native;
     }
     static void Request(Ship ship,Source source,out Envelope result,out long version,out bool clean,out string problem) {
         Observe(ship, source); AdvanceCapture();
@@ -172,6 +184,8 @@ internal static class HullDisplay {
                 ["components"] = result?.Loops ?? 0,
                 ["collisionPieces"] = result?.Collision?.Pieces.Length,
                 ["collisionGeometryError"] = result?.CollisionError,
+                ["nativeRadiusMetres"] = draw.ship.objSS.Size,
+                ["hullRadiusMetres"] = Radius(draw.ship, result),
                 ["renderedPoints"] = draw.lineBodySilhouette?.points2?.Count,
                 ["lineMode"] = draw.lineBodySilhouette?.lineType.ToString(),
                 ["outlineSelected"] = ReferenceEquals(draw.lineBody,draw.lineBodySilhouette),

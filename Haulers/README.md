@@ -37,6 +37,55 @@ independent of the experimental Orbital toggle. Venus-specific route validation,
 and manual navigation fallback remain in Venus. RCS refill accounting now lives
 in [shared navigation](../Navigation/RCS-REPLENISHMENT.md), independent of role/home.
 
+## Open investigation: Hassan's loss near OKLG
+
+Investigated 2026-11-11 (captures use UTC 2026-11-12), game 1.0.1.10.
+This is **not a confirmed stale-cleanup death**; no runtime change was made.
+
+- Hassan Miracle Saunders was moved from O-F8LK to OKLG_ATC, then reused as
+  captain of O-JJ3 / OKLG Hauler 74. The previous captain, Finbarr Smith, had
+  already been dropped off alive after an earlier delivery.
+- The two-hour SFF ended at epoch 65633080969.567657. O-JJ3 was hidden during
+  SFF; Orbital recorded `nativeHidden`, with no replacement trajectory or impact
+  check. The later pickup and destruction occurred under ordinary simulation.
+- O-JJ3 docked with E-S6F / Boaty McBoatface at 65633081072.296524, then was
+  observed executing HaulShip toward OKLG at 65633081091.243393.
+- At 65633081221.197792 the controller was unregistered while still towing the
+  wreck. Player.log records E-S6F destroyed first, then O-JJ3, then Hassan's
+  death. There is no intervening recorded undock, station delivery or combat.
+- The saved IsStale deadline was 65633083323.4801, about 35 minutes later than
+  destruction. No stale-marking log identifies O-JJ3. That known lifecycle
+  defect does not explain this death.
+
+The strongest explanation is a celestial collision, probably Ganymed.
+`CollisionManager.CheckCollisions(Ship)` destroys every attached ship and then
+the checked shallow ship on a body impact. `Ship.Destroy(false)` kills its
+remaining crew. This matches the order exactly, but **the captured log contains
+neither the caller nor impact coordinates**. The same body-collision branch
+also handles asteroid-field impacts; the specific object is not established.
+Normal `DockCargoAndDespawn` instead undocks the tow and drops off the pilot.
+The inspected IsStale condition and TIsCollisionSafe asset do not define a
+hauler retirement/crew-killing policy; the relevant destruction is native C#.
+
+An offline controller model executed shipped HaulShip.RunCommand,
+FlightCPU.GetDockingNavPoint and AIShipManager.AIIntercept2 using the saved wreck
+offset, hull masses/radii and native body ephemerides. With ideal translation,
+no other ship obstacles and zero initial body-relative velocity, it reached
+the delivery threshold safely in about 143 game seconds, with about 3.9 km
+minimum body clearance. Update intervals through 16 seconds also succeeded;
+an artificial 32-second interval crashed. This is sensitivity analysis, **not a
+reproduction of Hassan's actual trajectory**: docking-group attitude, real
+controller cadence, residual input and intervening avoidance were not replayed.
+It does not justify changing the planner or blaming SFF.
+
+Evidence is retained in ignored
+`obj/TrafficBaseline/after-sff-20261112T045815Z` (Player.log, AI/docking events,
+SFF reports), with the scratch native-controller model in obj/HassanDisposal.
+The missing decisive evidence is the Destroy caller and the group's position,
+velocity, body clearance and active steering immediately before removal.
+Capture those at an opt-in diagnostic boundary if this recurs; do not implement
+a forced rescue or a speculative navigation rule from this incident alone.
+
 After a successful derelict release or empty HaulShip failure, an eligible empty
 hauler's native pilot supplies its target. Recovery verifies that the target is
 the valid registered home station and applies it through TargetData.ApplyToShip.

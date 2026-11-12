@@ -4,6 +4,7 @@ using HarmonyLib;
 using Ostranauts.Core.Models;
 using Ostranauts.ShipGUIs.Trade;
 using Ostranauts.Ships;
+using Ostrabus.MiscBugFixes;
 
 namespace Ostrabus.Optimizations;
 
@@ -26,15 +27,7 @@ internal static class BarterWritebackPatch {
                 // A nested native callback may replace the original layout array.
                 if (!ReferenceEquals(scratch.Source, original.json.aItems)) scratch.Index(original.json.aItems);
                 if (scratch.Ids.Contains(entry.Key)) continue;
-                var co = entry.Value;
-                co.tf.position -= AsyncShipLoader.SPAWNOFFSET;
-                co.mapGUIPropMaps.Add(GUITradeBase.ASYNCIDENTIFIER, new Dictionary<string, string> {
-                    { GUITradeBase.ASYNCIDENTIFIER, GUITradeBase.ASYNCIDENTIFIER }
-                });
-                scratch.Added.Add(ship.GetJsonItem(co));
-                var saved = co.GetJSONSave();
-                if (saved != null) DataHandler.dictCOSaves[saved.strID] = saved;
-                co.tf.position += AsyncShipLoader.SPAWNOFFSET;
+                BarterWritebackSafety.Append(ship, scratch.Added, entry.Value);
                 // Native membership remains the original array until final commit.
                 // In particular, do not add new keys to Ids here.
             }

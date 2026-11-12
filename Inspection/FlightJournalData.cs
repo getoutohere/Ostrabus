@@ -45,6 +45,7 @@ internal static class FlightJournalData {
         public int WorldIdentity, TotalShips, TotalAis, TotalBodies, RegisteredCOs, StaleAiReferences;
         public bool ShipsTruncated, BodiesTruncated, AisTruncated, PlayerCourseTruncated, NewSffReport, EpochApproximate, LogTruncated;
         public object Orbital;
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public object Diagnostic;
         public BodyRow[] Bodies;
         public PlanPoint[] PlayerCourse;
         [JsonIgnore] internal ShipRow[] Buffer;

@@ -1,0 +1,7 @@
+[
+  {
+    "strName": "Mod Loading Order",
+    "aLoadOrder": [ "core", "MvolApartmentTransit" ],
+    "aIgnorePatterns": []
+  }
+]

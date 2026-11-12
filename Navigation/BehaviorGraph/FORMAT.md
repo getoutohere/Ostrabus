@@ -29,6 +29,11 @@ fragment or guard is evaluated as arbitrary code.
   block later requested events; the report retains that fact rather than skipping
   those events or declaring the real simulation stuck.
 
+Scenario expectations can additionally specify `stop`: an empty string requires
+every requested event to complete; a nonempty string asserts the exact blocked,
+unknown or ambiguous termination. New cross-actor scenarios use this explicitly
+so an accidentally truncated trace cannot masquerade as a successful test.
+
 Conditions conjunct `facts` (each value is a set of allowed domain codes), required
 predicate IDs and forbidden predicate IDs. Missing input is unknown. Any definite
 false term makes the conjunction false; otherwise an unknown term keeps it unknown.

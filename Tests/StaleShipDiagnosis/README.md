@@ -1,7 +1,7 @@
-# Native stale-ship lifecycle reproduction
+# Native stale-ship lifecycle reproduction and repair
 
-Investigation, game 1.0.1.10. This fixture installs **no production patches** and
-does not attach to the running game.
+Game 1.0.1.10. First reproduces the unpatched defect, then installs the actual
+production registration and stale-worker hooks. Does not attach to the running game.
 
 ```powershell
 dotnet build Tests/StaleShipDiagnosis -c Release
@@ -39,3 +39,24 @@ Native `StarSystem.Update` disregards that failed recycling result and calls
 sets Kill on remaining human/robot COs. Live log evidence confirms the two pilot
 deaths; the fixture observes the marking and recycling decisions rather than
 claiming an end-to-end Unity destruction test.
+
+The production phase executes the existing crew-registration hook plus
+`StaleShipMarkPatch` against the shipped Task worker. Its 42 total checks cover:
+
+- New reserve activation and saved-controller registration cancel old timers;
+  two-hour advancement and later docking/separation do not resurrect them.
+- Scavenger, police, retrieving/deploying/cargo hauler, civilian, navy and pirate
+  registrations use the same repair.
+- Retiring the hull again produces a new timer and still reaches native cleanup.
+- A later deliberate failure marker survives re-enqueueing the same controller
+  and remains eligible for native removal.
+- Hidden, non-AI, unregistered and crewless hulls are not treated as valid
+  reactivations. Existing bRemove flags and their timers are not revived.
+- A deterministic read callback pauses the native decision after it has read an
+  expired timestamp, then registers the hull or refreshes its timer before the
+  worker commits. The production write guard rejects both outdated decisions;
+  a cancelled mark emits no misleading removal log.
+
+Company lookup is a no-company boundary in this phase; native roster/crew
+readiness checks otherwise run normally. The queue is cleared in place rather
+than replacing its native readonly identity, which Mono may embed in JIT code.

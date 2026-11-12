@@ -7,6 +7,7 @@ using HarmonyLib;
 using Ostrabus.NavConsole.Outlines;
 using Ostrabus.ShipNavigation;
 using Ostrabus.ShipNavigation.Collisions;
+using Ostranauts.ShipGUIs.Utilities;
 using UnityEngine;
 
 static partial class Program {
@@ -40,12 +41,13 @@ static partial class Program {
         var situ=new ShipSitu(false){Size=100,vPosx=x*HullZoom.MetresToAU,vPosy=y*HullZoom.MetresToAU};Field(ship,"<objSS>k__BackingField",situ);
         Field(ship,"aDocked",new Dictionary<string,Ship>());return ship;
     }
-    static void WarmCollision(Ship ship) {
+    static void WarmCollision(Ship ship,Envelope geometry=null,bool alreadyBuilt=false) {
         var worker=(HullWorker)AccessTools.Field(typeof(HullDisplay),"worker").GetValue(null);
         var source=AccessTools.Method(typeof(HullDisplay),"Create").Invoke(null,new object[]{ship});Field(source,"NextCapture",double.MaxValue);
         var entry=(HullWorker.Entry)AccessTools.Field(source.GetType(),"Entry").GetValue(source);
         var table=AccessTools.Field(typeof(HullDisplay),"sources").GetValue(null);table.GetType().GetMethod("Add").Invoke(table,new[]{(object)ship,source});
-        Publish(worker,entry,new Envelope(new[]{new HullPoint(-4,-.5),new HullPoint(4,-.5),new HullPoint(4,.5),new HullPoint(-4,.5)},4));
+        if(alreadyBuilt) {entry.Result=geometry;entry.Accepted=entry.Revision;entry.DrawingVersion++;}
+        else Publish(worker,entry,geometry??new Envelope(new[]{new HullPoint(-2,-.25),new HullPoint(2,-.25),new HullPoint(2,.25),new HullPoint(-2,.25)},4));
     }
     static float NativeDistance(Ship a,Ship b)=>(float)a.objSS.GetDistance(b.objSS.vPosx,b.objSS.vPosy);
     static void ClearImpactMemory()=>((Dictionary<string,string>)AccessTools.Field(typeof(CollisionManager),"_collisionMemory").GetValue(null)).Clear();
@@ -127,6 +129,7 @@ static partial class Program {
             foreach(var untouched in new[]{AccessTools.Method(typeof(CollisionManager),nameof(CollisionManager.WillCollide)),AccessTools.Method(typeof(CollisionManager),nameof(CollisionManager.CheckProjectileCollisions)),
                 AccessTools.Method(typeof(CollisionManager),nameof(CollisionManager.GetCollisionDistanceAU),new[]{typeof(Ship),typeof(Ship)}),AccessTools.Method(typeof(CollisionManager),"ProcessCollision",new[]{typeof(Ship),typeof(BodyOrbit),typeof(double)})})
                 Check(!(Harmony.GetPatchInfo(untouched)?.Owners.Contains(production.Id)??false),"Weapons/shared radius/planet path was patched");
+            SizingCollisionCases();
             var pendingShip=Hull(Ship.Loaded.Shallow,Enumerable.Range(0,5000).Select(i=>new JsonItem{strName="ItmFloor01",fX=i%100,fY=i/100}).ToArray());
             HullDisplay.Geometry(pendingShip,out _);
             var pending=(HullSnapshot)AccessTools.Field(typeof(HullDisplay),"capture").GetValue(null);
@@ -138,5 +141,56 @@ static partial class Program {
             AccessTools.Field(typeof(GUIFFWD),"bFFWDActive").SetValue(null,false);
             PhysicalCollisions.Flag=null;StationDockedCollisions.Flag=null;HullDisplay.Reset();StarSystem.fEpoch=originalEpoch;CrewSim.system=originalWorld;
         }
+    }
+    static void SizingCollisionCases() {
+        var a=CollisionHull("SIZE-A",750,0);var b=CollisionHull("SIZE-B",0,0);
+        float nativeRadius=CollisionManager.GetCollisionDistanceAU(a,b);
+        var builder=new EnvelopeBuilder();
+        var longHull=builder.Build(new[]{new HullPoint(-10,-1),new HullPoint(10,-1),new HullPoint(10,1),new HullPoint(-10,1)},4,null);
+        var turnedHull=builder.Build(new[]{new HullPoint(-1,-10),new HullPoint(1,-10),new HullPoint(1,10),new HullPoint(-1,10)},4,null);
+        var cases=new[]{(750d,0d,0d),(750d,0d,-50d),(0d,750d,-50d),(50d,0d,0d)};
+        var avoidance=new bool[cases.Length];
+        for(int i=0;i<cases.Length;i++) {
+            a.objSS.vPosx=cases[i].Item1*HullZoom.MetresToAU;a.objSS.vPosy=cases[i].Item2*HullZoom.MetresToAU;
+            a.objSS.vVelX=cases[i].Item3*HullZoom.MetresToAU;
+            avoidance[i]=CollisionManager.WillCollide(a.objSS,b.objSS,30);
+        }
+        WarmCollision(a,longHull);WarmCollision(b,longHull);
+        for(int i=0;i<cases.Length;i++) {
+            a.objSS.vPosx=cases[i].Item1*HullZoom.MetresToAU;a.objSS.vPosy=cases[i].Item2*HullZoom.MetresToAU;
+            a.objSS.vVelX=cases[i].Item3*HullZoom.MetresToAU;
+            Check(avoidance[i]==CollisionManager.WillCollide(a.objSS,b.objSS,30),"Hull sizing altered the native AI collision prediction");
+        }
+        Check(a.objSS.Size==100&&b.objSS.Size==100&&CollisionManager.GetCollisionDistanceAU(a,b)==nativeRadius,"Hull sizing wrote native radius state");
+        Check(HullDisplay.Radius(a,longHull)==HullDisplay.Radius(a,turnedHull),"World hull size depends on grid orientation");
+        HullDisplay.Radius(a);
+        long allocated=GC.GetAllocatedBytesForCurrentThread();
+        for(int i=0;i<10000;i++)HullDisplay.Radius(a);
+        Check(GC.GetAllocatedBytesForCurrentThread()==allocated,"Cached hull sizing allocates in steady state");
+        a.objSS.vPosx=750*HullZoom.MetresToAU;a.objSS.vPosy=0;a.objSS.vVelX=0;
+        PhysicalCollisions.Reset();
+        Check(NativeDistance(a,b)>nativeRadius&&PhysicalCollisions.Overlap(a,b,NativeDistance(a,b),nativeRadius),"Corrected broad phase missed hull contact outside native circles");
+        var registry=CrewSim.system.dictShips;
+        try {
+            CrewSim.system.dictShips=new Dictionary<string,Ship>{{a.strRegID,a},{b.strRegID,b}};
+            int before=impacts;ClearImpactMemory();CollisionManager.CheckCollisions(a);
+            Check(impacts==before+1&&impactDisplacement>0,"Native scan missed corrected hull contact outside the original radius comparison");
+        } finally {CrewSim.system.dictShips=registry;}
+        var draw=new ShipDraw(a){lineBodySilhouette=NativeLine(8)};
+        HullDisplay.Assign(draw,longHull,HullDisplay.Radius(a),0);
+        Check(Math.Abs(draw.silhouetteDrawPoints.Max(p=>p.x)-400)<.001,"Visible edge differs from collision edge");
+        PhysicalCollisions.Reset();a.objSS.vPosx=801*HullZoom.MetresToAU;
+        Check(!PhysicalCollisions.Overlap(a,b,NativeDistance(a,b),nativeRadius),"Separated visible edges still collide");
+        PhysicalCollisions.SetEnabled(false);a.objSS.vPosx=750*HullZoom.MetresToAU;
+        Check(!PhysicalCollisions.Overlap(a,b,NativeDistance(a,b),nativeRadius),"Disabled hull setting did not restore native radii");
+        PhysicalCollisions.SetEnabled(true);
+        a.Classification=Ship.TypeClassification.OrbitalStation;Check(HullDisplay.Radius(a,longHull)==100,"Station radius was resized");
+        a.Classification=Ship.TypeClassification.Default;a.objSS.bIsBO=true;Check(HullDisplay.Radius(a,longHull)==100,"Body orbit radius was resized");
+        a.objSS.bIsBO=false;
+        var cold=CollisionHull("SIZE-COLD",0,0);cold.json.nCols=56;cold.json.nRows=25;
+        float coldSize=HullDisplay.Radius(cold);cold.json.nCols=25;cold.json.nRows=56;
+        Check(coldSize==HullDisplay.Radius(cold)&&cold.objSS.Size==100,"Cold visibility estimate retained the X-only sizing defect");
+        cold.Classification=Ship.TypeClassification.OrbitalStation;Check(HullDisplay.Radius(cold)==100,"Cold station estimate ignored its native radius");
+        HullDisplay.Retire(a);HullDisplay.Retire(b);PhysicalCollisions.Reset();
     }
 }

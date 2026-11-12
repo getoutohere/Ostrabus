@@ -11,9 +11,10 @@ static partial class Program {
     static readonly Dictionary<GameObject, CondOwner> components = new Dictionary<GameObject, CondOwner>(new RefComparer<GameObject>());
     static bool CreatePart(JsonItem __0, ref GameObject __result) {
         events.Add("create:" + __0.strID);
+        if (__0.strID == "throw-create") throw new InvalidOperationException("fixture creation exception");
         if (__0.strName == "fail") { __result = null; return false; }
         var go = Empty<GameObject>(); var co = CO(__0.strID, __0.strName);
-        if (__0.strName == "slots") Field(co, "_compSlots", Empty<Slots>());
+        if (__0.strName == "slots" || __0.strName == "destroyed-slots") Field(co, "_compSlots", Empty<Slots>());
         else { co.objContainer = Empty<Container>(); co.objContainer.bAllowStacking = true; }
         if (__0.strSlotParentID != null) co.jCOS = new JsonCondOwnerSave { strSlotName = "heldR" };
         components[go] = co; DataHandler.mapCOs[co.strID] = co; __result = go; return false;
@@ -21,7 +22,7 @@ static partial class Program {
     static bool GetComponent(GameObject __instance, ref CondOwner __result) { __result = components[__instance]; return false; }
     static bool AddRoot(Ship __instance, CondOwner __0) { Items(__instance)[__0.strID] = __0; events.Add("root:" + __0.strID); return false; }
     static bool HasCond(ref bool __result) { __result = false; return false; }
-    static bool Destroyed(JsonItem __0, ref bool __result) { __result = __0.strName == "destroyed"; return false; }
+    static bool Destroyed(JsonItem __0, ref bool __result) { __result = __0.strName == "destroyed" || __0.strName == "destroyed-slots"; return false; }
     static bool Contains(ref bool __result) { __result = false; return false; }
     static bool AddContents(Container __instance, CondOwner __0) {
         Check(!__instance.bAllowStacking, "Stacking enabled during loader restoration"); events.Add("contained:" + __0.strID); return false;
@@ -42,7 +43,7 @@ static partial class Program {
         var generic = typeof(GameObject).GetMethods().Single(m => m.Name == "GetComponent" && m.IsGenericMethod && m.GetParameters().Length == 0).MakeGenericMethod(typeof(CondOwner));
         fixture.Patch(generic, prefix: new HarmonyMethod(typeof(Program), nameof(GetComponent)));
     }
-    static string LoadCase(JsonItem[] records, bool preview) {
+    static string LoadCase(JsonItem[] records, bool preview, bool template = false) {
         Reset(); components.Clear(); DataHandler.mapCOs = new Dictionary<string, CondOwner>();
         foreach (var record in records) DataHandler.dictCOSaves[record.strID] = new JsonCondOwnerSave { strID = record.strID };
         Ship ship;
@@ -55,7 +56,7 @@ static partial class Program {
         } else {
             ship = Empty<Ship>(); Items(ship) = new Ostranauts.Core.Models.DictionaryArray<string, CondOwner>();
             Field(ship, "mapIDRemap", new Dictionary<string, string>());
-            var args = new object[] { records.ToList(), false, Ship.Loaded.Shallow, new Dictionary<string, CondOwner>(), new List<CondOwner>() };
+            var args = new object[] { records.ToList(), template, Ship.Loaded.Shallow, new Dictionary<string, CondOwner>(), new List<CondOwner>() };
             AccessTools.Method(typeof(Ship), "SpawnItems").Invoke(ship, args);
         }
         return Json(new { calls = events.ToArray(), ids = Items(ship).Keys.ToArray(), stacking = Items(ship).Values.Select(co => co.objContainer?.bAllowStacking).ToArray() });

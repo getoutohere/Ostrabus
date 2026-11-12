@@ -87,13 +87,13 @@ static partial class Program {
         int lookupsBefore = lookupCalls;
         moved.AuditConnections(); moved.RemoveConnection(movedTarget.coSelf.strID); Tick(moved);
         Check(lookupCalls == lookupsBefore && Queue(moved, "sendQueue").Count == 1, "Stale cached owner defers without querying the old runtime map");
-        moved.coShip = newOwner; Tick(moved); Tick(movedTarget);
+        moved.coShip = newOwner; WakeCandidate(moved); Tick(moved); Tick(movedTarget);
         Check(Queue(moved, "sendQueue").Count == 0 && !movedTarget.inputConnections.ContainsKey(moved.coSelf.strID), "Delivery resumes after owner binding is settled");
         var initializingSource = Box(); var initializingTarget = Device();
         initializingSource.SetUpConnection(initializingTarget.coSelf); Tick(initializingSource); Tick(initializingTarget);
         initializingTarget.isInitialising = true; initializingSource.RemoveConnection(initializingTarget.coSelf.strID); Tick(initializingSource);
         Check(Queue(initializingSource, "sendQueue").Count == 1, "Existing receiver defers terminal delivery until its GPM initialization finishes");
-        initializingTarget.isInitialising = false; Tick(initializingSource); Tick(initializingTarget);
+        initializingTarget.isInitialising = false; WakeCandidate(initializingSource); Tick(initializingSource); Tick(initializingTarget);
         Check(!initializingTarget.inputConnections.ContainsKey(initializingSource.coSelf.strID), "Receiver consumes terminal delivery after initialization");
         Console.WriteLine("Endpoint authority: " + (checks-before) + " checks passed.");
     }

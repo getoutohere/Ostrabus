@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/6554c4ce6d523142e49be05a3b596b86ce746cc8168b92a550cc60e8a9e34baa.json.br",
+  "reason": "0.4.0 source-reference review: native-tested valid-registration stale timer cancellation and station-chain predicate extraction for moored towing previews; modeled transitions unchanged. See REVIEW.md.",
+  "acceptedUtc": "2026-11-12T23:39:21.1642129Z",
+  "previousSnapshot": "assembly-baselines/3ecee3a90e10493bd89c3207e76c040e260838012d1a066f70ad2109cdee6cbe.json.br"
+}

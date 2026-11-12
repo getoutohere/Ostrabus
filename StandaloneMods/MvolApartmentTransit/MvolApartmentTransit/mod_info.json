@@ -1,0 +1,10 @@
+[
+  {
+    "strName": "MVOL Apartment Transit Fix",
+    "strAuthor": "GetOutOfHere",
+    "strModURL": "",
+    "strGameVersion": "1.0.1.10",
+    "strModVersion": "1.0.0",
+    "strNotes": "Standalone native JSON mod. Adds missing MVOL residence transit and a residential stop at Upsilon Docking's existing express lift. Preserves medical and laboratory connections. No Ostrabus or BepInEx dependency."
+  }
+]

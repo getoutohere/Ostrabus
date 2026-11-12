@@ -54,6 +54,23 @@ target and range even if validation throws. Probe failures retain vanilla sittin
 behavior and log a warning. Native path-search scratch/cache may still be updated
 by its normal reachability queries.
 
+Failed probes advance a numeric cursor through the freshly ranked list. An
+unusable leading pair can no longer monopolize every chair renewal and hide a
+usable third candidate. Each pass still considers at most two entries; later
+passes wrap around and retry previously blocked work. Finding usable work or an
+empty list resets the cursor. Changing ships or reversing simulation time resets
+both progress and the throttle. Candidate changes are handled by fresh ranking
+and a bounds check; no candidate references are saved between passes.
+
+The cursor belongs only to this discovery probe. It does not populate the native
+recently-tried dictionary, reserve jobs or change actual duty selection. Native
+`ProcessAutoTasks` still selects work and records its own attempts after the
+actor gets up. It may first reject its original top two, then use their native
+cooldowns to reach the later usable job on its next work pass. The original
+probe lacked both native failure cooldowns and independent progress, so its
+first two entries could keep an eligible crew seated until personal needs
+happened to interrupt the loop.
+
 When usable automatic maintenance exists, the reply becomes native `ACTChairSitEnd`,
 which clears `Sitting`, releases `IsOccupied`, and retains the native continuation
 and work selection. Actual work is chosen and revalidated by the existing
@@ -106,10 +123,12 @@ and are cleared in `finally`, so values do not retain item/ship references betwe
 probes. Coroutine wrappers dispose inner iterators and release their own retained
 lists/actors on completion or disposal. Thread-local scope is cleared before
 yielding. Native searches and ranking allocate their normal temporary results.
+Probe progress adds only numeric fields and a ship ID string to the existing
+weak-key state; it introduces no additional hook, scan, collection or save field.
 
 ## Validation
 
-`Tests/CrewRestCheck` passes 599 offline checks using the bundled Mono. It installs
+`Tests/CrewRestCheck` passes 696 offline checks using the bundled Mono. It installs
 the production hooks and exercises yielded search scopes, inventory/world result
 filtering, manual/NPC exclusions, switching to manual control during a search,
 cancelled iterators, eligibility and safety gates, probe throttling, native ranking
@@ -123,6 +142,15 @@ also cover reused/distinct buffers and candidate cleanup after native exceptions
 Sleep regressions reproduce the drafted-actor bypass before correction and cover
 all three drafted flags, a flag change during a yielded search, and unchanged
 direct/manual searches outside autonomous choice.
+
+The progress regression fails against the old probe: two blocked native-ranked
+candidates repeatedly hide a usable third. Corrected probes advance within the
+two-entry budget, keep crew cursors independent, revisit failed work, reset on an
+empty list/context change/time reversal, and tolerate removal of candidates.
+The shipped native ProcessAutoTasks then rejects its own leading pair, records
+its native cooldowns and queues the discovered third target on its following
+pass. Tests verify that discovery does not write those cooldowns, restore-path
+state is retained across failed cycles, and scratch lists release their targets.
 
 Native ProcessAutoTasks, InsertUndamage, reply-role assignment and
 JsonInteractionSave execute.

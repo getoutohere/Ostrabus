@@ -1,6 +1,7 @@
 # Active ships retain retirement markers and lose living crews
 
-Investigation only, 2026-11-09, game 1.0.1.10. **No runtime fix implemented.**
+Investigated 2026-11-09; lifecycle repair implemented 2026-11-11, game 1.0.1.10.
+The separate crew-recycling policy gap remains open.
 
 ## Observed sequence
 
@@ -71,26 +72,51 @@ active voyage should never have reached retired-hull disposal in the first place
 Broadly teleporting crews or disabling all retirement would change native policy
 and would not repair the lifecycle transition.
 
-## Proposed correction, pending implementation
+## Implemented correction
 
-Cancel an old retirement marker at successful reactivation/registration of a
-visible, valid crewed AI ship. Keep actual retirement/unregistration and command
-failure disposal intact. Cover loading existing active controllers with bad
-saved markers as well as new reserve reuse. Prefer the existing registration
-hook if its validated boundary is sufficient; avoid a periodic rescue sweep.
+`ActiveShipRetirement` extends the existing crew-validated AddAIToDict hook.
+A newly registered, visible, valid crewed AI hull cancels its obsolete IsStale
+marker. Both reserve reuse and saved-controller restoration reach this boundary.
+The same controller merely being re-enqueued or moved between region buckets
+does not cancel a later command-failure marker. Auto, Station and non-crewed
+controller types, hidden reserves, non-AI hulls and pre-existing bRemove flags
+are excluded. The existing crew guard still rejects invalid crewless flight.
 
-Do not blanket-clear bRemove: a deletion may have another valid cause. Audit
-concurrency with the native background sweep before choosing the final integration.
-Treat any independent crew-recycling policy change as a separate decision.
+CleanupStaleShips runs its eligibility scan on a background Task. A narrow
+transpiler changes only its final bRemove assignment and associated log: the
+worker rechecks the current retirement timestamp under the same short lock used
+for cancellation. If it read an obsolete timer before reactivation, it cannot
+subsequently commit that cancelled decision. A refreshed, unexpired timestamp
+also stops the old decision. The original player/plot/docking/visit protections,
+three-hour threshold and selection logic remain native. An unknown worker or
+write-site shape fails patch binding rather than modifying unrelated removal.
 
-The current live census also found active hull markers on O-BFZ2, O-QH5 and O-YVZC.
-O-QH5's marker is already expired but docking currently protects it. No live state
-has been changed during this investigation.
+No blanket bRemove clearing is performed. A hull whose deletion was already
+committed before registration remains queued, whether from stale cleanup,
+scuttling, arena cleanup or saved state. This is not a queued-deletion rescue.
+Normal unregistration writes a new timer, and later deliberate command-failure
+cleanup remains effective even for an active controller. The faction matching
+and unconditional destruction after failed crew recycling are unchanged.
+
+One additional worker transpiler is used; registration reuses the existing
+hook. There is no periodic mod scan, per-frame hook, retained ship reference,
+custom save state or added background job. The lock is taken on valid new
+registrations and final stale-mark decisions, not on each AI tick. Custom
+builds include the repair with `ai-crew-integrity`.
+
+The pre-fix census also found active hull markers on O-BFZ2, O-QH5 and O-YVZC.
+O-QH5's marker was expired but docking protected it. Loading the new build
+cancels these markers when their valid controllers register; it cannot restore
+NPCs already destroyed in the save. No live state was mutated during development.
 
 ## Evidence and offline reproduction
 
 [`Tests/StaleShipDiagnosis`](../Tests/StaleShipDiagnosis/README.md) executes the
-shipped lifecycle, cleanup and recycling decisions under bundled Mono. Private
+shipped lifecycle, cleanup and recycling decisions under bundled Mono, first
+unpatched and then with the actual production registration/worker hooks (42
+checks). It includes deterministic old-read/reactivation and timer-refresh
+interleavings, reserve reuse, saved-marker cancellation, role coverage,
+same-controller re-enqueueing, legitimate retirement and removal exclusions. Private
 native save extracts and live captures remain in ignored obj/stale-* files;
 the fixture retains only anonymous scalar ages. Earlier faction evidence is
 obj/live-survey/O-5FWA.ai.json and O-ENB.ai.json; cleanup logs and recent events

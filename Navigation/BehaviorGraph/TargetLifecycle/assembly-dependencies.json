@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "description": "Shared target lifecycle and cross-actor retirement; native method bindings.",
+  "bindings": {
+    "scav": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.ScavPilot",
+        "methods": [
+          ".ctor",
+          "GetTarget",
+          "ScavCanDockWith"
+        ]
+      }
+    ],
+    "retriever": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.HaulerRetrievingPilot",
+        "methods": [
+          ".ctor",
+          "GetTarget",
+          "FindDerelictTarget",
+          "FFWD"
+        ]
+      }
+    ],
+    "retirement": [
+      {
+        "type": "Ostranauts.Ships.Commands.DockCargoAndDespawn",
+        "methods": [
+          "RunCommand",
+          "HandleDockedShips",
+          "ResolveInstantly"
+        ]
+      }
+    ],
+    "ship": [
+      {
+        "type": "Ship",
+        "methods": [
+          "Destroy",
+          "CheckTargets",
+          "ClearShipTarget",
+          "GetJSON",
+          "get_HideFromSystem",
+          "set_HideFromSystem"
+        ]
+      }
+    ],
+    "system": [
+      {
+        "type": "StarSystem",
+        "methods": [
+          "RemoveShip",
+          "Destroy"
+        ]
+      }
+    ],
+    "situ": [
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "destroy",
+          "CopyFrom",
+          "UpdateTime",
+          "ResetNavData"
+        ]
+      }
+    ],
+    "replacement": [
+      {
+        "type": "CrewSim",
+        "methods": [
+          "DestroyAndReload",
+          "SaveToShallow",
+          "DockAndDespawn"
+        ]
+      }
+    ],
+    "target": [
+      {
+        "type": "Ostranauts.Ships.TargetData",
+        "methods": [
+          ".ctor",
+          "get_HasValidTarget",
+          "ApplyToShip"
+        ]
+      }
+    ],
+    "fly": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyTo",
+        "methods": [
+          "RunCommand",
+          "HasValidPathTarget",
+          "CanExecute"
+        ]
+      }
+    ],
+    "path": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToPath",
+        "methods": [
+          "RunCommand",
+          "PlanTrip4",
+          "PlanTrip4Sub",
+          "CreateNavPointStatic"
+        ]
+      }
+    ],
+    "manual": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToManual",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "dock": [
+      {
+        "type": "Ostranauts.Ships.Commands.Dock",
+        "methods": [
+          "RunCommand",
+          "CanExecute",
+          "HasValidTargetLock",
+          "CanDockWith"
+        ]
+      }
+    ],
+    "fix_targets": [
+      {
+        "type": "Ship",
+        "methods": [
+          "Destroy",
+          "CheckTargets"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Undock",
+        "methods": [
+          "AttemptToUnMoor"
+        ]
+      },
+      {
+        "type": "StarSystem",
+        "methods": [
+          "CreateStellarObject"
+        ]
+      }
+    ],
+    "clear_saved": [
+      {
+        "type": "Ship",
+        "methods": [
+          "ClearShipTarget",
+          "GetJSON"
+        ]
+      }
+    ]
+  },
+  "predicateSources": {},
+  "assets": [
+    {
+      "id": "collector_role",
+      "path": "condtrigs/condtrigs.json",
+      "entry": "TIsDerelictCollector",
+      "sources": [
+        "retriever"
+      ]
+    }
+  ]
+}

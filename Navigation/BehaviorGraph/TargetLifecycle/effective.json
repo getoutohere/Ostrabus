@@ -1,0 +1,3314 @@
+{
+  "schemaVersion": 1,
+  "id": "ostrabus-current-target-lifecycle",
+  "gameVersion": "1.0.1.10",
+  "assemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+  "baselineCommit": "21124d5",
+  "scope": {
+    "status": "cross_actor_target_lifecycle",
+    "roles": [
+      "Scav",
+      "HaulerRetriever",
+      "shared FlyTo consumers"
+    ],
+    "covered": [
+      "Concurrent pickup and permanent retirement",
+      "Live versus saved missing destination",
+      "Existing route versus fresh divergent plot",
+      "Replacement versus hiding",
+      "Owned waypoint versus shared situation",
+      "Manual versus planned lifetime validation",
+      "Port occupancy separate from removal",
+      "Production permanent-removal and restored missing-identity repair",
+      "Shallow saved-field clearing"
+    ],
+    "opaque": [
+      "Complete role-specific behavior trees",
+      "Physical arrival geometry",
+      "Full combat, SFF scheduling and ATC population lifecycle"
+    ],
+    "preconditions": [
+      "Ordinary FlyTo dispatch without observer pause, docking or own body-lock early return.",
+      "Captured numerical outcome is established by a shipped-assembly replay."
+    ],
+    "notProven": [
+      "Complete AI behavior coverage",
+      "Universal divergence for all removed destinations"
+    ]
+  },
+  "sources": {
+    "scav": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/ScavPilot.cs",
+      "symbol": "Scavenger selection and sticky Main",
+      "anchors": [
+        "ScavCanDockWith",
+        "new FlyTo(this)"
+      ],
+      "sha256": "0e6a2cb3345664d6b5a51f85c6f1efbc3662a5249a608a28e28257d00f7ec787"
+    },
+    "retriever": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/HaulerRetrievingPilot.cs",
+      "symbol": "Concurrent retrieval actor",
+      "anchors": [
+        "FindDerelictTarget",
+        "new DockCargoAndDespawn(this)"
+      ],
+      "sha256": "9244be33820d92ab159a8044dcd08eb7ea0c72c23049c90acd31c532e53ece40"
+    },
+    "retirement": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/DockCargoAndDespawn.cs",
+      "symbol": "Retrieved wreck disposal",
+      "anchors": [
+        "dockedShip.Destroy(isDespawning: false)"
+      ],
+      "sha256": "5b8e2e88cb943202406e89bdc0b44a5132cdf27616a9eff7c4045f98f4adedbf"
+    },
+    "ship": {
+      "origin": "game",
+      "path": "Ship.cs",
+      "symbol": "Destroy, CheckTargets, ClearShipTarget and hiding",
+      "anchors": [
+        "public void Destroy(bool isDespawning = true)",
+        "public void CheckTargets()",
+        "public void ClearShipTarget()"
+      ],
+      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+    },
+    "system": {
+      "origin": "game",
+      "path": "StarSystem.cs",
+      "symbol": "Registry removal and teardown",
+      "anchors": [
+        "public void RemoveShip(string shipRegID)"
+      ],
+      "sha256": "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+    },
+    "situ": {
+      "origin": "game",
+      "path": "ShipSitu.cs",
+      "symbol": "Retained situation destruction, copying and time update",
+      "anchors": [
+        "public void destroy()",
+        "public void UpdateTime("
+      ],
+      "sha256": "09eba8d52011e3a63659e3bb7d582bf21ecaccd8de8ff0a67711d5dec5169a79"
+    },
+    "replacement": {
+      "origin": "game",
+      "path": "CrewSim.cs",
+      "symbol": "Synchronous same-ID unload/replacement transaction",
+      "anchors": [
+        "private void DestroyAndReload(Ship ship, JsonShip json)"
+      ],
+      "sha256": "3f4396cd567159dd3a132cc148e72c6df331c6fef08ced4423e0f495afeea038"
+    },
+    "target": {
+      "origin": "game",
+      "path": "Ostranauts.Ships/TargetData.cs",
+      "symbol": "Nominal validity and assignment",
+      "anchors": [
+        "public bool HasValidTarget =\u003E Situ != null"
+      ],
+      "sha256": "49ee14a7a489125bd81bf18a84f23af6f9d7908756684be3eba0c8263ac239f1"
+    },
+    "fly": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyTo.cs",
+      "symbol": "Planned versus manual dispatch",
+      "anchors": [
+        "private bool HasValidPathTarget()",
+        "_flyToPath.RunCommand(blackboard)"
+      ],
+      "sha256": "bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"
+    },
+    "path": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyToPath.cs",
+      "symbol": "Planned continuation and intercept iteration",
+      "anchors": [
+        "public NavData PlanTrip4(",
+        "base.ShipUs.objSS.NavData != null"
+      ],
+      "sha256": "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+    },
+    "manual": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyToManual.cs",
+      "symbol": "Existing manual-flight target lifetime validation",
+      "anchors": [
+        "base.ShipUs.shipScanTarget.bDestroyed",
+        "base.ShipUs.ClearShipTarget()"
+      ],
+      "sha256": "41ad105cc1a487658b9a27f991bf3dfed6da8c7eafdcd7e2e7b7612c1ecf5662"
+    },
+    "dock": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/Dock.cs",
+      "symbol": "Late target validation and port checks",
+      "anchors": [
+        "private bool HasValidTargetLock()",
+        "shipTarget.HasOpenDockingPorts()"
+      ],
+      "sha256": "37515df3429295135b9b3abcecc4341c3026d118199e7513299c49b9e00f8b95"
+    },
+    "fix_targets": {
+      "origin": "repo",
+      "path": "MiscBugFixes/ShipReplacementTargetsPatch.cs",
+      "symbol": "Replacement-aware target lifetime completion and restore validation",
+      "anchors": [
+        "internal static void Complete(Replacement state, bool stellarConversion",
+        "internal static void Removed(",
+        "internal static void Restored("
+      ],
+      "sha256": "76eef5c6932b1a87f4de59f7b8c02f8a6df37fe6d67f07b08f8cfe47f96e181c"
+    },
+    "clear_saved": {
+      "origin": "repo",
+      "path": "Navigation/NavigationFuel.cs",
+      "symbol": "ClearShipTarget clears live, saved and predicted target state",
+      "anchors": [
+        "internal static class ClearTargetFuelPatch",
+        "saved.objSituScanTarget = null;"
+      ],
+      "sha256": "35e7e8398bbda8440a43820430324b8b93c4ade6494c02aaf19b3e903a064fcc"
+    }
+  },
+  "evidence": {
+    "review": {
+      "level": "source_review",
+      "artifact": "Navigation/BehaviorGraph/Scavenger/TARGET-RETIREMENT-INVESTIGATION.md",
+      "supports": "Native actor interaction and reference lifetime, including collector disposal."
+    },
+    "native_lifecycle": {
+      "level": "native_offline",
+      "artifact": "Tests/AiPlannerDiagnosis/LifecycleChecks.cs",
+      "supports": "Native destruction and restored missing destinations remain accepted by planned dispatch; manual validation rejects dead references; existing replacement repair preserves valid routes."
+    },
+    "planner_replay": {
+      "level": "native_offline",
+      "artifact": "Tests/AiPlannerDiagnosis/Program.cs",
+      "supports": "Captured retired-target replay matches saved route duration under declared fixture boundaries."
+    },
+    "repaired_lifecycle": {
+      "level": "native_offline",
+      "artifact": "Tests/AiPlannerDiagnosis/TargetLifetimeChecks.cs",
+      "supports": "Production removal/restoration hooks execute native destruction, restoration, command failure, replacement and failed/nested replacement. Captured O-ZY3A route is cleared without changing motion/fuel; weak references release and unchanged restoration allocates zero."
+    }
+  },
+  "variables": {
+    "target_kind": {
+      "values": [
+        "ship",
+        "station",
+        "coordinate",
+        "asteroid",
+        "body"
+      ],
+      "description": "Identity-bearing target versus an independent point or stellar object.",
+      "kind": "state"
+    },
+    "lifetime": {
+      "values": [
+        "live",
+        "hidden",
+        "replaced",
+        "removed"
+      ],
+      "description": "Hidden is not destroyed; replacement preserves logical identity.",
+      "kind": "state"
+    },
+    "registry": {
+      "values": [
+        "present",
+        "absent"
+      ],
+      "description": "Whether the logical ship destination resolves in the system.",
+      "kind": "state"
+    },
+    "scan_ref": {
+      "values": [
+        "current",
+        "dead",
+        "none"
+      ],
+      "description": "Observer Ship reference, separate from saved ID and situation.",
+      "kind": "state"
+    },
+    "situation": {
+      "values": [
+        "coherent",
+        "orphan",
+        "none"
+      ],
+      "description": "Orphan means a retained locked situation has lost its body reference.",
+      "kind": "state"
+    },
+    "shared": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Observer uses the exact destination ShipSitu rather than an owned waypoint.",
+      "kind": "state"
+    },
+    "lock": {
+      "values": [
+        "anchored",
+        "free"
+      ],
+      "description": "Anchored situations pass HasValidPathTarget; free targets use manual flight.",
+      "kind": "state"
+    },
+    "plan": {
+      "values": [
+        "none",
+        "finite",
+        "divergent"
+      ],
+      "description": "Divergent is the captured numerical outcome, not every possible malformed route.",
+      "kind": "state"
+    },
+    "branch": {
+      "values": [
+        "undispatched",
+        "planned",
+        "manual"
+      ],
+      "description": "Shared FlyTo child selected.",
+      "kind": "state"
+    },
+    "ports": {
+      "values": [
+        "available",
+        "occupied"
+      ],
+      "description": "Nonstation docking-port availability is separate from target lifetime.",
+      "kind": "state"
+    },
+    "collector": {
+      "values": [
+        "elsewhere",
+        "attached",
+        "returned"
+      ],
+      "description": "Concurrent retrieval actor progression for the same wreck.",
+      "kind": "state"
+    },
+    "goal": {
+      "values": [
+        "assigned",
+        "none"
+      ],
+      "description": "Destination assigned versus cleared; coordinate destinations need not have a registry ID.",
+      "kind": "state"
+    },
+    "collision": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Native collision prediction may divert anchored flight into the manual child.",
+      "kind": "native_result"
+    }
+  },
+  "predicates": {},
+  "nodes": {
+    "dispatch": {
+      "label": "Shared FlyTo dispatch",
+      "layer": "control",
+      "sources": [
+        "fly"
+      ],
+      "detail": "Another actor can change target lifetime or ports during flight."
+    },
+    "planned": {
+      "label": "FlyToPath running",
+      "layer": "motion",
+      "sources": [
+        "path"
+      ],
+      "detail": "A non-null route returns Running without establishing target liveness or convergence."
+    },
+    "manual": {
+      "label": "FlyToManual validation",
+      "layer": "motion",
+      "sources": [
+        "manual"
+      ],
+      "detail": "Native destroyed-Ship check runs before steering."
+    },
+    "dock": {
+      "label": "Dock target and port checks",
+      "layer": "control",
+      "sources": [
+        "dock"
+      ],
+      "detail": "Checks here cannot protect a flight that never reaches handoff."
+    },
+    "resume": {
+      "label": "Return control to native behavior tree",
+      "layer": "control",
+      "sources": [
+        "fly",
+        "dock"
+      ],
+      "detail": "Native failure or CanExecute outcome; subsequent role selection is not invented."
+    }
+  },
+  "edges": [
+    {
+      "id": "dispatch.collected",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "collector_attaches",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "live",
+            "hidden"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "attached",
+        "ports": "occupied"
+      },
+      "sources": [
+        "retriever"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Concurrent selection and attachment are legitimate; target motion is a separate native outcome.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dispatch.hidden",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "target_hidden",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "live"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "hidden"
+      },
+      "sources": [
+        "ship"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Hiding alone neither destroys the Ship nor nulls its situation.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dispatch.other_retired",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "other_target_retired",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "ship",
+        "system"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "An unrelated retirement does not change this destination.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "planned.collected",
+      "from": "planned",
+      "to": "planned",
+      "event": "collector_attaches",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "live",
+            "hidden"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "attached",
+        "ports": "occupied"
+      },
+      "sources": [
+        "retriever"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Concurrent selection and attachment are legitimate; target motion is a separate native outcome.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "planned.hidden",
+      "from": "planned",
+      "to": "planned",
+      "event": "target_hidden",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "live"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "hidden"
+      },
+      "sources": [
+        "ship"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Hiding alone neither destroys the Ship nor nulls its situation.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "planned.other_retired",
+      "from": "planned",
+      "to": "planned",
+      "event": "other_target_retired",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "ship",
+        "system"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "An unrelated retirement does not change this destination.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "manual.collected",
+      "from": "manual",
+      "to": "manual",
+      "event": "collector_attaches",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "live",
+            "hidden"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "attached",
+        "ports": "occupied"
+      },
+      "sources": [
+        "retriever"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Concurrent selection and attachment are legitimate; target motion is a separate native outcome.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "manual.hidden",
+      "from": "manual",
+      "to": "manual",
+      "event": "target_hidden",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "live"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "hidden"
+      },
+      "sources": [
+        "ship"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Hiding alone neither destroys the Ship nor nulls its situation.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "manual.other_retired",
+      "from": "manual",
+      "to": "manual",
+      "event": "other_target_retired",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "ship",
+        "system"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "An unrelated retirement does not change this destination.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dock.collected",
+      "from": "dock",
+      "to": "dock",
+      "event": "collector_attaches",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "live",
+            "hidden"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "attached",
+        "ports": "occupied"
+      },
+      "sources": [
+        "retriever"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Concurrent selection and attachment are legitimate; target motion is a separate native outcome.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dock.hidden",
+      "from": "dock",
+      "to": "dock",
+      "event": "target_hidden",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "live"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "hidden"
+      },
+      "sources": [
+        "ship"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Hiding alone neither destroys the Ship nor nulls its situation.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dock.other_retired",
+      "from": "dock",
+      "to": "dock",
+      "event": "other_target_retired",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "ship",
+        "system"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "An unrelated retirement does not change this destination.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dispatch.path",
+      "from": "dispatch",
+      "to": "planned",
+      "event": "flight_tick",
+      "when": {
+        "facts": {
+          "lock": [
+            "anchored"
+          ],
+          "collision": [
+            "false"
+          ],
+          "goal": [
+            "assigned"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "branch": "planned"
+      },
+      "sources": [
+        "fly"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dispatch.manual",
+      "from": "dispatch",
+      "to": "manual",
+      "event": "flight_tick",
+      "when": {
+        "facts": {
+          "lock": [
+            "free"
+          ],
+          "goal": [
+            "assigned"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "branch": "manual"
+      },
+      "sources": [
+        "fly"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "path.plot_divergent",
+      "from": "planned",
+      "to": "planned",
+      "event": "captured_native_plot",
+      "when": {
+        "facts": {
+          "situation": [
+            "orphan"
+          ],
+          "plan": [
+            "none"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "plan": "divergent"
+      },
+      "sources": [
+        "path",
+        "situ"
+      ],
+      "evidence": [
+        "planner_replay"
+      ],
+      "note": "Captured O-ZY3A numerical replay; not a universal geometry theorem.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "path.continue",
+      "from": "planned",
+      "to": "planned",
+      "event": "route_tick",
+      "when": {
+        "facts": {
+          "plan": [
+            "finite",
+            "divergent"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "path"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "path.arrive",
+      "from": "planned",
+      "to": "dock",
+      "event": "arrival_reached",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "path",
+        "dock"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Conditional handoff; this event does not guarantee that a route can arrive.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dock.occupied",
+      "from": "dock",
+      "to": "resume",
+      "event": "dock_eligibility",
+      "when": {
+        "facts": {
+          "ports": [
+            "occupied"
+          ],
+          "target_kind": [
+            "ship"
+          ],
+          "lifetime": [
+            "live",
+            "hidden"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "dock"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Dock.CanExecute skips an ordinary nonstation target with no open target port; authored subsequent behavior remains authoritative.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dock.retired",
+      "from": "dock",
+      "to": "dock",
+      "event": "dock_tick",
+      "when": {
+        "facts": {
+          "scan_ref": [
+            "dead"
+          ],
+          "registry": [
+            "absent"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "goal": "none",
+        "scan_ref": "none",
+        "situation": "none"
+      },
+      "sources": [
+        "dock"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "HasValidTargetLock clears the dead destination; RunCommand returns Running on this tick.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dock.cleared",
+      "from": "dock",
+      "to": "resume",
+      "event": "dock_tick",
+      "when": {
+        "facts": {
+          "goal": [
+            "none"
+          ],
+          "scan_ref": [
+            "none"
+          ],
+          "situation": [
+            "none"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "dock"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "manual.retired",
+      "from": "manual",
+      "to": "resume",
+      "event": "manual_validate",
+      "when": {
+        "facts": {
+          "scan_ref": [
+            "dead"
+          ],
+          "registry": [
+            "absent"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "goal": "none",
+        "scan_ref": "none",
+        "situation": "none"
+      },
+      "sources": [
+        "manual"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Native ClearShipTarget and Failure; the next role task is not forced to a home return.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "manual.replacement",
+      "from": "manual",
+      "to": "manual",
+      "event": "manual_validate",
+      "when": {
+        "facts": {
+          "scan_ref": [
+            "dead"
+          ],
+          "registry": [
+            "present"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "scan_ref": "current"
+      },
+      "sources": [
+        "manual"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Native manual branch resolves a same-ID replacement before steering.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dispatch.collision_manual",
+      "from": "dispatch",
+      "to": "manual",
+      "event": "flight_tick",
+      "when": {
+        "facts": {
+          "lock": [
+            "anchored"
+          ],
+          "collision": [
+            "true"
+          ],
+          "goal": [
+            "assigned"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "branch": "manual"
+      },
+      "sources": [
+        "fly"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Native collision fallback may run manual validation even for an anchored target.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "manual.saved_missing",
+      "from": "manual",
+      "to": "manual",
+      "event": "manual_validate",
+      "when": {
+        "facts": {
+          "scan_ref": [
+            "none"
+          ],
+          "registry": [
+            "absent"
+          ],
+          "goal": [
+            "assigned"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "manual",
+        "ship"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "The destroyed-Ship branch is bypassed when CheckTargets has already resolved the Ship to null. This edge models validation only, not the subsequent steering result.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dispatch.no_goal",
+      "from": "dispatch",
+      "to": "resume",
+      "event": "flight_tick",
+      "when": {
+        "facts": {
+          "goal": [
+            "none"
+          ],
+          "scan_ref": [
+            "none"
+          ],
+          "situation": [
+            "none"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "branch": "manual"
+      },
+      "sources": [
+        "fly",
+        "manual"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "Without a target native shared flight selects its manual child, which returns Failure; the native parent tree chooses what follows.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dispatch.restore_nonship",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "restore_nonship_goal",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "coordinate",
+            "body",
+            "asteroid"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "ship"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "Native restoration preserves independent coordinates and existing body/stellar-object identities; ship registry absence alone does not make these lost ships.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "planned.restore_nonship",
+      "from": "planned",
+      "to": "planned",
+      "event": "restore_nonship_goal",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "coordinate",
+            "body",
+            "asteroid"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "ship"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "Native restoration preserves independent coordinates and existing body/stellar-object identities; ship registry absence alone does not make these lost ships.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "manual.restore_nonship",
+      "from": "manual",
+      "to": "manual",
+      "event": "restore_nonship_goal",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "coordinate",
+            "body",
+            "asteroid"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "ship"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "Native restoration preserves independent coordinates and existing body/stellar-object identities; ship registry absence alone does not make these lost ships.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "dock.restore_nonship",
+      "from": "dock",
+      "to": "dock",
+      "event": "restore_nonship_goal",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "coordinate",
+            "body",
+            "asteroid"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "ship"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "Native restoration preserves independent coordinates and existing body/stellar-object identities; ship registry absence alone does not make these lost ships.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "fix.dispatch.replace_true",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "same_id_replaced",
+      "when": {
+        "facts": {
+          "shared": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "replaced",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent"
+      },
+      "sources": [
+        "replacement",
+        "ship",
+        "situ",
+        "fix_targets"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes.",
+      "guards": [],
+      "patch": "replacement_references"
+    },
+    {
+      "id": "fix.dispatch.replace_false",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "same_id_replaced",
+      "when": {
+        "facts": {
+          "shared": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "replaced",
+        "registry": "present",
+        "scan_ref": "current"
+      },
+      "sources": [
+        "replacement",
+        "ship",
+        "situ",
+        "fix_targets"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes.",
+      "guards": [],
+      "patch": "replacement_references"
+    },
+    {
+      "id": "fix.planned.replace_true",
+      "from": "planned",
+      "to": "planned",
+      "event": "same_id_replaced",
+      "when": {
+        "facts": {
+          "shared": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "replaced",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent"
+      },
+      "sources": [
+        "replacement",
+        "ship",
+        "situ",
+        "fix_targets"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes.",
+      "guards": [],
+      "patch": "replacement_references"
+    },
+    {
+      "id": "fix.planned.replace_false",
+      "from": "planned",
+      "to": "planned",
+      "event": "same_id_replaced",
+      "when": {
+        "facts": {
+          "shared": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "replaced",
+        "registry": "present",
+        "scan_ref": "current"
+      },
+      "sources": [
+        "replacement",
+        "ship",
+        "situ",
+        "fix_targets"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes.",
+      "guards": [],
+      "patch": "replacement_references"
+    },
+    {
+      "id": "fix.manual.replace_true",
+      "from": "manual",
+      "to": "manual",
+      "event": "same_id_replaced",
+      "when": {
+        "facts": {
+          "shared": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "replaced",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent"
+      },
+      "sources": [
+        "replacement",
+        "ship",
+        "situ",
+        "fix_targets"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes.",
+      "guards": [],
+      "patch": "replacement_references"
+    },
+    {
+      "id": "fix.manual.replace_false",
+      "from": "manual",
+      "to": "manual",
+      "event": "same_id_replaced",
+      "when": {
+        "facts": {
+          "shared": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "replaced",
+        "registry": "present",
+        "scan_ref": "current"
+      },
+      "sources": [
+        "replacement",
+        "ship",
+        "situ",
+        "fix_targets"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes.",
+      "guards": [],
+      "patch": "replacement_references"
+    },
+    {
+      "id": "fix.dock.replace_true",
+      "from": "dock",
+      "to": "dock",
+      "event": "same_id_replaced",
+      "when": {
+        "facts": {
+          "shared": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "replaced",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent"
+      },
+      "sources": [
+        "replacement",
+        "ship",
+        "situ",
+        "fix_targets"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes.",
+      "guards": [],
+      "patch": "replacement_references"
+    },
+    {
+      "id": "fix.dock.replace_false",
+      "from": "dock",
+      "to": "dock",
+      "event": "same_id_replaced",
+      "when": {
+        "facts": {
+          "shared": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "replaced",
+        "registry": "present",
+        "scan_ref": "current"
+      },
+      "sources": [
+        "replacement",
+        "ship",
+        "situ",
+        "fix_targets"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes.",
+      "guards": [],
+      "patch": "replacement_references"
+    },
+    {
+      "id": "fix.lifetime.dispatch.retired_shared",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "collector_retires_target",
+      "when": {
+        "facts": {
+          "collector": [
+            "attached"
+          ],
+          "shared": [
+            "true"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "returned",
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "none",
+        "goal": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "retirement",
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "review",
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.dispatch.retired_copy",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "collector_retires_target",
+      "when": {
+        "facts": {
+          "collector": [
+            "attached"
+          ],
+          "shared": [
+            "false"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "returned",
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "retirement",
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "review",
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.dispatch.saved_removed",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "save_reload",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "removed"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.planned.retired_shared",
+      "from": "planned",
+      "to": "dispatch",
+      "event": "collector_retires_target",
+      "when": {
+        "facts": {
+          "collector": [
+            "attached"
+          ],
+          "shared": [
+            "true"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "returned",
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "none",
+        "goal": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "retirement",
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "review",
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.planned.retired_copy",
+      "from": "planned",
+      "to": "dispatch",
+      "event": "collector_retires_target",
+      "when": {
+        "facts": {
+          "collector": [
+            "attached"
+          ],
+          "shared": [
+            "false"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "returned",
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "retirement",
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "review",
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.planned.saved_removed",
+      "from": "planned",
+      "to": "dispatch",
+      "event": "save_reload",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "removed"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.manual.retired_shared",
+      "from": "manual",
+      "to": "dispatch",
+      "event": "collector_retires_target",
+      "when": {
+        "facts": {
+          "collector": [
+            "attached"
+          ],
+          "shared": [
+            "true"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "returned",
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "none",
+        "goal": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "retirement",
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "review",
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.manual.retired_copy",
+      "from": "manual",
+      "to": "dispatch",
+      "event": "collector_retires_target",
+      "when": {
+        "facts": {
+          "collector": [
+            "attached"
+          ],
+          "shared": [
+            "false"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "returned",
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "retirement",
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "review",
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.manual.saved_removed",
+      "from": "manual",
+      "to": "dispatch",
+      "event": "save_reload",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "removed"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.dock.retired_shared",
+      "from": "dock",
+      "to": "dock",
+      "event": "collector_retires_target",
+      "when": {
+        "facts": {
+          "collector": [
+            "attached"
+          ],
+          "shared": [
+            "true"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "returned",
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "none",
+        "goal": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "retirement",
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "review",
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.dock.retired_copy",
+      "from": "dock",
+      "to": "dock",
+      "event": "collector_retires_target",
+      "when": {
+        "facts": {
+          "collector": [
+            "attached"
+          ],
+          "shared": [
+            "false"
+          ],
+          "target_kind": [
+            "ship"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "collector": "returned",
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "retirement",
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "review",
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.dock.saved_removed",
+      "from": "dock",
+      "to": "dock",
+      "event": "save_reload",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "removed"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "native_lifecycle",
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.dispatch.destroyed_true",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "target_destroyed",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "ship",
+            "station"
+          ],
+          "shared": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "none",
+        "goal": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.dispatch.destroyed_false",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "target_destroyed",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "ship",
+            "station"
+          ],
+          "shared": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.planned.destroyed_true",
+      "from": "planned",
+      "to": "dispatch",
+      "event": "target_destroyed",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "ship",
+            "station"
+          ],
+          "shared": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "none",
+        "goal": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.planned.destroyed_false",
+      "from": "planned",
+      "to": "dispatch",
+      "event": "target_destroyed",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "ship",
+            "station"
+          ],
+          "shared": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.manual.destroyed_true",
+      "from": "manual",
+      "to": "dispatch",
+      "event": "target_destroyed",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "ship",
+            "station"
+          ],
+          "shared": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "none",
+        "goal": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.manual.destroyed_false",
+      "from": "manual",
+      "to": "dispatch",
+      "event": "target_destroyed",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "ship",
+            "station"
+          ],
+          "shared": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.dock.destroyed_true",
+      "from": "dock",
+      "to": "dock",
+      "event": "target_destroyed",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "ship",
+            "station"
+          ],
+          "shared": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "none",
+        "goal": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    },
+    {
+      "id": "fix.lifetime.dock.destroyed_false",
+      "from": "dock",
+      "to": "dock",
+      "event": "target_destroyed",
+      "when": {
+        "facts": {
+          "target_kind": [
+            "ship",
+            "station"
+          ],
+          "shared": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "goal": "none",
+        "situation": "none",
+        "plan": "none",
+        "lock": "free",
+        "branch": "undispatched"
+      },
+      "sources": [
+        "ship",
+        "situ",
+        "system",
+        "fix_targets",
+        "clear_saved"
+      ],
+      "evidence": [
+        "repaired_lifecycle"
+      ],
+      "note": "At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer.",
+      "guards": [],
+      "patch": "target_lifetime"
+    }
+  ],
+  "findings": [
+    {
+      "id": "target.dead_flight",
+      "kind": "stale_target_lifetime",
+      "severity": "bug",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "removed"
+          ],
+          "goal": [
+            "assigned"
+          ],
+          "branch": [
+            "planned"
+          ],
+          "plan": [
+            "finite",
+            "divergent"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "ship",
+        "fly",
+        "path"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Planned flight continues toward a permanently removed ship."
+    },
+    {
+      "id": "target.divergent_route",
+      "kind": "numeric_planner_failure",
+      "severity": "bug",
+      "when": {
+        "facts": {
+          "situation": [
+            "orphan"
+          ],
+          "plan": [
+            "divergent"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "path",
+        "situ"
+      ],
+      "evidence": [
+        "planner_replay"
+      ],
+      "note": "The captured frozen-position/nonzero-velocity input reproduced a trillion-year route."
+    },
+    {
+      "id": "target.saved_missing_goal",
+      "kind": "stale_saved_target",
+      "severity": "bug",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "removed"
+          ],
+          "goal": [
+            "assigned"
+          ],
+          "scan_ref": [
+            "none"
+          ],
+          "branch": [
+            "manual",
+            "planned"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "ship",
+        "manual",
+        "path"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "Saved missing destination survives both path dispatch and the manual destroyed-Ship check."
+    },
+    {
+      "id": "target.retained_goal",
+      "kind": "stale_target_lifetime",
+      "severity": "bug",
+      "when": {
+        "facts": {
+          "lifetime": [
+            "removed"
+          ],
+          "goal": [
+            "assigned"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "ship",
+        "target"
+      ],
+      "evidence": [
+        "native_lifecycle"
+      ],
+      "note": "A removed destination remains assigned even before route dispatch."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "retriever-retires-outbound-scav-target",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "none",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "collector_attaches",
+        "collector_retires_target",
+        "flight_tick",
+        "captured_native_plot",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": "target.divergent_route",
+          "without": null,
+          "fact": "collector",
+          "value": "returned",
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": "blocked event captured_native_plot"
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "retirement-with-existing-route",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "collector_attaches",
+        "collector_retires_target",
+        "flight_tick",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": "target.dead_flight",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": "blocked event route_tick"
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "retirement-during-planned-flight",
+      "start": "planned",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "planned",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "collector_attaches",
+        "collector_retires_target",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": "target.dead_flight",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "dispatch",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": "blocked event route_tick"
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "saved-missing-destination",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "collector_attaches",
+        "collector_retires_target",
+        "save_reload",
+        "flight_tick",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": "target.dead_flight",
+          "without": null,
+          "fact": "scan_ref",
+          "value": "none",
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": "blocked event route_tick"
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "manual-native-clears-removed-target",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "free",
+        "plan": "none",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "collector_attaches",
+        "collector_retires_target",
+        "flight_tick",
+        "manual_validate"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "goal",
+          "value": "none",
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": "blocked event manual_validate"
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "independent-waypoint-still-has-dead-ship-goal",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "false",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "collector_attaches",
+        "collector_retires_target",
+        "flight_tick",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": "target.dead_flight",
+          "without": null,
+          "fact": "situation",
+          "value": "coherent",
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": "blocked event route_tick"
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "hidden-is-not-retired",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "target_hidden",
+        "flight_tick",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "scan_ref",
+          "value": "current",
+          "stop": ""
+        },
+        "effective": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "scan_ref",
+          "value": "current",
+          "stop": ""
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "occupied-port-does-not-destroy-target",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "collector_attaches",
+        "flight_tick",
+        "route_tick",
+        "arrival_reached",
+        "dock_eligibility"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "lifetime",
+          "value": "live",
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "lifetime",
+          "value": "live",
+          "stop": ""
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "dock-validation-is-late-but-handles-retirement",
+      "start": "dock",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "none",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "collector_attaches",
+        "collector_retires_target",
+        "dock_tick",
+        "dock_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "goal",
+          "value": "none",
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": "blocked event dock_tick"
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "unrelated-retirement-preserves-course",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "other_target_retired",
+        "flight_tick",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "situation",
+          "value": "coherent",
+          "stop": ""
+        },
+        "effective": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "situation",
+          "value": "coherent",
+          "stop": ""
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "native-manual-rebinds-replacement",
+      "start": "manual",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "replaced",
+        "registry": "present",
+        "scan_ref": "dead",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "free",
+        "plan": "none",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "manual_validate"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "manual",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "scan_ref",
+          "value": "current",
+          "stop": ""
+        },
+        "effective": {
+          "node": "manual",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "scan_ref",
+          "value": "current",
+          "stop": ""
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "same-id-replacement-shared",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "same_id_replaced",
+        "flight_tick",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "scan_ref",
+          "value": "dead",
+          "stop": ""
+        },
+        "effective": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "scan_ref",
+          "value": "current",
+          "stop": ""
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "same-id-replacement-owned-waypoint",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "false",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "same_id_replaced",
+        "flight_tick",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "scan_ref",
+          "value": "dead",
+          "stop": ""
+        },
+        "effective": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.dead_flight",
+          "fact": "scan_ref",
+          "value": "current",
+          "stop": ""
+        }
+      },
+      "note": ""
+    },
+    {
+      "id": "saved-missing-target-bypasses-manual-validation",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "none",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "true"
+      },
+      "events": [
+        "collector_attaches",
+        "collector_retires_target",
+        "save_reload",
+        "flight_tick",
+        "manual_validate"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "manual",
+          "finding": "target.saved_missing_goal",
+          "without": null,
+          "fact": "goal",
+          "value": "assigned",
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": "blocked event manual_validate"
+        }
+      },
+      "note": "Live dead-Ship validation alone is insufficient for an already saved missing identity."
+    },
+    {
+      "id": "removed-target-releases-native-flight",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "collector_attaches",
+        "collector_retires_target",
+        "flight_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": "target.retained_goal",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": ""
+        }
+      },
+      "note": "Collector completion clears the target at the removal boundary; native flight fails on its next update."
+    },
+    {
+      "id": "preexisting-saved-missing-route",
+      "start": "planned",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "removed",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "orphan",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "divergent",
+        "branch": "planned",
+        "ports": "available",
+        "collector": "returned",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "save_reload",
+        "flight_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": "target.retained_goal",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": "blocked event flight_tick"
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": null,
+          "fact": "goal",
+          "value": "none",
+          "stop": ""
+        }
+      },
+      "note": "Existing corruption is recovered by native CheckTargets restoration, not by waiting for a future destruction event."
+    },
+    {
+      "id": "restore-valid-coordinate-goal",
+      "start": "planned",
+      "facts": {
+        "target_kind": "coordinate",
+        "lifetime": "live",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "coherent",
+        "shared": "false",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "planned",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "restore_nonship_goal",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "plan",
+          "value": "finite",
+          "stop": ""
+        },
+        "effective": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "plan",
+          "value": "finite",
+          "stop": ""
+        }
+      },
+      "note": "An independent plotted destination is not a removed ship; no collector-removal event is applicable to this kind."
+    },
+    {
+      "id": "restore-valid-body-goal",
+      "start": "planned",
+      "facts": {
+        "target_kind": "body",
+        "lifetime": "live",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "coherent",
+        "shared": "false",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "planned",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "restore_nonship_goal",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "plan",
+          "value": "finite",
+          "stop": ""
+        },
+        "effective": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "plan",
+          "value": "finite",
+          "stop": ""
+        }
+      },
+      "note": "An independent plotted destination is not a removed ship; no collector-removal event is applicable to this kind."
+    },
+    {
+      "id": "restore-valid-asteroid-goal",
+      "start": "planned",
+      "facts": {
+        "target_kind": "asteroid",
+        "lifetime": "live",
+        "registry": "absent",
+        "scan_ref": "none",
+        "situation": "coherent",
+        "shared": "false",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "planned",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "restore_nonship_goal",
+        "route_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "plan",
+          "value": "finite",
+          "stop": ""
+        },
+        "effective": {
+          "node": "planned",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "plan",
+          "value": "finite",
+          "stop": ""
+        }
+      },
+      "note": "An independent plotted destination is not a removed ship; no collector-removal event is applicable to this kind."
+    },
+    {
+      "id": "nonretrieval-station-destruction",
+      "start": "dispatch",
+      "facts": {
+        "target_kind": "station",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "undispatched",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "target_destroyed",
+        "flight_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "planned",
+          "finding": "target.retained_goal",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "resume",
+          "finding": null,
+          "without": "target.retained_goal",
+          "fact": "goal",
+          "value": "none",
+          "stop": ""
+        }
+      },
+      "note": "The same shared repair applies when a vessel disappears for a reason other than hauling a derelict."
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/da1a98ebcba88b7873aeb680bb4281074b8a5a9ed83542f1491eefaa4901d30b.json.br",
+  "reason": "Reviewed native player-connected cleanup scope, temporary interregional scheduling, queue refill reclassification and primitive blackboard serialization; reproduced and repaired offline.",
+  "acceptedUtc": "2026-11-12T00:38:11.6937786Z",
+  "previousSnapshot": "assembly-baselines/439328a257d8991309be2c8fe0b1d1cb88bf1c3653d22dd47afde9af7c9d2c49.json.br"
+}

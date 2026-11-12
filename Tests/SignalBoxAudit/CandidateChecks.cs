@@ -2,28 +2,43 @@ using System;
 using System.Linq;
 using HarmonyLib;
 using Ostranauts.Electrical;
+using Ostrabus.MiscBugFixes.SignalBoxes;
 
 static partial class Program {
-    static void CheckCandidateFixes() {
+    static void CheckCandidateFixes(bool production = false) {
         int before = checks;
         var oldSystem = CrewSim.system;
+        var oldMap = DataHandler.mapCOs;
+        productionTesting = production;
+        if (production) DataHandler.mapCOs = registry;
         CrewSim.system = Empty<StarSystem>(); CrewSim.system.dictShips = new System.Collections.Generic.Dictionary<string, Ship>();
         var patch = new Harmony("offline.signalbox.candidates.only");
         void Hook(string method, string prefix = null, string postfix = null) => patch.Patch(AccessTools.Method(typeof(Electrical), method),
             prefix: prefix == null ? null : new HarmonyMethod(typeof(Program), prefix),
             postfix: postfix == null ? null : new HarmonyMethod(typeof(Program), postfix));
         try {
-            Hook(nameof(Electrical.SetGateMode), nameof(CandidateGateBefore), nameof(CandidateGateAfter));
-            patch.Patch(AccessTools.PropertySetter(typeof(Electrical), nameof(Electrical.GateMode)),
-                prefix: new HarmonyMethod(typeof(Program), nameof(CandidateGateBefore)), postfix: new HarmonyMethod(typeof(Program), nameof(CandidateGateAfter)));
-            Hook(nameof(Electrical.AuditConnections), nameof(CandidateAuditBefore), nameof(CandidateAuditAfter));
-            patch.Patch(AccessTools.Method(typeof(Electrical), nameof(Electrical.AuditConnections)), prefix: new HarmonyMethod(typeof(Program), nameof(CandidateAuditAllowed)));
-            Hook(nameof(Electrical.QueueSignal), nameof(CandidateQueue));
-            Hook(nameof(Electrical.SendSignal), nameof(CandidateSend));
-            Hook(nameof(Electrical.ResolveSignalQueue), postfix: nameof(CandidateResolved));
-            Hook(nameof(Electrical.SetGPM), postfix: nameof(CandidatePersist));
-            Hook("InitGPMValues", postfix: nameof(CandidateInitialised));
-            Hook(nameof(Electrical.RenameConnection), nameof(CandidateRename));
+            if (production) {
+                patch.Patch(AccessTools.Method(typeof(UnityEngine.Debug), "Log", new[] { typeof(object) }), prefix: new HarmonyMethod(typeof(Program), nameof(CaptureDiagnostic)));
+                patch.CreateClassProcessor(typeof(Ostrabus.MiscBugFixes.ElectricalAuditLogging)).Patch();
+                patch.CreateClassProcessor(typeof(Ostrabus.MiscBugFixes.ElectricalAuditConsoleFilter)).Patch();
+                foreach (Type type in new[] {
+                    typeof(SignalBoxGatePatch), typeof(SignalBoxAuditPatch), typeof(SignalBoxQueuePatch),
+                    typeof(SignalBoxDispatchPatch), typeof(SignalBoxPersistencePatch), typeof(SignalBoxLabelPatch), typeof(SignalBoxLabelInputPatch),
+                    typeof(SignalBoxShipReadyPatch), typeof(SignalBoxOwnerPatch), typeof(SignalBoxModeSwitchPatch), typeof(SignalBoxCleanupPatch)
+                }) patch.CreateClassProcessor(type).Patch();
+            } else {
+                Hook(nameof(Electrical.SetGateMode), nameof(CandidateGateBefore), nameof(CandidateGateAfter));
+                patch.Patch(AccessTools.PropertySetter(typeof(Electrical), nameof(Electrical.GateMode)),
+                    prefix: new HarmonyMethod(typeof(Program), nameof(CandidateGateBefore)), postfix: new HarmonyMethod(typeof(Program), nameof(CandidateGateAfter)));
+                Hook(nameof(Electrical.AuditConnections), nameof(CandidateAuditBefore), nameof(CandidateAuditAfter));
+                patch.Patch(AccessTools.Method(typeof(Electrical), nameof(Electrical.AuditConnections)), prefix: new HarmonyMethod(typeof(Program), nameof(CandidateAuditAllowed)));
+                Hook(nameof(Electrical.QueueSignal), nameof(CandidateQueue));
+                Hook(nameof(Electrical.SendSignal), nameof(CandidateSend));
+                Hook(nameof(Electrical.ResolveSignalQueue), postfix: nameof(CandidateResolved));
+                Hook(nameof(Electrical.SetGPM), postfix: nameof(CandidatePersist));
+                Hook("InitGPMValues", postfix: nameof(CandidateInitialised));
+                Hook(nameof(Electrical.RenameConnection), nameof(CandidateRename));
+            }
 
             // Full effective-output matrix; native gate math and delivery still run.
             foreach (GateMode gate in Enum.GetValues(typeof(GateMode))) for (int mask = 0; mask < 4; mask++)
@@ -75,6 +90,7 @@ static partial class Program {
                     Check(Gpm(source)["sendQueue"] != "" && Queue(source, "sendQueue").Count > 0, "Pending disconnect survives reinitialization");
                     registry[target.coSelf.strID] = target.coSelf;
                     CompletedElectricalLoad(source.coShip) = true;
+                    WakeCandidate(source); // Reconstruction-completion boundary.
                     conditions[source.coSelf.strID].Add("IsPowered"); Tick(source); Tick(target);
                 }
                 Check(!target.inputConnections.ContainsKey(source.coSelf.strID), "Terminal disconnect removes ghost input");
@@ -103,7 +119,11 @@ static partial class Program {
             Check(!Get<bool>(ordinary, "bNeedsCheck") && ordinary.status, "Unmarked non-signal-box devices retain vanilla behavior");
             CheckCandidateNetwork();
             CheckEndpointAuthority();
-            Console.WriteLine("Offline candidates: " + (checks-before) + " checks passed; no production behavior hooks added.");
-        } finally { patch.UnpatchSelf(); candidateBoxes.Clear(); candidateRetries.Clear(); candidateSwitches.Clear(); candidateDormant.Clear(); CrewSim.system = oldSystem; }
+            if (production) CheckProductionLifecycle();
+            Console.WriteLine((production ? "Production signal-box repairs: " : "Offline candidates: ") + (checks-before) + " checks passed.");
+        } finally {
+            patch.UnpatchSelf(); candidateBoxes.Clear(); candidateRetries.Clear(); candidateSwitches.Clear(); candidateDormant.Clear();
+            CrewSim.system = oldSystem; DataHandler.mapCOs = oldMap; productionTesting = false;
+        }
     }
 }

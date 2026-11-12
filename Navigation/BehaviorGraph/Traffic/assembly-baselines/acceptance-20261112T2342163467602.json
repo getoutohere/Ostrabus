@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/fe3683ec70fef9e38a0ee853533cc781279b64a55519ef3dac5140efdfe8682c.json.br",
+  "reason": "0.4.0 tooling review: bind seven existing visit/retention predicates to their owning native/patch source groups. No transition or runtime changes; native lifecycle checks and graph scenarios passed. See REVIEW.md.",
+  "acceptedUtc": "2026-11-12T23:42:16.3451857Z",
+  "previousSnapshot": "assembly-baselines/18b45abf1ddf7753c076459da5646fb1c6a8a664f581ed39557bacd9badc7242.json.br"
+}

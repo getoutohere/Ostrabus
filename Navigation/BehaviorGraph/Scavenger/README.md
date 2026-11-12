@@ -39,3 +39,10 @@ scenarios. Its 79 scenario/model checks are separate from the
 [native offline tests](../../../../Tests/ScavFuelDiagnosis/RESULT.md).
 An empty-fuel state is an explicit initial condition; this is not a reproduction
 of the historical fuel-consumption sequence that created every stranded ship.
+
+The [target-retirement investigation](TARGET-RETIREMENT-INVESTIGATION.md) records
+a confirmed gap: another actor can retire a scavenger's destination while it is
+in flight. Current scenarios do not model that interleaving; matching source
+fingerprints and passing checks do not establish target-lifetime safety.
+The new [cross-actor model](../TargetLifecycle/README.md) now represents and
+detects this failure independently of the original docked-fuel slice.

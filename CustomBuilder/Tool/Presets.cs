@@ -11,16 +11,22 @@ static class Presets {
             "bugfixes" => category == "bugfix",
             "bugfixes-qol" => category is "bugfix" or "qol",
             "bugfixes-performance" => category is "bugfix" or "performance",
-            "recommended" => category is "bugfix" or "qol" or "performance",
+            "recommended" => category is "bugfix" or "qol" or "performance" or "simulation",
             "full" => category != "developer",
             "developer" => true,
             _ => false
         };
 
+        bool Include(Feature feature) {
+            if (name == "recommended" && feature.Id == "ceres-navigation") return false;
+            if (feature.Id == "legacy-commands" && name is "recommended" or "full") return true;
+            return Category(feature.Category);
+        }
+
         return new Profile {
             Name = name,
             Features = catalog.Features
-                .Where(feature => !feature.Hidden && !feature.Experimental && Category(feature.Category))
+                .Where(feature => !feature.Hidden && !feature.Experimental && Include(feature))
                 .Select(feature => feature.Id)
                 .Order(StringComparer.Ordinal)
                 .ToArray()

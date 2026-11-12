@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/0ee4fbd026165ce068200fb1f96d50eb88e0c3f294a4accd528bdba3a5887823.json.br",
+  "reason": "Finalized 1.0.1.10 traffic reference with explicit docking versus materialization, command-type FFWD dispatch, cargo/PASS conservation and rotorcraft Hold exception; native role and conversion witnesses reproduced, known defects retained.",
+  "acceptedUtc": "2026-11-11T22:50:59.4974526Z",
+  "previousSnapshot": "assembly-baselines/03bf3105f846fec1492afd491cdd0d5eafb74b1ad04f8401bb90657c3d92421b.json.br"
+}
