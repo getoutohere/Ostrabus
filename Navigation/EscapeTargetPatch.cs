@@ -18,7 +18,7 @@ internal static class EscapeTargetPatch {
             data = new TargetData(target);
         // Existing ApplyToShip observation clears the old manual prediction.
         data.ApplyToShip(ship);
-        if (!before.Same(new NavigationTargetKey(ship))) ship.objSS.ResetNavData();
+        if (!before.Same(new NavigationTargetKey(ship))) NavigationRoute.Stop(ship);
         return false;
     }
 }

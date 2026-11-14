@@ -20,7 +20,7 @@ static partial class Program {
     static void CheckRecovery(Harmony h) {
         var production=new Harmony("offline.scav-recovery.production");
         try {
-            foreach(string name in new[]{"ScavVisitRegistrationPatch","ScavVisitFuelPatch","ScavHomeFeasibilityPatch","ScavNullHomePlanPatch","ScavHelpLifecyclePatch"})
+            foreach(string name in new[]{"ScavVisitRegistrationPatch","ScavVisitFuelPatch","ScavHomeFeasibilityPatch","ScavNullHomePlanPatch","ScavHelpLifecyclePatch", "AiHoldRunClockPatch", "AiHoldEligibilityClockPatch"})
                 production.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.MiscBugFixes."+name,true)).Patch();
             h.Patch(AccessTools.PropertyGetter(typeof(Ship),nameof(Ship.DeltaVRemainingRCS)),prefix:new HarmonyMethod(typeof(Program),nameof(Available)));
             h.Patch(AccessTools.Method(typeof(AIShipManager),nameof(AIShipManager.GetDeltaVNeededToTargetFullTrip)),prefix:new HarmonyMethod(typeof(Program),nameof(Needed)));
@@ -62,18 +62,18 @@ static partial class Program {
             Check(ship.shipScanTarget==homeFixture,"Interregional fusion exception rejected.");
             ship.ClearShipTarget();interregional=false;ship.bFusionReactorRunning=false;
             CrewSim.coPlayer.ship.objSS.vPosx=1E-4;sendOK=true;int retired=unregisters;sent=sends;
-            Check(target.RunCommand(pilot.Blackboard).Status==CommandCode.Finished,"Stranded ATC path did not retain controller.");
+            Check(target.RunCommand(pilot.Blackboard).Status==CommandCode.Running,"Stranded ATC path did not remain in selection.");
             Check(ship.shipScanTarget==null && sends==sent+1 && lastSend=="SHIPSosStranded" && unregisters==retired,"Infeasible home failed to reach native ATC interaction without retirement.");
             Check(ship.fAIPauseTimer==StarSystem.fEpoch+64,"Existing native pause was not retained.");
-            sendOK=false;sent=sends;target.RunCommand(pilot.Blackboard);
+            sendOK=false;sent=sends;StarSystem.fEpoch+=65;target.RunCommand(pilot.Blackboard);
             Check(sends==sent+1 && unregisters==retired,"Failed ATC send retired controller.");
-            CrewSim.coPlayer.ship.objSS.vPosx=0;tensionResets=0;target.RunCommand(pilot.Blackboard);
+            CrewSim.coPlayer.ship.objSS.vPosx=0;tensionResets=0;StarSystem.fEpoch+=65;target.RunCommand(pilot.Blackboard);
             Check(lastSend=="SHIPSosAskPlayer" && tensionResets==0 && unregisters==retired,"Failed player send falsely reset tension/retired controller.");
-            sendOK=true;target.RunCommand(pilot.Blackboard);
+            sendOK=true;StarSystem.fEpoch+=65;target.RunCommand(pilot.Blackboard);
             Check(tensionResets==1,"Successful player send did not reset native tension.");
-            help=true;sent=sends;target.RunCommand(pilot.Blackboard);
+            help=true;sent=sends;StarSystem.fEpoch+=65;target.RunCommand(pilot.Blackboard);
             Check(sends==sent && unregisters==retired,"Existing help request was resent/retired.");
-            help=false;pilot.MissingHome=true;sent=sends;target.RunCommand(pilot.Blackboard);
+            help=false;pilot.MissingHome=true;sent=sends;StarSystem.fEpoch+=65;target.RunCommand(pilot.Blackboard);
             Check(ship.shipScanTarget==null && sends==sent+1 && unregisters==retired,"Missing home did not safely reach native SOS routing.");
             pilot.MissingHome=false;pilot.Role=AIType.Navy;target.RunCommand(pilot.Blackboard);
             Check(ship.shipScanTarget==homeFixture,"Non-scav home selection was changed.");

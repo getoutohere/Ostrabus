@@ -42,6 +42,52 @@
     ]
   },
   "sources": {
+    "flight_rcs_native": {
+      "origin": "game",
+      "path": "Ship.cs",
+      "symbol": "Ship.Maneuver: direct combat/undock/tow RCS command boundary",
+      "anchors": [
+        "public void Maneuver("
+      ],
+      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+    },
+    "flight_handoff_native": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyTo.cs",
+      "symbol": "FlyTo.RunCommand: path, pause and manual control ownership",
+      "anchors": [
+        "public override CommandStatus RunCommand"
+      ],
+      "sha256": "bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"
+    },
+    "flight_shutdown_native": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyToPath.cs",
+      "symbol": "FlyToPath.TorchOff and explicit shutdown callers",
+      "anchors": [
+        "private void TorchOff()"
+      ],
+      "sha256": "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+    },
+    "flight_control_repair": {
+      "origin": "repo",
+      "path": "Navigation/FlightControlHandoffPatch.cs",
+      "symbol": "FlightControlHandoff / validated route-exit and shallow shutdown hooks",
+      "anchors": [
+        "internal static void ResetForRcs",
+        "class ShallowTorchShutdownPatch"
+      ],
+      "sha256": "7d0f7932dcde09f5ae3749d799597d3c3accc53353ac19f30dedf4b21236a0f1"
+    },
+    "flight_control_stop": {
+      "origin": "repo",
+      "path": "Navigation/NavigationRoute.cs",
+      "symbol": "NavigationRoute.Stop / StopTorch preserve momentum and fuel",
+      "anchors": [
+        "internal static void StopTorch"
+      ],
+      "sha256": "ec3915ac92cde1e37618a11fc372d219f499a664bc0c5c005669cbc4b2708cf2"
+    },
     "scav": {
       "origin": "game",
       "path": "Ostranauts.Ships.AIPilots/ScavPilot.cs",
@@ -201,7 +247,7 @@
         "TripFuelPrediction",
         "InvalidRcsBudgetPatch"
       ],
-      "sha256": "35e7e8398bbda8440a43820430324b8b93c4ade6494c02aaf19b3e903a064fcc"
+      "sha256": "cfe000115b7a1af4b342617314239cd29282e7fcb5f200b7c1a79bc494d3ae11"
     },
     "fix_targets": {
       "origin": "repo",
@@ -243,7 +289,7 @@
         "VisitFuel",
         "SHIPSosStranded"
       ],
-      "sha256": "b8b70f8b38003a01744bfe46affbe676baed9822ade0610df42b5b508983fcd0"
+      "sha256": "b98cb5b328bd127c9d81f9f5d1d3941f554fdb32ef22825eaf6fd32ab4d917fd"
     },
     "replenishment": {
       "origin": "repo",
@@ -270,9 +316,9 @@
       "symbol": "EscapeTargetPatch",
       "anchors": [
         "data.ApplyToShip(ship)",
-        "ship.objSS.ResetNavData()"
+        "NavigationRoute.Stop(ship)"
       ],
-      "sha256": "d783788c02a27143a2c504852c562741a1931821de59d935bec93f033fae906f"
+      "sha256": "49bc2cc125963c7fdf6aa2a235009c1494c545dbd8044d57418c93004ad0d4b1"
     },
     "avoidance_native": {
       "origin": "game",
@@ -359,6 +405,162 @@
         "hiddenChecks != 1"
       ],
       "sha256": "0734bb745bd265599ec5ea5d1bde253c66aef8ee5a97577a186ec72d4abebd4e"
+    },
+    "wait_clock_repair": {
+      "origin": "repo",
+      "path": "MiscBugFixes/AiHoldClockPatch.cs",
+      "symbol": "Hold absolute pause and saved help timer expiry",
+      "anchors": [
+        "Rewrite",
+        "ExpireHelp"
+      ],
+      "sha256": "fb0ebc5946e96e99f1f832398091f56cb9343fe0a87982acac6a4531fe9ba9dc"
+    },
+    "scav_return_policy": {
+      "origin": "repo",
+      "path": "Navigation/ScavengerReturn.cs",
+      "symbol": "Feasible native return after failed random sampling",
+      "anchors": [
+        "Fallback",
+        "Generate"
+      ],
+      "sha256": "abd1f0a3433c8b9e05887961e87f94c3d8bc143d13312292b6e449797b251ebc"
+    },
+    "orbital_wait_policy": {
+      "origin": "repo",
+      "path": "Navigation/OrbitalWaiting.cs",
+      "symbol": "Vacuum wait eligibility and native gravity restoration",
+      "anchors": [
+        "Coast",
+        "InCombat"
+      ],
+      "sha256": "b047966823b44400b24ea83f33d03bedddd76f08d4de5d5c7b2ed66e9fe39692"
+    },
+    "local_frame_navy": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/NavyPilot.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.NavyPilot",
+      "anchors": [
+        "GetTarget("
+      ],
+      "sha256": "ef7fca6786766fa9003602092547e5e0e0915ba34e589f8465de6344925dcd42"
+    },
+    "local_frame_blockade": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/BlockadePilot.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.BlockadePilot",
+      "anchors": [
+        "GetTarget("
+      ],
+      "sha256": "932d285926f42b7e23355e2cbe9362bf985382db4e8e831857bcd208cb1388fd"
+    },
+    "local_frame_pirate": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/PiratePilot.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.PiratePilot",
+      "anchors": [
+        "GetTarget("
+      ],
+      "sha256": "d685f9a6829b09864e825399eae1143ff82187fd900ea7623fc6bf5a5bfd6310"
+    },
+    "local_frame_police": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/PolicePilot.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.PolicePilot",
+      "anchors": [
+        "FFWD("
+      ],
+      "sha256": "b768328bea569bc308878469f533b8fdd665dd29094b963a6b78c62b2eba0a6f"
+    },
+    "local_frame_lurk": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/Lurk.cs",
+      "symbol": "Ostranauts.Ships.Commands.Lurk",
+      "anchors": [
+        "RunCommand("
+      ],
+      "sha256": "ed7439b13c6d399dfab0a4d9fd43b5efad4d191c80ca24e88dea3fa331d261ad"
+    },
+    "local_frame_guard": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/Guard.cs",
+      "symbol": "Ostranauts.Ships.Commands.Guard",
+      "anchors": [
+        "RunCommand("
+      ],
+      "sha256": "d272d327a599a64e39138427445c0c820c2ca23d6b16fdf369e01cccd41ad7f3"
+    },
+    "local_frame_lock": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/LockPirate.cs",
+      "symbol": "Ostranauts.Ships.Commands.LockPirate",
+      "anchors": [
+        "RunCommand("
+      ],
+      "sha256": "e58f418a37c4213fef2aa10fc4bc49656b9e225638764819fc8aff8d3c448500"
+    },
+    "local_frame_encounter": {
+      "origin": "game",
+      "path": "BeatManager.cs",
+      "symbol": "BeatManager",
+      "anchors": [
+        "Pirate("
+      ],
+      "sha256": "142978e07bce1a888e38debbaac3c06ea2558568633b1919992148935b983bd6"
+    },
+    "local_frame_manager": {
+      "origin": "game",
+      "path": "AIShipManager.cs",
+      "symbol": "AIShipManager",
+      "anchors": [
+        "CheckLocalAuthorityScenario("
+      ],
+      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+    },
+    "local_frame_situ": {
+      "origin": "game",
+      "path": "ShipSitu.cs",
+      "symbol": "ShipSitu",
+      "anchors": [
+        "LockToBO("
+      ],
+      "sha256": "09eba8d52011e3a63659e3bb7d582bf21ecaccd8de8ff0a67711d5dec5169a79"
+    },
+    "local_frame_world": {
+      "origin": "game",
+      "path": "StarSystem.cs",
+      "symbol": "StarSystem",
+      "anchors": [
+        "GetNearestBO("
+      ],
+      "sha256": "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+    },
+    "local_frame_resolver": {
+      "origin": "repo",
+      "path": "Navigation/LocalNavigationFrame.cs",
+      "symbol": "Ostrabus.ShipNavigation.LocalNavigationFrame",
+      "anchors": [
+        "class LocalNavigationFrame"
+      ],
+      "sha256": "a065ea48331d23f4aecae1ca8a587cffcb336716682ad4cc62d60bbd9056f147"
+    },
+    "local_frame_hooks": {
+      "origin": "repo",
+      "path": "Navigation/LocalNavigationFramePatches.cs",
+      "symbol": "Ostrabus.ShipNavigation.LocalNavigationFramePatch",
+      "anchors": [
+        "class LocalNavigationFramePatch"
+      ],
+      "sha256": "aad1ccbbbf4d18b20d72d13f997e8542a98e72d000d2edc64b18a811143f28a2"
+    },
+    "local_frame_departure": {
+      "origin": "repo",
+      "path": "Navigation/DepartureWaypointPatch.cs",
+      "symbol": "Ostrabus.ShipNavigation.DepartureWaypointPatch",
+      "anchors": [
+        "class DepartureWaypointPatch"
+      ],
+      "sha256": "c50cc807b6b6132241acd2b743a43620c43f4a15fd4376e7a6b03d7a790eda34"
     }
   },
   "evidence": {
@@ -401,6 +603,11 @@
       "level": "native_offline_and_policy_tests",
       "artifact": "Navigation/STATION-DOCKED-COLLISIONS.md",
       "supports": "880 assertions: live-link scope, native proximity scan, physical prefix with counting body boundary, free-space/projectile/body controls and native shared FlyTo replay of both patrol and returning hauler. Native impact controls fail; production reaches original targets for three anchors. Full geometry remains unexpanded; no live success claim."
+    },
+    "waiting_checks": {
+      "level": "shipped_assembly_offline",
+      "artifact": "Tests/ScavFuelDiagnosis/WAITING.md",
+      "supports": "Native continuation, actual production clock/recovery/return/wait patches, saved payloads and SFF wrapper; candidate failure, route availability, delivery and Unity boundaries are explicit."
     }
   },
   "variables": {
@@ -633,6 +840,46 @@
       ],
       "description": "One-leg native delta-v predicate including rotor/interregional fusion exceptions, independent of null NavData.",
       "kind": "native_result"
+    },
+    "goal": {
+      "values": [
+        "absent",
+        "present"
+      ],
+      "description": "Current navigation goal availability",
+      "kind": "state"
+    },
+    "retry_pause": {
+      "values": [
+        "future",
+        "expired"
+      ],
+      "description": "Absolute deadline state; numeric clock is exercised offline",
+      "kind": "state"
+    },
+    "gravity": {
+      "values": [
+        "on",
+        "off"
+      ],
+      "description": "Wait command gravity exemption",
+      "kind": "state"
+    },
+    "orbital_wait": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Orbital policy enabled and free unpowered vacuum wait eligible; atmosphere/combat excluded",
+      "kind": "native_result"
+    },
+    "fallback_plan": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Valid registered native return and accepted one-way plan",
+      "kind": "native_result"
     }
   },
   "predicates": {
@@ -661,6 +908,45 @@
       "facts": {
         "help_origin": [
           "target"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "return_available": {
+      "facts": {
+        "fallback_plan": [
+          "true"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "retained_target_caller": {
+      "facts": {
+        "help_origin": [
+          "target"
+        ],
+        "registered": [
+          "true"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "space_wait": {
+      "facts": {
+        "orbital_wait": [
+          "true"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "requested_help": {
+      "facts": {
+        "help": [
+          "true"
         ]
       },
       "require": [],
@@ -762,7 +1048,7 @@
         "comms",
         "target"
       ],
-      "detail": "Snapshot inside RequestHelp after sending; subsequent caller return/tree scheduling is not expanded. This node does not insert a Hold command. Accepted request marks help; declining does not itself clear it."
+      "detail": "Native player SOS caller continuation is now expanded through deadline wait, failed targetless flight and Hold. Station retirement remains distinct."
     },
     "scav_station_reply": {
       "label": "Station response eligibility",
@@ -1331,7 +1617,13 @@
         "review"
       ],
       "note": "Failed search reaches RequestHelp; event summarizes native attempts, not a guarantee the first random candidate fails.",
-      "guards": [],
+      "guards": [
+        {
+          "predicate": "return_available",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
       "patch": ""
     },
     {
@@ -1976,6 +2268,40 @@
       "patch": ""
     },
     {
+      "id": "flight.targetless_hold",
+      "from": "scav_fly",
+      "to": "scav_hold",
+      "event": "targetless_flight",
+      "when": {
+        "facts": {
+          "goal": [
+            "absent"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "4",
+        "leaf": "hold",
+        "hold_result": "running",
+        "retry_pause": "expired",
+        "gravity": "off"
+      },
+      "sources": [
+        "fly",
+        "dock",
+        "hold",
+        "sticky"
+      ],
+      "evidence": [
+        "waiting_checks"
+      ],
+      "note": "After the deadline, targetless manual flight fails, Dock is ineligible and the positive absolute pause bypasses Hold speed eligibility.",
+      "guards": [],
+      "patch": ""
+    },
+    {
       "id": "fix.fuel_handoff",
       "from": "scav_account_plan",
       "to": "scav_account_manual",
@@ -2255,6 +2581,191 @@
         }
       ],
       "patch": "scav_emergency_recovery"
+    },
+    {
+      "id": "fix.player_selection_wait",
+      "from": "scav_wait_player",
+      "to": "scav_target",
+      "event": "caller_resume",
+      "when": {
+        "facts": {
+          "help_origin": [
+            "target"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "main": "1",
+        "retry_pause": "future",
+        "leaf": "target",
+        "goal": "absent"
+      },
+      "sources": [
+        "target",
+        "fly",
+        "sticky",
+        "fix_scav_recovery",
+        "wait_clock_repair"
+      ],
+      "evidence": [
+        "waiting_checks"
+      ],
+      "note": "Keep failed retained selection at Main[1], respect the absolute retry deadline and authored assistance flag instead of advancing into targetless visit Hold.",
+      "guards": [],
+      "patch": "scav_selection_wait"
+    },
+    {
+      "id": "fix.station_selection_wait",
+      "from": "scav_no_dispatch",
+      "to": "scav_target",
+      "event": "caller_resume",
+      "when": {
+        "facts": {},
+        "require": [
+          "retained_target_caller"
+        ],
+        "forbid": []
+      },
+      "set": {
+        "main": "1",
+        "retry_pause": "future",
+        "leaf": "target",
+        "goal": "absent"
+      },
+      "sources": [
+        "fix_scav_recovery",
+        "wait_clock_repair"
+      ],
+      "evidence": [
+        "waiting_checks"
+      ],
+      "note": "Keep failed retained selection at Main[1], respect the absolute retry deadline and authored assistance flag instead of advancing into targetless visit Hold.",
+      "guards": [],
+      "patch": "scav_selection_wait"
+    },
+    {
+      "id": "fix.selection_cooldown",
+      "from": "scav_target",
+      "to": "scav_target",
+      "event": "targetless_flight",
+      "when": {
+        "facts": {},
+        "require": [
+          "requested_help"
+        ],
+        "forbid": []
+      },
+      "set": {
+        "retry_pause": "future",
+        "leaf": "target",
+        "main": "1"
+      },
+      "sources": [
+        "fix_scav_recovery",
+        "wait_clock_repair"
+      ],
+      "evidence": [
+        "waiting_checks"
+      ],
+      "note": "Keep failed retained selection at Main[1], respect the absolute retry deadline and authored assistance flag instead of advancing into targetless visit Hold.",
+      "guards": [],
+      "patch": "scav_selection_wait"
+    },
+    {
+      "id": "fix.help_deadline",
+      "from": "scav_target",
+      "to": "scav_target",
+      "event": "help_timer_elapsed",
+      "when": {
+        "facts": {},
+        "require": [
+          "requested_help"
+        ],
+        "forbid": []
+      },
+      "set": {
+        "retry_pause": "expired",
+        "help": "false"
+      },
+      "sources": [
+        "fix_scav_recovery",
+        "wait_clock_repair"
+      ],
+      "evidence": [
+        "waiting_checks"
+      ],
+      "note": "Keep failed retained selection at Main[1], respect the absolute retry deadline and authored assistance flag instead of advancing into targetless visit Hold.",
+      "guards": [],
+      "patch": "scav_selection_wait"
+    },
+    {
+      "id": "policy.return_after_sampling",
+      "from": "scav_target",
+      "to": "scav_home_fly",
+      "event": "select_candidate",
+      "when": {
+        "facts": {
+          "low": [
+            "false"
+          ],
+          "candidate_ok": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "help_origin": "target",
+        "request": "none",
+        "main": "2",
+        "leaf": "fly",
+        "goal": "present"
+      },
+      "sources": [
+        "target",
+        "scav_return_policy"
+      ],
+      "evidence": [
+        "review",
+        "waiting_checks"
+      ],
+      "note": "After native random selection fails, accept a native station return only when the registered destination and one-way plan pass.",
+      "guards": [
+        {
+          "predicate": "return_available",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "scav_return_fallback"
+    },
+    {
+      "id": "policy.selection_gravity",
+      "from": "scav_target",
+      "to": "scav_target",
+      "event": "wait_physics",
+      "when": {
+        "facts": {},
+        "require": [
+          "space_wait"
+        ],
+        "forbid": []
+      },
+      "set": {
+        "gravity": "on"
+      },
+      "sources": [
+        "orbital_wait_policy"
+      ],
+      "evidence": [
+        "waiting_checks"
+      ],
+      "note": "Free unpowered vacuum waits retain normal gravity; atmospheric, combat, powered, docked and locked modes keep native behavior.",
+      "guards": [],
+      "patch": "orbital_waiting"
     }
   ],
   "findings": [
@@ -2418,6 +2929,41 @@
         "mixed_accounting"
       ],
       "note": "Two accounting modes charged overlapping progress. Numeric route generation and collision geometry remain outside the model."
+    },
+    {
+      "id": "scav.targetless_orbit_hold",
+      "kind": "simulation_integrity",
+      "severity": "review",
+      "when": {
+        "facts": {
+          "main": [
+            "4"
+          ],
+          "docked": [
+            "false"
+          ],
+          "orbital_wait": [
+            "true"
+          ],
+          "goal": [
+            "absent"
+          ],
+          "gravity": [
+            "off"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "hold",
+        "target",
+        "sticky"
+      ],
+      "evidence": [
+        "waiting_checks"
+      ],
+      "note": "Free targetless Hold suppresses gravity instead of maintaining a relative position."
     }
   ],
   "scenarios": [
@@ -2434,7 +2980,9 @@
         "pause_early": "false",
         "interrupt": "false",
         "request": "none",
-        "registered": "true"
+        "registered": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "hold_expiry",
@@ -2475,7 +3023,9 @@
         "pause_early": "false",
         "interrupt": "false",
         "request": "none",
-        "registered": "true"
+        "registered": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "hold_expiry",
@@ -2514,7 +3064,9 @@
         "pause_early": "false",
         "interrupt": "false",
         "request": "none",
-        "registered": "true"
+        "registered": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "hold_expiry",
@@ -2554,7 +3106,9 @@
         "interrupt": "false",
         "request": "none",
         "registered": "true",
-        "transfer_complete": "true"
+        "transfer_complete": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "fuel_restored",
@@ -2594,7 +3148,9 @@
         "pause_early": "false",
         "interrupt": "false",
         "request": "none",
-        "registered": "true"
+        "registered": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "hold_expiry"
@@ -2632,7 +3188,9 @@
         "pause_early": "true",
         "interrupt": "false",
         "request": "none",
-        "registered": "true"
+        "registered": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "hold_tick"
@@ -2670,7 +3228,9 @@
         "pause_early": "false",
         "interrupt": "true",
         "request": "none",
-        "registered": "true"
+        "registered": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "priority_tick"
@@ -2708,7 +3268,9 @@
         "pause_early": "false",
         "interrupt": "false",
         "request": "none",
-        "registered": "true"
+        "registered": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "sff_hold",
@@ -2750,7 +3312,9 @@
         "request": "none",
         "registered": "true",
         "low": "false",
-        "candidate_ok": "true"
+        "candidate_ok": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "select_candidate",
@@ -2795,7 +3359,9 @@
         "low": "true",
         "home": "true",
         "plan": "false",
-        "home_affordable": "true"
+        "home_affordable": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "select_home",
@@ -2838,7 +3404,9 @@
         "low": "true",
         "home": "true",
         "plan": "true",
-        "home_affordable": "true"
+        "home_affordable": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "select_home",
@@ -2885,7 +3453,9 @@
         "near_target": "false",
         "send_ok": "true",
         "dispatch_ok": "true",
-        "haul_ok": "true"
+        "haul_ok": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "select_candidate",
@@ -2934,7 +3504,9 @@
         "near_target": "false",
         "send_ok": "true",
         "dispatch_ok": "true",
-        "haul_ok": "true"
+        "haul_ok": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "select_candidate",
@@ -2982,7 +3554,9 @@
         "near_target": "false",
         "send_ok": "false",
         "dispatch_ok": "true",
-        "haul_ok": "true"
+        "haul_ok": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "select_candidate",
@@ -3024,7 +3598,9 @@
         "request": "none",
         "registered": "true",
         "player_eligible": "false",
-        "near_target": "true"
+        "near_target": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "injected_sos",
@@ -3066,7 +3642,9 @@
         "registered": "true",
         "player_eligible": "false",
         "near_target": "false",
-        "send_ok": "true"
+        "send_ok": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "injected_sos",
@@ -3114,7 +3692,9 @@
         "near_target": "false",
         "send_ok": "true",
         "dispatch_ok": "true",
-        "haul_ok": "false"
+        "haul_ok": "false",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "select_candidate",
@@ -3153,7 +3733,9 @@
         "planned_paid": "true",
         "duplicate_debit": "false",
         "manual_watermark": "current",
-        "stale_debit_exhausts": "true"
+        "stale_debit_exhausts": "true",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "planned_segment_accounted",
@@ -3196,7 +3778,9 @@
         "low": "true",
         "home": "true",
         "plan": "false",
-        "home_affordable": "false"
+        "home_affordable": "false",
+        "fallback_plan": "false",
+        "orbital_wait": "false"
       },
       "events": [
         "select_home"
@@ -3220,6 +3804,167 @@
         }
       },
       "note": "No planned-route-null inference: the separate native one-leg feasibility result is supplied explicitly."
+    },
+    {
+      "id": "player-sos-targetless-continuation",
+      "start": "scav_wait_player",
+      "facts": {
+        "help": "true",
+        "gravity": "off",
+        "orbital_wait": "true",
+        "rotor": "false",
+        "goal": "absent",
+        "docked": "false",
+        "fallback_plan": "false",
+        "help_origin": "target",
+        "fuel": "ge1",
+        "retry_pause": "future",
+        "registered": "true",
+        "leaf": "target",
+        "main": "1"
+      },
+      "events": [
+        "caller_resume",
+        "targetless_flight"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_hold",
+          "finding": "scav.targetless_orbit_hold",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": null
+        },
+        "effective": {
+          "node": "scav_target",
+          "finding": null,
+          "without": "scav.targetless_orbit_hold",
+          "fact": null,
+          "value": null,
+          "stop": null
+        }
+      },
+      "note": "Real native continuation with help presence held as an explicit input; actual numeric clock and expiry are separately tested."
+    },
+    {
+      "id": "retained-atc-selection-wait",
+      "start": "scav_no_dispatch",
+      "facts": {
+        "help": "true",
+        "gravity": "off",
+        "orbital_wait": "true",
+        "rotor": "false",
+        "goal": "absent",
+        "docked": "false",
+        "fallback_plan": "false",
+        "help_origin": "target",
+        "fuel": "ge1",
+        "retry_pause": "future",
+        "registered": "true",
+        "leaf": "target",
+        "main": "1"
+      },
+      "events": [
+        "caller_resume",
+        "targetless_flight",
+        "wait_physics"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_no_dispatch",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": null
+        },
+        "effective": {
+          "node": "scav_target",
+          "finding": null,
+          "without": null,
+          "fact": "gravity",
+          "value": "on",
+          "stop": null
+        }
+      },
+      "note": "Retained controller is the explicit post-reply input, representing our earlier retention repair. Vanilla has no retained-caller transition here."
+    },
+    {
+      "id": "shallow-help-expiry-releases-retry",
+      "start": "scav_target",
+      "facts": {
+        "help": "true",
+        "gravity": "off",
+        "orbital_wait": "true",
+        "rotor": "false",
+        "goal": "absent",
+        "docked": "false",
+        "fallback_plan": "false",
+        "help_origin": "target",
+        "fuel": "ge1",
+        "retry_pause": "future",
+        "registered": "true",
+        "leaf": "target",
+        "main": "1"
+      },
+      "events": [
+        "help_timer_elapsed"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_target",
+          "finding": null,
+          "without": null,
+          "fact": "help",
+          "value": "true",
+          "stop": null
+        },
+        "effective": {
+          "node": "scav_target",
+          "finding": null,
+          "without": null,
+          "fact": "help",
+          "value": "false",
+          "stop": null
+        }
+      },
+      "note": "Event means the saved authored deadline was reached; no new duration or forced dispatch is assumed."
+    },
+    {
+      "id": "sample-failure-with-feasible-return",
+      "start": "scav_target",
+      "facts": {
+        "fallback_plan": "true",
+        "leaf": "target",
+        "help": "false",
+        "low": "false",
+        "candidate_ok": "false",
+        "orbital_wait": "false",
+        "main": "1"
+      },
+      "events": [
+        "select_candidate"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_request",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": null
+        },
+        "effective": {
+          "node": "scav_home_fly",
+          "finding": null,
+          "without": null,
+          "fact": "goal",
+          "value": "present",
+          "stop": null
+        }
+      },
+      "note": "Accepted one-way plan is an explicit native-result input, not an invariant that returning must succeed."
     }
   ]
 }

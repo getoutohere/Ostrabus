@@ -7,6 +7,7 @@ using Ostranauts.Core;
 using Ostranauts.ShipGUIs.Utilities;
 using Ostranauts.Ships;
 using Ostranauts.Ships.AIPilots;
+using Ostranauts.Ships.AIPilots.Interfaces;
 using Ostranauts.Ships.Commands;
 using Ostrabus.ShipNavigation;
 using UnityEngine.SceneManagement;
@@ -19,8 +20,8 @@ internal static class CeresNavigationGuardrails {
     internal const double LostShipHomeDistanceKm = 200000;
     const string LegacyReturnKey = "CeresNavigation.ReturnRouteQueued";
     internal const string RejectedPlanKey = "CeresNavigation.ReturnAfterRejectedPlan";
-    sealed class CheckTime { internal double Next, Last; }
-    static ConditionalWeakTable<AIShip, CheckTime> checks = new();
+    internal sealed class CheckTime { internal double Next, Last; internal string HomeId; internal bool Retreat; }
+    static ConditionalWeakTable<IAICharacter, CheckTime> checks = new();
     static readonly List<string> factions = new(1);
     static readonly AccessTools.FieldRef<NavData, List<NavDataPoint>> Points = AccessTools.FieldRefAccess<NavData, List<NavDataPoint>>("_navPoints");
     internal static void OnSceneUnloaded(Scene scene) => ResetRuntimeState();
@@ -87,33 +88,65 @@ internal static class CeresNavigationGuardrails {
         return NavigationFuel.Finite(outbound) && outbound >= 0 && NavigationFuel.Finite(backFuel) && backFuel >= 0 &&
             NavigationFuel.Finite(fuel) && NavigationFuel.Finite(required) && fuel > required;
     }
-    static bool PatrolRole(AIShip ai) => ai.AIType == AIType.Navy || ai.AIType == AIType.Pirate || ai.AIType == AIType.Police;
+    static bool PatrolRole(IAICharacter pilot) => pilot.AIType == AIType.Navy || pilot.AIType == AIType.Pirate || pilot.AIType == AIType.Police;
+    internal static bool PolicyApplies(IAICharacter pilot) {
+        Ship ship = pilot?.ShipUs;
+        return pilot != null && PatrolRole(pilot) && IsCeresFactionShip(ship) && ship.IsAIShip && ship.objSS != null &&
+            !ship.HideFromSystem && ship.DMGStatus != Ship.Damage.Derelict && !ship.NavPlayerManned &&
+            !ReferenceEquals(CrewSim.coPlayer?.ship, ship) && !ship.IsStation() && !ship.IsStationHidden() &&
+            !ship.IsDocked() && !ship.HasDockGroup;
+    }
+    internal static CheckTime Reserve(IAICharacter pilot, AIShip ai = null) {
+        var time = checks.GetValue(pilot, _ => new CheckTime());
+        double epoch = StarSystem.fEpoch;
+        if (epoch >= time.Last && epoch < time.Next) return time;
+        time.Last = epoch; time.Next = epoch + ReturnCheckInterval;
+        time.Retreat = false; time.HomeId = null;
+        Ship ship = pilot.ShipUs;
+        NavData plan = ship.objSS.NavData;
+        if (HasUsableTorch(ship) && plan != null && plan.IsUsingTorchDrive()) return time;
+        Ship home = FindHome(ship, ai);
+        if (home == null) return time;
+        time.HomeId = home.strRegID;
+        double speed = pilot.MaxSpeed(null);
+        // Already-homeward plans retain the native trip's fuel authority.
+        bool homeward = ship.targetRegID == home.strRegID || ship.shipScanTarget == home;
+        bool unsafePlan = !homeward && plan != null && !PlanHasReserve(ship, home, plan, speed);
+        double remaining = ship.DeltaVRemainingRCS;
+        time.Retreat = unsafePlan || !NavigationFuel.Finite(remaining) || AIShipManager.BingoFuelCheck(ship, home, speed);
+        return time;
+    }
+    internal static Ship RetreatHome(IAICharacter pilot) {
+        var state = Reserve(pilot);
+        Ship home = state.HomeId == null ? null : CrewSim.system?.GetShipByRegID(state.HomeId);
+        if (home != null && !home.bDestroyed && !home.HideFromSystem && home.objSS != null &&
+            CrewSim.system.GetShipOwner(home.strRegID) == CrewSim.system.GetShipOwner(pilot.ShipUs.strRegID)) return home;
+        home = FindHome(pilot.ShipUs);
+        state.HomeId = home?.strRegID;
+        return home;
+    }
     internal static void CheckReturn(AIShip ai) {
         Ship ship = ai?.Ship;
         if (ai?.Blackboard == null || ai.AICharacter == null || !IsCeresFactionShip(ship) || !ship.IsAIShip || ship.objSS == null || ship.bDestroyed ||
             ship.HideFromSystem || ship.DMGStatus == Ship.Damage.Derelict || ship.NavPlayerManned ||
             ReferenceEquals(CrewSim.coPlayer?.ship, ship)) return;
         if ((ship.HasDockGroup || ship.IsDocked()) && ship.IsDockedWithPlayer()) return;
+        if (!PatrolRole(ai.AICharacter)) {
+            ai.Blackboard.Remove(LegacyReturnKey); ai.Blackboard.Remove(RejectedPlanKey);
+            return;
+        }
         bool legacy = ai.Blackboard.Get<bool>(LegacyReturnKey);
         // Migrate persistent old intent once; it must never act as a dedup latch.
         if (legacy) {
             Ship oldHome = FindHome(ship, ai);
             if (oldHome != null) { StationReturn.Request(ai, oldHome); ai.Blackboard.Remove(LegacyReturnKey); }
         }
-        if (StationReturn.Pending(ai) || !PatrolRole(ai)) return;
-        var time = checks.GetValue(ai, _ => new CheckTime());
-        double epoch = StarSystem.fEpoch;
-        if (epoch >= time.Last && epoch < time.Next) return;
-        time.Last = epoch; time.Next = epoch + ReturnCheckInterval;
-        if (ship.IsStation() || ship.IsStationHidden() || ship.IsDocked() || ship.HasDockGroup) return;
-        NavData plan = ship.objSS.NavData;
-        if (HasUsableTorch(ship) && plan != null && plan.IsUsingTorchDrive()) return;
-        Ship home = FindHome(ship, ai);
+        ai.Blackboard.Remove(RejectedPlanKey); // Obsolete first-rejection latch from older saves.
+        if (!PolicyApplies(ai.AICharacter)) return;
+        var state = Reserve(ai.AICharacter, ai);
+        if (StationReturn.Pending(ai) || !state.Retreat || state.HomeId == null) return;
+        Ship home = CrewSim.system.GetShipByRegID(state.HomeId);
         if (home == null || ship.targetRegID == home.strRegID || ship.shipScanTarget == home) return;
-        double speed = ai.AICharacter.MaxSpeed(null);
-        bool unsafeRoute = plan != null && !PlanHasReserve(ship, home, plan, speed);
-        double remaining = ship.DeltaVRemainingRCS;
-        if (!unsafeRoute && NavigationFuel.Finite(remaining) && !AIShipManager.BingoFuelCheck(ship, home, speed)) return;
         StationReturn.Request(ai, home);
         Ostrabus.OstrabusPlugin.Logger?.LogInfo($"[CeresNavigation] {ship.strRegID}: returning to {home.strRegID} for fuel reserve.");
     }
@@ -125,18 +158,30 @@ internal static class CeresNavigationGuardrails {
             catch (Exception error) { Ostrabus.OstrabusPlugin.Logger?.LogError("[CeresNavigation] " + error); }
         }
     }
-    [HarmonyPatch]
+    [HarmonyPatch(typeof(TargetNewIfNone), "FindTarget")]
     internal static class PatrolHomePatch {
-        static IEnumerable<MethodBase> TargetMethods() {
-            yield return AccessTools.Method(typeof(NavyPilot), nameof(NavyPilot.GetTarget));
-            yield return AccessTools.Method(typeof(PiratePilot), nameof(PiratePilot.GetTarget));
-            yield return AccessTools.Method(typeof(PolicePilot), nameof(PolicePilot.GetTarget));
-        }
+        static readonly Type ResultType = AccessTools.Inner(typeof(TargetNewIfNone), "TargetDataDTO");
+        static readonly FieldInfo Goal = AccessTools.Field(ResultType, "TargetData");
+        static readonly FieldInfo Plan = AccessTools.Field(ResultType, "NavData");
+        static readonly FieldInfo Cost = AccessTools.Field(ResultType, "FuelCostRCS");
+        static readonly AccessTools.FieldRef<TargetNewIfNone, IAICharacter> Pilot = AccessTools.FieldRefAccess<TargetNewIfNone, IAICharacter>("_ai");
+        static readonly Func<TargetNewIfNone, TargetData, NavData> Generate = AccessTools.MethodDelegate<Func<TargetNewIfNone, TargetData, NavData>>(AccessTools.Method(typeof(TargetNewIfNone), "GenerateNavData"));
+        static readonly Func<TargetNewIfNone, TargetData, double> Needed = AccessTools.MethodDelegate<Func<TargetNewIfNone, TargetData, double>>(AccessTools.Method(typeof(TargetNewIfNone), "GetNeededFuel"));
         [HarmonyPostfix]
-        internal static void Postfix(BaseCharacter __instance, ref TargetData __result) {
-            if (!IsCeresFactionShip(__instance.ShipUs) || __result != null && !__instance.Blackboard.Get<bool>(RejectedPlanKey)) return;
+        internal static void Postfix(TargetNewIfNone __instance, object __result) {
+            if (__result == null || Goal.GetValue(__result) != null || !PolicyApplies(Pilot(__instance))) return;
             Ship home = FindHome(__instance.ShipUs);
-            if (home != null) { __result = new TargetData(home); __instance.Blackboard.Remove(RejectedPlanKey); }
+            if (home == null) return;
+            var target = new TargetData(home);
+            NavData plan = null;
+            double fuel;
+            if (target.TargetIsBoLocked) {
+                plan = Generate(__instance, target);
+                if (plan?.Origin == null || plan.Destination == null) return;
+                fuel = plan.Origin.FuelLevel - plan.Destination.FuelLevel;
+            } else fuel = Needed(__instance, target);
+            if (!NavigationFuel.Finite(fuel) || fuel < 0) return;
+            Goal.SetValue(__result, target); Plan.SetValue(__result, plan); Cost.SetValue(__result, fuel);
         }
     }
     [HarmonyPatch(typeof(TargetNewIfNone), "GenerateNavData")]
@@ -146,13 +191,21 @@ internal static class CeresNavigationGuardrails {
             Ship ship = __instance.ShipUs;
             if (__result == null || !IsCeresFactionShip(ship) || !ship.IsAIShip) return;
             AIShip ai = NavigationFuel.Controller(ship);
-            if (ai == null || !PatrolRole(ai)) return;
+            if (ai == null || !PolicyApplies(ai.AICharacter)) return;
             Ship home = FindHome(ship, ai);
             if (home == null || target?.Ship == home || target?.TargetRegId == home.strRegID) return;
-            if (!PlanHasReserve(ship, home, __result, ai.AICharacter.MaxSpeed(null))) {
-                __result = null;
-                ai.Blackboard.Set(RejectedPlanKey, true);
-            }
+            if (!PlanHasReserve(ship, home, __result, ai.AICharacter.MaxSpeed(null))) __result = null;
+        }
+    }
+    [HarmonyPatch(typeof(TargetNewIfNone), "GetNeededFuel")]
+    internal static class ManualReservePatch {
+        static readonly AccessTools.FieldRef<TargetNewIfNone, IAICharacter> Pilot = AccessTools.FieldRefAccess<TargetNewIfNone, IAICharacter>("_ai");
+        static void Postfix(TargetNewIfNone __instance, TargetData target, ref double __result) {
+            var pilot = Pilot(__instance);
+            if (__result < 0 || !PolicyApplies(pilot)) return;
+            Ship home = FindHome(__instance.ShipUs);
+            if (home != null && target?.Ship != home && target?.TargetRegId != home.strRegID &&
+                LacksRoundTripReserve(__instance.ShipUs, target?.Situ, home, pilot.MaxSpeed(null))) __result = -1;
         }
     }
 }

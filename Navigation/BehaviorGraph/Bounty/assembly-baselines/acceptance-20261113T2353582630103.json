@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/2a51062486a68106378423cbe3edff3a652d074f33e007df4cba2032c5a52299.json.br",
+  "reason": "Reviewed native FlyTo/pause, direct RCS and explicit shallow TorchOff release. 213 control checks preserve owned courses, physical/player inputs, missing hardware, momentum and fuel tolerance; 60 retarget, 174 Ceres and 23 composed fuel checks pass. Numerical flight remains an explicitly unexpanded boundary.",
+  "acceptedUtc": "2026-11-13T23:53:58.2612889Z",
+  "previousSnapshot": "assembly-baselines/6c3aa90b4ff41e90688903dcf042b320153584a179d2c05f3f222f55a756a6a8.json.br"
+}

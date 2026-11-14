@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/eaca942a4f6a1b384c6abfbc54a6d12b2755f63a0b4cdd7d5fb5733e3f0ef64a.json.br",
+  "reason": "Reviewed native FlyTo RCS/pause and shallow TorchOff control release; production matrix preserves active courses, hardware absence, momentum and fuel tolerance. Escape and Ceres retreat use explicit route cleanup; 148 control, 60 retarget, 174 Ceres, 22 fuel assertions and full native binding passed.",
+  "acceptedUtc": "2026-11-13T23:35:06.0806756Z",
+  "previousSnapshot": "assembly-baselines/2c7e3e7d3d63684c5000cddb9c5c71806f32d43a2239709ccd8d266a4cfd421d.json.br"
+}

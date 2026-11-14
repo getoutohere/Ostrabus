@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/048e354f80b708d5d8360b6d39c8268f58cc87af2cccc019e0550e6f75b7bcf8.json.br",
+  "reason": "Reviewed unchanged native assembly plus explicit repair-source/native-method dependency bindings; 61 local-frame, 69 departure, 174 Ceres checks and 32 custom profiles pass. Graph boundary remains unexpanded.",
+  "acceptedUtc": "2026-11-13T17:48:27.9357479Z",
+  "previousSnapshot": "assembly-baselines/de3d95fab5fe96425bdf2de8bc0fc07e9f1bf7b1f015996da4194c03d36a1eb7.json.br"
+}

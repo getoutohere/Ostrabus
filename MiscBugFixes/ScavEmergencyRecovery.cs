@@ -20,6 +20,43 @@ internal static class ScavEmergencyRecovery {
     static readonly AccessTools.FieldRef<object, NavData> HomePlan = AccessTools.FieldRefAccess<object, NavData>(PlanField);
     static readonly AccessTools.FieldRef<object, TargetData> HomeTarget = AccessTools.FieldRefAccess<object, TargetData>(AccessTools.Field(PlanField.DeclaringType, "TargetData"));
     static readonly Func<TargetNewIfNone, int> RequestDistance = (Func<TargetNewIfNone, int>)AccessTools.Method(typeof(TargetNewIfNone), "GetRequestDistance").CreateDelegate(typeof(Func<TargetNewIfNone, int>));
+    static readonly Func<BaseCommand, CommandStatus> Running = (Func<BaseCommand, CommandStatus>)AccessTools.PropertyGetter(typeof(BaseCommand), "Running").CreateDelegate(typeof(Func<BaseCommand, CommandStatus>));
+    static readonly Func<BaseCommand, CommandStatus> Finished = (Func<BaseCommand, CommandStatus>)AccessTools.PropertyGetter(typeof(BaseCommand), "Success").CreateDelegate(typeof(Func<BaseCommand, CommandStatus>));
+
+    internal static IAICharacter GetPilot(TargetNewIfNone command) => Pilot(command);
+    internal static string SelectionMessage(TargetNewIfNone command) => Pilot(command).AIType == AIType.Scav ?
+        " Could not find a valid target; retaining controller for assistance/retry" : " Could not find a valid target, unregistering";
+    internal static bool NoGoal(Ship ship) => ship.shipScanTarget == null && ship.shipSituTarget == null;
+
+    internal static bool BeforeSelection(TargetNewIfNone command, ref CommandStatus result) {
+        if (Pilot(command).AIType != AIType.Scav || !NoGoal(command.ShipUs)) return true;
+        Ship ship = command.ShipUs;
+        if (ship.fAIPauseTimer > StarSystem.fEpoch) {
+            result = Running(command);
+            return false;
+        }
+        ship.Comms.GetCaptain(out CondOwner captain);
+        if (!AiHoldClock.HelpRequested(DataHandler.GetCondTrigger("TIsHasRequestedHelp"), captain)) return true;
+        ship.fAIPauseTimer = StarSystem.fEpoch + 64;
+        result = Running(command);
+        return false;
+    }
+
+    internal static void AfterSelection(TargetNewIfNone command, ref CommandStatus result) {
+        if (Pilot(command).AIType == AIType.Scav && NoGoal(command.ShipUs) && result.Status == CommandCode.Finished)
+            result = Running(command);
+    }
+
+    internal static bool FinishDetachedVisit(Hold hold, ref CommandStatus result) {
+        Ship ship = hold.ShipUs;
+        if (!Visits.TryGetValue(hold, out _) || ship.IsDocked() || !NoGoal(ship) || ship.objSS.NavData != null) return true;
+        // A salvage visit requires the actual attachment. This also repairs old
+        // targetless Main[4] saves; the next native Main pass performs selection
+        // and honors the existing assistance/pause gates there.
+        ship.fAIDockingExpire = double.NegativeInfinity;
+        result = Finished(hold);
+        return false;
+    }
 
     internal static void MarkVisit(ScavPilot pilot) {
         if (!(pilot.BehaviorTree is SelectorCommand root)) return;
@@ -59,7 +96,7 @@ internal static class ScavEmergencyRecovery {
         // caller supplies its existing pause. Failed sends must not retire crew.
         result = true;
         ship.Comms.GetCaptain(out CondOwner captain);
-        if (DataHandler.GetCondTrigger("TIsHasRequestedHelp").Triggered(captain)) return false;
+        if (AiHoldClock.HelpRequested(DataHandler.GetCondTrigger("TIsHasRequestedHelp"), captain)) return false;
         Ship player = CrewSim.coPlayer.ship;
         bool atStation = false;
         foreach (Ship attached in player.GetAllDockedShips()) {
@@ -85,6 +122,7 @@ internal static class ScavVisitRegistrationPatch {
 
 [HarmonyPatch(typeof(Hold), nameof(Hold.RunCommand))]
 internal static class ScavVisitFuelPatch {
+    static bool Prefix(Hold __instance, ref CommandStatus __result) => ScavEmergencyRecovery.FinishDetachedVisit(__instance, ref __result);
     static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
         int count = 0;
         foreach (CodeInstruction instruction in instructions) {
@@ -102,9 +140,19 @@ internal static class ScavVisitFuelPatch {
 
 [HarmonyPatch(typeof(TargetNewIfNone), nameof(TargetNewIfNone.RunCommand))]
 internal static class ScavHomeFeasibilityPatch {
+    static bool Prefix(TargetNewIfNone __instance, ref CommandStatus __result) => ScavEmergencyRecovery.BeforeSelection(__instance, ref __result);
+    static void Postfix(TargetNewIfNone __instance, ref CommandStatus __result) => ScavEmergencyRecovery.AfterSelection(__instance, ref __result);
     static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-        int count = 0;
+        int count = 0, messages = 0;
         foreach (CodeInstruction instruction in instructions) {
+            if (instruction.opcode == OpCodes.Ldstr && Equals(instruction.operand, " Could not find a valid target, unregistering")) {
+                instruction.opcode = OpCodes.Ldarg_0;
+                instruction.operand = null;
+                yield return instruction;
+                yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ScavEmergencyRecovery), nameof(ScavEmergencyRecovery.SelectionMessage)));
+                messages++;
+                continue;
+            }
             if (instruction.opcode == OpCodes.Stfld && Equals(instruction.operand, ScavEmergencyRecovery.PlanField)) {
                 var first = new CodeInstruction(OpCodes.Ldarg_0);
                 instruction.MoveLabelsTo(first); instruction.MoveBlocksTo(first);
@@ -113,7 +161,7 @@ internal static class ScavHomeFeasibilityPatch {
                 count++;
             } else yield return instruction;
         }
-        if (count != 1) throw new InvalidOperationException("Home selection boundary changed.");
+        if (count != 1 || messages != 1) throw new InvalidOperationException("Home selection boundary changed.");
     }
 }
 

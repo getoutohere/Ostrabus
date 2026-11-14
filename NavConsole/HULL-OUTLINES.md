@@ -113,6 +113,18 @@ intersections: four inside corners alone cannot exclude a concave notch running
 through the box. Boundary changes coalesce. Source load state, floor-snapshot reference
 and grid rotation are also checked before capture/adoption.
 
+`Ship.RotateCW` also invalidates existing geometry directly and cancels an active
+old-layout capture. Native Q/E commands reset `nGridRotation` to zero after each
+turn while mutating `FloorPlan` and installed socket grids in place; neither the
+final grid value nor the list reference reliably exposes that change. Docking
+uses the same rotation method. This rare mutation hook creates no cache for an
+unobserved ship and coalesces repeated turns before the next capture. Ordinary
+continuous heading changes keep using the native live draw matrix, without a
+geometry rebuild or reupload. Shared collision geometry receives the same
+invalidation; its rotation convention and collision algorithms are unchanged.
+The existing `/ui/hulls` inspection includes current/observed grid rotation,
+world heading and the native nonrotating-marker flag.
+
 ## Main thread and worker ownership
 
 Only the main thread accesses ships, COs, transforms, definitions and Vectrosity.

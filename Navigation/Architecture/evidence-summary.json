@@ -1,0 +1,120 @@
+{
+    "schemaVersion":  1,
+    "status":  "characterization_and_design_not_runtime_validation",
+    "gameVersion":  "1.0.1.10",
+    "gameAssemblySha256":  "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+    "pluginSnapshotSha256":  "0352505018f97e01b445eb05d9689a6098811585b22de1299a809bb4776df03d",
+    "metrics":  {
+                    "pilotTypes":  13,
+                    "concreteCommands":  70,
+                    "selectedDirectCalls":  338,
+                    "selectedDirectFieldWrites":  395,
+                    "nativeRunCommandCallerMethods":  26,
+                    "decoratedPatchClasses":  254,
+                    "filteredPatchDeclarations":  90,
+                    "designNativeMethodReferences":  49,
+                    "nativeProbeAssertions":  16
+                },
+    "pilotTypes":  [
+                       "Ostranauts.Ships.AIPilots.ArenaModePilot",
+                       "Ostranauts.Ships.AIPilots.AutoPilot",
+                       "Ostranauts.Ships.AIPilots.BlockadePilot",
+                       "Ostranauts.Ships.AIPilots.CivilianPilot",
+                       "Ostranauts.Ships.AIPilots.HaulerCargoPilot",
+                       "Ostranauts.Ships.AIPilots.HaulerDeployingPilot",
+                       "Ostranauts.Ships.AIPilots.HaulerRetrievingPilot",
+                       "Ostranauts.Ships.AIPilots.MissilePilot",
+                       "Ostranauts.Ships.AIPilots.NavyPilot",
+                       "Ostranauts.Ships.AIPilots.PiratePilot",
+                       "Ostranauts.Ships.AIPilots.PolicePilot",
+                       "Ostranauts.Ships.AIPilots.ScavPilot",
+                       "Ostranauts.Ships.AIPilots.StationPilot"
+                   ],
+    "probes":  [
+                   {
+                       "probe":  "selector-preemption",
+                       "ordinaryRuns":  1,
+                       "emergencyRuns":  1,
+                       "interruptedExits":  0,
+                       "savedChild":  "-1",
+                       "meaning":  "Native priority selection preempts without a cancellation callback; saved selector index does not identify current leaf."
+                   },
+                   {
+                       "probe":  "reactive-sequence",
+                       "firstRuns":  2,
+                       "workRuns":  2,
+                       "disabledChildRuns":  0,
+                       "followingRuns":  1,
+                       "meaning":  "Sequence re-evaluates earlier children every tick; CanExecute=false skips rather than fails the sequence."
+                   },
+                   {
+                       "probe":  "sticky-failure",
+                       "approachRuns":  1,
+                       "dockRuns":  1,
+                       "approachExits":  0,
+                       "phase":  "1",
+                       "meaning":  "Failure advances to the next child in the same dispatch; a new executive needs explicit failure edges."
+                   },
+                   {
+                       "probe":  "goal-ownership",
+                       "missionAObserves":  "B",
+                       "meaning":  "Native FlyTo commands share ship-global destination/combat fields. Suspending a command object does not preserve its mission target."
+                   },
+                   {
+                       "probe":  "queue-order",
+                       "restored":  [
+                                        "FlyToManual",
+                                        "FlyToPath"
+                                    ],
+                       "meaning":  "Native loader reverses saved waiting commands; known existing patch repairs this."
+                   },
+                   {
+                       "probe":  "persisted-state",
+                       "emergencyTuplePreserved":  false,
+                       "emptyListPreserved":  false,
+                       "primitivePhase":  2,
+                       "nestedRetreatHasPayload":  false,
+                       "meaning":  "Blackboard is not a general durable mission state store; nested leaf state needs explicit capture/reconstruction."
+                   },
+                   {
+                       "probe":  "native-role-policy",
+                       "root":  [
+                                    {
+                                        "type":  "QueuedCommandsNode",
+                                        "name":  "PriorityQueue"
+                                    },
+                                    {
+                                        "type":  "SequenceCommand",
+                                        "name":  "CombatResponse"
+                                    },
+                                    {
+                                        "type":  "SequenceCommand",
+                                        "name":  "ThreatResponse"
+                                    },
+                                    {
+                                        "type":  "SequenceCommand",
+                                        "name":  "SupportResponse"
+                                    },
+                                    {
+                                        "type":  "StickySequenceCommand",
+                                        "name":  "MainBehavior"
+                                    }
+                                ],
+                       "meaning":  "Native role tree construction can remain the source of ordered choices; composites and nested action controllers require explicit adapter semantics."
+                   },
+                   {
+                       "probe":  "native-sff",
+                       "queued":  "OneShotWrapperCommand",
+                       "meaning":  "Native Navy fast-forward schedules later work; it is not a synchronous mission advancement interface."
+                   }
+               ],
+    "fixtures":  "Unity object equality, captain, trigger lookup and ship owner; controlled probe leaves characterize combinator semantics.",
+    "productionPatchesEnabled":  false,
+    "source":  "Tools/ShipExecutiveStudy",
+    "limits":  [
+                   "Direct metadata inventory is not complete reachability or a proposed hook count.",
+                   "Probe leaves use controlled outcomes; no full game flight, battle or scene transfer was simulated.",
+                   "No replacement runtime has been implemented or playtested.",
+                   "Existing runtime patches and game assets were left unchanged."
+               ]
+}

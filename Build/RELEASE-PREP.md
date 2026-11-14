@@ -1,11 +1,14 @@
 # Public snapshot preparation
 
 Current target: Ostranauts 1.0.1.10 (`public_test`), BepInEx 5, Windows.
-Current staging scope: [Ostrabus 0.4.0](RELEASE-0.4.0.md): torch autopilot/towing,
-traffic lifecycle and freight recovery, signal boxes, trading, collision/outline
-compatibility and associated performance/inspection work. Project, plugin, PDA
-and package metadata report 0.4.0. The latest bounty-escort patch/tests and their
-shared-file documentation/catalog entries remain outside this prepared commit.
+Current staging scope: [Ostrabus 0.5.0](RELEASE-0.5.0.md): AI control ownership,
+combat/patrol and time-skip repairs, local navigation frames, Ceres and scavenger
+behavior, docked-group micrometeoroid defense, cargo-pod market isolation, bounty
+escorts, assets-only PDA hacking, recovery APIs and their tests/reference tools.
+Project, plugin, native mod and package metadata report 0.5.0. The bounty-escort
+repair now has a live escort confirmation and is included. Neutral ATC rescue is
+a design discussion, not an implemented feature in this snapshot.
+The earlier [0.4.0 snapshot](RELEASE-0.4.0.md) was committed as `ed83d46`.
 The earlier [0.3.1 cleanup](RELEASE-0.3.1.md) was committed as `21124d5`.
 The [0.3.0 builder](RELEASE-0.3.0.md) was committed as `e9056ea`.
 The earlier [post-0.2.2 preparation](PREPARED-CHANGES.md) was committed as
@@ -35,7 +38,7 @@ are supplied by the player's installation and are not redistributed.
 - `Ostrabus-0.2` marks the earlier experimental snapshot. Custom builder validation
   produces ignored test packages under `dist/`; they are not a hosted release.
 - Earlier snapshots are documented in [0.2.2](RELEASE-0.2.2.md) and the
-  [post-0.2.2 changes](PREPARED-CHANGES.md). The current [0.4.0 scope](RELEASE-0.4.0.md)
+  [post-0.2.2 changes](PREPARED-CHANGES.md). The current [0.5.0 scope](RELEASE-0.5.0.md)
   is recorded separately; commit/tag creation and pushing remain separate
   actions. Do not advertise compatibility beyond the tested game.
 - Keep known investigations distinguishable from completed fixes. In particular,
@@ -50,7 +53,7 @@ are supplied by the player's installation and are not redistributed.
   publisher namespace/URL and reference-assembly input are not configured for
   this snapshot. The validated paths are the Windows full/custom builders and
   their local package scripts; this preparation does not certify or invoke CI
-  publishing. The package version field is aligned at 0.4.0.
+  publishing. The package version field is aligned at 0.5.0.
 - Selected native-state fixtures are useful regression inputs; exploratory tools
   may need ignored local captures. The repository does not redistribute decompiled
   game source, assemblies, or complete saves.

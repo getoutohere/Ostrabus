@@ -1,5 +1,10 @@
 # Scav emergency recovery
 
+The separate `vorb-hold` mode now covers and verifies repair of the failed-search
+continuation beyond this test's immediate SOS result. See
+[156 continuation/clock/return checks and fixture limits](WAITING.md) and
+[the original VORB audit](../../Venus/SCAVENGER-HOLD-AUDIT.md).
+
 `recovery` first runs the 23 native/asset SOS diagnosis assertions unchanged,
 then installs the actual production recovery patches and adds 20 assertions.
 Run through the bundled-Mono host described in RESULT.md.

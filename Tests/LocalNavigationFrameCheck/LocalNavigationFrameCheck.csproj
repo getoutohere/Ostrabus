@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion><NoWarn>SYSLIB0050</NoWarn></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Navigation/LocalNavigationFrame.cs" Link="LocalNavigationFrame.cs" />
+    <Compile Include="../../Navigation/LocalNavigationFramePatches.cs" Link="LocalNavigationFramePatches.cs" />
+    <Compile Include="../../Navigation/NavyCandidateFuelPatch.cs" Link="NavyCandidateFuelPatch.cs" />
+    <None Update="Frames.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../Fixtures/Navigation/DepartureOrbits.json" Link="Orbits.json" CopyToOutputDirectory="PreserveNewest" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(GameDir)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

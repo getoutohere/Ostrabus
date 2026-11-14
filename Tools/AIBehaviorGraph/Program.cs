@@ -21,10 +21,10 @@ static class Program {
             }
             folder = Path.Combine(root, "Navigation", "BehaviorGraph");
             string modelName=args.Contains("--model") ? args.ElementAtOrDefault(Array.IndexOf(args,"--model")+1) ?? throw new Exception("Missing model name.") : "retriever";
-            Check(modelName is "retriever" or "scavenger" or "deployer" or "target-lifecycle" or "traffic","Unknown model: "+modelName);
+            Check(modelName is "retriever" or "scavenger" or "deployer" or "target-lifecycle" or "traffic" or "bounty" or "encounters","Unknown model: "+modelName);
             bool retriever=modelName=="retriever";
             Check(retriever || args.FirstOrDefault()!="assembly-self-test","Run assembly-self-test on the default retriever fixture model; slice audits use --model.");
-            if(!retriever)folder=Path.Combine(folder,modelName switch { "scavenger" => "Scavenger", "deployer" => "Deployer", "traffic" => "Traffic", _ => "TargetLifecycle" });
+            if(!retriever)folder=Path.Combine(folder,modelName switch { "scavenger" => "Scavenger", "deployer" => "Deployer", "traffic" => "Traffic", "bounty" => "Bounty", "encounters" => "Encounters", _ => "TargetLifecycle" });
             var vanilla = Read<Model>(Path.Combine(folder, retriever ? "retriever.vanilla.json" : "vanilla.json"));
             var overlay = Read<Overlay>(Path.Combine(folder, retriever ? "ostrabus.overlay.json" : "overlay.json"));
             bool assemblyCommand=args.FirstOrDefault()?.StartsWith("assembly-",StringComparison.Ordinal)==true;

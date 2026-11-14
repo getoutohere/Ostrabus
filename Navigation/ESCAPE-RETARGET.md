@@ -10,13 +10,16 @@ The prefix replaces only that setter. Native RunCommand still owns combatant
 eligibility, regional-station selection, geometry, fallback and command results.
 The repair applies the selected station using native TargetData.ApplyToShip;
 the existing target observer clears obsolete manual predictions. It compares the
-existing semantic target key and resets NavData only when the destination changes.
+existing semantic target key and releases the obsolete route and its commanded
+forces only when the destination changes. The shared NavigationRoute.Stop retains
+actual momentum and fuel; this closes the earlier reset-only phantom-thrust gap.
 Equivalent reapplication preserves the current route and reuses coherent
 TargetData instead of allocating another object.
 
 Police, scavenger, civilian and pirate trees use this escape command. Navy and
-blockade retreat use TargetNearestStation, whose native route reset is already
-correct; the new hook is not involved. Player autopilot and ordinary cargo
+blockade retreat use TargetNearestStation, which already resets route identity;
+the escape hook is not involved. The shared shallow control-handoff fix handles
+its subsequent RCS ownership boundary. Player autopilot and ordinary cargo
 plotting are not changed. Route endpoints are not compared to final destinations:
 departure/detour/approach legs can legitimately end elsewhere.
 

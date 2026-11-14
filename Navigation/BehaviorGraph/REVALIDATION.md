@@ -35,7 +35,7 @@ dependencies without requiring an accepted snapshot.
 ## What triggers review
 
 Each slice's manifest binds its catalogued source groups to native methods (41
-retriever, 32 scavenger and 24 deployer groups after the station-docked policy). Each selected
+retriever, 35 scavenger and 24 deployer groups after the waiting/return expansion). Each selected
 method includes its overload set, signature, metadata and normalized IL. Tracked
 dependencies include local calls, referenced fields/types, constructors and
 conservative virtual-call candidates. Directly referenced external DLL bytes are

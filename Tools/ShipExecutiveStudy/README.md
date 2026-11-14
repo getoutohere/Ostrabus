@@ -1,0 +1,34 @@
+# Ship mission executive feasibility study
+
+Read-only analysis tools for the [architecture evaluation](../../Navigation/Architecture/README.md).
+These are characterization programs, not a replacement executive or deployable
+patch. They do not contact the running game or edit game/mod sources or assets.
+
+From the repository root:
+
+```powershell
+dotnet run --project Tools/ShipExecutiveStudy/Scan -c Release
+dotnet build Tools/ShipExecutiveStudy/Native -c Release
+dotnet run --project Tests/SaveJsonCompatibility/Host -c Release --no-build -- Tools/ShipExecutiveStudy/Native/bin/Release/netstandard2.1/Native.dll
+```
+
+The scanner reads the shipped assembly with Mono.Cecil, the existing Debug
+plugin and selected shipped JSON. It does not load/execute the plugin or invoke
+patch factories. Outputs go to ignored `obj/ShipExecutiveStudy`.
+
+The native probe runs shipped command combinators, state persistence, Navy tree
+construction and a Navy FFWD continuation under the bundled Mono runtime. It
+does not reference Ostrabus. Unity identity, captain, trigger lookup and faction
+lookup have explicit offline fixtures. Controlled command leaves characterize
+scheduling semantics; this does not simulate an actual battle or flight.
+
+The current snapshot records 13 concrete pilots, 70 concrete command types,
+338 selected direct call sites and 395 selected direct field-write sites. These
+are exploratory metadata counts, not required hook counts or a completeness
+proof. Vector component writes, reflection, delegates, transitive effects and
+reachability require separate interpretation. The relevant patch subset is a
+namespace/name filter; neither its size nor attribute counts imply removability.
+
+The native probes contain eight observations with 16 assertions. Assertions
+characterize the original mechanisms, including behaviors already corrected by
+existing production patches. They must not be reported as 16 new defects.

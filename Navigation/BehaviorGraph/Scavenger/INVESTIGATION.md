@@ -19,7 +19,7 @@ wait on the next call. It does not request help or advance to Undock. This is a
 kilogram threshold, not the bingo-delta-v check or LowFuel's 25%/speed reserve.
 
 The actual native ScavPilot tree and Hold/sequence bodies reproduce that repeating
-state offline: [native results](../../../../Tests/ScavFuelDiagnosis/RESULT.md).
+state offline: [native results](../../../Tests/ScavFuelDiagnosis/RESULT.md).
 A funded hold finishes, a rotor exception can
 bypass the mass gate, the pause/zero-timer exception can release it, and priority
 commands/combat/threat behavior can intervene. Therefore the claim is a missing
@@ -90,16 +90,17 @@ or collision follows that witness.
 
 ## Effective behavior and scope limits
 
-The modeled ordinary Hold path is unchanged by the current mod. Shared target
-replacement and prediction invalidation fixes remain relevant navigation
-dependencies, but do not add a scav fuel-emergency branch. The overlay records
-them as unexpanded boundaries, not as a claim that every gameplay hook has been
-modeled. Retriever-specific SFF handoff and deployer recovery do not apply to
-ScavPilot. Docked Hold's own SFF path resets its timer and queues a one-shot Hold;
-it does not release Main[4] or request assistance.
+The recovery overlay now releases ordinary empty visits and retains failed
+selection at Main[1] rather than advancing into targetless Hold. Its new caller
+continuation, cooldown and optional feasible-return/orbital-wait policies are
+covered in [WAITING.md](../../../Tests/ScavFuelDiagnosis/WAITING.md).
+Shared target replacement and prediction invalidation remain relevant, separately
+bounded dependencies. Retriever-specific SFF handoff and deployer recovery do not
+apply to ScavPilot. Genuine docked visits retain their timer/SFF behavior; a
+detached targetless saved visit finishes back into normal Main selection.
 
 No desirable outcome is made an invariant. Failed rescue, depleted fuel,
 interruption and legitimate successful trips remain possible. The source review,
 native reproduction and graph scenario checks are separate evidence levels.
 
-Native test source/results: [ScavFuelDiagnosis](../../../../Tests/ScavFuelDiagnosis/RESULT.md).
+Native test source/results: [ScavFuelDiagnosis](../../../Tests/ScavFuelDiagnosis/RESULT.md).

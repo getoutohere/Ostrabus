@@ -18,6 +18,12 @@ sealed class Feature {
     public string[] Tick { get; set; } = [];
     public string[] Stop { get; set; } = [];
     public string[] Settings { get; set; } = [];
+    public NativeMod[] NativeMods { get; set; } = [];
+}
+
+sealed class NativeMod {
+    public string Name { get; set; } = "";
+    public string Source { get; set; } = "";
 }
 
 sealed class Hook {
@@ -49,6 +55,7 @@ sealed class Plan {
     public string[] Settings { get; set; } = [];
     public int TickCalls { get; set; }
     public bool PdaAssets { get; set; }
+    public NativeMod[] NativeMods { get; set; } = [];
 }
 
 static class Files {

@@ -8,12 +8,15 @@ using Ostranauts.Trading;
 using Ostrabus.Micrometeoroids;
 using UnityEngine;
 
-static class Program {
+static partial class Program {
     static int checks, destroyed, projectiles;
     static int defenseAttempts, impacts;
     static bool defenseResult;
     static bool throwSpawn;
     static bool throwShot;
+    static ShipSitu firedTarget;
+    static Vector3 weaponPosition;
+    static WeaponsSystem firedSystem;
     static Ship ship, spawned, logged;
     static readonly Dictionary<CondOwner, Dictionary<string, double>> flags = new Dictionary<CondOwner, Dictionary<string, double>>();
     static readonly Dictionary<CondOwner, int> ammunition = new Dictionary<CondOwner, int>();
@@ -30,17 +33,31 @@ static class Program {
     static bool Zero(CondOwner __instance, string strName) { flags[__instance][strName] = 0; return false; }
     static bool Value(ref float __result) { if (rolls.Count == 0) throw new Exception("Unexpected random roll"); __result = rolls.Dequeue(); return false; }
     static bool RangeFloat(float minInclusive, float maxInclusive, ref float __result) { __result = maxInclusive; return false; }
-    static bool Pos(ref Vector3 __result) { __result = default; return false; }
+    static bool Pos(ref Vector3 __result) { __result = weaponPosition; return false; }
     static bool ItemOf(ref Item __result) { __result = Empty<Item>(); return false; }
     static bool Quiet() => false;
     static bool ShaderId(ref int __result) { __result = 1; return false; }
     static bool TimeScale(ref float __result) { __result = 1; return false; }
     static bool Ammo(CondOwner weaponCo, ref List<CondOwner> __result) {
         __result = new List<CondOwner>();
-        for (int i = 0; i < ammunition[weaponCo]; i++) __result.Add(CO());
+        for (int i = 0; i < ammunition[weaponCo]; i++) __result.Add(Bullet());
         return false;
     }
-    static bool Projectile() { if (throwShot) throw new InvalidOperationException("fixture projectile error"); projectiles++; return false; }
+    static bool Projectile(WeaponsSystem __instance, ShipSitu target) {
+        if (throwShot) throw new InvalidOperationException("fixture projectile error");
+        firedSystem = __instance; firedTarget = target; projectiles++; return false;
+    }
+    static CondOwner Bullet(double lifetime = .6, int count = 3) {
+        var co = CO("IsAmmo20mm");
+        flags[co]["IsAmmoDespawnTime"] = lifetime; flags[co]["IsShipWeaponSalvoCount"] = count;
+        return co;
+    }
+    static bool FiringClear() {
+        object context = AccessTools.Field(typeof(MeteorDefense), "firing").GetValue(null);
+        foreach (var field in AccessTools.GetDeclaredFields(context.GetType()))
+            if (!field.FieldType.IsValueType && field.GetValue(context) != null) return false;
+        return true;
+    }
     static bool Destroy() { destroyed++; return false; }
     static bool Spawn(Ship __0) {
         if (throwSpawn) throw new InvalidOperationException("fixture spawn error");
@@ -79,7 +96,11 @@ static class Program {
         return co;
     }
     static readonly List<Tuple<DataCOWrapper, float>> gunList = new List<Tuple<DataCOWrapper, float>>();
-    static bool Guns(ref List<Tuple<DataCOWrapper, float>> __result) { __result = gunList; return false; }
+    static readonly Dictionary<WeaponsSystem, List<Tuple<DataCOWrapper, float>>> groupGuns = new Dictionary<WeaponsSystem, List<Tuple<DataCOWrapper, float>>>();
+    static bool Guns(WeaponsSystem __instance, ref List<Tuple<DataCOWrapper, float>> __result) {
+        if (!groupGuns.TryGetValue(__instance, out __result)) __result = gunList;
+        return false;
+    }
     static WeaponsSystem SystemFor(Ship host) { var ws = Empty<WeaponsSystem>(); Field(ws, "_ship", host); return ws; }
     static void Prefix(Harmony h, Type type, string method, string prefix, Type[] args = null) =>
         h.Patch(AccessTools.Method(type, method, args), prefix: new HarmonyMethod(typeof(Program), prefix));
@@ -172,8 +193,10 @@ static class Program {
             Check(flags[second]["IsReloading"] > 100, "First success suppressed simultaneous second burst");
             flags[gun]["IsReloading"] = flags[second]["IsReloading"] = 0; throwShot = true;
             bool threw = false; try { Defend(ws, 90, 0); } catch (InvalidOperationException) { threw = true; }
-            Check(threw && AccessTools.Field(typeof(MeteorDefense), "firingWeapon").GetValue(null) == null, "Exception retained combat CO reference");
+            Check(threw && FiringClear(), "Exception retained combat CO reference");
             throwShot = false;
+            GroupDefenseChecks();
+            BurstSafetyChecks();
 
             var other = Hull("B", 20, 20); var shallow = Hull("SHALLOW"); Field(shallow, "nLoadState", Ship.Loaded.Shallow);
             var dead = Hull("DEAD"); dead.bDestroyed = true;

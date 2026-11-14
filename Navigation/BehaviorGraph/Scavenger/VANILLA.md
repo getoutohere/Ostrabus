@@ -65,4 +65,6 @@ flowchart TD
   n_scav_dispatch -->|"dispatch_attempt"| n_scav_no_dispatch
   n_scav_fly -->|"planned_segment_accounted"| n_scav_account_plan
   n_scav_account_plan -->|"resume_manual_accounting"| n_scav_account_manual
+  n_scav_wait_player -->|"caller_resume"| n_scav_fly
+  n_scav_fly -->|"targetless_flight"| n_scav_hold
 ```

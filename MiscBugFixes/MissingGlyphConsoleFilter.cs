@@ -5,12 +5,14 @@ using UnityEngine;
 namespace Ostrabus.MiscBugFixes;
 
 // Filter only the GUI's Unity-log subscriber. Player.log and inspection logging
-// still receive the original warning; font rendering and fallbacks are unchanged.
+// still receive the original warning; native recovery and rendering are unchanged.
 [HarmonyPatch(typeof(ConsoleToGUI), nameof(ConsoleToGUI.Log))]
 internal static class MissingGlyphConsoleFilter {
     [HarmonyPrefix]
     internal static bool Prefix(string logString, LogType type) {
         if (type != LogType.Warning || logString == null) return true;
+        if (logString.StartsWith("ERROR: null gascontainer dict on ", StringComparison.Ordinal) &&
+            logString.EndsWith(". Setting to empty for now.", StringComparison.Ordinal)) return false;
         if (logString.StartsWith("The character used for Ellipsis is not available in font asset [", StringComparison.Ordinal) &&
             logString.EndsWith("] or any potential fallbacks. Switching Text Overflow mode to Truncate.", StringComparison.Ordinal)) return false;
         if (!logString.StartsWith("The character with Unicode value \\u", StringComparison.Ordinal)) return true;

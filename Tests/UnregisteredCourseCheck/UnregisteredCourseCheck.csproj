@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Navigation/FlightControlHandoffPatch.cs" Link="FlightControlHandoffPatch.cs" />
+    <Compile Include="../../Navigation/FlightControllerLifetimePatch.cs" Link="FlightControllerLifetimePatch.cs" />
+    <Compile Include="../../Navigation/NavigationRoute.cs" Link="NavigationRoute.cs" />
+    <Compile Include="../../Navigation/LowFuelRetreatProgressPatch.cs" Link="LowFuelRetreatProgressPatch.cs" />
+    <Compile Include="../../MiscBugFixes/AIShipLifecyclePatches.cs" Link="AIShipLifecyclePatches.cs" />
+    <Compile Include="../../MiscBugFixes/ActiveShipRetirement.cs" Link="ActiveShipRetirement.cs" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(Managed)/UnityEngine.UI.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(GameDir)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

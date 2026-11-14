@@ -19,6 +19,8 @@ namespace Ostrabus;
 [HarmonyPatch]
 class Patch
 {
+    static bool BountyTargetMissing(CondOwner co) => co == null || co.ship?.strRegID == "OKLG_UNK";
+
     [HarmonyPatch(typeof(GUIBountyDetails), nameof(GUIBountyDetails.Init))]
     public static class GUIBountyDetailsPatch
     {
@@ -31,7 +33,7 @@ class Patch
             try {
                 CondOwner co = bountySave.GetCO();
                 TMP_Text txtLocation = TxtLocationField(__instance);
-                if (co == null && txtLocation != null) { txtLocation.text = $"{txtLocation.text} (MIA)"; }
+                if (BountyTargetMissing(co) && txtLocation != null) txtLocation.text = $"{txtLocation.text} (MIA)";
             } catch (Exception ex) {
                 ConsoleToGUI.instance?.LogInfo($"[BountyRow] Exception trying to modify UI text: {ex}");
             }
@@ -50,7 +52,7 @@ class Patch
             try {
                 CondOwner co = bountySave.GetCO();
                 TMP_Text txtLocation = TxtLocationField(__instance);
-                if (co == null && txtLocation != null) { txtLocation.text = "(MIA)"; }
+                if (BountyTargetMissing(co) && txtLocation != null) txtLocation.text = "(MIA)";
             } catch (Exception ex) {
                 ConsoleToGUI.instance?.LogInfo($"[BountyRow] Exception trying to modify UI text: {ex}");
             }

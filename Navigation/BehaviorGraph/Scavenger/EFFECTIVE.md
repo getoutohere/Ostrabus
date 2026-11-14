@@ -41,7 +41,7 @@ flowchart TD
   n_scav_undock -->|"departure_pending"| n_scav_undock
   n_scav_undock -->|"undock_finished"| n_scav_target
   n_scav_target -->|"select_candidate"| n_scav_fly
-  n_scav_target -->|"select_candidate"| n_scav_request
+  n_scav_target -->|"select_candidate [conditional]"| n_scav_request
   n_scav_target -->|"select_home [conditional]"| n_scav_home_fly
   n_scav_target -->|"select_home [conditional]"| n_scav_home_fly
   n_scav_home_fly -->|"navigation_pending"| n_scav_home_fly
@@ -64,6 +64,7 @@ flowchart TD
   n_scav_dispatch -->|"dispatch_attempt"| n_scav_retriever
   n_scav_dispatch -->|"dispatch_attempt"| n_scav_no_dispatch
   n_scav_fly -->|"planned_segment_accounted"| n_scav_account_plan
+  n_scav_fly -->|"targetless_flight"| n_scav_hold
   n_scav_account_plan -->|"resume_manual_accounting / flight_fuel_handoff"| n_scav_account_manual
   n_scav_hold -->|"hold_expiry / scav_emergency_recovery [conditional]"| n_scav_undock
   n_scav_target -->|"select_home / scav_emergency_recovery [conditional]"| n_scav_request
@@ -71,4 +72,10 @@ flowchart TD
   n_scav_station_send -->|"send_result / scav_emergency_recovery [conditional]"| n_scav_station_reply
   n_scav_station_send -->|"send_result / scav_emergency_recovery [conditional]"| n_scav_target
   n_scav_player_send -->|"send_result / scav_emergency_recovery [conditional]"| n_scav_target
+  n_scav_wait_player -->|"caller_resume / scav_selection_wait"| n_scav_target
+  n_scav_no_dispatch -->|"caller_resume / scav_selection_wait"| n_scav_target
+  n_scav_target -->|"targetless_flight / scav_selection_wait"| n_scav_target
+  n_scav_target -->|"help_timer_elapsed / scav_selection_wait"| n_scav_target
+  n_scav_target -->|"select_candidate / scav_return_fallback [conditional]"| n_scav_home_fly
+  n_scav_target -->|"wait_physics / orbital_waiting"| n_scav_target
 ```

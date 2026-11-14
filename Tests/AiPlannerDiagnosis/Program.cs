@@ -128,6 +128,10 @@ static class Program {
         h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Equality"), prefix: new HarmonyMethod(typeof(Program), nameof(Equal)));
         h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"), prefix: new HarmonyMethod(typeof(Program), nameof(Unequal)));
         if (args.Length != 0 && args[0] == "ceres") { CeresAuditChecks.Run(); return 0; }
+        if (args.Length != 0 && args[0] == "patrol-queue") { PatrolQueueChecks.Run(args); return 0; }
+        if (args.Length != 0 && args[0] == "patrol-interactions") { PatrolQueueChecks.Interactions(); return 0; }
+        if (args.Length != 0 && args[0] == "flight-handoff") { FlightHandoffChecks.Run(); return 0; }
+        if (args.Length != 0 && args[0] == "ceres-chain") { CeresAuditChecks.Run(true, true); return 0; }
         if (args.Length != 0 && args[0] == "audit-priority") { CeresAuditChecks.Run(true); return 0; }
         if (args.Length != 0 && args[0] == "lifecycle") { LifecycleChecks.Run(args.Length > 1 ? args[1] : null); return 0; }
         if (args.Length != 0 && args[0] == "traffic") { TrafficChecks.Run(); return 0; }

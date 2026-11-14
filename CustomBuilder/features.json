@@ -7,6 +7,50 @@
   ],
   "features": [
     {
+      "id": "ai-combat-handoff",
+      "title": "Run native combat cleanup before resuming patrol after lost contact",
+      "category": "bugfix",
+      "patchFiles": ["Navigation/CombatCleanupAdmissionPatch.cs"]
+    },
+    {
+      "id": "ai-neutralized-targets",
+      "title": "Stop reacquiring disabled AI ships after native combat neutralization",
+      "category": "bugfix",
+      "patchFiles": ["Navigation/NeutralizedThreatPatch.cs"]
+    },
+    {
+      "id": "radio-surrender",
+      "title": "Keep radio surrender from blocking crew work or disrupting on-foot conversations",
+      "category": "bugfix",
+      "patchFiles": ["MiscBugFixes/RadioSurrenderEffectsPatch.cs"]
+    },
+    {
+      "id": "ai-surrender-accounting",
+      "title": "Preserve AI combat state when surrender messages cannot be sent",
+      "category": "bugfix",
+      "patchFiles": ["Navigation/SurrenderOfferPatch.cs"]
+    },
+    {
+      "id": "preview-market-isolation",
+      "title": "Isolate preview cargo markets and repair verified empty pod ghosts",
+      "category": "bugfix",
+      "patchFiles": ["MiscBugFixes/PreviewMarketIsolation.cs", "MiscBugFixes/CargoPodFix.cs"]
+    },
+    {
+      "id": "sff-navigation-destination",
+      "title": "Preserve AI mission destinations when plotted routes finish during SFF",
+      "category": "bugfix",
+      "patchFiles": ["MiscBugFixes/SffNavigationDestinationPatch.cs"]
+    },
+    {
+      "id": "quick-pda-hack",
+      "title": "Unlock PDAs with Hacking directly from the quick-action menu",
+      "category": "qol",
+      "nativeMods": [
+        { "name": "OstrabusPdaHack", "source": "QoL/PdaHacking/Assets" }
+      ]
+    },
+    {
       "id": "torch-fuel-cache",
       "title": "Keep torch autopilot fuel checks synchronized with actual tanks",
       "category": "bugfix",
@@ -31,6 +75,20 @@
       "requires": ["torch-fuel"],
       "patchFiles": [
         "Navigation/TorchCourses/TorchTransferPlanning.cs"
+      ]
+    },
+    {
+      "id": "bounty-departure-fuel",
+      "title": "Service bounty ships before native station departures",
+      "category": "bugfix",
+      "patchFiles": ["Navigation/BountyDepartureFuelPatch.cs"]
+    },
+    {
+      "id": "bounty-escort",
+      "title": "Allow arrested bounty targets through airlocks on manual orders",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/BountyEscortAirlockPatch.cs"
       ]
     },
     {
@@ -75,6 +133,21 @@
       ]
     },
     {
+      "id": "ai-flight-controls",
+      "title": "Release abandoned AI courses and thrust across control handoffs",
+      "category": "bugfix",
+      "patchFiles": [
+        "Navigation/FlightControlHandoffPatch.cs",
+        "Navigation/FlightControllerLifetimePatch.cs"
+      ]
+    },
+    {
+      "id": "ai-patrol-priority",
+      "title": "Keep Navy patrols interruptible and preserve AI command queues",
+      "category": "bugfix",
+      "patchFiles": [ "Navigation/PatrolCommandPatch.cs", "Navigation/CommandQueuePersistencePatch.cs" ]
+    },
+    {
       "id": "flight-fuel",
       "title": "Prevent double charging AI flight fuel",
       "category": "bugfix",
@@ -96,10 +169,12 @@
     },
     {
       "id": "navigation-targets",
-      "title": "Repair stale target identity and route state",
+      "title": "Repair target identity, routes and RCS fuel budgets",
       "category": "bugfix",
       "patchFiles": [
         "Navigation/NavigationFuel.cs",
+        "Navigation/NavyCandidateFuelPatch.cs",
+        "Navigation/LowFuelRetreatProgressPatch.cs",
         "MiscBugFixes/NavigationTargetRecovery.cs",
         "MiscBugFixes/ShipReplacementTargetsPatch.cs"
       ]
@@ -162,6 +237,7 @@
       "title": "Restore authored scavenger emergency assistance",
       "category": "bugfix",
       "requires": [
+        "ai-hold-clock",
         "navigation-targets",
         "flight-fuel",
         "rcs-refill",
@@ -170,6 +246,45 @@
       "patchFiles": [
         "MiscBugFixes/ScavEmergencyRecovery.cs"
       ]
+    },
+    {
+      "id": "ai-hold-clock",
+      "title": "Correct AI wait deadlines and shallow SOS cooldown expiry",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/AiHoldClockPatch.cs"
+      ]
+    },
+    {
+      "id": "scav-return",
+      "title": "Try a feasible station return after failed scavenger job selection",
+      "category": "simulation",
+      "requires": [
+        "scav-assistance"
+      ],
+      "patchFiles": [
+        "Navigation/ScavengerReturn.cs"
+      ]
+    },
+    {
+      "id": "orbital-waiting",
+      "title": "Let free AI ships wait under orbital gravity",
+      "category": "simulation",
+      "requires": [
+        "scav-assistance",
+        "orbital",
+        "coast",
+        "sff"
+      ],
+      "patchFiles": [
+        "Navigation/OrbitalWaiting.cs"
+      ]
+    },
+    {
+      "id": "local-navigation-frames",
+      "title": "Keep local AI patrol, ambush and encounter coordinates in their regional motion frame",
+      "category": "bugfix",
+      "patchFiles": ["Navigation/LocalNavigationFramePatches.cs"]
     },
     {
       "id": "departure-waypoints",
@@ -351,7 +466,7 @@
     },
     {
       "id": "font-console",
-      "title": "Suppress missing-glyph and ellipsis console spam",
+      "title": "Suppress font and recovered gas-buffer console spam",
       "category": "bugfix",
       "patchFiles": [
         "MiscBugFixes/MissingGlyphConsoleFilter.cs"
@@ -424,6 +539,9 @@
         },
         {
           "type": "Ostrabus.NavConsole.Outlines.HullRetirePatch"
+        },
+        {
+          "type": "Ostrabus.NavConsole.Outlines.HullRotationPatch"
         }
       ],
       "before": [
@@ -864,12 +982,13 @@
       "title": "Apply homeward fuel reserves to Ceres patrols and chases",
       "category": "simulation",
       "requires": [
+        "ai-return",
         "navigation-targets",
         "rcs-refill"
       ],
       "patchFiles": [
         "CeresNavigation/CeresNavigationGuardrails.cs",
-        "Navigation/NavyCandidateFuelPatch.cs"
+        "CeresNavigation/CeresCombatRetreat.cs"
       ],
       "before": [
         "SceneManager.sceneUnloaded += global::Ostrabus.CeresNavigation.CeresNavigationGuardrails.OnSceneUnloaded;"
@@ -977,6 +1096,7 @@
       "category": "developer",
       "patchFiles": [
         "Inspection/InspectionLogHooks.cs",
+        "Inspection/ShipVelocityRecovery.cs",
         "Inspection/DockingInspection.cs",
         "Inspection/ExcursionInspection.cs"
       ],
@@ -1088,6 +1208,12 @@
         "global::Ostrabus.Optimizations.SavedJsonLoading.Enabled = Config.Bind(\"Optimizations\", \"ExperimentalSaveJson\", false, \"Experimental compatible save reader. Restart to apply.\").Value;"
       ],
       "experimental": true
+    },
+    {
+      "id": "faction-encounters",
+      "title": "Keep staged faction encounters local and preserve active ships",
+      "category": "simulation",
+      "patchFiles": [ "Navigation/Encounters/FactionEncounterPatch.cs" ]
     },
     {
       "id": "civilian-visits",

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/fcbc74c4d323005d1e1409202360da8af8a0c64c8025711a501743ebd95d8bfa.json.br",
+  "reason": "Reviewed unchanged 1.0.1.10 native selection, Hold, condition timers and station lookup; expanded failed-selection continuation and explicit return/coasting policies; 152 native fixture assertions and 93 graph checks pass, live playtest pending.",
+  "acceptedUtc": "2026-11-13T02:55:13.8212673Z",
+  "previousSnapshot": "assembly-baselines/1d0ab06940b1c78f082500154dca5caed7ef83405946f0593f589b5043aef839.json.br"
+}

@@ -3,7 +3,8 @@ using System.IO;
 
 namespace Ostrabus.Development;
 
-internal static class InstallationPaths {
+internal static class InstallationPaths
+{
     internal static string Game => Environment.GetEnvironmentVariable("OSTRANAUTS_DIR") ??
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam", "steamapps", "common", "Ostranauts");
     internal static string Managed => Path.Combine(Game, "Ostranauts_Data", "Managed");

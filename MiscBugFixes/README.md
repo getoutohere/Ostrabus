@@ -1,6 +1,43 @@
 # Miscellaneous vanilla bug fixes
 
+The [preview market isolation repair](PREVIEW-MARKET-ISOLATION.md) prevents ship
+rating/visual copies from registering persistent phantom cargo pods under the
+real ship's call sign. Real offscreen barter ships retain their live markets.
+The explicit [cargopodfix command](CARGO-POD-FIX.md) reconciles verified empty
+ghosts and missing registrations on player-owned ships while preserving cargo.
+
 Always enabled through the plugin's normal Harmony lifecycle. No update loop or saved state.
+
+## Radio surrender
+
+[Isolate radio surrender effects](SHIP-SURRENDER-WORK-STALL.md) from the on-foot
+conversation lock and relationship context, preserving native negotiation,
+boarding, currency and cooldown effects. One delivery-call transpiler; no crew
+scan or permanent condition cleanup. Available as `radio-surrender` in custom
+builds, separately from [AI offer accounting](../Navigation/SURRENDER-COMBAT-LOOP.md).
+
+## SFF route destinations
+
+[Preserve AI mission destinations](SFF-NAVIGATION-DESTINATION.md) while native
+route completion extrapolates a temporary placement point during fast-forward.
+Player course behavior and native movement/fuel handling are retained.
+
+## AI waiting and scavenger recovery
+
+`ScavEmergencyRecovery` keeps failed target selection at a throttled native
+selection step and releases old detached targetless visit Holds. `AiHoldClockPatch`
+keeps pause deadlines absolute and expires only due shallow SOS conditions through
+their native timers. Authored assistance remains authoritative. The optional
+station-return and orbital-coasting policies are separate simulation features;
+see [implementation, scope and validation](../Navigation/SCAVENGER-WAITING.md).
+
+## Arrested bounty escorts
+
+`BountyEscortAirlockPatch` lets NPCs under the native long-term temporary draft
+condition follow explicit manual airlock orders, matching their existing native
+disembark exception. It leaves faction rosters, autonomous suit/permission rules,
+custody duration, physical obstacles and bounty hand-in unchanged. Included with
+`bounty-escort` in custom builds. See [cause and native validation](BOUNTY-ESCORT.md).
 
 ## AI retirement timestamps
 
@@ -438,7 +475,7 @@ doors need one manual close because their disabled preference is indistinguishab
 from an intentional hold-open. See [DOOR-AUTO-CLOSE.md](DOOR-AUTO-CLOSE.md) for the
 root cause, scope and 50 offline checks.
 
-## Missing font glyph console spam
+## Font and recovered gas-buffer console spam
 
 `MissingGlyphConsoleFilter` hides TextMeshPro's standard missing-character
 warnings for `robotocondensed SDF` and `robotocondensed SDF No Outline` from the
@@ -451,8 +488,17 @@ The same filter also hides the standard missing-ellipsis warning, observed with
 `Jura-Bold SDF`, when TextMeshPro explicitly falls back to Truncate overflow.
 Original warnings remain in `Player.log` and inspection logs. Other warning
 formats and all errors/exceptions remain visible. Always on, no setting,
-save data or retained objects. `Tests/MissingGlyphCheck` passes 21 checks,
+save data or retained objects. `Tests/MissingGlyphCheck` passes 31 checks,
 including native console output and warning-badge behavior.
+
+The existing filter also hides the exact warning `ERROR: null gascontainer dict
+on <name>. Setting to empty for now.` Native `CondOwner.GetJSONSave` initializes
+the missing `GasContainer.mapDGasMols` dictionary before serializing it. This is
+the pending gas-change buffer, not the owner's stored gas inventory; initialization
+normally happens in `GasContainer.Awake`. The observed new-NPC warning needs no
+player action. Recovery is unchanged and the warning remains in `Player.log` and
+inspection logs for diagnosis. Different gas warnings and actual error/exception
+log entries remain visible. This reuses the existing GUI subscriber hook.
 
 ## Walking into an adjacent work target
 

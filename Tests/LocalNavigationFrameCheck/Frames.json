@@ -1,0 +1,38 @@
+{
+    "epoch":  65633727561.703285,
+    "bodies":  [
+                   {
+                       "strName":  "MSUZ",
+                       "fPerh":  1.38006676970291,
+                       "fAph":  1.66643822985579,
+                       "fAxis1":  3.0465049995587,
+                       "fAxis2":  3.0330156773657,
+                       "fEcc":  0.0939999967813492,
+                       "fAngle":  349.600006103516,
+                       "fPeriod":  59327020.88,
+                       "fRadius":  6.68458706417963E-09,
+                       "fMass":  100000,
+                       "nOrbitDirection":  1,
+                       "nDrawFlagsBody":  1
+                   },
+                   {
+                       "strName":  "Vesta",
+                       "fPerh":  2.15235250626903,
+                       "fAph":  2.57155176485784,
+                       "fAxis1":  4.72390427112687,
+                       "fAxis2":  4.70526763791065,
+                       "fEcc":  0.0887399986386299,
+                       "fAngle":  103.800003051758,
+                       "fPeriod":  114551644.991404,
+                       "fRadius":  1.75136181081506E-06,
+                       "fMass":  2.58999991468682E+20,
+                       "nOrbitDirection":  1,
+                       "nDrawFlagsBody":  0
+                   }
+               ],
+    "parents":  [
+                    "MSUZ=Sol",
+                    "Vesta=Sol"
+                ],
+    "provenance":  "Public orbital elements captured by the read-only API during the Panmen reference mismatch. No ships, NPCs, save paths or identifiers other than authored body names."
+}

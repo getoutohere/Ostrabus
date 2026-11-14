@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/e764e3d40cefe165ecadd485de5bb929a703ea083b5ada9b415fe52b42081c57.json.br",
+  "reason": "Added source-reviewed bounty scheduler and existing-hull departure service; native baseline reproduces low-fuel return, production repair passes 166 scoped native/asset checks; 69 graph expectations retain restoration and inadequate full-tank budget controls.",
+  "acceptedUtc": "2026-11-13T20:20:15.9251406Z",
+  "previousSnapshot": null
+}

@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "1.0.1.10",
+  "assemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+  "implementation": {
+    "feature": "ai-flight-controls",
+    "source": "Navigation/FlightControllerLifetimePatch.cs",
+    "patchClasses": [
+      "Ostrabus.ShipNavigation.FlightControllerWithdrawalPatch",
+      "Ostrabus.ShipNavigation.FlightControllerDispatchPatch",
+      "Ostrabus.ShipNavigation.CourseEngagementOrderPatch",
+      "Ostrabus.ShipNavigation.RetiredRetreatTerminalPatch"
+    ],
+    "contracts": [
+      "Cancel an actually registered withdrawing controller's course before native stops/notifications; ignore stale private requests.",
+      "Publish replacement player NavData after withdrawal and before Auto registration.",
+      "Admit exact registered controller instances at normal/SFF manager dispatch; preserve same-instance region migration.",
+      "Return Finished only at the terminal LowFuelRetreat withdrawal; preserve nonterminal Failure and target-selection policy."
+    ],
+    "unchanged": [ "ordinary course completion", "physical/manual reactor settings", "TargetNewIfNone status", "momentum and damage spin", "environmental forces", "crew/faction/retirement policy" ]
+  },
+  "scope": "Every direct native AIShipManager.UnregisterShip call. Dispositions distinguish source review from executed callers. New assembly bytes invalidate this review, even if call counts match.",
+  "callers": [
+    {
+      "caller": "AIShipManager::AIShipCleanup", "sites": 1,
+      "disposition": "terminal-cleanup", "evidence": "source",
+      "note": "Body-object branch retires registration and hides; other branch destroys hull after regional crew policy. No replacement course is assigned by this method. Player-connected preservation bypasses cleanup and migrates the same controller without UnregisterShip."
+    },
+    {
+      "caller": "AIShipManager::ValidateCrew", "sites": 1,
+      "disposition": "loss-of-crew-authority", "evidence": "source-and-existing-native-lifecycle-tests",
+      "note": "No living conscious eligible crew remains. Preserve crew readiness policy; native stops already apply. Docked police boarding exception is implemented separately."
+    },
+    {
+      "caller": "AIShipManager::UnregisterShip", "sites": 1,
+      "disposition": "forwarder", "evidence": "native-method",
+      "note": "Ship overload resolves current registry object and forwards. No registered controller means no withdrawal. Do not turn this call into a blanket stop of manual or pre-registration navigation."
+    },
+    {
+      "caller": "AIShipManager::CheckLocalAuthorityScenario", "sites": 1,
+      "disposition": "terminal-role-retirement", "evidence": "source",
+      "note": "Wrong/absent local police crew causes retirement or hidden hull destruction. Patrol retargeting is a different branch that does not unregister."
+    },
+    {
+      "caller": "AIShipManager::RunAIQueue", "sites": 1,
+      "disposition": "destroyed-entry-cleanup", "evidence": "source-and-native-detached-batch-tests",
+      "note": "Null/destroyed actor cleanup. Dispatch uses detached references: exact current registry identity is required, including before processing a stale destroyed entry."
+    },
+    {
+      "caller": "CrewSim::DockAndDespawn", "sites": 1,
+      "disposition": "station-retirement", "evidence": "native-method-empty-crew-and-source",
+      "note": "Native crew/drop-off policy executes before hiding hull and recording retirement station. Retired course is not handed to a station controller. Audit fixture executes empty-crew case; it does not simulate crew transfer or destruction."
+    },
+    {
+      "caller": "Ship::Destroy", "sites": 1,
+      "disposition": "hull-destruction", "evidence": "source",
+      "note": "Removes world/projectile membership then retires AI and destroys components. DestroyAndReload snapshots JSON before Destroy and constructs a new hull/controller afterward; snapshot course must survive."
+    },
+    {
+      "caller": "GUIOrbitDraw::ToggleStationKeeping", "sites": 3,
+      "disposition": "replace-or-disable-auto", "evidence": "native-valid-enable-disable-and-source-invalid-target",
+      "note": "Enable creates new Auto with HoldStationAutoPilot after withdrawal; reference stored separately. Disable/invalid target removes that mode. Old plotted course is not an input to station keeping."
+    },
+    {
+      "caller": "GUIOrbitDraw::ToggleHoldThrust", "sites": 2,
+      "disposition": "replace-or-disable-auto", "evidence": "native-enable-disable",
+      "note": "Creates new HoldThrustAutoPilot after withdrawal, or disables it. Mode uses saved/GUI throttle; it does not inherit a plotted course."
+    },
+    {
+      "caller": "StarSystem::Update", "sites": 1,
+      "disposition": "destroyed-hull-cleanup", "evidence": "source",
+      "note": "Destroyed hulls are unregistered before dictionary removal. No replacement navigation in this branch."
+    },
+    {
+      "caller": "Ostranauts.Ships.DamageSystem::ApplyDamageToCell", "sites": 1,
+      "disposition": "navigation-destroyed", "evidence": "source",
+      "note": "Nav-station destruction unregisters, resets course, then applies Drift spin. Preserve damage and spin. Other equipment damage resets are independent, not permission for a universal reset hook."
+    },
+    {
+      "caller": "Ostranauts.Ships.DamageSystem::DebugAttackComponent", "sites": 1,
+      "disposition": "developer-damage-path", "evidence": "source",
+      "note": "Developer equivalent of nav destruction; no proof of ordinary gameplay reachability."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.Blank::RunCommand", "sites": 1,
+      "disposition": "terminal-command", "evidence": "native-expired-leaf",
+      "note": "Timer expiry unregisters then returns Finished. No course handoff."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.FlyToMissile::RunCommand", "sites": 1,
+      "disposition": "exhausted-missile", "evidence": "native-fuel-failure-leaf",
+      "note": "Less than one fuel unit unregisters and fails. Existing momentum remains; missile targeting and armed state are separate."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.FlyToPatrol::RunCommand", "sites": 1,
+      "disposition": "rejected-patrol-exhaustion", "evidence": "source",
+      "note": "Base FlyTo failure and more than eight rejected paths unregister before optional stale cleanup. Successful stopping-distance arrival is a separate reset-only path."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.HaulShip::RunCommand", "sites": 1,
+      "disposition": "fuel-exhaustion", "evidence": "source",
+      "note": "DeltaVRemainingRCS <= 0 unregisters and fails. Dock links and hauling policy remain native; no group-wide cancellation is added."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.LowFuelRetreat::RunCommand", "sites": 1,
+      "disposition": "fuel-exhaustion-with-harmful-terminal-failure", "evidence": "native-short-long-consumers-and-existing-progress-composition",
+      "note": "Less than one RCS unit unregisters and returns Failure. Both combat consumers then resume firing/steering in that same invocation. Correct only this terminal return to Finished; preserve ordinary no-retreat Failure, target selection, Ceres policy and normal retreat progress."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.PirateShakeDown::HandlePlayer", "sites": 1,
+      "disposition": "boarding-party-eliminated", "evidence": "source-and-authored-trigger-review",
+      "note": "No living regional-pirate crew satisfies boarding continuation. Terminal Finished return; no new route. Preserve authored pirate/surrender/subdued rules."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.RemoveAI::RunCommand", "sites": 1,
+      "disposition": "explicit-terminal-command", "evidence": "native-leaf-and-constructor-tree-source",
+      "note": "Authored command trees use terminal removal, including Auto completion. No replacement course is installed by this leaf."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.SosOutOfFuel::RequestHelp", "sites": 2,
+      "disposition": "distress-retirement", "evidence": "native-civilian-branch-and-source-other-roles",
+      "note": "Role policy either unregisters with optional cleanup or sends station distress then unregisters. Player proximity branch keeps Scav alive; preserve existing Scav recovery patches and asset policy."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.TargetNewIfNone::RunCommand", "sites": 1,
+      "disposition": "no-target-no-help", "evidence": "source-and-native-parent-next-leaf-negative-control",
+      "note": "Failure stops drives and clears plan before optional retirement. StickySequence can advance afterward, but actual native FlyTo/Dock reject the missing target without steering. Experimental status rewrite is unnecessary and excluded. Successful DTO plan installation must survive."
+    },
+    {
+      "caller": "Ostranauts.Ships.Commands.TargetNewIfNone::RequestHelp", "sites": 1,
+      "disposition": "distress-retirement", "evidence": "source-and-existing-scav-recovery-tests",
+      "note": "Native failed-target distress can unregister; ScavHelpLifecyclePatch retains the Scav controller instead. Cancellation must not invent a removal where the existing patch deliberately keeps authority."
+    },
+    {
+      "caller": "Ostranauts.ShipGUIs.Utilities.NavData::TimeAdvance", "sites": 1,
+      "disposition": "reactor-abort", "evidence": "source-and-joint-reactor-suite",
+      "note": "Reactor safety abort resets plan/target and sliders before conditionally unregistering FlyToAutoPilot. Ordinary course completion does not unregister here. Generic completion force changes are outside the narrowed withdrawal repair."
+    },
+    {
+      "caller": "Ostranauts.ShipGUIs.NavStation.NavModCoursePlot::Engage", "sites": 1,
+      "disposition": "player-disengagement", "evidence": "native-disable-branch",
+      "note": "Player disables engagement: reset target/plan then conditionally unregister FlyToAutoPilot. No replacement course expected."
+    },
+    {
+      "caller": "Ostranauts.ShipGUIs.NavStation.NavModCoursePlot::EngageTrip", "sites": 1,
+      "disposition": "new-course-handoff", "evidence": "native-method-counterexample-and-order-candidate",
+      "note": "Only direct removal caller found publishing its replacement course before withdrawal. New publication must move after old withdrawal and before native replacement registration."
+    },
+    {
+      "caller": "Ostranauts.Debugging.Testcases.TestDocking::GetRandomUndockedScav", "sites": 1,
+      "disposition": "developer-test", "evidence": "source",
+      "note": "Developer test explicitly takes controller ownership; not ordinary gameplay policy."
+    },
+    {
+      "caller": "Ostranauts.Debugging.Testcases.TestFFWDShipBehavior/<ScavInstaDockDerelictTest>d__7::MoveNext", "sites": 1,
+      "disposition": "developer-test", "evidence": "source",
+      "note": "Coroutine test withdraws before test setup; no shipping AI handoff is inferred."
+    }
+  ]
+}

@@ -1,0 +1,1350 @@
+{
+  "schemaVersion": 1,
+  "id": "ostrabus-bounty-current",
+  "gameVersion": "1.0.1.10",
+  "assemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+  "baselineCommit": "ed83d460873cb27a2b3346861f614d286b56f444",
+  "scope": {
+    "roles": [
+      "Existing-hull bounty activation; Navy selection branch reproduced natively"
+    ],
+    "preconditions": [
+      "Eligibility is established from native predicates, not inferred from a bounty label.",
+      "A due selection is an actual successful choice, not a claimed probability or forced departure.",
+      "Patrol-ready fuel does not prove a route, compel launch, or eliminate damage/threat decisions."
+    ],
+    "opaque": [
+      "Complete military/combat trees, human agendas and numerical flight.",
+      "Timer draws and randomized candidate ordering are native external results.",
+      "Physical transfer, docking success and station CO placement are native external results.",
+      "Other bounty plots, quest rewards, arrests and station-only fallback selection."
+    ],
+    "covered": [
+      "MoveTargets eligibility/due-pass/one-target selection boundary.",
+      "SpawnBountyTarget station departure versus same-ship/in-space restoration.",
+      "Existing-hull constructor bypass of CreateAIShip station service.",
+      "Native low-fuel home choice and observed immediate retirement loop."
+    ],
+    "status": "bounty_reactivation_entrypoint_and_service_boundary",
+    "notProven": [
+      "All ship AI entrypoints and interleavings.",
+      "This slice fixes no reserve-hull spawn relocation/teleport behavior."
+    ]
+  },
+  "sources": {
+    "flight_rcs_native": {
+      "origin": "game",
+      "path": "Ship.cs",
+      "symbol": "Ship.Maneuver: direct combat/undock/tow RCS command boundary",
+      "anchors": [
+        "public void Maneuver("
+      ],
+      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+    },
+    "flight_handoff_native": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyTo.cs",
+      "symbol": "FlyTo.RunCommand: path, pause and manual control ownership",
+      "anchors": [
+        "public override CommandStatus RunCommand"
+      ],
+      "sha256": "bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"
+    },
+    "flight_shutdown_native": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyToPath.cs",
+      "symbol": "FlyToPath.TorchOff and explicit shutdown callers",
+      "anchors": [
+        "private void TorchOff()"
+      ],
+      "sha256": "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+    },
+    "flight_control_repair": {
+      "origin": "repo",
+      "path": "Navigation/FlightControlHandoffPatch.cs",
+      "symbol": "FlightControlHandoff / validated route-exit and shallow shutdown hooks",
+      "anchors": [
+        "internal static void ResetForRcs",
+        "class ShallowTorchShutdownPatch"
+      ],
+      "sha256": "7d0f7932dcde09f5ae3749d799597d3c3accc53353ac19f30dedf4b21236a0f1"
+    },
+    "flight_control_stop": {
+      "origin": "repo",
+      "path": "Navigation/NavigationRoute.cs",
+      "symbol": "NavigationRoute.Stop / StopTorch preserve momentum and fuel",
+      "anchors": [
+        "internal static void StopTorch"
+      ],
+      "sha256": "ec3915ac92cde1e37618a11fc372d219f499a664bc0c5c005669cbc4b2708cf2"
+    },
+    "bounty": {
+      "origin": "game",
+      "path": "Ostranauts.Systems/BountyManager.cs",
+      "symbol": "Ostranauts.Systems.BountyManager",
+      "anchors": [
+        "class BountyManager"
+      ],
+      "sha256": "8b54dedda1f6da43457fecc36b00de5f53f51288c33f9f8e3eb84eab44d00def"
+    },
+    "navy": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/NavyPilot.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.NavyPilot",
+      "anchors": [
+        "class NavyPilot"
+      ],
+      "sha256": "ef7fca6786766fa9003602092547e5e0e0915ba34e589f8465de6344925dcd42"
+    },
+    "controller": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/AIShip.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.AIShip",
+      "anchors": [
+        "class AIShip"
+      ],
+      "sha256": "713ed29317fc3512c8923c78e4cbf746d177a0057571d177c76035b2016a3103"
+    },
+    "manager": {
+      "origin": "game",
+      "path": "AIShipManager.cs",
+      "symbol": "AIShipManager",
+      "anchors": [
+        "class AIShipManager"
+      ],
+      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+    },
+    "select": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/TargetNewIfNone.cs",
+      "symbol": "Ostranauts.Ships.Commands.TargetNewIfNone",
+      "anchors": [
+        "class TargetNewIfNone"
+      ],
+      "sha256": "fd7c311b3c45a67bbfec7a8adb0528877ec9f928fc5705700c3388756ca5e7d0"
+    },
+    "crew": {
+      "origin": "game",
+      "path": "CrewSim.cs",
+      "symbol": "CrewSim.DockAndDespawn",
+      "anchors": [
+        "DockAndDespawn"
+      ],
+      "sha256": "3f4396cd567159dd3a132cc148e72c6df331c6fef08ced4423e0f495afeea038"
+    },
+    "ship": {
+      "origin": "game",
+      "path": "Ship.cs",
+      "symbol": "Ship.AIRefuel / GetRCSRemain / GetRCSMax / IsStation",
+      "anchors": [
+        "void AIRefuel"
+      ],
+      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+    },
+    "patch": {
+      "origin": "repo",
+      "path": "Navigation/BountyDepartureFuelPatch.cs",
+      "symbol": "Ostrabus.ShipNavigation.BountyDepartureFuelPatch",
+      "anchors": [
+        "class BountyDepartureFuelPatch"
+      ],
+      "sha256": "23dad0df53d94b6f9f1b1b294b1b340db3f6f122baf29441adb29d4821cb9a32"
+    }
+  },
+  "evidence": {
+    "review": {
+      "level": "source_review",
+      "artifact": "Navigation/BOUNTY-DEPARTURES.md",
+      "supports": "Native C# owns scheduling/embarkation/refuel. Authored custody and station drop-off conditions remain authoritative."
+    },
+    "native": {
+      "level": "native_offline",
+      "artifact": "Tests/BountyDepartureCheck/README.md",
+      "supports": "Actual native bounty activation and low-fuel branch before/after the production transpiler. Transfer, registration and numerical planning are explicit fixtures."
+    },
+    "live": {
+      "level": "live_observation",
+      "artifact": "Navigation/BOUNTY-DEPARTURES.md",
+      "supports": "Four Anthony Rosario FD03/B-MC6/FD03 cycles in Player.log; current B-MC6 fuel 8.755%. No live postpatch departure claimed."
+    }
+  },
+  "variables": {
+    "eligible": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Native selected nonstation bounty: alive, not under arrest, unloaded and orbit/station eligible.",
+      "kind": "assumed_predicate"
+    },
+    "selected": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Due native pass selected this target. False includes no due pass or a different eligible target.",
+      "kind": "native_result"
+    },
+    "origin": {
+      "values": [
+        "station",
+        "space",
+        "same",
+        "missing"
+      ],
+      "description": "Actual embarkation source; same means already in the reserved hull.",
+      "kind": "state"
+    },
+    "hull": {
+      "values": [
+        "shallow",
+        "physical",
+        "station",
+        "destroyed"
+      ],
+      "description": "Destination servicing scope; physical includes Full/Edit, excluded from this shallow repair.",
+      "kind": "state"
+    },
+    "fuel": {
+      "values": [
+        "low",
+        "ready",
+        "zero"
+      ],
+      "description": "Low means native LowFuel is true; ready prescribes both native threshold tests false.",
+      "kind": "native_result"
+    },
+    "transfer": {
+      "values": [
+        "success",
+        "exception"
+      ],
+      "description": "Native transfer outcome; exceptions propagate and prevent service.",
+      "kind": "native_result"
+    },
+    "purpose": {
+      "values": [
+        "flight",
+        "station_move"
+      ],
+      "description": "Actual SpawnBountyTarget branch, not just the stored AIType.",
+      "kind": "native_result"
+    },
+    "service": {
+      "values": [
+        "missing",
+        "native"
+      ],
+      "description": "Native station service is missing on the flight existing-hull caller until repaired.",
+      "kind": "state"
+    },
+    "decision": {
+      "values": [
+        "none",
+        "home",
+        "ordinary"
+      ],
+      "description": "Native selection result; ordinary does not promise a valid route.",
+      "kind": "state"
+    },
+    "serviced_budget": {
+      "values": [
+        "ready",
+        "low"
+      ],
+      "description": "Native LowFuel result after full RCS service; failed propulsion/insufficient full-tank delta-v may still require home.",
+      "kind": "native_result"
+    }
+  },
+  "predicates": {
+    "station_service": {
+      "facts": {
+        "transfer": [
+          "success"
+        ],
+        "purpose": [
+          "flight"
+        ],
+        "origin": [
+          "station"
+        ],
+        "hull": [
+          "shallow"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "service_ready": {
+      "facts": {
+        "serviced_budget": [
+          "ready"
+        ]
+      },
+      "require": [
+        "station_service"
+      ],
+      "forbid": []
+    },
+    "service_limited": {
+      "facts": {
+        "serviced_budget": [
+          "low"
+        ]
+      },
+      "require": [
+        "station_service"
+      ],
+      "forbid": []
+    }
+  },
+  "nodes": {
+    "parked": {
+      "label": "Parked target / native scheduling",
+      "layer": "control",
+      "sources": [
+        "bounty",
+        "crew"
+      ],
+      "detail": ""
+    },
+    "boarding": {
+      "label": "SpawnBountyTarget native AddCrew",
+      "layer": "control",
+      "sources": [
+        "bounty",
+        "controller"
+      ],
+      "detail": ""
+    },
+    "activate": {
+      "label": "Existing-hull pilot activation",
+      "layer": "control",
+      "sources": [
+        "bounty",
+        "navy",
+        "manager"
+      ],
+      "detail": "No CreateAIShip call, therefore no ordinary station refuel."
+    },
+    "choose": {
+      "label": "Native TargetNewIfNone",
+      "layer": "control",
+      "sources": [
+        "select",
+        "manager"
+      ],
+      "detail": ""
+    },
+    "home": {
+      "label": "Low fuel: choose station",
+      "layer": "control",
+      "sources": [
+        "select",
+        "navy"
+      ],
+      "detail": ""
+    },
+    "ordinary": {
+      "label": "Ordinary target search",
+      "layer": "control",
+      "sources": [
+        "select"
+      ],
+      "detail": "Selection/route/damage/combat outcomes remain native and unexpanded."
+    },
+    "physical": {
+      "label": "Fully loaded native handling",
+      "layer": "control",
+      "sources": [
+        "bounty"
+      ],
+      "detail": ""
+    },
+    "station_move": {
+      "label": "Station-only person relocation",
+      "layer": "control",
+      "sources": [
+        "bounty"
+      ],
+      "detail": ""
+    },
+    "failure": {
+      "label": "Transfer exception propagates",
+      "layer": "control",
+      "sources": [
+        "bounty",
+        "controller"
+      ],
+      "detail": ""
+    }
+  },
+  "edges": [
+    {
+      "id": "schedule.wait",
+      "from": "parked",
+      "to": "parked",
+      "event": "scheduling",
+      "when": {
+        "facts": {
+          "selected": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "bounty"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "schedule.ineligible",
+      "from": "parked",
+      "to": "parked",
+      "event": "scheduling",
+      "when": {
+        "facts": {
+          "selected": [
+            "true"
+          ],
+          "eligible": [
+            "false"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "bounty"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "schedule.selected",
+      "from": "parked",
+      "to": "boarding",
+      "event": "scheduling",
+      "when": {
+        "facts": {
+          "selected": [
+            "true"
+          ],
+          "eligible": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "decision": "none"
+      },
+      "sources": [
+        "bounty"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Native MoveTargets schedules every 240-600 game seconds and selects at most one eligible target; not an additional depart/stay coin flip.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "region.restore",
+      "from": "parked",
+      "to": "boarding",
+      "event": "region_entry",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "decision": "none"
+      },
+      "sources": [
+        "bounty"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "PlaceTargetsWithinRegion is a separate entry point, including already-airborne saved targets. This is not a MoveTargets launch opportunity.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "embark.flight",
+      "from": "boarding",
+      "to": "activate",
+      "event": "embark",
+      "when": {
+        "facts": {
+          "transfer": [
+            "success"
+          ],
+          "purpose": [
+            "flight"
+          ],
+          "hull": [
+            "shallow"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "service": "missing"
+      },
+      "sources": [
+        "bounty",
+        "controller",
+        "navy"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "AddCrew preserves the reserved NPC and hull. Native branch bypasses ordinary CreateAIShip refueling.",
+      "guards": [
+        {
+          "predicate": "service_ready",
+          "negated": true,
+          "probeSet": {}
+        },
+        {
+          "predicate": "service_limited",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
+      "id": "embark.physical",
+      "from": "boarding",
+      "to": "physical",
+      "event": "embark",
+      "when": {
+        "facts": {
+          "transfer": [
+            "success"
+          ],
+          "purpose": [
+            "flight"
+          ],
+          "hull": [
+            "physical"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "bounty"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "embark.station",
+      "from": "boarding",
+      "to": "station_move",
+      "event": "embark",
+      "when": {
+        "facts": {
+          "transfer": [
+            "success"
+          ],
+          "purpose": [
+            "station_move"
+          ],
+          "hull": [
+            "station"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "bounty"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "embark.exception",
+      "from": "boarding",
+      "to": "failure",
+      "event": "embark",
+      "when": {
+        "facts": {
+          "transfer": [
+            "exception"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "bounty",
+        "controller"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "activate.existing",
+      "from": "activate",
+      "to": "choose",
+      "event": "activate",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {},
+      "sources": [
+        "bounty",
+        "manager",
+        "navy"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "choose.low",
+      "from": "choose",
+      "to": "home",
+      "event": "select",
+      "when": {
+        "facts": {
+          "fuel": [
+            "low",
+            "zero"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "decision": "home"
+      },
+      "sources": [
+        "select",
+        "manager",
+        "navy"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "choose.ready",
+      "from": "choose",
+      "to": "ordinary",
+      "event": "select",
+      "when": {
+        "facts": {
+          "fuel": [
+            "ready"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "decision": "ordinary"
+      },
+      "sources": [
+        "select",
+        "manager"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "return.park",
+      "from": "home",
+      "to": "parked",
+      "event": "dock",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "decision": "none",
+        "origin": "station"
+      },
+      "sources": [
+        "crew"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "External successful native station arrival. Does not grant fuel; permits the same low-fuel loop on the next actual selection.",
+      "guards": [],
+      "patch": ""
+    },
+    {
+      "id": "fix.embark.serviced",
+      "from": "boarding",
+      "to": "activate",
+      "event": "embark",
+      "when": {
+        "facts": {
+          "transfer": [
+            "success"
+          ],
+          "purpose": [
+            "flight"
+          ],
+          "hull": [
+            "shallow"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "service": "native",
+        "fuel": "ready"
+      },
+      "sources": [
+        "bounty",
+        "controller",
+        "navy",
+        "patch"
+      ],
+      "evidence": [
+        "review",
+        "native"
+      ],
+      "note": "Restore the ordinary station AIRefuel step after successful bounty embarkation, before activating its existing hull.",
+      "guards": [
+        {
+          "predicate": "service_ready",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "bounty_departure_service"
+    },
+    {
+      "id": "fix.embark.service_limited",
+      "from": "boarding",
+      "to": "activate",
+      "event": "embark",
+      "when": {
+        "facts": {
+          "transfer": [
+            "success"
+          ],
+          "purpose": [
+            "flight"
+          ],
+          "hull": [
+            "shallow"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "service": "native",
+        "fuel": "low"
+      },
+      "sources": [
+        "bounty",
+        "controller",
+        "navy",
+        "patch"
+      ],
+      "evidence": [
+        "review",
+        "native"
+      ],
+      "note": "Restore the ordinary station AIRefuel step after successful bounty embarkation, before activating its existing hull.",
+      "guards": [
+        {
+          "predicate": "service_ready",
+          "negated": true,
+          "probeSet": {}
+        },
+        {
+          "predicate": "service_limited",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "bounty_departure_service"
+    }
+  ],
+  "findings": [
+    {
+      "id": "bounty.unserviced_return",
+      "kind": "reactivation_loop",
+      "severity": "bug",
+      "when": {
+        "facts": {
+          "decision": [
+            "home"
+          ],
+          "service": [
+            "missing"
+          ],
+          "origin": [
+            "station"
+          ],
+          "hull": [
+            "shallow"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "sources": [
+        "bounty",
+        "navy",
+        "select"
+      ],
+      "evidence": [
+        "review",
+        "native",
+        "live"
+      ],
+      "note": "Station departure skipped ordinary servicing and immediately selected home. This is not evidence of a randomized decision to remain ashore."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "station-low-fuel-departure",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "station",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling",
+        "embark",
+        "activate",
+        "select"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "home",
+          "finding": "bounty.unserviced_return",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "ordinary",
+          "finding": null,
+          "without": "bounty.unserviced_return",
+          "fact": "fuel",
+          "value": "ready",
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "station-empty-departure",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "station",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "zero",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling",
+        "embark",
+        "activate",
+        "select"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "home",
+          "finding": "bounty.unserviced_return",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "ordinary",
+          "finding": null,
+          "without": "bounty.unserviced_return",
+          "fact": null,
+          "value": null,
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "repeat-reboarding-is-not-rng-refusal",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "station",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling",
+        "embark",
+        "activate",
+        "select",
+        "dock",
+        "scheduling",
+        "embark",
+        "activate",
+        "select"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "home",
+          "finding": "bounty.unserviced_return",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "ordinary",
+          "finding": null,
+          "without": "bounty.unserviced_return",
+          "fact": null,
+          "value": null,
+          "stop": "blocked event dock"
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "airborne-restoration-keeps-fuel",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "space",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "region_entry",
+        "embark",
+        "activate",
+        "select"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "home",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        },
+        "effective": {
+          "node": "home",
+          "finding": null,
+          "without": "bounty.unserviced_return",
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "already-aboard-restoration-keeps-fuel",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "same",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "region_entry",
+        "embark",
+        "activate",
+        "select"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "home",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        },
+        "effective": {
+          "node": "home",
+          "finding": null,
+          "without": "bounty.unserviced_return",
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "full-tank-still-insufficient-delta-v",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "station",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "low",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling",
+        "embark",
+        "activate",
+        "select"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "home",
+          "finding": "bounty.unserviced_return",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "home",
+          "finding": null,
+          "without": "bounty.unserviced_return",
+          "fact": "service",
+          "value": "native",
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "serviced-but-underpowered-return-is-not-missing-service",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "station",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "low",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling",
+        "embark",
+        "activate",
+        "select",
+        "dock",
+        "scheduling",
+        "embark",
+        "activate",
+        "select"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "home",
+          "finding": "bounty.unserviced_return",
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "home",
+          "finding": null,
+          "without": "bounty.unserviced_return",
+          "fact": "service",
+          "value": "native",
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "full-edit-no-counter-refill",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "station",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "physical",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling",
+        "embark"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "physical",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        },
+        "effective": {
+          "node": "physical",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "station-person-move",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "station",
+        "eligible": "true",
+        "purpose": "station_move",
+        "fuel": "low",
+        "hull": "station",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling",
+        "embark"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "station_move",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        },
+        "effective": {
+          "node": "station_move",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "custody-or-native-ineligibility",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "success",
+        "origin": "station",
+        "eligible": "false",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "parked",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "parked",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "another-candidate-or-not-due",
+      "start": "parked",
+      "facts": {
+        "selected": "false",
+        "transfer": "success",
+        "origin": "station",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "parked",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "parked",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    },
+    {
+      "id": "transfer-exception-no-service",
+      "start": "parked",
+      "facts": {
+        "selected": "true",
+        "transfer": "exception",
+        "origin": "station",
+        "eligible": "true",
+        "purpose": "flight",
+        "fuel": "low",
+        "hull": "shallow",
+        "decision": "none",
+        "serviced_budget": "ready",
+        "service": "missing"
+      },
+      "events": [
+        "scheduling",
+        "embark"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "failure",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        },
+        "effective": {
+          "node": "failure",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "low",
+          "stop": ""
+        }
+      },
+      "note": "Native/source-derived branch model; native harness and live evidence have their documented boundaries."
+    }
+  ]
+}

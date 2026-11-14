@@ -5,6 +5,10 @@ Investigated against 1.0.1.10 on November 8, 2026. Implemented in
 SFF continuation in `Orbital/Economy/FreightRoute.cs`. No live ship was mutated
 during development.
 
+Station-reference validation is now shared with the
+[local AI reference repair](LOCAL-NAVIGATION-FRAMES.md). The departure hook still
+uses the departure depot's exact orbit; its scope and fallback are unchanged.
+
 ## O-LVKJ
 
 MHNG Hauler 57 carries 633 electronics from Qiantangmen (MHNG) to Port Yangshan

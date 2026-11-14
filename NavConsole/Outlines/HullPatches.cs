@@ -32,6 +32,11 @@ internal static class HullRetirePatch {
     static void Prefix(Ship __instance) => HullDisplay.Retire(__instance);
 }
 
+[HarmonyPatch(typeof(Ship), nameof(Ship.RotateCW))]
+internal static class HullRotationPatch {
+    static void Postfix(Ship __instance) => HullDisplay.Rotated(__instance);
+}
+
 [HarmonyPatch]
 internal static class HullNavClosePatch {
     static IEnumerable<MethodBase> TargetMethods() {

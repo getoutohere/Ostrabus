@@ -1,0 +1,2021 @@
+{
+    "schemaVersion":  1,
+    "id":  "encounters-1.0.1.10",
+    "gameVersion":  "1.0.1.10",
+    "assemblySha256":  "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+    "baselineCommit":  "ed83d460873cb27a2b3346861f614d286b56f444",
+    "scope":  {
+                  "status":  "beatmanager_staging_entrypoint_and_existing_actor_boundary",
+                  "notProven":  [
+                                    "No completeness claim for all Navy creation and activation paths.",
+                                    "No conclusion about the eventual fate of a patrol from staging alone.",
+                                    "Sensor detection, combat physics, casualties and eventual victory are external outcomes.",
+                                    "Unmarked mixed legacy queues retain native scripted authority; their origin cannot be inferred."
+                                ],
+                  "covered":  [
+                                  "Ordinary weighted FactionShip, nav-GUI deferred caller and post-finale FactionBattle.",
+                                  "Native selection can construct/reuse reserve hulls or recruit active Navy actors.",
+                                  "Player-relative position, velocity and rotation writes.",
+                                  "Physical region/speed eligibility, busy candidate exclusion, unchanged fleet cap accounting.",
+                                  "Native Navy patrol admission, emergency scheduling and isolated legacy restoration.",
+                                  "General native one-shot callback and FIFO persistence, with explicit counterfactual control outcomes."
+                              ],
+                  "opaque":  [
+                                 "Complete combat trees, human agendas, new hull/crew construction and subsequent flight.",
+                                 "Native RNG/weighted eligibility and candidate choice are explicit external inputs.",
+                                 "Selection=existing scenarios use a full fleet and a single eligible native candidate; they do not claim other candidates are unavailable in all worlds."
+                             ]
+              },
+    "sources":  {
+"combat_handoff_blockade":  {
+                                    "origin":  "game",
+                                    "path":  "Ostranauts.Ships.AIPilots/BlockadePilot.cs",
+                                    "symbol":  "Ostranauts.Ships.AIPilots.BlockadePilot",
+                                    "anchors":  [
+                                                    "public BlockadePilot("
+                                                ],
+                                    "sha256":  "932d285926f42b7e23355e2cbe9362bf985382db4e8e831857bcd208cb1388fd"
+                                },
+    "combat_handoff_admission":  {
+                                     "origin":  "game",
+                                     "path":  "Ostranauts.Ships.Commands/AmIInCombat.cs",
+                                     "symbol":  "Ostranauts.Ships.Commands.AmIInCombat",
+                                     "anchors":  [
+                                                     "public override CommandStatus RunCommand"
+                                                 ],
+                                     "sha256":  "121a3b11b49981ccffb2c1602e2d71c9e0c49200c7b5265784a4a7d16c681741"
+                                 },
+    "combat_handoff_scan":  {
+                                "origin":  "game",
+                                "path":  "Ostranauts.Ships.Commands/AreThreatsNearby.cs",
+                                "symbol":  "Ostranauts.Ships.Commands.AreThreatsNearby",
+                                "anchors":  [
+                                                "public override CommandStatus RunCommand"
+                                            ],
+                                "sha256":  "c9cf731f8d98bfb1eaf7ffb1a71ad4b581c5c9ccc75574b74ff2e8b79b9b47a8"
+                            },
+    "combat_handoff_blockade_scan":  {
+                                         "origin":  "game",
+                                         "path":  "Ostranauts.Ships.Commands/AreThreatsNearbyBlockade.cs",
+                                         "symbol":  "Ostranauts.Ships.Commands.AreThreatsNearbyBlockade",
+                                         "anchors":  [
+                                                         "public override CommandStatus RunCommand"
+                                                     ],
+                                         "sha256":  "fd60826196c344f2e9bf39db637857c313b0ba4a34adf7f7b84dc167ffc9edca"
+                                     },
+    "combat_handoff_cleanup":  {
+                                   "origin":  "game",
+                                   "path":  "Ostranauts.Ships.Commands/IsTargetNeutralized.cs",
+                                   "symbol":  "Ostranauts.Ships.Commands.IsTargetNeutralized",
+                                   "anchors":  [
+                                                   "public override CommandStatus RunCommand"
+                                               ],
+                                   "sha256":  "4945a123717f37f38ca962786fba3a393dca333ad02d9559d8d0cf4a9e628806"
+                               },
+    "combat_handoff_station":  {
+                                   "origin":  "game",
+                                   "path":  "Ostranauts.Ships.Commands/TargetNearestStation.cs",
+                                   "symbol":  "Ostranauts.Ships.Commands.TargetNearestStation",
+                                   "anchors":  [
+                                                   "public override CommandStatus RunCommand"
+                                               ],
+                                   "sha256":  "35b3f5bce15ac45f8a5f8875324c4093163efcb8db866dd4f2212cf0c66c7003"
+                               },
+    "combat_handoff_sequence":  {
+                                    "origin":  "game",
+                                    "path":  "Ostranauts.Ships.Commands/SequenceCommand.cs",
+                                    "symbol":  "Ostranauts.Ships.Commands.SequenceCommand",
+                                    "anchors":  [
+                                                    "public override CommandStatus RunCommand"
+                                                ],
+                                    "sha256":  "fdaea5698876ddf363cdc334bc6e3b4fca8b5403dbf52bf575646a97befb9001"
+                                },
+    "combat_handoff_adapter":  {
+                                   "origin":  "game",
+                                   "path":  "Ostranauts.Ships.Commands/ConditionCommand.cs",
+                                   "symbol":  "Ostranauts.Ships.Commands.ConditionCommand",
+                                   "anchors":  [
+                                                   "public override CommandStatus RunCommand"
+                                               ],
+                                   "sha256":  "d342d36f01bdcd6727749be7cde7a7ec74ab8d2c5239ebb2fcd79a4cbd04f7c7"
+                               },
+    "combat_handoff_patch":  {
+                                 "origin":  "repo",
+                                 "path":  "Navigation/CombatCleanupAdmissionPatch.cs",
+                                 "symbol":  "CombatCleanupAdmission.Configure / constructor postfix",
+                                 "anchors":  [
+                                                 "internal static bool Configure"
+                                             ],
+                                 "sha256":  "b6f221bf009d2404e821bdc59d89e830a21aab5bc8e19b03bfe30c163ab5df71"
+                             },
+    "combat_acquisition_patch":  {
+                                     "origin":  "repo",
+                                     "path":  "Navigation/NeutralizedThreatPatch.cs",
+                                     "symbol":  "NeutralizedThreatEligibility / regular and Blockade acquisition guards",
+                                     "anchors":  [
+                                                     "internal static class BlockadeNeutralizedThreatPatch"
+                                                 ],
+                                     "sha256":  "7906141648777c79b68b70701976141ee470bfc54f1685d7552885221bb62daf"
+                                 },
+"flight_rcs_native":  {
+                                              "origin":  "game",
+                                              "path":  "Ship.cs",
+                                              "symbol":  "Ship.Maneuver: direct combat/undock/tow RCS command boundary",
+                                              "anchors":  [
+                                                              "public void Maneuver("
+                                                          ],
+                                              "sha256":  "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+                                          },
+                    "flight_handoff_native":  {
+                                                  "origin":  "game",
+                                                  "path":  "Ostranauts.Ships.Commands/FlyTo.cs",
+                                                  "symbol":  "FlyTo.RunCommand: path, pause and manual control ownership",
+                                                  "anchors":  [
+                                                                  "public override CommandStatus RunCommand"
+                                                              ],
+                                                  "sha256":  "bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"
+                                              },
+                    "flight_shutdown_native":  {
+                                                   "origin":  "game",
+                                                   "path":  "Ostranauts.Ships.Commands/FlyToPath.cs",
+                                                   "symbol":  "FlyToPath.TorchOff and explicit shutdown callers",
+                                                   "anchors":  [
+                                                                   "private void TorchOff()"
+                                                               ],
+                                                   "sha256":  "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+                                               },
+                    "flight_control_repair":  {
+                                                  "origin":  "repo",
+                                                  "path":  "Navigation/FlightControlHandoffPatch.cs",
+                                                  "symbol":  "FlightControlHandoff / validated route-exit and shallow shutdown hooks",
+                                                  "anchors":  [
+                                                                  "internal static void ResetForRcs",
+                                                                  "class ShallowTorchShutdownPatch"
+                                                              ],
+                                                  "sha256":  "7d0f7932dcde09f5ae3749d799597d3c3accc53353ac19f30dedf4b21236a0f1"
+                                              },
+                    "flight_control_stop":  {
+                                                "origin":  "repo",
+                                                "path":  "Navigation/NavigationRoute.cs",
+                                                "symbol":  "NavigationRoute.Stop / StopTorch preserve momentum and fuel",
+                                                "anchors":  [
+                                                                "internal static void StopTorch"
+                                                            ],
+                                                "sha256":  "ec3915ac92cde1e37618a11fc372d219f499a664bc0c5c005669cbc4b2708cf2"
+                                            },
+                    "beat":  {
+                                 "origin":  "game",
+                                 "path":  "BeatManager.cs",
+                                 "symbol":  "BeatManager.FactionShip / FactionBattle / DebugFactionShip / GenerateTension",
+                                 "anchors":  [
+                                                 "FactionShip"
+                                             ],
+                                 "sha256":  "142978e07bce1a888e38debbaac3c06ea2558568633b1919992148935b983bd6"
+                             },
+                    "gui":  {
+                                "origin":  "game",
+                                "path":  "GUIOrbitDraw.cs",
+                                "symbol":  "GUIOrbitDraw deferred IsDueFactionSpawn caller",
+                                "anchors":  [
+                                                "DebugFactionShip"
+                                            ],
+                                "sha256":  "49bf885816662fe6168e128b9ec160c2135a65cbad7b1d4f1e9670759d558392"
+                            },
+                    "manager":  {
+                                    "origin":  "game",
+                                    "path":  "AIShipManager.cs",
+                                    "symbol":  "AIShipManager.GetAllStationsInATCRegion / GetPOIs / AddAIToDict",
+                                    "anchors":  [
+                                                    "GetAllStationsInATCRegion"
+                                                ],
+                                    "sha256":  "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+                                },
+                    "controller":  {
+                                       "origin":  "game",
+                                       "path":  "Ostranauts.Ships.AIPilots/AIShip.cs",
+                                       "symbol":  "AIShip constructors and command assignment",
+                                       "anchors":  [
+                                                       "class AIShip"
+                                                   ],
+                                       "sha256":  "713ed29317fc3512c8923c78e4cbf746d177a0057571d177c76035b2016a3103"
+                                   },
+                    "navy":  {
+                                 "origin":  "game",
+                                 "path":  "Ostranauts.Ships.AIPilots/NavyPilot.cs",
+                                 "symbol":  "NavyPilot.CreateAIShip / GetRandomSpotsWithinInfluenceRange",
+                                 "anchors":  [
+                                                 "class NavyPilot"
+                                             ],
+                                 "sha256":  "ef7fca6786766fa9003602092547e5e0e0915ba34e589f8465de6344925dcd42"
+                             },
+                    "policy":  {
+                                   "origin":  "repo",
+                                   "path":  "Navigation/Encounters/FactionEncounter.cs",
+                                   "symbol":  "Ostrabus.ShipNavigation.Encounters.FactionEncounter",
+                                   "anchors":  [
+                                                   "class FactionEncounter"
+                                               ],
+                                   "sha256":  "0800b708cd5196717208c902cb51c10af711fa7392ae36766aca93791bc96480"
+                               },
+                    "patch":  {
+                                  "origin":  "repo",
+                                  "path":  "Navigation/Encounters/FactionEncounterPatch.cs",
+                                  "symbol":  "Ostrabus.ShipNavigation.Encounters.FactionEncounterPatch",
+                                  "anchors":  [
+                                                  "class FactionEncounterPatch"
+                                              ],
+                                  "sha256":  "2b6df60b444d23fb9c49d90e385af88eb0bf401ee7f7190abb67ff136e3a02f5"
+                              },
+                    "patrol_admission":  {
+                                             "origin":  "repo",
+                                             "path":  "Navigation/PatrolCommandPatch.cs",
+                                             "symbol":  "PatrolCommand native mission admission and isolated legacy recovery",
+                                             "anchors":  [
+                                                             "class PatrolCommand",
+                                                             "class PatrolRestorePatch"
+                                                         ],
+                                             "sha256":  "dbf01183cbd5c04dcd3a1bd5cec2ade1d8aff25a7875f323f6b82e874d3a9b17"
+                                         },
+                    "queue_repair":  {
+                                         "origin":  "repo",
+                                         "path":  "Navigation/CommandQueuePersistencePatch.cs",
+                                         "symbol":  "One-shot wire metadata, native factory and FIFO restoration",
+                                         "anchors":  [
+                                                         "class CommandQueuePersistence",
+                                                         "class CommandQueueLoadPatch"
+                                                     ],
+                                         "sha256":  "f3b2de6c97a35ed6112eeead6652704de5a3976b91c00d0e3c0ce8f0da7d746f"
+                                     },
+                    "native_queue":  {
+                                         "origin":  "game",
+                                         "path":  "Ostranauts.Ships.Commands/QueuedCommandsNode.cs",
+                                         "symbol":  "QueuedCommandsNode running ownership and persistence",
+                                         "anchors":  [
+                                                         "class QueuedCommandsNode"
+                                                     ],
+                                         "sha256":  "8eda547644c33e59ad24f6bd1f8628cded6d5628f99f21625ce4f92ab25d880a"
+                                     },
+                    "native_wrapper":  {
+                                           "origin":  "game",
+                                           "path":  "Ostranauts.Ships.Commands/OneShotWrapperCommand.cs",
+                                           "symbol":  "OneShotWrapperCommand execution versus flattened persistence",
+                                           "anchors":  [
+                                                           "class OneShotWrapperCommand"
+                                                       ],
+                                           "sha256":  "03cc95249c9d460b677f2d1bcee9ef4d1368d539afe9d2bedd1503a289959c11"
+                                       },
+                    "native_selector":  {
+                                            "origin":  "game",
+                                            "path":  "Ostranauts.Ships.Commands/SelectorCommand.cs",
+                                            "symbol":  "SelectorCommand stops at first running/successful branch",
+                                            "anchors":  [
+                                                            "class SelectorCommand"
+                                                        ],
+                                            "sha256":  "fe97c99edcc1cfd92d9e62bb6a801224131483402718b3b3c388d0dff661c999"
+                                        }
+                },
+    "evidence":  {
+                     "native":  {
+                                    "supports":  "Shipped BeatManager before/after production patch reproduces distant convoy, cap accounting, actor protection and local severity.",
+                                    "level":  "native_offline",
+                                    "artifact":  "Tests/FactionEncounterCheck/README.md"
+                                },
+                     "baseline":  {
+                                      "supports":  "Pre-reload BCER traffic recorded after explicit four-ship prune; not a live encounter-policy validation.",
+                                      "level":  "live_observation",
+                                      "artifact":  "Navigation/Encounters/TRAFFIC-BASELINE.md"
+                                  },
+                     "review":  {
+                                    "supports":  "C# owns placement and actor recruitment; shipped settings expose weights and station caps/influence only.",
+                                    "level":  "source_review",
+                                    "artifact":  "Navigation/Encounters/README.md"
+                                },
+                     "scheduling":  {
+                                        "level":  "native_offline",
+                                        "artifact":  "Navigation/PATROL-PRIORITY.md",
+                                        "supports":  "Native baseline and production scheduling, one-shot/FIFO persistence, script preservation and Ceres return interaction tests. Controlled leaf outcomes; not sensor/combat-physics predictions."
+                                    }
+                 },
+    "variables":  {
+                      "depot":  {
+                                    "values":  [
+                                                   "compatible",
+                                                   "incompatible"
+                                               ],
+                                    "description":  "Actual ordinary spawning depot passes per-station velocity filter.",
+                                    "kind":  "native_result"
+                                },
+                      "selection":  {
+                                        "values":  [
+                                                       "fresh",
+                                                       "existing",
+                                                       "none"
+                                                   ],
+                                        "description":  "Native selection outcome; fresh includes unregistered reserve hull activation.",
+                                        "kind":  "native_result"
+                                    },
+                      "region":  {
+                                     "values":  [
+                                                    "local",
+                                                    "distant"
+                                                ],
+                                     "description":  "Physical position relative to authored regional infrastructure.",
+                                     "kind":  "native_result"
+                                 },
+                      "caller":  {
+                                     "values":  [
+                                                    "weighted",
+                                                    "nav_gui",
+                                                    "postplot"
+                                                ],
+                                     "description":  "Independent entrypoint; native gate includes applicable event-specific exclusions.",
+                                     "kind":  "native_result"
+                                 },
+                      "native_gate":  {
+                                          "values":  [
+                                                         "pass",
+                                                         "decline"
+                                                     ],
+                                          "description":  "Applicable native weighted/empty-universe/on-task/atmosphere conditions.",
+                                          "kind":  "native_result"
+                                      },
+                      "protected":  {
+                                        "values":  [
+                                                       "yes",
+                                                       "no"
+                                                   ],
+                                        "description":  "Existing actor fails Recruitable due to physical/mission/fuel/ownership constraints.",
+                                        "kind":  "assumed_predicate"
+                                    },
+                      "motion":  {
+                                     "values":  [
+                                                    "unchanged",
+                                                    "rewritten",
+                                                    "preserved"
+                                                ],
+                                     "description":  "Native placement/velocity/rotation writes versus retained active actor state.",
+                                     "kind":  "state"
+                                 },
+                      "torch":  {
+                                    "values":  [
+                                                   "off",
+                                                   "on"
+                                               ],
+                                    "description":  "Active torch on player or connected group.",
+                                    "kind":  "native_result"
+                                },
+                      "speed":  {
+                                    "values":  [
+                                                   "local",
+                                                   "cruise"
+                                               ],
+                                    "description":  "Local is at most 1 km/s relative to some regional spawning depot.",
+                                    "kind":  "native_result"
+                                },
+                      "actors":  {
+                                     "values":  [
+                                                    "none",
+                                                    "fresh",
+                                                    "existing"
+                                                ],
+                                     "description":  "Actors actually selected by this event.",
+                                     "kind":  "state"
+                                 },
+                      "phase":  {
+                                    "values":  [
+                                                   "pending",
+                                                   "patrol"
+                                               ],
+                                    "description":  "Native patrol assignment completed.",
+                                    "kind":  "state"
+                                },
+                      "owner":  {
+                                    "values":  [
+                                                   "ordinary",
+                                                   "priority",
+                                                   "oneshot"
+                                               ],
+                                    "description":  "Patrol scheduler/persistence boundary: owner. Emergency and leaf results are external native outcomes.",
+                                    "kind":  "state"
+                                },
+                      "emergency":  {
+                                        "values":  [
+                                                       "present",
+                                                       "absent"
+                                                   ],
+                                        "description":  "Patrol scheduler/persistence boundary: emergency. Emergency and leaf results are external native outcomes.",
+                                        "kind":  "native_result"
+                                    },
+                      "leaf_result":  {
+                                          "values":  [
+                                                         "running",
+                                                         "finished"
+                                                     ],
+                                          "description":  "Patrol scheduler/persistence boundary: leaf_result. Emergency and leaf results are external native outcomes.",
+                                          "kind":  "native_result"
+                                      },
+                      "checks":  {
+                                     "values":  [
+                                                    "pending",
+                                                    "blocked",
+                                                    "evaluated"
+                                                ],
+                                     "description":  "Patrol scheduler/persistence boundary: checks. Emergency and leaf results are external native outcomes.",
+                                     "kind":  "state"
+                                 },
+                      "continuation":  {
+                                           "values":  [
+                                                          "none",
+                                                          "single",
+                                                          "persistent"
+                                                      ],
+                                           "description":  "Patrol scheduler/persistence boundary: continuation. Emergency and leaf results are external native outcomes.",
+                                           "kind":  "state"
+                                       },
+                      "isolated":  {
+                                       "values":  [
+                                                      "yes",
+                                                      "no"
+                                                  ],
+                                       "description":  "Patrol scheduler/persistence boundary: isolated. Emergency and leaf results are external native outcomes.",
+                                       "kind":  "native_result"
+                                   },
+                      "queue_order":  {
+                                          "values":  [
+                                                         "saved",
+                                                         "reversed",
+                                                         "preserved"
+                                                     ],
+                                          "description":  "Patrol scheduler/persistence boundary: queue_order. Emergency and leaf results are external native outcomes.",
+                                          "kind":  "state"
+                                      }
+                  },
+    "predicates":  {
+                       "active_torch":  {
+                                            "facts":  {
+                                                          "region":  [
+                                                                         "local"
+                                                                     ],
+                                                          "torch":  [
+                                                                        "on"
+                                                                    ],
+                                                          "speed":  [
+                                                                        "local"
+                                                                    ]
+                                                      }
+                                        },
+                       "invalid_region":  {
+                                              "facts":  {
+                                                            "region":  [
+                                                                           "distant"
+                                                                       ]
+                                                        }
+                                          },
+                       "wrong_depot":  {
+                                           "facts":  {
+                                                         "caller":  [
+                                                                        "weighted",
+                                                                        "nav_gui"
+                                                                    ],
+                                                         "depot":  [
+                                                                       "incompatible"
+                                                                   ]
+                                                     }
+                                       },
+                       "invalid_speed":  {
+                                             "facts":  {
+                                                           "region":  [
+                                                                          "local"
+                                                                      ],
+                                                           "speed":  [
+                                                                         "cruise"
+                                                                     ]
+                                                       }
+                                         },
+                       "protected_actor":  {
+                                               "facts":  {
+                                                             "protected":  [
+                                                                               "yes"
+                                                                           ]
+                                                         }
+                                           },
+                       "isolated_patrol":  {
+                                               "facts":  {
+                                                             "isolated":  [
+                                                                              "yes"
+                                                                          ]
+                                                         }
+                                           }
+                   },
+    "nodes":  {
+                  "attempt":  {
+                                  "label":  "Weighted, deferred GUI, or post-finale encounter attempt",
+                                  "layer":  "control",
+                                  "sources":  [
+                                                  "beat",
+                                                  "gui"
+                                              ],
+                                  "detail":  ""
+                              },
+                  "declined":  {
+                                   "label":  "Decline event without actors; native roll accounting retained",
+                                   "layer":  "control",
+                                   "sources":  [
+                                                   "beat",
+                                                   "patch"
+                                               ],
+                                   "detail":  ""
+                               },
+                  "patrol":  {
+                                 "label":  "Native nearby patrol target and command assigned",
+                                 "layer":  "control",
+                                 "sources":  [
+                                                 "beat"
+                                             ],
+                                 "detail":  ""
+                             },
+                  "fresh":  {
+                                "label":  "New controller / unregistered reserve hull",
+                                "layer":  "control",
+                                "sources":  [
+                                                "beat",
+                                                "controller",
+                                                "navy"
+                                            ],
+                                "detail":  ""
+                            },
+                  "select":  {
+                                 "label":  "Native station caps and Navy selection",
+                                 "layer":  "control",
+                                 "sources":  [
+                                                 "beat",
+                                                 "manager",
+                                                 "controller",
+                                                 "navy"
+                                             ],
+                                 "detail":  ""
+                             },
+                  "existing":  {
+                                   "label":  "Existing registered Navy actor recruited",
+                                   "layer":  "control",
+                                   "sources":  [
+                                                   "beat",
+                                                   "manager"
+                                               ],
+                                   "detail":  ""
+                               },
+                  "blocked":  {
+                                  "label":  "Queued patrol blocks emergency evaluation",
+                                  "layer":  "control",
+                                  "sources":  [
+                                                  "navy",
+                                                  "native_selector",
+                                                  "native_queue",
+                                                  "native_wrapper"
+                                              ],
+                                  "detail":  "Conditional scheduling/persistence state, not a combat outcome."
+                              },
+                  "responding":  {
+                                     "label":  "Native emergency branch selected",
+                                     "layer":  "control",
+                                     "sources":  [
+                                                     "navy",
+                                                     "native_selector",
+                                                     "native_queue",
+                                                     "native_wrapper"
+                                                 ],
+                                     "detail":  "Conditional scheduling/persistence state, not a combat outcome."
+                                 },
+                  "callback":  {
+                                   "label":  "Pending native one-shot SFF continuation",
+                                   "layer":  "control",
+                                   "sources":  [
+                                                   "navy",
+                                                   "native_selector",
+                                                   "native_queue",
+                                                   "native_wrapper"
+                                               ],
+                                   "detail":  "Conditional scheduling/persistence state, not a combat outcome."
+                               },
+                  "legacy_queue":  {
+                                       "label":  "Saved isolated or mixed Navy patrol queue",
+                                       "layer":  "control",
+                                       "sources":  [
+                                                       "navy",
+                                                       "native_selector",
+                                                       "native_queue",
+                                                       "native_wrapper"
+                                                   ],
+                                       "detail":  "Conditional scheduling/persistence state, not a combat outcome."
+                                   },
+                  "saved_queue":  {
+                                      "label":  "Native saved FIFO sequence",
+                                      "layer":  "control",
+                                      "sources":  [
+                                                      "navy",
+                                                      "native_selector",
+                                                      "native_queue",
+                                                      "native_wrapper"
+                                                  ],
+                                      "detail":  "Conditional scheduling/persistence state, not a combat outcome."
+                                  },
+                  "restored_queue":  {
+                                         "label":  "Restored FIFO sequence",
+                                         "layer":  "control",
+                                         "sources":  [
+                                                         "navy",
+                                                         "native_selector",
+                                                         "native_queue",
+                                                         "native_wrapper"
+                                                     ],
+                                         "detail":  "Conditional scheduling/persistence state, not a combat outcome."
+                                     }
+              },
+    "edges":  [
+                  {
+                      "id":  "attempt.pass",
+                      "evidence":  [
+                                       "review",
+                                       "native"
+                                   ],
+                      "sources":  [
+                                      "beat",
+                                      "gui"
+                                  ],
+                      "event":  "attempt",
+                      "note":  "",
+                      "set":  {
+
+                              },
+                      "from":  "attempt",
+                      "when":  {
+                                   "facts":  {
+                                                 "native_gate":  [
+                                                                     "pass"
+                                                                 ]
+                                             }
+                               },
+                      "to":  "select"
+                  },
+                  {
+                      "id":  "attempt.decline",
+                      "evidence":  [
+                                       "review",
+                                       "native"
+                                   ],
+                      "sources":  [
+                                      "beat"
+                                  ],
+                      "event":  "attempt",
+                      "note":  "",
+                      "set":  {
+
+                              },
+                      "from":  "attempt",
+                      "when":  {
+                                   "facts":  {
+                                                 "native_gate":  [
+                                                                     "decline"
+                                                                 ]
+                                             }
+                               },
+                      "to":  "declined"
+                  },
+                  {
+                      "id":  "select.fresh",
+                      "evidence":  [
+                                       "review",
+                                       "native"
+                                   ],
+                      "sources":  [
+                                      "beat",
+                                      "controller",
+                                      "navy"
+                                  ],
+                      "event":  "select",
+                      "note":  "",
+                      "set":  {
+                                  "actors":  "fresh"
+                              },
+                      "from":  "select",
+                      "when":  {
+                                   "facts":  {
+                                                 "selection":  [
+                                                                   "fresh"
+                                                               ]
+                                             }
+                               },
+                      "to":  "fresh"
+                  },
+                  {
+                      "id":  "select.existing",
+                      "evidence":  [
+                                       "review",
+                                       "native"
+                                   ],
+                      "sources":  [
+                                      "beat",
+                                      "manager"
+                                  ],
+                      "event":  "select",
+                      "note":  "Native same-owner existing actors count against the cap, then may be recruited regardless of current activity.",
+                      "set":  {
+                                  "actors":  "existing"
+                              },
+                      "from":  "select",
+                      "when":  {
+                                   "facts":  {
+                                                 "selection":  [
+                                                                   "existing"
+                                                               ]
+                                             }
+                               },
+                      "to":  "existing"
+                  },
+                  {
+                      "id":  "select.none",
+                      "evidence":  [
+                                       "review",
+                                       "native"
+                                   ],
+                      "sources":  [
+                                      "beat"
+                                  ],
+                      "event":  "select",
+                      "note":  "",
+                      "set":  {
+
+                              },
+                      "from":  "select",
+                      "when":  {
+                                   "facts":  {
+                                                 "selection":  [
+                                                                   "none"
+                                                               ]
+                                             }
+                               },
+                      "to":  "declined"
+                  },
+                  {
+                      "id":  "fresh.place",
+                      "evidence":  [
+                                       "review",
+                                       "native"
+                                   ],
+                      "sources":  [
+                                      "beat"
+                                  ],
+                      "event":  "place",
+                      "note":  "Native position changes only beyond 500 km; velocity and rotation always overwritten.",
+                      "set":  {
+                                  "phase":  "patrol",
+                                  "motion":  "rewritten",
+                                  "owner":  "priority"
+                              },
+                      "from":  "fresh",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "patrol"
+                  },
+                  {
+                      "id":  "existing.place",
+                      "evidence":  [
+                                       "review",
+                                       "native"
+                                   ],
+                      "sources":  [
+                                      "beat"
+                                  ],
+                      "event":  "place",
+                      "note":  "",
+                      "set":  {
+                                  "phase":  "patrol",
+                                  "motion":  "rewritten",
+                                  "owner":  "priority"
+                              },
+                      "from":  "existing",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "to":  "patrol"
+                  },
+                  {
+                      "id":  "patrol.blocked",
+                      "from":  "patrol",
+                      "to":  "blocked",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+                                                 "leaf_result":  [
+                                                                     "running"
+                                                                 ],
+                                                 "owner":  [
+                                                               "priority"
+                                                           ]
+                                             }
+                               },
+                      "set":  {
+                                  "checks":  "blocked"
+                              },
+                      "sources":  [
+                                      "navy",
+                                      "native_queue",
+                                      "native_selector"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  },
+                  {
+                      "id":  "patrol.respond",
+                      "from":  "patrol",
+                      "to":  "responding",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+                                                 "emergency":  [
+                                                                   "present"
+                                                               ],
+                                                 "owner":  [
+                                                               "ordinary"
+                                                           ]
+                                             }
+                               },
+                      "set":  {
+                                  "checks":  "evaluated"
+                              },
+                      "sources":  [
+                                      "navy",
+                                      "native_selector"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  },
+                  {
+                      "id":  "patrol.quiet",
+                      "from":  "patrol",
+                      "to":  "patrol",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+                                                 "emergency":  [
+                                                                   "absent"
+                                                               ],
+                                                 "owner":  [
+                                                               "ordinary"
+                                                           ]
+                                             }
+                               },
+                      "set":  {
+                                  "checks":  "evaluated"
+                              },
+                      "sources":  [
+                                      "navy",
+                                      "native_selector"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  },
+                  {
+                      "id":  "patrol.finished",
+                      "from":  "patrol",
+                      "to":  "patrol",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+                                                 "leaf_result":  [
+                                                                     "finished"
+                                                                 ],
+                                                 "owner":  [
+                                                               "priority"
+                                                           ]
+                                             }
+                               },
+                      "set":  {
+                                  "checks":  "pending",
+                                  "owner":  "ordinary"
+                              },
+                      "sources":  [
+                                      "native_queue"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  },
+                  {
+                      "id":  "patrol.sff",
+                      "from":  "patrol",
+                      "to":  "callback",
+                      "event":  "sff",
+                      "when":  {
+                                   "facts":  {
+                                                 "owner":  [
+                                                               "ordinary"
+                                                           ]
+                                             }
+                               },
+                      "set":  {
+                                  "continuation":  "single",
+                                  "owner":  "oneshot"
+                              },
+                      "sources":  [
+                                      "controller",
+                                      "navy"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  },
+                  {
+                      "id":  "callback.run",
+                      "from":  "callback",
+                      "to":  "patrol",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "continuation":  "none",
+                                  "owner":  "ordinary",
+                                  "checks":  "pending"
+                              },
+                      "sources":  [
+                                      "native_wrapper",
+                                      "native_queue"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  },
+                  {
+                      "id":  "callback.load",
+                      "from":  "callback",
+                      "to":  "patrol",
+                      "event":  "save_load",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "continuation":  "persistent",
+                                  "owner":  "priority"
+                              },
+                      "sources":  [
+                                      "native_wrapper",
+                                      "native_queue"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  },
+                  {
+                      "id":  "legacy.load",
+                      "from":  "legacy_queue",
+                      "to":  "patrol",
+                      "event":  "restore",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "owner":  "priority"
+                              },
+                      "sources":  [
+                                      "native_queue",
+                                      "controller"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  },
+                  {
+                      "id":  "fifo.load",
+                      "from":  "saved_queue",
+                      "to":  "restored_queue",
+                      "event":  "restore",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "queue_order":  "reversed"
+                              },
+                      "sources":  [
+                                      "native_queue"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  },
+                  {
+                      "id":  "blocked.remains",
+                      "from":  "blocked",
+                      "to":  "blocked",
+                      "event":  "ai_tick",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+
+                              },
+                      "sources":  [
+                                      "native_queue"
+                                  ],
+                      "evidence":  [
+                                       "scheduling"
+                                   ],
+                      "note":  "Native mechanism, with controlled boundary outcomes."
+                  }
+              ],
+    "findings":  [
+                     {
+                         "id":  "distant_convoy",
+                         "sources":  [
+                                         "beat"
+                                     ],
+                         "evidence":  [
+                                          "review",
+                                          "native"
+                                      ],
+                         "when":  {
+                                      "facts":  {
+                                                    "region":  [
+                                                                   "distant"
+                                                               ],
+                                                    "phase":  [
+                                                                  "patrol"
+                                                              ],
+                                                    "motion":  [
+                                                                   "rewritten"
+                                                               ]
+                                                }
+                                  },
+                         "note":  "Fresh/reserved ships appear beside interplanetary player and inherit cruise velocity.",
+                         "kind":  "implausible_staging",
+                         "severity":  "simulation"
+                     },
+                     {
+                         "id":  "busy_actor_hijacked",
+                         "sources":  [
+                                         "beat"
+                                     ],
+                         "evidence":  [
+                                          "review",
+                                          "native"
+                                      ],
+                         "when":  {
+                                      "facts":  {
+                                                    "phase":  [
+                                                                  "patrol"
+                                                              ],
+                                                    "actors":  [
+                                                                   "existing"
+                                                               ],
+                                                    "protected":  [
+                                                                      "yes"
+                                                                  ]
+                                                }
+                                  },
+                         "note":  "Native staging recruits an existing actor whose mission/physical state should be preserved.",
+                         "kind":  "mission_override",
+                         "severity":  "simulation"
+                     },
+                     {
+                         "id":  "patrol_masks_emergency",
+                         "kind":  "priority_starvation",
+                         "severity":  "gameplay",
+                         "when":  {
+                                      "facts":  {
+                                                    "checks":  [
+                                                                   "blocked"
+                                                               ],
+                                                    "emergency":  [
+                                                                      "present"
+                                                                  ]
+                                                }
+                                  },
+                         "sources":  [
+                                         "navy",
+                                         "native_queue"
+                                     ],
+                         "evidence":  [
+                                          "scheduling"
+                                      ],
+                         "note":  "Ordinary patrol prevents combat/threat/damage evaluation."
+                     },
+                     {
+                         "id":  "oneshot_lost",
+                         "kind":  "serialization",
+                         "severity":  "gameplay",
+                         "when":  {
+                                      "facts":  {
+                                                    "continuation":  [
+                                                                         "persistent"
+                                                                     ]
+                                                }
+                                  },
+                         "sources":  [
+                                         "native_wrapper",
+                                         "native_queue"
+                                     ],
+                         "evidence":  [
+                                          "scheduling"
+                                      ],
+                         "note":  "A one-call continuation becomes a long-running priority command."
+                     },
+                     {
+                         "id":  "queue_reversed",
+                         "kind":  "serialization",
+                         "severity":  "gameplay",
+                         "when":  {
+                                      "facts":  {
+                                                    "queue_order":  [
+                                                                        "reversed"
+                                                                    ]
+                                                }
+                                  },
+                         "sources":  [
+                                         "native_queue"
+                                     ],
+                         "evidence":  [
+                                          "scheduling"
+                                      ],
+                         "note":  "Native load prepends the saved waiting commands and reverses FIFO."
+                     }
+                 ],
+    "scenarios":  [
+                      {
+                          "id":  "local-new-patrol",
+                          "events":  [
+                                         "attempt",
+                                         "select",
+                                         "place"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actors",
+                                                         "stop":  "",
+                                                         "node":  "patrol",
+                                                         "value":  "fresh"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "",
+                                                           "node":  "patrol",
+                                                           "value":  "fresh"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "fresh",
+                                        "region":  "local",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "local",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "distant-cruise-convoy",
+                          "events":  [
+                                         "attempt",
+                                         "select",
+                                         "place"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "motion",
+                                                         "stop":  "",
+                                                         "node":  "patrol",
+                                                         "value":  "rewritten",
+                                                         "finding":  "distant_convoy"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "blocked event select",
+                                                           "node":  "declined",
+                                                           "without":  "distant_convoy",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "fresh",
+                                        "region":  "distant",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "cruise",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "deferred-nav-gui-convoy",
+                          "events":  [
+                                         "attempt",
+                                         "select",
+                                         "place"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "motion",
+                                                         "stop":  "",
+                                                         "node":  "patrol",
+                                                         "value":  "rewritten",
+                                                         "finding":  "distant_convoy"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "blocked event select",
+                                                           "node":  "declined",
+                                                           "without":  "distant_convoy",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "fresh",
+                                        "region":  "distant",
+                                        "caller":  "nav_gui",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "cruise",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "post-finale-distant-battle",
+                          "events":  [
+                                         "attempt",
+                                         "select",
+                                         "place"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actors",
+                                                         "stop":  "",
+                                                         "node":  "patrol",
+                                                         "value":  "fresh",
+                                                         "finding":  "distant_convoy"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "blocked event select",
+                                                           "node":  "declined",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "fresh",
+                                        "region":  "distant",
+                                        "caller":  "postplot",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "local",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "local-battle",
+                          "events":  [
+                                         "attempt",
+                                         "select",
+                                         "place"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actors",
+                                                         "stop":  "",
+                                                         "node":  "patrol",
+                                                         "value":  "fresh"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "",
+                                                           "node":  "patrol",
+                                                           "value":  "fresh"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "fresh",
+                                        "region":  "local",
+                                        "caller":  "postplot",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "local",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "fast-local-flyby",
+                          "events":  [
+                                         "attempt"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actors",
+                                                         "stop":  "",
+                                                         "node":  "select",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "",
+                                                           "node":  "declined",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "fresh",
+                                        "region":  "local",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "cruise",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "active-torch",
+                          "events":  [
+                                         "attempt"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actors",
+                                                         "stop":  "",
+                                                         "node":  "select",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "",
+                                                           "node":  "declined",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "fresh",
+                                        "region":  "local",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "on",
+                                        "speed":  "local",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "native-decline",
+                          "events":  [
+                                         "attempt"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actors",
+                                                         "stop":  "",
+                                                         "node":  "declined",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "",
+                                                           "node":  "declined",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "fresh",
+                                        "region":  "local",
+                                        "caller":  "weighted",
+                                        "native_gate":  "decline",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "local",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "incompatible-depot",
+                          "events":  [
+                                         "attempt",
+                                         "select"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actors",
+                                                         "stop":  "",
+                                                         "node":  "fresh",
+                                                         "value":  "fresh"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "",
+                                                           "node":  "declined",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "incompatible",
+                                        "selection":  "fresh",
+                                        "region":  "local",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "local",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "reuse-idle-patrol",
+                          "events":  [
+                                         "attempt",
+                                         "select",
+                                         "place"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "motion",
+                                                         "stop":  "",
+                                                         "node":  "patrol",
+                                                         "value":  "rewritten"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "motion",
+                                                           "stop":  "",
+                                                           "node":  "patrol",
+                                                           "value":  "preserved"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "existing",
+                                        "region":  "local",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "local",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "busy-actor-cap-full",
+                          "events":  [
+                                         "attempt",
+                                         "select",
+                                         "place"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actors",
+                                                         "stop":  "",
+                                                         "node":  "patrol",
+                                                         "value":  "existing",
+                                                         "finding":  "busy_actor_hijacked"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "blocked event place",
+                                                           "node":  "declined",
+                                                           "without":  "busy_actor_hijacked",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "existing",
+                                        "region":  "local",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "protected":  "yes",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "local",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "no-native-candidate",
+                          "events":  [
+                                         "attempt",
+                                         "select"
+                                     ],
+                          "note":  "Conditional source-derived staging scenario; native harness boundaries are explicit.",
+                          "start":  "attempt",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actors",
+                                                         "stop":  "",
+                                                         "node":  "declined",
+                                                         "value":  "none"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actors",
+                                                           "stop":  "",
+                                                           "node":  "declined",
+                                                           "value":  "none"
+                                                       }
+                                     },
+                          "facts":  {
+                                        "depot":  "compatible",
+                                        "selection":  "none",
+                                        "region":  "local",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "torch":  "off",
+                                        "speed":  "local",
+                                        "actors":  "none",
+                                        "phase":  "pending",
+                                        "owner":  "ordinary",
+                                        "emergency":  "absent",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved"
+                                    }
+                      },
+                      {
+                          "id":  "ambient-patrol-under-fire",
+                          "start":  "fresh",
+                          "events":  [
+                                         "place",
+                                         "ai_tick"
+                                     ],
+                          "facts":  {
+                                        "owner":  "ordinary",
+                                        "emergency":  "present",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved",
+                                        "region":  "local",
+                                        "speed":  "local",
+                                        "torch":  "off",
+                                        "depot":  "compatible",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "selection":  "fresh",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "actors":  "fresh",
+                                        "phase":  "patrol"
+                                    },
+                          "note":  "Native scheduling/persistence reproduction; emergency/leaf outcomes are controlled, not inferred from sensor geometry.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "blocked",
+                                                         "stop":  "",
+                                                         "finding":  "patrol_masks_emergency"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "responding",
+                                                           "stop":  "",
+                                                           "without":  "patrol_masks_emergency"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "sff-save-patrol-under-fire",
+                          "start":  "patrol",
+                          "events":  [
+                                         "sff",
+                                         "save_load",
+                                         "ai_tick",
+                                         "ai_tick"
+                                     ],
+                          "facts":  {
+                                        "owner":  "ordinary",
+                                        "emergency":  "present",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved",
+                                        "region":  "local",
+                                        "speed":  "local",
+                                        "torch":  "off",
+                                        "depot":  "compatible",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "selection":  "fresh",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "actors":  "fresh",
+                                        "phase":  "patrol"
+                                    },
+                          "note":  "Native scheduling/persistence reproduction; emergency/leaf outcomes are controlled, not inferred from sensor geometry.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "blocked",
+                                                         "stop":  "",
+                                                         "finding":  "oneshot_lost"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "responding",
+                                                           "stop":  "",
+                                                           "without":  "oneshot_lost"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "sff-without-save-one-call",
+                          "start":  "patrol",
+                          "events":  [
+                                         "sff",
+                                         "ai_tick",
+                                         "ai_tick"
+                                     ],
+                          "facts":  {
+                                        "owner":  "ordinary",
+                                        "emergency":  "present",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved",
+                                        "region":  "local",
+                                        "speed":  "local",
+                                        "torch":  "off",
+                                        "depot":  "compatible",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "selection":  "fresh",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "actors":  "fresh",
+                                        "phase":  "patrol"
+                                    },
+                          "note":  "Native scheduling/persistence reproduction; emergency/leaf outcomes are controlled, not inferred from sensor geometry.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "responding",
+                                                         "stop":  ""
+                                                     },
+                                         "effective":  {
+                                                           "node":  "responding",
+                                                           "stop":  "",
+                                                           "without":  "patrol_masks_emergency"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "isolated-legacy-patrol-under-fire",
+                          "start":  "legacy_queue",
+                          "events":  [
+                                         "restore",
+                                         "ai_tick"
+                                     ],
+                          "facts":  {
+                                        "owner":  "ordinary",
+                                        "emergency":  "present",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved",
+                                        "region":  "local",
+                                        "speed":  "local",
+                                        "torch":  "off",
+                                        "depot":  "compatible",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "selection":  "fresh",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "actors":  "fresh",
+                                        "phase":  "patrol"
+                                    },
+                          "note":  "Native scheduling/persistence reproduction; emergency/leaf outcomes are controlled, not inferred from sensor geometry.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "blocked",
+                                                         "stop":  "",
+                                                         "finding":  "patrol_masks_emergency"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "responding",
+                                                           "stop":  "",
+                                                           "without":  "patrol_masks_emergency"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "mixed-legacy-script-preserved",
+                          "start":  "legacy_queue",
+                          "events":  [
+                                         "restore"
+                                     ],
+                          "facts":  {
+                                        "owner":  "ordinary",
+                                        "emergency":  "present",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "no",
+                                        "queue_order":  "saved",
+                                        "region":  "local",
+                                        "speed":  "local",
+                                        "torch":  "off",
+                                        "depot":  "compatible",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "selection":  "fresh",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "actors":  "fresh",
+                                        "phase":  "patrol"
+                                    },
+                          "note":  "Native scheduling/persistence reproduction; emergency/leaf outcomes are controlled, not inferred from sensor geometry.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "patrol",
+                                                         "stop":  ""
+                                                     },
+                                         "effective":  {
+                                                           "node":  "patrol",
+                                                           "stop":  ""
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "native-ordinary-patrol-under-fire",
+                          "start":  "patrol",
+                          "events":  [
+                                         "ai_tick"
+                                     ],
+                          "facts":  {
+                                        "owner":  "ordinary",
+                                        "emergency":  "present",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved",
+                                        "region":  "local",
+                                        "speed":  "local",
+                                        "torch":  "off",
+                                        "depot":  "compatible",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "selection":  "fresh",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "actors":  "fresh",
+                                        "phase":  "patrol"
+                                    },
+                          "note":  "Native scheduling/persistence reproduction; emergency/leaf outcomes are controlled, not inferred from sensor geometry.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "responding",
+                                                         "stop":  ""
+                                                     },
+                                         "effective":  {
+                                                           "node":  "responding",
+                                                           "stop":  "",
+                                                           "without":  "patrol_masks_emergency"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "whole-priority-patrol-finished",
+                          "start":  "patrol",
+                          "events":  [
+                                         "ai_tick",
+                                         "ai_tick"
+                                     ],
+                          "facts":  {
+                                        "owner":  "priority",
+                                        "emergency":  "present",
+                                        "leaf_result":  "finished",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved",
+                                        "region":  "local",
+                                        "speed":  "local",
+                                        "torch":  "off",
+                                        "depot":  "compatible",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "selection":  "fresh",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "actors":  "fresh",
+                                        "phase":  "patrol"
+                                    },
+                          "note":  "Native scheduling/persistence reproduction; emergency/leaf outcomes are controlled, not inferred from sensor geometry.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "responding",
+                                                         "stop":  ""
+                                                     },
+                                         "effective":  {
+                                                           "node":  "responding",
+                                                           "stop":  "",
+                                                           "without":  "patrol_masks_emergency"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "saved-fifo-restoration",
+                          "start":  "saved_queue",
+                          "events":  [
+                                         "restore"
+                                     ],
+                          "facts":  {
+                                        "owner":  "ordinary",
+                                        "emergency":  "present",
+                                        "leaf_result":  "running",
+                                        "checks":  "pending",
+                                        "continuation":  "none",
+                                        "isolated":  "yes",
+                                        "queue_order":  "saved",
+                                        "region":  "local",
+                                        "speed":  "local",
+                                        "torch":  "off",
+                                        "depot":  "compatible",
+                                        "caller":  "weighted",
+                                        "native_gate":  "pass",
+                                        "selection":  "fresh",
+                                        "protected":  "no",
+                                        "motion":  "unchanged",
+                                        "actors":  "fresh",
+                                        "phase":  "patrol"
+                                    },
+                          "note":  "Native scheduling/persistence reproduction; emergency/leaf outcomes are controlled, not inferred from sensor geometry.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "node":  "restored_queue",
+                                                         "stop":  "",
+                                                         "finding":  "queue_reversed"
+                                                     },
+                                         "effective":  {
+                                                           "node":  "restored_queue",
+                                                           "stop":  "",
+                                                           "without":  "queue_reversed"
+                                                       }
+                                     }
+                      }
+                  ]
+}

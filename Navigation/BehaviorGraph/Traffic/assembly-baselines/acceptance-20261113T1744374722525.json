@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/d7e38e524bd1565d863633d4f03b47e8e2aaf34cd20374397899af5691411403.json.br",
+  "reason": "Reviewed local-reference caller audit against unchanged 1.0.1.10 assembly and authored station orbits; new source/method/asset boundaries only. Native frame reproduction and 61 corrected controls, 69 departure and 174 Ceres regressions pass. No military geometry completeness claim.",
+  "acceptedUtc": "2026-11-13T17:44:37.4699846Z",
+  "previousSnapshot": "assembly-baselines/e17d1ad07a6e0dce49ce6eda6d870f62175c298c82b36fb99259a1e0c23bdf52.json.br"
+}

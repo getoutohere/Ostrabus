@@ -1,11 +1,33 @@
 # Cargo and civilian traffic
 
+The shared combat leaf has a separately reproduced native failure:
+[SurrenderOffer can clear combat even when sending fails](../../SURRENDER-COMBAT-LOOP.md).
+Its production repair and dedicated assembly tests cover message failure,
+mixed opponents and native tree continuation. Constructor-tree references and
+stubbed priority checks alone do not establish these leaf semantics; this slice
+does not claim a complete negotiation or combat model.
+
+The shared native combat leaves have another established gap:
+[disabled AI targets are reacquired after native neutralization](../../COMBAT-NEUTRALIZATION.md).
+Its separate 66-check native reproduction covers acquisition and neutralization
+semantics. The production acquisition repair has 170 combined baseline/contrast
+checks, including native cleanup before exclusion and controller reactivation.
+This remains external leaf evidence, not a complete battle projection.
+
+The [implemented controller-lifetime boundary](../../UNREGISTERED-COURSES.md)
+adds native-tested withdrawal cancellation, exact normal/SFF dispatch admission,
+replacement course ordering and terminal retreat status. It preserves regional
+migration, native retirement policy and missing-target continuation. See its
+machine-readable caller review rather than inferring force ownership from a
+successful constructor-tree or lifecycle projection alone.
+
 This reference separates freight, PASS shuttles and civilian visitors, follows
 their native control and lifecycle boundaries, and derives the current Ostrabus
 overlay without silently repairing known defects in the model.
 
 - [Investigation and certainty of findings](INVESTIGATION.md)
 - [Prioritized follow-up investigations](FOLLOW-UP-PRIORITIES.md)
+- [Native navigation withdrawal audit and collateral controls](../../CONTROL-OWNERSHIP-AUDIT.md)
 - [Confirmed player-connected regional cleanup defect](REGIONAL-CLEANUP.md)
 - [Hidden-hull visits: candidate correction and lifecycle limits](HIDDEN-VISIT-INVESTIGATION.md)
 - [Collision-created duplicate controllers and orphaned freight](../../../MiscBugFixes/FREIGHT-CONTROLLER-IDENTITY.md)
@@ -29,7 +51,7 @@ registration-time timer bookkeeping and worker interleavings are verified by
 Tests/StaleShipDiagnosis rather than simulated by this lifecycle projection.
 
 The current reference has 29 control points, 112 vanilla / 123 effective edges,
-70 scenarios and 410 consistency checks. It pins 54 source groups and 14 asset
+70 scenarios and 410 consistency checks. It pins 73 source groups and 15 asset
 entries. The accepted IL/asset baseline reports no missing selectors or unresolved
 members. These counts describe coverage of the reference, not proof that the
 entire game simulation is correct.
@@ -85,3 +107,13 @@ faction-hull controls and fixture boundaries.
 control deferral, SFF, connected encounters and native hauler/station retirement
 exclusions are represented in the effective graph. Saved paths load in an
 unpatched native tree. See the linked visit investigation for fixture limits.
+
+Navy/Blockade lost-contact cleanup is recorded in the encounter slice's method
+bindings and [native reproduction](../../PATROL-TARGET-HANDOFF.md). It is separate
+from this freight/PASS/civilian lifecycle model and its passing counts.
+
+[Unregistered-course playback](../../UNREGISTERED-COURSES.md) is a newly confirmed
+numerical/lifecycle boundary: removal does not cancel the course; playback restores
+force and can retain it after expiry. The 156-check native investigation is not
+yet a production repair. Retirement edges do not prove stopped movement; this
+remains outside the projection's numerical flight coverage.

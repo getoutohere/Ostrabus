@@ -4,6 +4,21 @@ The aim is to preserve plausible emergent interactions while identifying broken
 execution paths and unnecessary restrictions. This is an offline reference, not
 a replacement AI controller, runtime monitor or automatic recovery policy.
 
+The [controller-lifetime repair](../UNREGISTERED-COURSES.md) covers shared native
+control bookkeeping outside the expanded diagram leaves: actual withdrawal
+cancels its plan, stale normal/SFF controllers cannot execute, replacement player
+plans survive, and terminal LowFuelRetreat returns Finished. Its
+[machine-readable caller/implementation review](../../Tools/NavigationOwnershipAudit/withdrawal-review.json)
+and [audit](../CONTROL-OWNERSHIP-AUDIT.md) distinguish these implemented contracts
+from unexpanded physical/combat behavior. The diagrams do not simulate forces.
+
+The [Ceres chain reassessment](../../CeresNavigation/REASSESSMENT.md) records
+native-tested reserve/selection findings and shared arithmetic defects outside
+the expanded graph slices. Traffic graph validation is not full Navy/Pirate/
+Police combat-and-retreat coverage.
+The [implemented Ceres refactor](../../CeresNavigation/REFACTOR.md) links the
+native selection/retreat regressions and current ordered transition diagram.
+
 The [AI behavior patch audit](../../Notes/AI-BEHAVIOR-PATCH-AUDIT.md) reviews the
 C#/asset boundary across modules and records a reproduced station-return priority
 conflict, since [repaired](../RETURN-PRIORITY.md), outside the currently expanded graph slices. Passing these slice checks
@@ -14,6 +29,10 @@ Start with the [generated audit](AUDIT.md), [vanilla diagrams](VANILLA.md) or
 slice is the **OKLG/VORB retriever lifecycle on 1.0.1.10**, with relevant shared
 navigation/lifecycle boundaries. It is intentionally not an all-ships/all-patches
 model. [Coverage and next steps](REVIEW.md) are part of the reference's contract.
+
+The [local reference caller audit](../LOCAL-NAVIGATION-FRAMES.md) covers patrol,
+ambush, guard and encounter coordinate creation across regions. This is a native
+geometry boundary, not a claim that these graphs model full military behavior.
 
 The second independent slice covers [OKLG scavengers](Scavenger/README.md):
 docked holds, fuel-selection decisions and emergency assistance eligibility.
@@ -34,6 +53,18 @@ traffic selection, market handoffs, visits, retirement, reserve reuse, ATC and S
 paths. Select `--model traffic`. Its effective graph now includes native-tested
 coordinate and asteroid-conversion repairs; unresolved home-dispatch, reserve
 reuse and freight handoff findings remain explicit.
+
+The [bounty reactivation slice](Bounty/README.md), selected with `--model bounty`,
+adds the independent scheduler/embarkation entry point missed by ordinary traffic
+departure coverage. It exposes depleted reserved hulls immediately returning to
+station and models the native station-service repair. Existing-hull activation
+must not be inferred to inherit ordinary `CreateAIShip` servicing.
+
+The [faction encounter slice](Encounters/README.md), selected with `--model encounters`,
+tracks another independent activation path: BeatManager and its deferred nav-GUI
+caller can create or recruit Navy ships, move them beside the player and copy the
+player's velocity. Its overlay limits staging to local operating space and protects
+existing actors. Ordinary traffic and bounty departure checks do not cover this path.
 
 Completeness has not been established. Inventory native pilot types and commands
 independently of the scenarios we chose to write:

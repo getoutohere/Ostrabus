@@ -18,16 +18,18 @@ internal static class MeteorTest {
         internal double? DetectionProbability;
         internal float? Angle;
         internal bool? Detected, Intercepted;
-        internal int Bursts, Rounds;
+        internal int Bursts, Rounds, GroupShips, DefendingShips, BlockedGuns;
     }
     internal static void Target(Ship ship) {
         if (current != null) current.ShipId = ship?.strRegID;
     }
-    internal static void Defense(float angle, double probability, bool detected, bool intercepted, int bursts, int rounds) {
+    internal static void Defense(float angle, double probability, bool detected, bool intercepted, int bursts, int rounds,
+        int groupShips = 1, int defendingShips = 1, int blockedGuns = 0) {
         if (current == null) return;
         current.Angle = angle; current.DetectionProbability = probability;
         current.Detected = detected; current.Intercepted = intercepted;
         current.Bursts = bursts; current.Rounds = rounds;
+        current.GroupShips = groupShips; current.DefendingShips = defendingShips; current.BlockedGuns = blockedGuns;
     }
     internal static Result Trigger() {
         if (CrewSim.coPlayer == null || CrewSim.coPlayer.ship?.objSS == null || CrewSim.system == null)

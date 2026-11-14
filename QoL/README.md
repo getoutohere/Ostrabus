@@ -3,6 +3,9 @@
 Quality-of-life changes to game behavior, separate from corrective MiscBugFixes patches.
 Each feature has its own subdirectory and namespace.
 
+- [Quick PDA hacking](PdaHacking/README.md): offer Hack PDA for the controlled
+  character with Hacking, using native unlock effects without the encounter dialog.
+
 - [Multiple-ship barter zones](BarterZones/README.md): prefix sale groups with
   callsigns, sort by ship/zone and keep same-named zones independently accessible.
   Personal inventory ordering and saved zone names remain unchanged. Always on.

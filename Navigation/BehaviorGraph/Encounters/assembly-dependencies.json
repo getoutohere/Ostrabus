@@ -1,0 +1,346 @@
+{
+    "schemaVersion":  1,
+    "description":  "BeatManager staging and deferred GUI entrypoint; not a complete military AI model.",
+    "bindings":  {
+"combat_handoff_blockade":  [
+                                    {
+                                        "type":  "Ostranauts.Ships.AIPilots.BlockadePilot",
+                                        "methods":  [
+                                                        ".ctor"
+                                                    ]
+                                    }
+                                ],
+    "combat_handoff_admission":  [
+                                     {
+                                         "type":  "Ostranauts.Ships.Commands.AmIInCombat",
+                                         "methods":  [
+                                                         "RunCommand"
+                                                     ]
+                                     }
+                                 ],
+    "combat_handoff_scan":  [
+                                {
+                                    "type":  "Ostranauts.Ships.Commands.AreThreatsNearby",
+                                    "methods":  [
+                                                    "RunCommand"
+                                                ]
+                                }
+                            ],
+    "combat_handoff_blockade_scan":  [
+                                         {
+                                             "type":  "Ostranauts.Ships.Commands.AreThreatsNearbyBlockade",
+                                             "methods":  [
+                                                             "RunCommand"
+                                                         ]
+                                         }
+                                     ],
+    "combat_handoff_cleanup":  [
+                                   {
+                                       "type":  "Ostranauts.Ships.Commands.IsTargetNeutralized",
+                                       "methods":  [
+                                                       "RunCommand"
+                                                   ]
+                                   }
+                               ],
+    "combat_handoff_station":  [
+                                   {
+                                       "type":  "Ostranauts.Ships.Commands.TargetNearestStation",
+                                       "methods":  [
+                                                       "RunCommand"
+                                                   ]
+                                   }
+                               ],
+    "combat_handoff_sequence":  [
+                                    {
+                                        "type":  "Ostranauts.Ships.Commands.SequenceCommand",
+                                        "methods":  [
+                                                        "RunCommand"
+                                                    ]
+                                    }
+                                ],
+    "combat_handoff_adapter":  [
+                                   {
+                                       "type":  "Ostranauts.Ships.Commands.ConditionCommand",
+                                       "methods":  [
+                                                       ".ctor",
+                                                       "RunCommand"
+                                                   ]
+                                   }
+                               ],
+    "combat_handoff_patch":  [
+                                 {
+                                     "type":  "Ostranauts.Ships.AIPilots.NavyPilot",
+                                     "methods":  [
+                                                     ".ctor"
+                                                 ]
+                                 },
+                                 {
+                                     "type":  "Ostranauts.Ships.AIPilots.BlockadePilot",
+                                     "methods":  [
+                                                     ".ctor"
+                                                 ]
+                                 },
+                                 {
+                                     "type":  "Ostranauts.Ships.Commands.ConditionCommand",
+                                     "methods":  [
+                                                     ".ctor",
+                                                     "RunCommand"
+                                                 ]
+                                 }
+                             ],
+    "combat_acquisition_patch":  [
+                                     {
+                                         "type":  "Ostranauts.Ships.Commands.AreThreatsNearby",
+                                         "methods":  [
+                                                         "HasSurrenderedToUs"
+                                                     ]
+                                     },
+                                     {
+                                         "type":  "Ostranauts.Ships.Commands.AreThreatsNearbyBlockade",
+                                         "methods":  [
+                                                         "RunCommand"
+                                                     ]
+                                     },
+                                     {
+                                         "type":  "Ostranauts.Ships.Commands.IsTargetNeutralized",
+                                         "methods":  [
+                                                         "RunCommand"
+                                                     ]
+                                     }
+                                 ],
+"flight_rcs_native":  [
+                                               {
+                                                   "methods":  [
+                                                                   "Maneuver"
+                                                               ],
+                                                   "type":  "Ship"
+                                               }
+                                           ],
+                     "flight_handoff_native":  [
+                                                   {
+                                                       "methods":  [
+                                                                       "RunCommand",
+                                                                       "CanExecute",
+                                                                       "ResolveInstantly"
+                                                                   ],
+                                                       "type":  "Ostranauts.Ships.Commands.FlyTo"
+                                                   }
+                                               ],
+                     "flight_shutdown_native":  [
+                                                    {
+                                                        "methods":  [
+                                                                        "RunCommand",
+                                                                        "TorchOff"
+                                                                    ],
+                                                        "type":  "Ostranauts.Ships.Commands.FlyToPath"
+                                                    }
+                                                ],
+                     "flight_control_repair":  [
+                                                   {
+                                                       "methods":  [
+                                                                       "RunCommand"
+                                                                   ],
+                                                       "type":  "Ostranauts.Ships.Commands.FlyTo"
+                                                   },
+                                                   {
+                                                       "methods":  [
+                                                                       "TorchOff"
+                                                                   ],
+                                                       "type":  "Ostranauts.Ships.Commands.FlyToPath"
+                                                   }
+                                               ],
+                     "flight_control_stop":  [
+                                                 {
+                                                     "methods":  [
+                                                                     "SetThrust",
+                                                                     "StopManeuver"
+                                                                 ],
+                                                     "type":  "Ship"
+                                                 },
+                                                 {
+                                                     "methods":  [
+                                                                     "ResetNavData"
+                                                                 ],
+                                                     "type":  "ShipSitu"
+                                                 }
+                                             ],
+                     "gui":  [
+                                 {
+                                     "methods":  [
+                                                     "CrewSwitch"
+                                                 ],
+                                     "type":  "GUIOrbitDraw"
+                                 }
+                             ],
+                     "policy":  [
+                                    {
+                                        "methods":  [
+                                                        "FactionShip",
+                                                        "FactionBattle"
+                                                    ],
+                                        "type":  "BeatManager"
+                                    }
+                                ],
+                     "beat":  [
+                                  {
+                                      "methods":  [
+                                                      "GenerateTension",
+                                                      "DebugFactionShip",
+                                                      "FactionShip",
+                                                      "FactionBattle",
+                                                      "OnTask"
+                                                  ],
+                                      "type":  "BeatManager"
+                                  }
+                              ],
+                     "patch":  [
+                                   {
+                                       "methods":  [
+                                                       "FactionShip",
+                                                       "FactionBattle"
+                                                   ],
+                                       "type":  "BeatManager"
+                                   }
+                               ],
+                     "manager":  [
+                                     {
+                                         "methods":  [
+                                                         "GetAllStationsInATCRegion",
+                                                         "GetPOIs",
+                                                         "GetShipsOfTypeForRegion",
+                                                         "AddAIToDict"
+                                                     ],
+                                         "type":  "AIShipManager"
+                                     }
+                                 ],
+                     "patrol_admission":  [
+                                              {
+                                                  "type":  "Ostranauts.Ships.AIPilots.AIShip",
+                                                  "methods":  [
+                                                                  "AddCommand",
+                                                                  "LoadBehaviorTreeSave"
+                                                              ]
+                                              }
+                                          ],
+                     "queue_repair":  [
+                                          {
+                                              "methods":  [
+                                                              "LoadSaveData"
+                                                          ],
+                                              "type":  "Ostranauts.Ships.Commands.QueuedCommandsNode"
+                                          },
+                                          {
+                                              "methods":  [
+                                                              "GetSaveData"
+                                                          ],
+                                              "type":  "Ostranauts.Ships.Commands.OneShotWrapperCommand"
+                                          },
+                                          {
+                                              "methods":  [
+                                                              "GetBehaviorTreeSaveData"
+                                                          ],
+                                              "type":  "Ostranauts.Ships.AIPilots.AIShip"
+                                          }
+                                      ],
+                     "native_queue":  [
+                                          {
+                                              "type":  "Ostranauts.Ships.Commands.QueuedCommandsNode",
+                                              "methods":  [
+                                                              "RunCommand",
+                                                              "GetSaveData",
+                                                              "LoadSaveData",
+                                                              "EnqueueCommand",
+                                                              "EnqueueUrgentCommand"
+                                                          ]
+                                          }
+                                      ],
+                     "native_wrapper":  [
+                                            {
+                                                "type":  "Ostranauts.Ships.Commands.OneShotWrapperCommand",
+                                                "methods":  [
+                                                                "RunCommand",
+                                                                "GetSaveData"
+                                                            ]
+                                            }
+                                        ],
+                     "native_selector":  [
+                                             {
+                                                 "type":  "Ostranauts.Ships.Commands.SelectorCommand",
+                                                 "methods":  [
+                                                                 "RunCommand"
+                                                             ]
+                                             }
+                                         ],
+                     "navy":  [
+                                  {
+                                      "type":  "Ostranauts.Ships.AIPilots.NavyPilot",
+                                      "methods":  [
+                                                      ".ctor",
+                                                      "FFWD",
+                                                      "CreateAIShip",
+                                                      "GetRandomSpotsWithinInfluenceRange"
+                                                  ]
+                                  }
+                              ],
+                     "controller":  [
+                                        {
+                                            "type":  "Ostranauts.Ships.AIPilots.AIShip",
+                                            "methods":  [
+                                                            ".ctor",
+                                                            "SetupAI",
+                                                            "AddCommandLoot",
+                                                            "AddCommand",
+                                                            "FFWD",
+                                                            "GetBehaviorTreeSaveData",
+                                                            "LoadBehaviorTreeSave",
+                                                            "CreateCommand"
+                                                        ]
+                                        }
+                                    ]
+                 },
+    "assets":  [
+                   {
+                       "sources":  [
+                                       "beat"
+                                   ],
+                       "path":  "plot_manager/pm_settings.json",
+                       "entry":  "Plot Manager Settings",
+                       "id":  "event_settings"
+                   },
+                   {
+                       "sources":  [
+                                       "manager",
+                                       "navy",
+                                       "policy"
+                                   ],
+                       "path":  "star_systems/star_system.json",
+                       "entry":  "NewGame",
+                       "id":  "world_infrastructure"
+                   }
+               ],
+    "predicateSources":  {
+                             "invalid_speed":  [
+                                                   "policy",
+                                                   "patch"
+                                               ],
+                             "wrong_depot":  [
+                                                 "policy",
+                                                 "patch"
+                                             ],
+                             "invalid_region":  [
+                                                    "policy",
+                                                    "patch"
+                                                ],
+                             "protected_actor":  [
+                                                     "policy",
+                                                     "patch"
+                                                 ],
+                             "active_torch":  [
+                                                  "policy",
+                                                  "patch"
+                                              ],
+                             "isolated_patrol":  [
+                                                     "patrol_admission"
+                                                 ]
+                         }
+}

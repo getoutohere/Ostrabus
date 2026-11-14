@@ -17,10 +17,8 @@ internal static class DepartureWaypointPatch {
             // Match CreateBorderSituBetweenPoints: identify the departure depot
             // using the original origin, never the final cargo destination.
             var depot = world.GetNearestStation(origin.ObjSS.vPosx, origin.ObjSS.vPosy, excludeOutposts:true);
-            var situation = depot?.objSS;
-            if (depot != null && !depot.bDestroyed && !depot.bRemove && situation != null &&
-                (situation.bIsBO || situation.bBOLocked || situation.bOrbitLocked) &&
-                situation.strBOPORShip != null && world.aBOs.TryGetValue(situation.strBOPORShip, out var reference) && reference != null) {
+            var reference = LocalNavigationFrame.StationOrbit(depot);
+            if (reference != null) {
                 point.LockToBO(reference, epoch);
                 return;
             }

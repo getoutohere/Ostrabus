@@ -51,10 +51,11 @@ static partial class Program {
             StarSystem.fEpoch=1000;
             CrewSim.system=Empty<StarSystem>();
             Set(CrewSim.system,"dictShipOwners",new Dictionary<string,string>{{"SCAV-FIXTURE","OKLGScav"}});
-            if(args.Length>0 && args[0].StartsWith("fuel")) {StudyFlightFuel(h,args[0]=="fuel-patched");return;}
+            if(args.Length>0 && args[0].StartsWith("fuel")) {StudyFlightFuel(h,args[0]=="fuel-patched" || args[0]=="fuel-controls" || args[0]=="fuel-queues",args[0]=="fuel-controls" || args[0]=="fuel-queues",args[0]=="fuel-queues");return;}
             if(args.Length>0 && args[0]=="refuel") {CheckRefuelApi(h);return;}
             if(args.Length>0 && args[0]=="sos") {CheckSosPaths(h,args.Length>1?args[1]:Ostrabus.Development.InstallationPaths.Game);return;}
             if(args.Length>0 && args[0]=="recovery") {CheckSosPaths(h,Ostrabus.Development.InstallationPaths.Game);CheckRecovery(h);return;}
+            if(args.Length>0 && args[0]=="vorb-hold") {CheckSosPaths(h,Ostrabus.Development.InstallationPaths.Game);CheckVorbHold(h);return;}
             if(args.Length>0 && args[0]=="scope") {CheckNavigationScope(h);return;}
             if(args.Length>0 && args[0]=="replenish") {CheckReplenishment(h);return;}
             if(args.Length>0 && args[0]=="replenish-native") {CheckNativeReplenishment(h);return;}

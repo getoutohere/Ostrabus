@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/7ea6696e721abc4e2ddc7c2bdecc9d5508b4dab131ccd8e33a9d14748c0723e1.json.br",
+  "reason": "Reviewed separate Blockade detector and authored warning assets. Shared lifecycle acquisition guard now covers regular and Blockade detectors, preserving pending cleanup and native policy. Verified 360 Blockade, 170 regular acquisition and 161 Navy handoff native checks; isolated acquisition feature binds both patches. Record the boundary without claiming complete combat modeling.",
+  "acceptedUtc": "2026-11-14T05:23:39.0223829Z",
+  "previousSnapshot": "assembly-baselines/a053b20bd0be0aacb2fede68af047081463a242e8f4b4d40ee7e8757e7f10b01.json.br"
+}

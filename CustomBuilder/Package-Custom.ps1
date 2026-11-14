@@ -22,6 +22,7 @@ Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Install-Custom.ps1') -Destinati
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Install-Custom.cmd') -Destination $destination
 New-Item -ItemType Directory -Path (Join-Path $destination 'Support') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $repo 'Build\Find-Game.ps1') -Destination (Join-Path $destination 'Support')
+Copy-Item -LiteralPath (Join-Path $repo 'Build\Install-NativeMod.ps1') -Destination (Join-Path $destination 'Support')
 if ($plan.pdaAssets) {
     New-Item -ItemType Directory -Path (Join-Path $destination 'PdaSettings') -Force | Out-Null
     Copy-Item -LiteralPath (Join-Path $repo 'PdaSettings\Assets') -Destination (Join-Path $destination 'PdaSettings') -Recurse
@@ -29,7 +30,21 @@ if ($plan.pdaAssets) {
 }
 $hashes=[ordered]@{}
 foreach ($name in @('Ostrabus.dll','Ostrabus.pdb')) { $hashes[$name]=(Get-FileHash -LiteralPath (Join-Path $destination ('Plugin\'+$name)) -Algorithm SHA256).Hash.ToLowerInvariant() }
-$manifest=[ordered]@{schemaVersion=1; kind='Ostrabus custom build'; selectionHash=$plan.fingerprint; pluginFiles=$hashes}
+$nativeHashes=[ordered]@{}
+foreach ($mod in @($plan.nativeMods)) {
+    $source=Join-Path $repo $mod.source
+    if (-not (Test-Path -LiteralPath (Join-Path $source 'mod_info.json') -PathType Leaf)) { throw "Missing native mod metadata: $($mod.name)" }
+    $target=Join-Path $destination ('NativeMods\'+$mod.name)
+    New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force | Out-Null
+    Copy-Item -LiteralPath $source -Destination $target -Recurse
+    foreach ($file in Get-ChildItem -LiteralPath $target -Recurse -File) {
+        $relative=$file.FullName.Substring($target.Length).TrimStart('\','/').Replace('\','/')
+        $nativeHashes[$mod.name+'/'+$relative]=(Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+    }
+}
+$catalog=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'features.json') -Raw | ConvertFrom-Json
+$managed=@($catalog.features | ForEach-Object { $_.nativeMods } | Where-Object { $_ } | ForEach-Object { $_.name } | Sort-Object -Unique)
+$manifest=[ordered]@{schemaVersion=1; kind='Ostrabus custom build'; selectionHash=$plan.fingerprint; pluginFiles=$hashes;managedNativeMods=$managed;nativeModFiles=$nativeHashes}
 [IO.File]::WriteAllText((Join-Path $destination 'package.json'),(ConvertTo-Json -InputObject $manifest -Depth 20),[Text.UTF8Encoding]::new($false))
 $readme=@"
 Ostrabus custom build: $($plan.name)
@@ -48,7 +63,9 @@ Inactive shared support code may remain in the DLL, without automatic registrati
 Normal maintainer Deploy-Mod.cmd continues to install the full normal build.
 
 Target: Ostranauts 1.0.1.10 / BepInEx 5. Game binaries are not redistributed.
-Torch autopilot work pending playtesting is not included in custom builds.
+Selected native mods: $(@($plan.nativeMods | ForEach-Object { $_.name }) -join ', ')
+Their assets are included independently of the Settings app; omitted native
+features are disabled in the game's load order when installing this profile.
 "@
 [IO.File]::WriteAllText((Join-Path $destination 'README.txt'),$readme,[Text.UTF8Encoding]::new($false))
 Compress-Archive -LiteralPath $destination -DestinationPath ($destination+'.zip')

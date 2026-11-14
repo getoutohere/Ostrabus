@@ -38,6 +38,14 @@ Recommended includes `massfix` through `legacy-commands` and `navfix` through
 remain excluded. Ceres guardrails are still individually selectable and included
 in Full; Recommended excludes the stable `ceres-navigation` ID, regardless of its
 current menu number.
+The Ceres feature requires the shared native-priority return integration.
+General RCS budget, Navy candidate affordability and native retreat progression
+repairs are included with `navigation-targets` in bugfix presets without enabling
+Ceres reserve policy.
+`ai-flight-controls` independently includes controller-withdrawal cancellation,
+normal/SFF stale-dispatch checks, player course handoff and terminal fuel-retreat
+repair. Selecting it alone preserves the same protections as the full build;
+`navigation-targets` and Ceres remain optional and compose with those patches.
 Torch features are individually selectable: `torch-fuel-cache` repairs fuel checks;
 `torch-fuel` adds course consumption/reactor control and requires that cache fix;
 `torch-momentum` adds momentum-aware player trajectories and requires `torch-fuel`
@@ -91,6 +99,16 @@ Install one Ostrabus variant at a time. Full and custom DLLs use the same plugin
 identity and filename. Switch profiles with the game closed, then restart it.
 The installer keeps reversible file backups with `.bak` extensions, which BepInEx
 does not load. Do not place an additional copy in another plugin directory.
+
+## Native asset features
+
+The catalog's `nativeMods` entries associate selected features with independent
+native payloads. `quick-pda-hack` packages `OstrabusPdaHack` under `NativeMods/`,
+with file checksums. It installs no Harmony hooks and needs no Settings app.
+Custom installation explicitly enables selected native payloads and disables
+omitted payloads in the active load order. Full `Deploy-Mod.cmd` also installs
+the native feature, preserving an existing disabled setting; reenable it in the
+game's Mods screen when wanted.
 
 ## Runtime cost and boundaries
 

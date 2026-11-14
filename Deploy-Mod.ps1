@@ -1,5 +1,9 @@
 [CmdletBinding()]
-param([string]$GameDirectory = $env:OSTRANAUTS_DIR)
+param(
+    [string]$GameDirectory = $env:OSTRANAUTS_DIR,
+    [string]$SettingsPath = (Join-Path $env:USERPROFILE 'AppData\LocalLow\Blue Bottle Games\Ostranauts\settings.json'),
+    [switch]$NoPrompt
+)
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Build\Find-Game.ps1')
@@ -43,8 +47,10 @@ try {
     $deployIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $deployPrincipal = New-Object Security.Principal.WindowsPrincipal($deployIdentity)
     if (-not $deployPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        $deployArguments = '-NoProfile -ExecutionPolicy Bypass -File "{0}" -GameDirectory "{1}"' -f $PSCommandPath, $gamePath
-        $deployProcess = Start-Process -FilePath "$PSHOME\powershell.exe" -ArgumentList $deployArguments -Verb RunAs -Wait -PassThru
+        $deployArguments = '-NoProfile -ExecutionPolicy Bypass -File "{0}" -GameDirectory "{1}" -SettingsPath "{2}"' -f $PSCommandPath, $gamePath, $SettingsPath
+        if ($NoPrompt) { $deployArguments += ' -NoPrompt' }
+        $deployWindow = if ($NoPrompt) { 'Hidden' } else { 'Normal' }
+        $deployProcess = Start-Process -FilePath "$PSHOME\powershell.exe" -ArgumentList $deployArguments -Verb RunAs -WindowStyle $deployWindow -Wait -PassThru
         exit $deployProcess.ExitCode
     }
 
@@ -63,7 +69,8 @@ try {
         }
         Write-Host "Deployed $deployFile"
     }
-    & (Join-Path $PSScriptRoot 'PdaSettings\Install-Assets.ps1') -AssetSource (Join-Path $deploySource 'PdaSettings\Assets') -GameDirectory $gamePath
+    & (Join-Path $PSScriptRoot 'PdaSettings\Install-Assets.ps1') -AssetSource (Join-Path $deploySource 'PdaSettings\Assets') -GameDirectory $gamePath -SettingsPath $SettingsPath
+    & (Join-Path $PSScriptRoot 'Build\Install-NativeMod.ps1') -ModName 'OstrabusPdaHack' -AssetSource (Join-Path $deploySource 'QoL\PdaHacking\Assets') -GameDirectory $gamePath -SettingsPath $SettingsPath
     Disable-LegacyPlugin -PluginsDirectory (Split-Path -Parent $deployDestination) -DisabledFiles $disabledLegacy
     $deploymentComplete = $true
     Write-Host "`nInstalled to $deployDestination" -ForegroundColor Green
@@ -80,8 +87,8 @@ try {
         }
     }
     Write-Host "`nDeployment failed: $($_.Exception.Message)" -ForegroundColor Red
-    Read-Host 'Press Enter to close'
+    if (-not $NoPrompt) { Read-Host 'Press Enter to close' }
     exit 1
 }
 
-Read-Host 'Press Enter to close'
+if (-not $NoPrompt) { Read-Host 'Press Enter to close' }

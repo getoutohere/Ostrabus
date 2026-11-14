@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Ostranauts.Ships.AIPilots;
-using Ostrabus.CeresNavigation;
 
 namespace Ostrabus.ShipNavigation;
 
@@ -31,10 +30,7 @@ internal static class NavyCandidateFuelPatch {
     internal static void AddEligible(List<Tuple<double, ShipSitu>> list, IEnumerable<Tuple<double, ShipSitu>> extra, NavyPilot pilot) {
         Ship ship = pilot.ShipUs;
         double speed = pilot.MaxSpeed(null);
-        bool ceres = CeresNavigationGuardrails.IsCeresFactionShip(ship);
-        Ship home = ceres ? CeresNavigationGuardrails.FindHome(ship) : null;
-        bool Eligible(ShipSitu target) => target != null && !AIShipManager.BingoFuelCheck(ship, target, speed) &&
-            (!ceres || home != null && !CeresNavigationGuardrails.LacksRoundTripReserve(ship, target, home, speed));
+        bool Eligible(ShipSitu target) => target != null && !AIShipManager.BingoFuelCheck(ship, target, speed);
         for (int i = list.Count - 1; i >= 0; i--) if (!Eligible(list[i].Item2)) list.RemoveAt(i);
         foreach (var candidate in extra) if (Eligible(candidate.Item2)) list.Add(candidate);
     }

@@ -33,6 +33,18 @@ plugin's actual AI/evasion/hull composition in both patch installation orders.
 Production sources are linked directly into both harnesses. No game assets or
 save files are written, and the running game is not contacted.
 
+Rotation regressions execute the shipped Q/E input command bodies and
+`Ship.RotateCW`. The unpatched control reproduces a stale outline despite an
+in-place floor-layout turn: both the floor-list identity and final grid rotation
+remain unchanged. Corrected cases cover an asymmetric perimeter through four CW
+turns, CCW turns, docking-style grid changes, partial-capture cancellation and
+unobserved hulls. Ordinary heading changes neither rebuild nor reupload geometry.
+Selected-ship/typing services, camera/audio/work bookkeeping and Unity transforms
+are fixture boundaries; the native commands, grid/floor rotation, production
+invalidation, worker publication and Vectrosity assignment execute. The prepared
+floor/socket-quadrilateral fixture isolates cache rotation from full scene item
+loading; existing live-socket capture tests cover that separate boundary.
+
 From the repository root, run sequentially:
 
 ```powershell

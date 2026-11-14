@@ -1,5 +1,10 @@
 # Ceres navigation guardrails
 
+The [November 13 reassessment](REASSESSMENT.md) records the reproduced problems.
+The [implemented refactor](REFACTOR.md) removes premature home fallback and the
+extra pre-plan reserve veto, integrates reserve with native tactical retreat,
+and corrects general skilled-pilot delta-v accounting.
+
 Returns now run at the native ordinary-mission branch, after queued/combat/threat
 decisions; see [return scheduling](../Navigation/RETURN-PRIORITY.md).
 
@@ -9,10 +14,15 @@ boarding returns and other factions where the same native defect applies.
 
 - General Navy candidate filtering runs before native selection, closing both
   the single-candidate and all-rejected fuel bypasses. Native generation, ordering
-  and random preference remain. Ceres candidates additionally require a 20%
-  outbound/home delta-v reserve; affordable alternatives remain available.
+  and random preference remain. This is a general bugfix, packaged independently
+  of Ceres policy. Ceres no longer applies an extra maximum-cruise round-trip veto
+  before native planning can evaluate the actual outbound trajectory.
 - Ceres Navy, Pirate and Police roles check reserve during AI updates every 30
-  simulation seconds, including short-range combat chasing. Cargo/civilian roles
+  simulation seconds. Ordinary return intent retains native mission priority;
+  combat separately uses the same sampled reserve to enter native LowFuelRetreat.
+  Its existing approach/docking stages remain authoritative, selecting an
+  available own-faction home and reselecting after target interruption/removal.
+  Cargo/civilian roles
   are excluded from this local patrol policy. Valid usable-torch plans retain
   native handling. Player helm, player-connected ships and active reactions retain
   authority over the shared return controller.
@@ -21,8 +31,10 @@ boarding returns and other factions where the same native defect applies.
   margin. Fuel already spent is not counted twice; refills do not increase the
   predicted remaining cost. No second planner is run. The homeward estimate is
   still a native heuristic, not a fully planned return course. Native target
-  generation also rejects an unsafe completed plan and selects home on its next
-  retry instead of exhausting retries on patrols.
+  generation also rejects an unsafe completed plan and tries native alternative
+  candidates, up to nine attempts. Only exhaustion adds one native home plan;
+  failed home plans remain failures. Unlocked/manual targets retain a heuristic
+  round-trip reserve through native GetNeededFuel.
   Home motion uses the shared pure NativeEphemeris evaluator; reserve prediction
   neither advances shared BodyOrbit caches nor depends on the Orbital toggle.
 - Home is the available assigned station owned by the same faction, otherwise
@@ -41,7 +53,8 @@ boarding returns and other factions where the same native defect applies.
   Equivalent target replacement/reapplication preserves valid predictions, using
   the same value identity as the VORB guard. Native invalid/negative RCS delta-v
   is normalized to zero, closing NaN comparison bypasses throughout native logic.
-- Runtime timing/command caches use weak AI keys, with no ship-ID history growth.
+- Runtime reserve samples use weak pilot keys and store only timing, home ID and
+  a boolean; command caches retain their weak AI keys, with no ship-ID history growth.
   Normal idle hooks allocate zero bytes in the warmed offline test. Home lookup,
   plan cost calculation and prediction occur after the reserve throttle.
 
@@ -56,7 +69,8 @@ exists; the second considers ships over 200,000 km from home lost regardless of
 fuel. Distances are from home, never the player. This policy is not automatic
 navigation correction and was not executed during offline testing.
 
-Validation: 79 Ceres/navigation repair checks, 134 native lifecycle/replacement
+Validation: the expanded native chain suite is documented in [REFACTOR.md](REFACTOR.md).
+The earlier baseline also had 82 Ceres/navigation repair checks, 134 native lifecycle/replacement
 checks, 98 navigation-recovery checks, and 4,850 orbital checks pass. The repair
 host runs native candidate
 selection, AI dispatch, Blackboard/queue serialization and RCS fuel arithmetic;

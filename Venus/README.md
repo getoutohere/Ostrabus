@@ -1,5 +1,10 @@
 # Venus-area fixes
 
+The [scavenger Hold audit](SCAVENGER-HOLD-AUDIT.md) records targetless orbital
+drift and a gap in our earlier emergency-recovery continuation. The resulting
+[shared recovery, return and waiting changes](../Navigation/SCAVENGER-WAITING.md)
+are implemented outside this Venus-specific module.
+
 Namespace `Ostrabus.Venus`, formerly `VorbHaulerReturn`. These patches cover:
 
 - VORB hauler route validation and manual navigation fallback.

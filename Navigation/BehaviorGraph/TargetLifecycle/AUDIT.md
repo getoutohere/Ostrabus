@@ -34,5 +34,7 @@ These are conditional reference traces, not live-game measurements or new native
 
 ## Dependencies not transition-expanded
 
+- **shallow_flight_control_handoff**: Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md.
+- **local_navigation_frames**: Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md.
 
 These unresolved boundaries prevent calling this an all-patches effective simulation. Native inner/outer Harmony phases and side effects must be expanded before drawing conclusions across them.

@@ -1,0 +1,61 @@
+{
+    "id":  "ostrabus-bounty-current",
+    "base":  "bounty-1.0.1.10",
+    "documentedDependencies":  [
+{"id":"shallow_flight_control_handoff","sources":["flight_handoff_native","flight_shutdown_native","flight_control_repair","flight_control_stop","flight_rcs_native"],"status":"native_tested_boundary_not_transition_expanded","reason":"Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."}
+
+
+                               ],
+    "schemaVersion":  1,
+    "patches":  [
+                    {
+                        "id":  "bounty_departure_service",
+                        "operations":  [
+                                           {
+                                               "id":  "fix.embark.serviced",
+                                               "predicate":  "service_ready",
+                                               "to":  "activate",
+                                               "edge":  "embark.flight",
+                                               "set":  {
+                                                           "fuel":  "ready",
+                                                           "service":  "native"
+                                                       },
+                                               "kind":  "intercept",
+                                               "phase":  "before"
+                                           },
+                                           {
+                                               "id":  "fix.embark.service_limited",
+                                               "predicate":  "service_limited",
+                                               "to":  "activate",
+                                               "edge":  "embark.flight",
+                                               "set":  {
+                                                           "fuel":  "low",
+                                                           "service":  "native"
+                                                       },
+                                               "kind":  "intercept",
+                                               "phase":  "before"
+                                           }
+                                       ],
+                        "removes":  [
+                                        "Repeated depleted-hull station departure and immediate home selection."
+                                    ],
+                        "summary":  "Restore the ordinary station AIRefuel step after successful bounty embarkation, before activating its existing hull.",
+                        "preserves":  [
+                                          "Native schedule, eligibility, same NPC/hull, placement, role and behavior tree.",
+                                          "No free fuel on airborne or already-aboard restore, station-only moves or physical ships.",
+                                          "Native exceptions and custody rules."
+                                      ],
+                        "sources":  [
+                                        "patch"
+                                    ],
+                        "evidence":  [
+                                         "native",
+                                         "review"
+                                     ],
+                        "classification":  "native_control_flow_repair"
+                    }
+                ],
+    "notApplicable":  [
+
+                      ]
+}

@@ -1,0 +1,208 @@
+{
+    "id":  "ostrabus-encounters-current",
+    "base":  "encounters-1.0.1.10",
+    "documentedDependencies":  [
+{
+    "id":  "combat_cleanup_admission",
+    "sources":  [
+                    "navy",
+                    "native_selector",
+                    "combat_handoff_blockade",
+                    "combat_handoff_admission",
+                    "combat_handoff_scan",
+                    "combat_handoff_blockade_scan",
+                    "combat_handoff_cleanup",
+                    "combat_handoff_station",
+                    "combat_handoff_sequence",
+                    "combat_handoff_adapter",
+                    "combat_handoff_patch"
+                ],
+    "status":  "native_tested_boundary_not_transition_expanded",
+    "reason":  "Native Navy/Blockade detection failure writes InCombat=false before neutralization; sticky Main resumes against the old enemy. Constructor-local stateless ConditionCommand adapters execute each original gate and admit pending Combatants to native cleanup and station selection. No invented enemies, forced home or saved fields. Dedicated shipped-assembly tests establish baseline and production contrast. Full combat remains outside this staging projection. Separate acquisition repair now also covers Blockade; see COMBAT-NEUTRALIZATION.md and Navigation/PATROL-TARGET-HANDOFF.md."
+},
+{
+    "id": "disabled_target_acquisition",
+    "sources": ["combat_handoff_scan", "combat_handoff_blockade_scan", "combat_handoff_cleanup", "combat_acquisition_patch"],
+    "status": "native_tested_boundary_not_transition_expanded",
+    "reason": "Both detectors exclude new AI-marked below-Full targets without a controller, matching native IsTargetNeutralized. Existing Combatants retain native cleanup; Full/manual and non-AI targets stay eligible. Blockade warnings, faction rules, range and reentry remain native; registration restoration is immediately observable. Tests execute baseline and production detector/cleanup paths, including mixed fights and IL drift. No replacement behavior controller or signature-cache mutation. See Navigation/COMBAT-NEUTRALIZATION.md."
+},
+                                   {
+                                       "id":  "shallow_flight_control_handoff",
+                                       "sources":  [
+                                                       "flight_handoff_native",
+                                                       "flight_shutdown_native",
+                                                       "flight_control_repair",
+                                                       "flight_control_stop",
+                                                       "flight_rcs_native"
+                                                   ],
+                                       "status":  "native_tested_boundary_not_transition_expanded",
+                                       "reason":  "Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."
+                                   }
+                               ],
+    "patches":  [
+                    {
+                        "id":  "local_faction_encounters",
+                        "operations":  [
+                                           {
+                                               "id":  "policy.area",
+                                               "predicate":  "invalid_region",
+                                               "to":  "declined",
+                                               "edge":  "attempt.pass",
+                                               "set":  {
+
+                                                       },
+                                               "kind":  "intercept"
+                                           },
+                                           {
+                                               "id":  "policy.speed",
+                                               "predicate":  "invalid_speed",
+                                               "to":  "declined",
+                                               "edge":  "attempt.pass",
+                                               "set":  {
+
+                                                       },
+                                               "kind":  "intercept"
+                                           },
+                                           {
+                                               "id":  "policy.torch",
+                                               "predicate":  "active_torch",
+                                               "to":  "declined",
+                                               "edge":  "attempt.pass",
+                                               "set":  {
+
+                                                       },
+                                               "kind":  "intercept"
+                                           },
+                                           {
+                                               "id":  "policy.select.fresh.depot",
+                                               "predicate":  "wrong_depot",
+                                               "to":  "declined",
+                                               "edge":  "select.fresh",
+                                               "set":  {
+                                                           "actors":  "none"
+                                                       },
+                                               "kind":  "intercept"
+                                           },
+                                           {
+                                               "id":  "policy.select.existing.depot",
+                                               "predicate":  "wrong_depot",
+                                               "to":  "declined",
+                                               "edge":  "select.existing",
+                                               "set":  {
+                                                           "actors":  "none"
+                                                       },
+                                               "kind":  "intercept"
+                                           },
+                                           {
+                                               "id":  "policy.protected",
+                                               "predicate":  "protected_actor",
+                                               "to":  "declined",
+                                               "edge":  "select.existing",
+                                               "set":  {
+                                                           "actors":  "none"
+                                                       },
+                                               "kind":  "intercept"
+                                           },
+                                           {
+                                               "to":  "patrol",
+                                               "set":  {
+                                                           "motion":  "preserved"
+                                                       },
+                                               "edge":  "existing.place",
+                                               "id":  "policy.retain_motion",
+                                               "kind":  "replace"
+                                           }
+                                       ],
+                        "removes":  [
+                                        "Interplanetary convoy staging.",
+                                        "Busy-actor recruitment and velocity overwrite."
+                                    ],
+                        "summary":  "Gate encounter staging by authored physical area and station-relative speed; protect busy actors and preserve existing patrol motion. Native caps and commands remain authoritative.",
+                        "preserves":  [
+                                          "Native event weights, severity, actor cap accounting and ordinary patrol execution."
+                                      ],
+                        "sources":  [
+                                        "policy",
+                                        "patch"
+                                    ],
+                        "evidence":  [
+                                         "review",
+                                         "native"
+                                     ],
+                        "classification":  "simulation_improvement"
+                    },
+                    {
+                        "id":  "patrol_priority_and_persistence",
+                        "classification":  "bugfix",
+                        "sources":  [
+                                        "patrol_admission",
+                                        "queue_repair"
+                                    ],
+                        "evidence":  [
+                                         "scheduling"
+                                     ],
+                        "summary":  "Use native ordinary Navy patrol missions; retain one-shot callbacks and saved FIFO; migrate only an isolated legacy Navy patrol.",
+                        "removes":  [
+                                        "Ambient patrol starvation of native emergency branches.",
+                                        "One-shot wrapper loss and reversed waiting commands."
+                                    ],
+                        "preserves":  [
+                                          "Native urgent/scripted queues and combat policy.",
+                                          "Target, native flight/fuel state and mixed legacy scripts."
+                                      ],
+                        "operations":  [
+                                           {
+                                               "to":  "patrol",
+                                               "set":  {
+                                                           "owner":  "ordinary"
+                                                       },
+                                               "edge":  "fresh.place",
+                                               "id":  "patrol.admit.fresh",
+                                               "kind":  "replace"
+                                           },
+                                           {
+                                               "to":  "patrol",
+                                               "set":  {
+                                                           "owner":  "ordinary"
+                                                       },
+                                               "edge":  "policy.retain_motion",
+                                               "id":  "patrol.admit.existing",
+                                               "kind":  "replace"
+                                           },
+                                           {
+                                               "to":  "callback",
+                                               "set":  {
+                                                           "continuation":  "single",
+                                                           "owner":  "oneshot"
+                                                       },
+                                               "edge":  "callback.load",
+                                               "id":  "callback.restore.oneshot",
+                                               "kind":  "replace"
+                                           },
+                                           {
+                                               "id":  "legacy.restore.ordinary",
+                                               "predicate":  "isolated_patrol",
+                                               "to":  "patrol",
+                                               "edge":  "legacy.load",
+                                               "set":  {
+                                                           "owner":  "ordinary"
+                                                       },
+                                               "kind":  "intercept"
+                                           },
+                                           {
+                                               "to":  "restored_queue",
+                                               "set":  {
+                                                           "queue_order":  "preserved"
+                                                       },
+                                               "edge":  "fifo.load",
+                                               "id":  "fifo.restore.order",
+                                               "kind":  "replace"
+                                           }
+                                       ]
+                    }
+                ],
+    "schemaVersion":  1,
+    "notApplicable":  [
+                          "Ordinary freight, civilian visits, bounty dispatch and combat flight remain outside this staging slice."
+                      ]
+}

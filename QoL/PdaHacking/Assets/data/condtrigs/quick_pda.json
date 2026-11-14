@@ -1,0 +1,40 @@
+[
+  {
+    "strName": "TOstrabusPdaHackUs",
+    "fChance": 1.0,
+    "fCount": 1.0,
+    "aTriggers": [
+      "TIsHumanAwake",
+      "TIsSkilledHacking"
+    ],
+    "nFilterMultiple": 0,
+    "bAND": true,
+    "bNOT": false,
+    "isBlank": false
+  },
+  {
+    "strName": "TOstrabusPdaDialogUs",
+    "fChance": 1.0,
+    "fCount": 1.0,
+    "aTriggers": [
+      "TIsHumanAwake",
+      "TOstrabusPdaNotHacking"
+    ],
+    "nFilterMultiple": 0,
+    "bAND": true,
+    "bNOT": false,
+    "isBlank": false
+  },
+  {
+    "strName": "TOstrabusPdaNotHacking",
+    "fChance": 1.0,
+    "fCount": 1.0,
+    "aTriggers": [
+      "TIsSkilledHacking"
+    ],
+    "nFilterMultiple": 0,
+    "bAND": true,
+    "bNOT": true,
+    "isBlank": false
+  }
+]

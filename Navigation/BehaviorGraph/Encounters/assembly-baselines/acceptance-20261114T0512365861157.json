@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/a053b20bd0be0aacb2fede68af047081463a242e8f4b4d40ee7e8757e7f10b01.json.br",
+  "reason": "Reviewed Navy and Blockade lost-contact admission against native constructors, detector and cleanup commands plus authored assets; production constructor hooks pass 313 role checks and 296 queue/Ceres interaction checks. Track this as a native-tested combat boundary, not full combat graph coverage.",
+  "acceptedUtc": "2026-11-14T05:12:36.5843802Z",
+  "previousSnapshot": "assembly-baselines/27786c67d43c009ca6704e2211eefaccc9d49dc6f2d1c4e3138835a891c43764.json.br"
+}

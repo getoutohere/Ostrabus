@@ -37,6 +37,10 @@
     ]
   },
   "sources": {
+"flight_rcs_native":{"origin":"game","path":"Ship.cs","symbol":"Ship.Maneuver: direct combat/undock/tow RCS command boundary","anchors":["public void Maneuver("],"sha256":"659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"},
+
+"flight_handoff_native": {"origin":"game","path":"Ostranauts.Ships.Commands/FlyTo.cs","symbol":"FlyTo.RunCommand: path, pause and manual control ownership","anchors":["public override CommandStatus RunCommand"],"sha256":"bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"},"flight_shutdown_native": {"origin":"game","path":"Ostranauts.Ships.Commands/FlyToPath.cs","symbol":"FlyToPath.TorchOff and explicit shutdown callers","anchors":["private void TorchOff()"],"sha256":"154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"},"flight_control_repair": {"origin":"repo","path":"Navigation/FlightControlHandoffPatch.cs","symbol":"FlightControlHandoff / validated route-exit and shallow shutdown hooks","anchors":["internal static void ResetForRcs","class ShallowTorchShutdownPatch"],"sha256":"7d0f7932dcde09f5ae3749d799597d3c3accc53353ac19f30dedf4b21236a0f1"},"flight_control_stop": {"origin":"repo","path":"Navigation/NavigationRoute.cs","symbol":"NavigationRoute.Stop / StopTorch preserve momentum and fuel","anchors":["internal static void StopTorch"],"sha256":"ec3915ac92cde1e37618a11fc372d219f499a664bc0c5c005669cbc4b2708cf2"},
+
     "scav": {
       "origin": "game",
       "path": "Ostranauts.Ships.AIPilots/ScavPilot.cs",
@@ -173,7 +177,133 @@
         "internal static class ClearTargetFuelPatch",
         "saved.objSituScanTarget = null;"
       ],
-      "sha256": "35e7e8398bbda8440a43820430324b8b93c4ade6494c02aaf19b3e903a064fcc"
+      "sha256": "cfe000115b7a1af4b342617314239cd29282e7fcb5f200b7c1a79bc494d3ae11"
+    },
+    "local_frame_navy": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/NavyPilot.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.NavyPilot",
+      "anchors": [
+        "GetTarget("
+      ],
+      "sha256": "ef7fca6786766fa9003602092547e5e0e0915ba34e589f8465de6344925dcd42"
+    },
+    "local_frame_blockade": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/BlockadePilot.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.BlockadePilot",
+      "anchors": [
+        "GetTarget("
+      ],
+      "sha256": "932d285926f42b7e23355e2cbe9362bf985382db4e8e831857bcd208cb1388fd"
+    },
+    "local_frame_pirate": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/PiratePilot.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.PiratePilot",
+      "anchors": [
+        "GetTarget("
+      ],
+      "sha256": "d685f9a6829b09864e825399eae1143ff82187fd900ea7623fc6bf5a5bfd6310"
+    },
+    "local_frame_police": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.AIPilots/PolicePilot.cs",
+      "symbol": "Ostranauts.Ships.AIPilots.PolicePilot",
+      "anchors": [
+        "FFWD("
+      ],
+      "sha256": "b768328bea569bc308878469f533b8fdd665dd29094b963a6b78c62b2eba0a6f"
+    },
+    "local_frame_lurk": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/Lurk.cs",
+      "symbol": "Ostranauts.Ships.Commands.Lurk",
+      "anchors": [
+        "RunCommand("
+      ],
+      "sha256": "ed7439b13c6d399dfab0a4d9fd43b5efad4d191c80ca24e88dea3fa331d261ad"
+    },
+    "local_frame_guard": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/Guard.cs",
+      "symbol": "Ostranauts.Ships.Commands.Guard",
+      "anchors": [
+        "RunCommand("
+      ],
+      "sha256": "d272d327a599a64e39138427445c0c820c2ca23d6b16fdf369e01cccd41ad7f3"
+    },
+    "local_frame_lock": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/LockPirate.cs",
+      "symbol": "Ostranauts.Ships.Commands.LockPirate",
+      "anchors": [
+        "RunCommand("
+      ],
+      "sha256": "e58f418a37c4213fef2aa10fc4bc49656b9e225638764819fc8aff8d3c448500"
+    },
+    "local_frame_encounter": {
+      "origin": "game",
+      "path": "BeatManager.cs",
+      "symbol": "BeatManager",
+      "anchors": [
+        "Pirate("
+      ],
+      "sha256": "142978e07bce1a888e38debbaac3c06ea2558568633b1919992148935b983bd6"
+    },
+    "local_frame_manager": {
+      "origin": "game",
+      "path": "AIShipManager.cs",
+      "symbol": "AIShipManager",
+      "anchors": [
+        "CheckLocalAuthorityScenario("
+      ],
+      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+    },
+    "local_frame_situ": {
+      "origin": "game",
+      "path": "ShipSitu.cs",
+      "symbol": "ShipSitu",
+      "anchors": [
+        "LockToBO("
+      ],
+      "sha256": "09eba8d52011e3a63659e3bb7d582bf21ecaccd8de8ff0a67711d5dec5169a79"
+    },
+    "local_frame_world": {
+      "origin": "game",
+      "path": "StarSystem.cs",
+      "symbol": "StarSystem",
+      "anchors": [
+        "GetNearestBO("
+      ],
+      "sha256": "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+    },
+    "local_frame_resolver": {
+      "origin": "repo",
+      "path": "Navigation/LocalNavigationFrame.cs",
+      "symbol": "Ostrabus.ShipNavigation.LocalNavigationFrame",
+      "anchors": [
+        "class LocalNavigationFrame"
+      ],
+      "sha256": "a065ea48331d23f4aecae1ca8a587cffcb336716682ad4cc62d60bbd9056f147"
+    },
+    "local_frame_hooks": {
+      "origin": "repo",
+      "path": "Navigation/LocalNavigationFramePatches.cs",
+      "symbol": "Ostrabus.ShipNavigation.LocalNavigationFramePatch",
+      "anchors": [
+        "class LocalNavigationFramePatch"
+      ],
+      "sha256": "aad1ccbbbf4d18b20d72d13f997e8542a98e72d000d2edc64b18a811143f28a2"
+    },
+    "local_frame_departure": {
+      "origin": "repo",
+      "path": "Navigation/DepartureWaypointPatch.cs",
+      "symbol": "Ostrabus.ShipNavigation.DepartureWaypointPatch",
+      "anchors": [
+        "class DepartureWaypointPatch"
+      ],
+      "sha256": "c50cc807b6b6132241acd2b743a43620c43f4a15fd4376e7a6b03d7a790eda34"
     }
   },
   "evidence": {

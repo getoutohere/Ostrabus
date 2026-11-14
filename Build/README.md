@@ -34,6 +34,11 @@ Custom builds and packages are isolated from normal build output.
 
 ## Project layout
 
+Full deployment registers the assets-only `OstrabusPdaHack` native mod alongside
+Settings, honoring custom Mods locations and preserving native disabled states.
+Custom installers enable selected native features and disable omitted ones.
+PDA hacking installs no game hook and works independently of the Settings app.
+
 - Feature directories contain their own implementation and notes: `AlternativeWork`,
   `CeresNavigation`, `Haulers`, `Navigation`, `Orbital`, `ShipboardAction`, `Venus`,
   `Sensors`, and `EMPropagation`.

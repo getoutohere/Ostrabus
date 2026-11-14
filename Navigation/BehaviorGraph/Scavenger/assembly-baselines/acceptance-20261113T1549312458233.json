@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/dacd36c9f5fcad8cfcf0f3a9a0ac56ea443a07e44476eaca707409cc7e3a59d6.json.br",
+  "reason": "Reviewed RCS efficiency inverse with native before/after and 174 chain assertions. Numeric affordability stays an external input in these slices; transition guards unchanged. Ceres retreat coverage is separately documented in CeresNavigation/REFACTOR.md.",
+  "acceptedUtc": "2026-11-13T15:49:31.2433784Z",
+  "previousSnapshot": "assembly-baselines/8bf7666dafd0b0540b46580e9aa7b9417d8317adf603e49399f60b70c1012166.json.br"
+}

@@ -10,6 +10,8 @@ trace controls also require `POST`; they enable diagnostics without changing
 combat behavior. `POST /micrometeoroids/strike` deliberately requests a real
 BeatManager MM event, with possible ammunition use and damage. The API has no
 authentication; local processes can query it.
+`POST /ships/{id}/match-velocity` is an explicit one-shot motion/navigation
+intervention; GET previews it. It does not move ships closer or consume fuel.
 It binds IPv4 loopback only and requires the matching numeric Host header.
 Browser Origin headers are rejected. No arbitrary code, reflection queries,
 request bodies, or persistent connections are exposed.
@@ -66,6 +68,10 @@ request bodies, or persistent connections are exposed.
 | `/ships?offset=0&limit=25` | Ship IDs, names, load state, destroyed and AI flags. |
 | `/ships/O-U2V` | Ship summary, raw shallow fuel/capacity/mass, propulsion fields, AI timers, scan/combat targets, navigation target and stored nav plan, saved direct docking links, and read-only `stationDockedCollisionExempt`. |
 | `/ships/O-U2V/ai` | AI registration, region, home station, active command chain/state, navigation target and stored nav plan, affiliations, captain, combat target and combat blackboard. |
+| `GET /ships/E-KRQD/match-velocity?referenceId=HQCH` | Preview a one-shot AI velocity match against a visible ship/nav buoy or celestial body. No movement or command changes. |
+| `POST /ships/E-KRQD/match-velocity?referenceId=HQCH` | Cancel the old route, match reference velocity and place a native recovery Hold. Preserve hull/crew/controller; haulers retain delivery intent. See [velocity recovery](VELOCITY-RECOVERY.md). |
+| `GET /ships/E-KRQD/release-hold` | Preview whether an isolated recovery Hold is present; no planning or mutation. |
+| `POST /ships/E-KRQD/release-hold` | Release only after native planning accepts a next trip; retain the Hold on failure. |
 | `GET /ships/O-U2V/refuel` | Preview replenishing this AI ship's RCS fuel to capacity. Optional `targetKg` specifies desired total kilograms, clamped to capacity; lower targets never drain fuel. |
 | `POST /ships/O-U2V/refuel` | Apply that explicit refill on the Unity thread, using corrected shallow/native materialized filling. Preserve remaining route consumption by rebasing stored fuel levels once. See [refuel contract](REFUEL.md). |
 | `/ships/O-U2V/factions` | Ship owner, ship affiliations and ship CO affiliations, including unregistered ships. |
@@ -74,7 +80,7 @@ request bodies, or persistent connections are exposed.
 | `/ships/O-U2V/comms/O-QYX?offset=0&limit=25` | Stored conversation between any two ships, read from both ship logs. |
 | `/npcs?offset=0&limit=25` | COs with a PersonSpec; the scan cursor counts all COs, so pages may be empty. |
 | `/npcs/{coId}` or `/cos/{coId}` | Runtime CO summary, up to 32 conditions, and current interaction name. Does not search saved PersonSpecs. |
-| `/cos/{coId}/conditions?offset=0&limit=25` | All raw active conditions and values, paged. |
+| `/cos/{coId}/conditions?offset=0&limit=25` | All raw active conditions and values, paged; optional `helpCooldown` exposes the saved SOS timer, world time remaining and actor clock without expiring it. |
 | `/cos/{coId}/activity?offset=0&limit=25` | Current interaction, queued interactions, and active pledges without evaluating them. |
 | `/derelicts?stationId=VORB&minDistanceKm=200&offset=0&limit=25` | Preview unanchored derelicts at least the requested distance from a station. Threshold can be any finite nonnegative value. |
 | `POST /derelicts/prune?stationId=VORB&minDistanceKm=1000000&confirm=PRUNE&maxShips=5` | Remove up to `maxShips` eligible derelicts per call (default 5, maximum 10). |

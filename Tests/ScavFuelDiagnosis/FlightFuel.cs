@@ -16,16 +16,25 @@ static partial class Program {
         internal SteeringBoundary(bool planned) {path=planned;SaveData=new[]{"0"};}
         public override CommandStatus RunCommand(Blackboard b) {if(path)pathCalls++;else manualCalls++;return Running;}
     }
-    static void StudyFlightFuel(Harmony h, bool patched) {
+    static void StudyFlightFuel(Harmony h, bool patched, bool controls=false, bool queues=false) {
         var production=new Harmony("offline.scav-fuel.production");
         if(patched) foreach(string name in new[]{"AIFlightFuelPathPatch","AIFlightFuelManualPatch","AIFlightFuelSavePatch","AIFlightFuelLoadPatch","AIFlightPhysicalFuelPatch"})
             production.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.MiscBugFixes."+name,true)).Patch();
+        if(controls) foreach(string name in new[]{"FlightControlHandoffPatch","ShallowTorchShutdownPatch","ShallowRcsTorchReleasePatch"})
+            production.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.ShipNavigation."+name,true)).Patch();
+        if(queues) foreach(string name in new[]{"PatrolAdmissionPatch","PatrolRestorePatch","OneShotPersistencePatch","CommandQueueLoadPatch","CommandTreeSaveContextPatch"})
+            production.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.ShipNavigation."+name,true)).Patch();
         // Prescribed positions/times and zero handoff radius isolate accounting.
         // No trajectory generation, gravity or controller mode choice is asserted.
         h.Patch(AccessTools.Method(typeof(ShipSitu),nameof(ShipSitu.UpdateTime)),prefix:new HarmonyMethod(typeof(Program),nameof(Quiet)));
         h.Patch(AccessTools.Method(typeof(CollisionManager),nameof(CollisionManager.GetCollisionDistanceAU),new[]{typeof(ShipSitu),typeof(ShipSitu)}),prefix:new HarmonyMethod(typeof(Program),nameof(ZeroCollision)));
         h.Patch(AccessTools.Method(typeof(AIShipManager),nameof(AIShipManager.IsOnCollisionCourse)),prefix:new HarmonyMethod(typeof(Program),nameof(CollisionState)));
         var ship=MakeShip(100);var pilot=Empty<ScavPilot>();Back(pilot,"ShipUs",ship);
+        if(controls) {
+            ship.IsAIShip=true;
+            var waypoints=AccessTools.Field(typeof(Ship),"aWPs");waypoints.SetValue(ship,Activator.CreateInstance(waypoints.FieldType));
+            h.Patch(AccessTools.Method(typeof(GUIOrbitDraw),nameof(GUIOrbitDraw.TriggerShipRedraw)),prefix:new HarmonyMethod(typeof(Program),nameof(Quiet)));
+        }
         ((Dictionary<string,Ship>)AccessTools.Field(typeof(Ship),"aDocked").GetValue(ship)).Clear();
         var flight=new FlyTo(pilot);var b=new Blackboard();b.Set("TripFuelPrediction","123456&80");
         ship.shipSituTarget=Empty<ShipSitu>();ship.shipSituTarget.vPosx=1;ship.shipSituTarget.bIsBO=true;
@@ -47,7 +56,33 @@ static partial class Program {
         Check(Math.Abs(ship.GetRCSRemain()-30)<.001,"Repeating planned accounting at the same epoch should not debit twice.");
         Console.WriteLine("Planned segment to 75%: fuel="+ship.GetRCSRemain());
         string[] saved=flight.SaveData;
+        if(queues) {
+            var pending=new QueuedCommandsNode("PriorityQueue",pilot); pending.EnqueueCommand(new OneShotWrapperCommand(flight));
+            pilot.PriorityQueue=pending;pilot.Blackboard=b;pilot.BehaviorTree=new SelectorCommand("BehaviorTree",pending,new StickySequenceCommand("Main",new ICommand[]{flight}));
+            var savedAI=Empty<AIShip>();Set(savedAI,"_aiCharacter",pilot);Set(savedAI,"_behaviorTree",pilot.BehaviorTree);
+            var json=Newtonsoft.Json.JsonConvert.SerializeObject(savedAI.GetBehaviorTreeSaveData());
+            var payload=Newtonsoft.Json.JsonConvert.DeserializeObject<JsonCommandPayload[]>(json);
+            var loadedPilot=Empty<ScavPilot>();Back(loadedPilot,"ShipUs",ship);loadedPilot.Blackboard=b;
+            var loadedQueue=new QueuedCommandsNode("PriorityQueue",loadedPilot);loadedPilot.PriorityQueue=loadedQueue;
+            var normal=new FlyTo(loadedPilot);loadedPilot.BehaviorTree=new SelectorCommand("BehaviorTree",loadedQueue,new StickySequenceCommand("Main",new ICommand[]{normal}));
+            var loadedAI=Empty<AIShip>();Set(loadedAI,"_aiCharacter",loadedPilot);Set(loadedAI,"_behaviorTree",loadedPilot.BehaviorTree);loadedAI.LoadBehaviorTreeSave(payload);
+            var restored=(FlyTo)((Queue<ICommand>)AccessTools.Field(typeof(QueuedCommandsNode),"commandQueue").GetValue(loadedQueue)).Peek().FindCommand(typeof(FlyTo));
+            Check(restored!=null && System.Linq.Enumerable.SequenceEqual(saved,restored.SaveData),"One-shot persistence lost the extended flight-fuel watermark.");
+            Check(ReferenceEquals(restored,normal),"Restored continuation duplicated the Main flight's fuel ledger.");
+            Set(restored,"_flyToManual",new SteeringBoundary(false));Set(restored,"_flyToPath",new SteeringBoundary(true));
+            fixtureCollision=true;
+            Check(loadedQueue.RunCommand(b).Status==CommandCode.Finished && !loadedQueue.CanExecute(b),"Restored fuel continuation did not run exactly once.");
+            Check(ship.GetRCSRemain()==30,"Restored one-shot callback double-debited the planned flight segment.");
+            ship.objSS.vPosx=.8;normal.RunCommand(b);
+            Check(Math.Abs(ship.GetRCSRemain()-26)<.001,"Normal flight did not inherit the callback's updated manual fuel watermark.");
+            ship.fShallowRCSRemass=30;ship.objSS.vPosx=.75;
+            // These callbacks are additional steering invocations, not mode
+            // changes in the original flight probed below.
+            pathCalls=1;manualCalls=2;
+        }
+        if(controls) {ship.objSS.vAccIn=new UnityEngine.Vector2(1e-10f,-1e-10f);Set(ship,"bTorchDriveThrusting",true);}
         fixtureCollision=true;flight.RunCommand(b);
+        if(controls) Check(ship.objSS.vAccIn.x==0 && ship.objSS.vAccIn.y==0 && !(bool)AccessTools.Field(typeof(Ship),"bTorchDriveThrusting").GetValue(ship),"Composed handoff retained phantom torch force.");
         Check(ship.GetRCSRemain()==(patched?30:0),"Resumed manual accounting had unexpected fuel.");
         Check(ship.objSS.NavData==null && pathCalls==1 && manualCalls==3,"Actual parent FlyTo did not switch modes and invalidate route as expected.");
         Console.WriteLine("Manual accounting resumes at SAME position: fuel="+ship.GetRCSRemain());

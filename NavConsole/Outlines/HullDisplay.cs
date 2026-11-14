@@ -59,6 +59,13 @@ internal static class HullDisplay {
         }
         worker.Dirty(source.Entry);
     }
+    internal static void Rotated(Ship ship) {
+        if (stopped || ship == null || !sources.TryGetValue(ship, out var source)) return;
+        // Q/E calls RotateCW, then resets nGridRotation to zero. FloorPlan and
+        // live socket arrays also rotate in place, so Observe cannot detect it.
+        worker.Dirty(source.Entry); source.NextCapture = 0;
+        if (capture != null && ReferenceEquals(capture.Ticket.Entry, source.Entry)) CloseCapture();
+    }
     internal static void Retire(Ship ship) {
         if (ship == null || !sources.TryGetValue(ship, out var source)) return;
         worker.Retire(source.Entry); sources.Remove(ship);
@@ -180,6 +187,8 @@ internal static class HullDisplay {
             worker.Read(source.Entry, out var result, out long version, out bool clean, out string error);
             items.Add(new Dictionary<string, object> {
                 ["shipId"] = draw.ship.strRegID, ["materialized"] = source.Loaded >= Ship.Loaded.Edit,
+                ["gridRotation"] = draw.ship.nGridRotation, ["observedGridRotation"] = source.Rotation,
+                ["worldRotationRadians"] = draw.ship.objSS.fRot, ["doNotRotate"] = draw.DoNotRotate,
                 ["clean"] = clean, ["version"] = version, ["vertices"] = result?.Count ?? 0,
                 ["components"] = result?.Loops ?? 0,
                 ["collisionPieces"] = result?.Collision?.Pieces.Length,

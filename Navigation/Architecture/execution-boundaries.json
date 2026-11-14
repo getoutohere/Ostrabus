@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "status": "researched_design_not_installed",
+  "gameVersion": "1.0.1.10",
+  "gameAssemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+  "decision": "Replace command execution and mission lifecycle behind native role policy and native world services; prototype offline first.",
+  "firstLifecycle": ["patrol", "encounter", "native_combat_or_surrender_or_retreat", "home_approach", "native_arrival_and_parking"],
+  "preservedPolicy": ["native_role_tree_ordered_choices", "native_asset_conditions_interactions_and_command_loot", "faction_sensor_and_engagement_rules", "existing_optional_reserve_policy", "fuel_tolerant_shallow_travel", "current_bulk_combat_exclusions", "native_crew_and_station_lifecycle"],
+  "neverConcurrent": ["native_root_dispatch_for_owned_actor", "native_role_ffwd_for_owned_actor", "new_executive_dispatch_for_same_actor"],
+  "invariants": [
+    {"id":"single_movement_authority","rule":"An adopted actor has one current mission/ability generation controlling engine inputs and route ownership; world forces remain native."},
+    {"id":"explicit_handoff","rule":"Revoke obsolete controls before granting the next ability; native OnExit is not a complete cancellation interface."},
+    {"id":"mission_owned_goal","rule":"An interrupted mission retains a logical target/frame independent of ship-global goal fields; resume revalidates it."},
+    {"id":"typed_outcomes","rule":"Failure, interruption and waiting are not successful phase completion; native reactive/skip semantics remain explicit."},
+    {"id":"durable_progress","rule":"Mission/ability identity, cursor, callback lifetime and shared fuel state survive reload; transient caches are separate."},
+    {"id":"interval_accounting","rule":"Supported deterministic travel consumes each time/fuel interval once and propagates residual time after phase completion."},
+    {"id":"acknowledged_world_effects","rule":"Native docking/retirement/transfer effects require readback before another action; local tokens alone do not prove exactly-once world effects."},
+    {"id":"canonical_binding","rule":"Logical reconstruction and actor/hull reuse are distinct; runtime bindings and generations reject stale events."}
+  ],
+  "boundaries": [
+    {
+      "id":"role_policy",
+      "nativeSymbols":["Ostranauts.Ships.AIPilots.NavyPilot..ctor", "Ostranauts.Ships.AIPilots.NavyPilot.GetTarget", "Ostranauts.Ships.Commands.AreThreatsNearby.RunCommand", "Ostranauts.Ships.Commands.IsTargetNeutralized.RunCommand"],
+      "proposedOwner":"native_policy_with_explicit_runtime_bindings",
+      "obligation":"Retain ordered decisions and mutating predicate semantics. Do not run a side-effectful native tree as a supposedly pure shadow.",
+      "evidence":["native-navy-tree", "source_review"]
+    },
+    {
+      "id":"normal_dispatch",
+      "nativeSymbols":["Ostranauts.Ships.AIPilots.AIShip.RunAI", "Ostranauts.Ships.AIShipQueue.Dequeue", "AIShipManager.RunAIQueue"],
+      "proposedOwner":"executive_for_adopted_actor_native_for_others",
+      "obligation":"Replace execution coherently, preserve the native scheduling budget initially, and expose compatible active-command status.",
+      "evidence":["selector-preemption", "reactive-sequence", "sticky-failure", "source_review"]
+    },
+    {
+      "id":"directive_admission",
+      "nativeSymbols":["Ostranauts.Ships.AIPilots.AIShip.AddCommand", "Ostranauts.Ships.AIPilots.AIShip.AddUrgentCommand", "Ostranauts.Ships.AIPilots.AIShip.AddCommandLoot", "Ostranauts.Ships.Comms.Comms.ApplyLoot", "Ostranauts.Ships.WeaponsSystem.DodgeHandling", "BeatManager.FactionShip", "BeatManager.FactionBattle", "BeatManager.Pirate", "AIShipManager.CheckLocalAuthorityScenario", "Ostranauts.Ships.Commands.DeployHauler.RunCommand", "Ostranauts.Ships.Commands.DeployLeo.RunCommand"],
+      "proposedOwner":"typed_admission_preserving_authored_protocol",
+      "obligation":"Separate ordinary missions, genuine urgent actions, one-shot continuations and scripts while preserving counterpart/payload context. Unknown directives require explicit compatibility handling.",
+      "evidence":["queue-order", "native-sff", "asset_command_loot", "direct_IL_inventory"]
+    },
+    {
+      "id":"nested_abilities",
+      "nativeSymbols":["Ostranauts.Ships.Commands.FlyTo.RunCommand", "Ostranauts.Ships.Commands.KeepAtDistance.RunCommand", "Ostranauts.Ships.Commands.KeepWithinFiringDistance.RunCommand", "Ostranauts.Ships.Commands.LowFuelRetreat.RunCommand", "Ostranauts.Ships.Commands.ComeHere.RunCommand", "Ostranauts.Ships.Commands.ShakeDown.ReApproachTarget"],
+      "proposedOwner":"native_ability_plus_explicit_state_effect_adapter",
+      "obligation":"Represent subordinate state, flight goal and accounting; a scheduler around an opaque command object is insufficient.",
+      "evidence":["goal-ownership", "persisted-state", "command_capability_inventory"]
+    },
+    {
+      "id":"movement_handoff",
+      "nativeSymbols":["Ship.Maneuver", "Ship.SetThrust", "ShipSitu.ResetNavData", "Ostranauts.ShipGUIs.Utilities.NavData.TimeAdvance", "Ostranauts.Ships.Commands.FlyToPath.TorchOff"],
+      "proposedOwner":"executive_lease_and_retained_native_motion_services",
+      "obligation":"Clear abandoned actuator/route ownership while preserving momentum, gravity, collision impulses, physical reactors and native fuel settlement.",
+      "evidence":["selector-preemption", "existing_flight_handoff_and_fuel_regressions"]
+    },
+    {
+      "id":"shared_world_time",
+      "nativeSymbols":["CrewSim.Update", "GUIFFWD.FFWD", "CrewSim._TeleportCO", "StarSystem.Update", "AIShipManager.FFWD", "Ostranauts.Ships.AIPilots.AIShip.FFWD"],
+      "proposedOwner":"shared_interval_coordinator_with_existing_motion_economy_contexts",
+      "obligation":"Coordinate before bulk movement and across completion boundaries. Suppress legacy callbacks only for an owned interval/actor. Never fake GUI flags or invent combat results.",
+      "evidence":["native-sff", "direct_IL_inventory", "Orbital/PASS-TIME-SKIPS.md"]
+    },
+    {
+      "id":"persistence",
+      "nativeSymbols":["Ostranauts.Ships.AIPilots.AIShip.GetBehaviorTreeSaveData", "Ostranauts.Ships.AIPilots.AIShip.LoadBehaviorTreeSave", "Ostranauts.Core.Blackboard.GetJson", "Ostranauts.Core.Blackboard.LoadSavedData"],
+      "proposedOwner":"versioned_mission_state_with_native_export",
+      "obligation":"Preserve native ability identity/ledger, separate transient caches, and demonstrate safe import/export/removal before claiming compatibility. Exact wire format remains a prototype gate.",
+      "evidence":["persisted-state", "queue-order", "existing_one_shot_identity_regressions"]
+    },
+    {
+      "id":"arrival_and_retirement",
+      "nativeSymbols":["Ostranauts.Ships.Commands.Dock.RunCommand", "Ostranauts.Ships.Commands.Dock.ResolveInstantly", "CrewSim.DockAndDespawn", "AIShipManager.UnregisterShip", "Ostranauts.Ships.Commands.DockCargoAndDespawn.RunCommand"],
+      "proposedOwner":"native_world_effect_with_executive_acknowledgement",
+      "obligation":"Preserve crew, hull parking and role-specific commerce; successful status is not sufficient evidence of the correct transfer. Cargo remains outside first adoption.",
+      "evidence":["source_review", "existing_role_lifecycle_tests"]
+    },
+    {
+      "id":"actor_binding_and_external_mutation",
+      "nativeSymbols":["AIShipManager.AddAIToShip", "AIShipManager.RegionCleanup", "AIShipManager.AIShipCleanup", "StarSystem.SpawnShip", "BeatManager.FactionShip", "Ostranauts.Systems.BountyManager.SpawnBountyTarget"],
+      "proposedOwner":"canonical_binding_bridge_with_retained_world_policy",
+      "obligation":"Separate reconstruction, reuse, departure, retirement and new activation. Preserve player attachments, role/home/crew identity and real-world repositioning semantics.",
+      "evidence":["direct_IL_inventory", "existing_target_lifecycle_bounty_and_encounter_audits"]
+    }
+  ],
+  "patchDisposition": [
+    {"group":"patrol_admission_restore", "classes":["PatrolAdmissionPatch", "PatrolRestorePatch"], "disposition":"subsumable_for_adopted_navy", "removalGate":"Native fallback and excluded Navy actors must remain corrected."},
+    {"group":"one_shot_fifo_persistence", "classes":["CommandTreeSaveContextPatch", "OneShotPersistencePatch", "CommandQueueLoadPatch"], "disposition":"subsumable_for_adopted_actors_shared_for_others", "removalGate":"Other roles and native import/export still depend on the existing mechanism."},
+    {"group":"station_return_runtime", "classes":["StationReturnPatch", "StationReturnMissionPatch", "StationReturnFastForwardPatch", "LegacyReturnLoadPatch"], "disposition":"merge_owned_return_phases_retain_other_roles_and_migration", "removalGate":"Equivalent interruption, save, arrival and legacy handback contracts."},
+    {"group":"retreat_progress", "classes":["LowFuelRetreatProgressPatch"], "disposition":"adapter_dependent", "removalGate":"Explicit retreat state/failure handling replaces the corrected native nested controller."},
+    {"group":"control_release", "classes":["FlightControlHandoffPatch", "ShallowTorchShutdownPatch", "ShallowRcsTorchReleasePatch", "EscapeTargetPatch"], "disposition":"centralize_owned_handoffs_retain_unowned_and_service_paths", "removalGate":"Direct combat/undock/RCS paths and unadopted actors retain the same force-release guarantees."},
+    {"group":"native_service_repairs", "examples":["fuel_arithmetic_refills", "target_rebinding", "local_reference_frames", "departure_waypoints", "collision_avoidance"], "disposition":"retain", "removalGate":"Independently replaced and validated, not made redundant by executive ownership."},
+    {"group":"world_simulation_and_authored_policy", "examples":["orbital_gravity", "economy_timeline", "crew_and_station_lifecycle", "faction_and_bounty_policy", "asset_interactions"], "disposition":"retain_and_integrate", "removalGate":"No removal is proposed by this study."}
+  ],
+  "acceptanceGates": [
+    "native_policy_and_directive_closure_bound",
+    "native_adapter_full_navy_lifecycle",
+    "interruption_and_stale_event_matrix",
+    "save_load_at_every_phase_and_shared_identity",
+    "target_removal_replacement_and_actor_reuse",
+    "failed_and_interrupted_native_world_effects",
+    "normal_sff_pass_interval_and_fuel_accounting",
+    "native_fallback_disable_removal_projection",
+    "warmed_allocation_and_scheduling_measurements",
+    "per_patch_contract_disposition_verified"
+  ],
+  "remainingEvidenceLimits": ["complete_comms_and_generated_stakes_reachability", "all_nested_role_state", "live_unity_scene_and_transfer_effects", "stochastic_combat_time_equivalence", "measured_runtime_performance", "safe_toggle_at_every_state", "global_hook_removal_count"],
+  "nextStep":"Offline executive and native-adapter prototype for the entire stated Navy lifecycle; no production dispatcher or asset edit until its gates pass."
+}

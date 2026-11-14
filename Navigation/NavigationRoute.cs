@@ -8,6 +8,9 @@ internal static class NavigationRoute {
     internal static void Stop(Ship ship) {
         ship.StopManeuver(ship.LoadState >= Ship.Loaded.Edit, false);
         ship.objSS.ResetNavData();
+        StopTorch(ship);
+    }
+    internal static void StopTorch(Ship ship) {
         if (ship.objSS.vAccIn.x != 0 || ship.objSS.vAccIn.y != 0 || TorchActive(ship)) ship.SetThrust(0);
     }
 }

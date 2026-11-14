@@ -1,0 +1,67 @@
+[
+  {
+    "strName": "ItmWristPDA01Locked",
+    "strNameShort": "PDA",
+    "strNameFriendly": "Renbao \"Portal\" PDA (Locked)",
+    "strDesc": "A Renbao handheld smart PDA. A ubiquitous personal item that can be used to store contacts, manage crew and to do lists, take photos, etc. Will interface with most electronic subsystems, like ship navstations, or other personal computers.",
+    "strItemDef": "ItmWristPDA01Locked",
+    "strType": "Item",
+    "strLoot": "ItmPDADataStorageNew",
+    "aInteractions": [
+      "OstrabusHackPDASkill",
+      "ENCHackPDAStart",
+      "DropItem",
+      "PickupItem"
+    ],
+    "aStartingConds": [
+      "IsComputer=1.0x1",
+      "IsLocked=1.0x1.0",
+      "IsPDA=1.0x1",
+      "IsPairable=1.0x1",
+      "IsSolid=1.0x1.0",
+      "IsRenbao=1.0x1.0",
+      "IsPocketable=1.0x1.0",
+      "IsClippable=1.0x1.0",
+      "StatComputerCPUArchitecture=1x0.5",
+      "StatComputerCPUCores=1.0x32",
+      "StatComputerDataStorage=1.0x4.0",
+      "StatComputerNRAM=1.0x1",
+      "StatBasePrice=1.0x270",
+      "StatDismantleProgressMax=1.0x230",
+      "StatMass=1.0x0.4",
+      "StatDamageMax=1.0x2",
+      "IsTechnology=1.0x1",
+      "IsCategoryElectronics=1.0x1"
+    ],
+    "mapCondTolerance": [],
+    "mapPoints": [],
+    "mapChargeProfiles": [
+      "Melee",
+      "MeleeAttackDefaultFragile"
+    ],
+    "aUpdateCommands": [
+      "Destructable,StatDamage,ACTPDADamage,StatDamageMax,1.0"
+    ],
+    "aSlotsWeHave": [
+      "data",
+      "pdaCards"
+    ],
+    "mapGUIPropMaps": [
+      "Computer",
+      "Computer",
+      "PDA Home",
+      "PDA Home"
+    ],
+    "strPortraitImg": "paperdoll/held/portWristPDA01Lock",
+    "strAudioEmitter": "ItmMediumPartsGeneralSound01",
+    "mapSlotEffects": [
+      "wristL",
+      "WristPDA01LockedFull",
+      "heldL",
+      "HeldLWristPDA01LockOn",
+      "heldR",
+      "HeldRWristPDA01LockOn"
+    ],
+    "jsonPI": null
+  }
+]

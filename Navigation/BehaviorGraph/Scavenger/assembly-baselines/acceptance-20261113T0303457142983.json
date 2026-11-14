@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/8bf7666dafd0b0540b46580e9aa7b9417d8317adf603e49399f60b70c1012166.json.br",
+  "reason": "Final reviewed recovery and separately selected return/orbital-wait policies, including Orbital-off preservation and native help-condition evaluation; 156 native fixture assertions, 93 graph checks and orbital regressions pass; live validation pending.",
+  "acceptedUtc": "2026-11-13T03:03:45.7126452Z",
+  "previousSnapshot": "assembly-baselines/fcbc74c4d323005d1e1409202360da8af8a0c64c8025711a501743ebd95d8bfa.json.br"
+}

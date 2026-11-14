@@ -1,0 +1,125 @@
+{
+    "schemaVersion":  1,
+    "description":  "Bounty scheduler/activation entrypoint, station service and native low-fuel return; not a complete military behavior model.",
+    "bindings":  {
+"flight_rcs_native":[{"methods":["Maneuver"],"type":"Ship"}],
+
+"flight_handoff_native":[{"methods":["RunCommand","CanExecute","ResolveInstantly"],"type":"Ostranauts.Ships.Commands.FlyTo"}],"flight_shutdown_native":[{"methods":["RunCommand","TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_repair":[{"methods":["RunCommand"],"type":"Ostranauts.Ships.Commands.FlyTo"},{"methods":["TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_stop":[{"methods":["SetThrust","StopManeuver"],"type":"Ship"},{"methods":["ResetNavData"],"type":"ShipSitu"}],
+
+                     "bounty":  [
+                                    {
+                                        "methods":  [
+                                                        "Init",
+                                                        "Update",
+                                                        "MoveTargets",
+                                                        "PlaceTargetsWithinRegion",
+                                                        "AllowedToLeaveShip",
+                                                        "SpawnBountyTarget"
+                                                    ],
+                                        "type":  "Ostranauts.Systems.BountyManager"
+                                    }
+                                ],
+                     "navy":  [
+                                  {
+                                      "methods":  [
+                                                      ".ctor",
+                                                      "CreateAIShip",
+                                                      "GetTargetHome",
+                                                      "MaxSpeed"
+                                                  ],
+                                      "type":  "Ostranauts.Ships.AIPilots.NavyPilot"
+                                  }
+                              ],
+                     "controller":  [
+                                        {
+                                            "methods":  [
+                                                            ".ctor",
+                                                            "SetupAI",
+                                                            "AddCrew",
+                                                            "ResetShipState"
+                                                        ],
+                                            "type":  "Ostranauts.Ships.AIPilots.AIShip"
+                                        }
+                                    ],
+                     "manager":  [
+                                     {
+                                         "methods":  [
+                                                         "Update",
+                                                         "AddAIToShip",
+                                                         "LowFuel"
+                                                     ],
+                                         "type":  "AIShipManager"
+                                     }
+                                 ],
+                     "select":  [
+                                    {
+                                        "methods":  [
+                                                        "RunCommand",
+                                                        "FindTarget"
+                                                    ],
+                                        "type":  "Ostranauts.Ships.Commands.TargetNewIfNone"
+                                    }
+                                ],
+                     "crew":  [
+                                  {
+                                      "methods":  [
+                                                      "DockAndDespawn"
+                                                  ],
+                                      "type":  "CrewSim"
+                                  }
+                              ],
+                     "ship":  [
+                                  {
+                                      "methods":  [
+                                                      "AIRefuel",
+                                                      "GetRCSRemain",
+                                                      "GetRCSMax",
+                                                      "IsStation"
+                                                  ],
+                                      "type":  "Ship"
+                                  }
+                              ],
+                     "patch":  [
+                                   {
+                                       "methods":  [
+                                                       "SpawnBountyTarget"
+                                                   ],
+                                       "type":  "Ostranauts.Systems.BountyManager"
+                                   }
+                               ]
+                 },
+    "assets":  [
+                   {
+                       "sources":  [
+                                       "bounty"
+                                   ],
+                       "path":  "condtrigs/condtrigs.json",
+                       "entry":  "TIsUnderArrestAlive",
+                       "id":  "custody"
+                   },
+                   {
+                       "sources":  [
+                                       "crew"
+                                   ],
+                       "path":  "condtrigs/condtrigs.json",
+                       "entry":  "TIsValidStationDropOff",
+                       "id":  "station_dropoff"
+                   }
+               ],
+    "predicateSources":  {
+                             "service_ready":  [
+                                                   "ship",
+                                                   "manager"
+                                               ],
+                             "station_service":  [
+                                                     "bounty",
+                                                     "controller",
+                                                     "ship",
+                                                     "patch"
+                                                 ],
+                             "service_limited":  [
+                                                     "ship",
+                                                     "manager"
+                                                 ]
+                         }
+}

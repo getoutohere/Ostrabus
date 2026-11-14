@@ -75,6 +75,7 @@ static class Inventory {
     internal static void Validate(Catalog catalog, Declaration[] declarations) {
         Files.Need(catalog.SchemaVersion == 1, "Unsupported catalog schema.");
         var ids = new HashSet<string>(StringComparer.Ordinal);
+        var nativeNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var types = declarations.ToDictionary(declaration => declaration.Type, StringComparer.Ordinal);
 
         foreach (var feature in catalog.Features) {
@@ -82,6 +83,13 @@ static class Inventory {
                 ids.Add(feature.Id), "Invalid/duplicate feature ID: " + feature.Id);
             Files.Need(feature.Category is "bugfix" or "qol" or "performance" or "simulation" or "developer" or "support",
                 "Unknown category: " + feature.Id);
+            foreach (var mod in feature.NativeMods) {
+                Files.Need(System.Text.RegularExpressions.Regex.IsMatch(mod.Name, "^[A-Za-z][A-Za-z0-9_-]*$") &&
+                    nativeNames.Add(mod.Name), "Invalid/duplicate native mod: " + mod.Name);
+                Files.Need(!Path.IsPathRooted(mod.Source) && !mod.Source.Contains(':') &&
+                    !mod.Source.Contains('\\') && mod.Source.Split('/').All(part => part.Length > 0 && part is not "." and not ".."),
+                    "Native asset source must stay inside the repository: " + mod.Source);
+            }
 
             foreach (string path in feature.PatchFiles)
                 Files.Need(declarations.Any(declaration => declaration.File == path),
@@ -166,7 +174,8 @@ static class Inventory {
             Settings = selected.SelectMany(feature => feature.Settings)
                 .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray(),
             TickCalls = selected.Sum(feature => feature.Tick.Length),
-            PdaAssets = selected.Any(feature => feature.Id == "pda-settings")
+            PdaAssets = selected.Any(feature => feature.Id == "pda-settings"),
+            NativeMods = selected.SelectMany(feature => feature.NativeMods).OrderBy(mod => mod.Name, StringComparer.Ordinal).ToArray()
         };
 
         foreach (var feature in selected.Where(feature => !plan.Requested.Contains(feature.Id, StringComparer.Ordinal)))

@@ -1,0 +1,28 @@
+[
+  {
+    "strName": "OstrabusQuickPdaHack",
+    "strTemplateIA": "ENCHackPDASkillFinished",
+    "strFind": "ENCHackPDASkillFinished",
+    "strReplace": "OstrabusHackPDASkill",
+    "aOverrideValues": [
+      "strTitle|Hack PDA",
+      "strTooltip|Unlock this PDA using your hacking skill.",
+      "strDesc|[us] unlocks [them].",
+      "strActionGroup|Use",
+      "CTTestUs|TOstrabusPdaHackUs",
+      "strRaiseUI|null",
+      "strRaiseUIThem|null",
+      "strSubUI|null",
+      "strImage|null",
+      "bPause|false",
+      "aInverse|null"
+    ]
+  },
+  {
+    "strName": "OstrabusQuickPdaDialog",
+    "strTemplateIA": "ENCHackPDAStart",
+    "aOverrideValues": [
+      "CTTestUs|TOstrabusPdaDialogUs"
+    ]
+  }
+]

@@ -40,6 +40,7 @@ These are conditional reference traces, not live-game measurements or new native
 
 ## Dependencies not transition-expanded
 
+- **shallow_flight_control_handoff**: Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md.
 - **fuel_prediction**: Retarget and clear-target invalidation are important; numeric budgets and native candidate costing are opaque.
 - **station_return**: Native higher priorities precede the persisted Main return branch; ordinary docking stages survive reload. Role-specific callers remain outside this slice.
 - **mixed_mode_fuel**: Shared FlyTo planned/manual fuel handoff is patched and natively tested; its numeric witness is expanded in the scavenger slice, not this retriever motion abstraction.
@@ -47,5 +48,6 @@ These are conditional reference traces, not live-game measurements or new native
 - **escape_handoff**: Production escape setter uses coherent native assignment and invalidates obsolete routes for semantic goal changes. Native caller evidence: Notes/AI-RETARGET-CALLER-AUDIT.md. Complete combat/retreat is outside this slice; generic ApplyToShip route invalidation has not been generalized. Navy/Blockade already clear routes through TargetNearestStation.
 - **planet_safe_avoidance**: Shared native evasion rejects past-only warnings and vets opposite dodges against bodies and moving obstacles. No target/retirement policy changes. Full flight geometry remains outside this slice; see Navigation/PLANETARY-AVOIDANCE-AUDIT.md and Tests/PlanetaryNavigationCheck.
 - **station_docked_traffic**: Saved PDA policy, default on: nonstation hulls connected to stations/apartments are nonhazards while enabled; disabling immediately restores native hull treatment. Enabled hulls are nonhazards for ship contact, AI evasion and proximity scans. Free-space tows, actual stations, weapon/planet hits remain native. Shared-command fixture evidence; no geometric transition model or forced arrival.
+- **local_navigation_frames**: Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md.
 
 These unresolved boundaries prevent calling this an all-patches effective simulation. Native inner/outer Harmony phases and side effects must be expanded before drawing conclusions across them.

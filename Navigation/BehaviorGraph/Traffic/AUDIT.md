@@ -92,10 +92,12 @@ These are conditional reference traces, not live-game measurements or new native
 
 ## Dependencies not transition-expanded
 
+- **shallow_flight_control_handoff**: Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md.
 - **native_economy_tests**: Tests/OrbitalCheck/EconomyChecks executes event ordering, loading, partial trips and delivery; this role model does not calculate physics or production recipes.
 - **native_target_lifecycle**: TargetLifecycle models permanent removal and reconstruction. Traffic adds the missing Ship-to-stellar conversion interleaving.
 - **station_return_intent**: StationReturn is an optional saved directive using native FlyTo/Dock; ordinary cargo Main and market loading do not imply it.
 - **full_npc_socials**: People may transfer during a nonstation visit; character-level pledges, permissions and agendas remain native. No prisoner-transfer policy is inferred.
 - **collision_duplicate_save_repair**: ApplySaveData removes only the unique original INTERREGIONAL cargo plus local Scav/Police fallback pattern with matching native cargo ownership/origin. Native restore and unchanged captured payloads are tested; ambiguous histories/missing hulls and historical orphan refunds are excluded.
+- **local_navigation_frames**: Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md.
 
 These unresolved boundaries prevent calling this an all-patches effective simulation. Native inner/outer Harmony phases and side effects must be expanded before drawing conclusions across them.

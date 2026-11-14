@@ -18,8 +18,29 @@ static class SelfTest {
 
         Plan Make(params string[] ids) => Inventory.Plan(catalog, new Profile { Features = ids }, declarations);
         string Read(string file) => File.ReadAllText(Path.Combine(root, file));
+        var pdaHack = Make("quick-pda-hack");
+        Check(pdaHack.Patches.Length == 0 && pdaHack.TickCalls == 0 && !pdaHack.PdaAssets,
+            "PDA hacking needs no game hooks, tick or Settings app");
+        Check(pdaHack.NativeMods.Length == 1 && pdaHack.NativeMods[0].Name == "OstrabusPdaHack",
+            "PDA hacking selects its native asset payload");
+        Check(Make().NativeMods.Length == 0 && Make("pda-settings").NativeMods.Length == 0,
+            "PDA hacking assets are independently selected");
+        foreach (var mod in catalog.Features.SelectMany(feature => feature.NativeMods))
+            Check(File.Exists(Path.Combine(root, mod.Source, "mod_info.json")), "Native asset metadata exists: " + mod.Name);
         Check(Make("barter-index").Included.Contains("barter-writeback"), "optimized barter includes writeback safety");
+        Check(Make("scav-assistance").Included.Contains("ai-hold-clock"), "scav recovery includes correct wait clocks");
+        Check(!Make("scav-assistance").Included.Contains("scav-return") && !Make("scav-assistance").Included.Contains("orbital-waiting"),
+            "scav bugfixes do not implicitly select simulation policies");
+        Check(Make("scav-return").Included.Contains("scav-assistance") && !Make("scav-return").Included.Contains("orbital-waiting"),
+            "return fallback includes recovery and remains independent of orbital waiting");
+        Check(new[] { "orbital", "scav-assistance", "coast", "sff" }.All(Make("orbital-waiting").Included.Contains),
+            "physical waiting includes orbital and recovery prerequisites");
         Check(Make("torch-fuel-cache").Patches.Length == 1, "fuel cache remains independently selectable");
+        Check(Make("sff-navigation-destination").Included.Length == 1 && Make("sff-navigation-destination").Patches.Length == 1,
+            "SFF destination integrity is independent of orbital and torch modifications");
+        Check(Make("inspection").Patches.Any(patch => patch.Type == "Ostrabus.Inspection.ShipVelocityRecoverySffPatch") &&
+            !Make("sff-navigation-destination").Patches.Any(patch => patch.Type == "Ostrabus.Inspection.ShipVelocityRecoverySffPatch"),
+            "recovery Hold SFF protection belongs to the inspection feature only");
         var torchFuel = Make("torch-fuel");
         Check(torchFuel.Included.Contains("torch-fuel-cache"), "course fuel includes accurate native fuel caches");
         Check(torchFuel.Patches.All(patch => patch.Type != "Ostrabus.ShipNavigation.TorchCourses.TorchTransferKernelPatch"),
@@ -75,6 +96,11 @@ static class SelfTest {
         Check(recommendedPlan.Included.Contains("navigation-targets"), "recommended includes navfix recovery");
         Check(Make("navigation-targets").Patches.Any(patch => patch.Type == "Ostrabus.MiscBugFixes.ShipStellarConversionTargetsPatch"),
             "target lifetimes include atomic asteroid conversion");
+        var navigation = Make("navigation-targets");
+        Check(navigation.Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.NavyCandidateFuelPatch") &&
+            navigation.Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.LowFuelRetreatProgressPatch") &&
+            !navigation.Included.Contains("ceres-navigation"), "general fuel/retreat repairs ship without Ceres policy");
+        Check(Make("ceres-navigation").Included.Contains("ai-return"), "Ceres policy installs native-priority return integration");
         var civilianCoordinates = Make("civilian-sff-coordinates");
         Check(civilianCoordinates.Patches.Length == 1 && civilianCoordinates.TickCalls == 0,
             "civilian coordinate repair has one independent transpiler and no frame callback");

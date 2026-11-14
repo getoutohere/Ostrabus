@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/de224add3716d0ebea9bc5f2b0b2971584698fa9c63455b06f5a79527e7a89b6.json.br",
+  "reason": "Final bounty slice review: 166 native/asset assertions and 76 graph expectations, including repeated legitimate underpowered returns after servicing; preserve native return policy and record actual working-tree provenance.",
+  "acceptedUtc": "2026-11-13T20:22:11.2677958Z",
+  "previousSnapshot": "assembly-baselines/e764e3d40cefe165ecadd485de5bb929a703ea083b5ada9b415fe52b42081c57.json.br"
+}

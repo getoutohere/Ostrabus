@@ -23,6 +23,15 @@ try {
     $run=Join-Path $repo ('obj\CustomBuilder\tests-'+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $run -Force | Out-Null
     $cases=[ordered]@{
+        'bounty-departure-fuel'=@('bounty-departure-fuel');
+        'faction-encounters'=@('faction-encounters');
+        'ai-flight-controls'=@('ai-flight-controls');
+        'ai-patrol-priority'=@('ai-patrol-priority');
+        'quick-pda-hack'=@('quick-pda-hack');
+        'sff-navigation-destination'=@('sff-navigation-destination');
+        'nav-budget'=@('navigation-targets'); 'ceres'=@('ceres-navigation');
+        'local-frames'=@('local-navigation-frames');
+        'local-frames-departure-budget'=@('local-navigation-frames','departure-waypoints','navigation-targets');
         'torch-cache'=@('torch-fuel-cache'); 'torch-fuel'=@('torch-fuel');
         'torch-momentum'=@('torch-momentum'); 'torch-tow'=@('torch-towing');
         door=@('door-autoclose'); range=@('proximity-range'); station=@('station-docked');

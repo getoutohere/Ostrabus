@@ -36,3 +36,11 @@ Validated with 93 bundled-Mono checks, including real Navy/Pirate/Police tree
 constructors and native dispatch, priority interruption, reload and return
 completion. See [test boundaries](../Tests/AiPlannerDiagnosis/PRIORITY-AUDIT.md).
 This build has not yet been tested live for combat during a pending return.
+
+The [Ceres reserve refactor](../CeresNavigation/REFACTOR.md) now feeds the scoped
+reserve decision into native LowFuelRetreat, which is executed inside the combat
+branch. This does not promote StationReturn above combat. The native retreat
+retains its flight/docking stages; Ceres supplies an own-faction home instead of
+using the native nearest-station fallback that can select an enemy. Interrupted
+retreat targets are revalidated when that command resumes. General non-Ceres
+retreat selection and ordinary return priority remain unchanged.

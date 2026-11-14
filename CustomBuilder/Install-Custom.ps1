@@ -35,6 +35,30 @@ if ($selection.pdaAssets) {
         if ($name.EndsWith('.json')) { $null=Get-Content -LiteralPath $path -Raw | ConvertFrom-Json }
     }
 }
+$nativeMods=@($selection.nativeMods | Where-Object { $_ })
+$managedNativeMods=@($manifest.managedNativeMods | Where-Object { $_ })
+foreach ($name in $managedNativeMods) {
+    if ($name -notmatch '^[A-Za-z][A-Za-z0-9_-]*$') { throw "Invalid managed native mod: $name" }
+}
+if (@($managedNativeMods | Sort-Object -Unique).Count -ne $managedNativeMods.Count -or
+    @($nativeMods.name | Sort-Object -Unique).Count -ne $nativeMods.Count) { throw 'Duplicate native mod selection.' }
+foreach ($mod in $nativeMods) {
+    if ($managedNativeMods -notcontains $mod.name) { throw "Unknown selected native mod: $($mod.name)" }
+    $source=Join-Path $PSScriptRoot ('NativeMods\'+$mod.name)
+    if (-not (Test-Path -LiteralPath (Join-Path $source 'mod_info.json') -PathType Leaf)) { throw "Missing native mod: $($mod.name)" }
+    $assets=@(Get-ChildItem -LiteralPath $source -Recurse -File)
+    $expectedFiles=@($manifest.nativeModFiles.PSObject.Properties | Where-Object { $_.Name.StartsWith($mod.name+'/',[StringComparison]::Ordinal) })
+    if ($assets.Count -ne $expectedFiles.Count) { throw "Native mod file inventory mismatch: $($mod.name)" }
+    foreach ($asset in $assets) {
+        $relative=$asset.FullName.Substring($source.Length).TrimStart('\','/').Replace('\','/')
+        $key=$mod.name+'/'+$relative
+        $expected=$manifest.nativeModFiles.PSObject.Properties[$key]
+        if (-not $expected -or (Get-FileHash -LiteralPath $asset.FullName -Algorithm SHA256).Hash -ne $expected.Value) {
+            throw "Native mod checksum mismatch: $key"
+        }
+        if ($asset.Extension -eq '.json') { $null=Get-Content -LiteralPath $asset.FullName -Raw | ConvertFrom-Json }
+    }
+}
 foreach ($process in @(Get-Process -Name 'Ostranauts' -ErrorAction SilentlyContinue)) {
     if (-not $process.Path -or [IO.Path]::GetFullPath($process.Path) -eq (Join-Path $gamePath 'Ostranauts.exe')) { throw 'Close Ostranauts before replacing its plugin.' }
 }
@@ -91,6 +115,18 @@ try {
             Backup-File (Join-Path $modRoot ('TemplateSettings\'+$relative))
         }
         & (Join-Path $PSScriptRoot 'Support\Install-Assets.ps1') -AssetSource (Join-Path $PSScriptRoot 'PdaSettings\Assets') -GameDirectory $gamePath -SettingsPath $SettingsPath
+    }
+    foreach ($name in $managedNativeMods) {
+        if ($nativeMods.name -contains $name) {
+            $source=Join-Path $PSScriptRoot ('NativeMods\'+$name)
+            foreach ($asset in Get-ChildItem -LiteralPath $source -Recurse -File) {
+                $relative=$asset.FullName.Substring($source.Length).TrimStart('\','/')
+                Backup-File (Join-Path $modRoot ($name+'\'+$relative))
+            }
+            & (Join-Path $PSScriptRoot 'Support\Install-NativeMod.ps1') -ModName $name -AssetSource $source -GameDirectory $gamePath -SettingsPath $SettingsPath -Enable
+        } else {
+            & (Join-Path $PSScriptRoot 'Support\Install-NativeMod.ps1') -ModName $name -GameDirectory $gamePath -SettingsPath $SettingsPath -Disabled
+        }
     }
     if (Test-Path -LiteralPath $loadingOrderPath -PathType Leaf) { Write-LoadOrder }
     foreach ($name in @('Ostrabus.dll','Ostrabus.pdb')) {

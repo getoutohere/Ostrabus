@@ -12,6 +12,7 @@ internal static class NpcInspection {
     static readonly AccessTools.FieldRef<Pledge2, JsonPledge> PledgeJson = AccessTools.FieldRefAccess<Pledge2, JsonPledge>("jp");
     static readonly AccessTools.FieldRef<Pledge2, string> PledgeUsId = AccessTools.FieldRefAccess<Pledge2, string>("strUsID");
     static readonly AccessTools.FieldRef<Pledge2, string> PledgeThemId = AccessTools.FieldRefAccess<Pledge2, string>("strThemID");
+    static readonly AccessTools.FieldRef<CondOwner, List<JsonTicker>> Tickers = AccessTools.FieldRefAccess<CondOwner, List<JsonTicker>>("aTickers");
     static Dictionary<string, object> Map(params object[] pairs) { return SnapshotJson.Map(pairs); }
     static bool OverBudget(long start) { return Stopwatch.GetTimestamp() - start >= Stopwatch.Frequency / 1000; }
 
@@ -30,9 +31,23 @@ internal static class NpcInspection {
                 index++;
             }
         }
-        return Map("coId", co.strID, "conditionCount", co.mapConds?.Count, "items", items,
+        return Map("coId", co.strID, "conditionCount", co.mapConds?.Count, "items", items, "helpCooldown", HelpCooldown(co, start),
             "nextOffset", more ? (object)index : null, "offset", offset,
             "note", "Raw active conditions and counts, paged in live dictionary order. No condition triggers or derived health calculations are run.");
+    }
+
+    static object HelpCooldown(CondOwner co, long start) {
+        if (co.mapConds == null || !co.mapConds.TryGetValue("ShipRequestedHelp", out var condition) || condition == null) return null;
+        var timers = Tickers(co);
+        if (timers != null) foreach (var timer in timers) {
+            if (OverBudget(start)) return Map("incomplete", true);
+            if (timer == null || timer.strCondUpdate != "ShipRequestedHelp") continue;
+            return Map("startEpoch", timer.fEpochStart, "endEpoch", timer.GetEpochEndS(),
+                "worldSecondsRemaining", timer.GetEpochEndS() - StarSystem.fEpoch, "ownerClockEpoch", co.Clock?.Epoch,
+                "ageHours", condition.GetAge(), "durationHours", condition.fDuration, "repeat", timer.bRepeat,
+                "note", "Raw saved timer and clocks. Inspection does not expire the condition.");
+        }
+        return Map("tickerFound", false, "ageHours", condition.GetAge(), "durationHours", condition.fDuration);
     }
 
     internal static object Activity(CondOwner co, int offset, int limit, long start) {

@@ -13,6 +13,12 @@ static class Program {
         " was not found in the [" + font + "] font asset or any potential fallbacks. It was replaced by Unicode character \\u0020 in text object [txt].";
     static int Main() {
         string message = Warning("robotocondensed SDF");
+        const string gas = "ERROR: null gascontainer dict on New NPC. Setting to empty for now.";
+        Check(!MissingGlyphConsoleFilter.Prefix(gas, LogType.Warning), "Recovered gas-buffer warning not filtered");
+        foreach (LogType type in new[] { LogType.Error, LogType.Exception, LogType.Assert, LogType.Log })
+            Check(MissingGlyphConsoleFilter.Prefix(gas, type), "Non-warning gas message suppressed");
+        Check(MissingGlyphConsoleFilter.Prefix("ERROR: null gascontainer dict on New NPC. Recovery failed.", LogType.Warning), "Different gas failure suppressed");
+        Check(MissingGlyphConsoleFilter.Prefix("GasContainer null during Init on New NPC", LogType.Warning), "Gas initialization failure suppressed");
         const string ellipsis = "The character used for Ellipsis is not available in font asset [Jura-Bold SDF] or any potential fallbacks. Switching Text Overflow mode to Truncate.";
         Check(!MissingGlyphConsoleFilter.Prefix(ellipsis, LogType.Warning), "Ellipsis fallback warning not filtered");
         Check(MissingGlyphConsoleFilter.Prefix(ellipsis, LogType.Error), "Ellipsis error suppressed");
@@ -38,13 +44,18 @@ static class Program {
         console.Log(ellipsis, "", LogType.Warning);
         Check(Text(console) == "seed", "Ellipsis warning reached GUI");
         Check((int)AccessTools.Field(typeof(ConsoleToGUI), "bugLevel").GetValue(console) == -1, "Ellipsis warning raised GUI badge");
+        console.Log(gas, "", LogType.Warning);
+        Check(Text(console) == "seed", "Recovered gas-buffer warning reached GUI");
+        Check((int)AccessTools.Field(typeof(ConsoleToGUI), "bugLevel").GetValue(console) == -1, "Recovered gas-buffer warning raised GUI badge");
         console.Log("Other warning", "", LogType.Warning);
         Check(Text(console).Contains("Other warning"), "Other warning lost");
         console.Log(message, "", LogType.Error);
         Check(Text(console).Contains(message) && console.ErrorCount == 1, "Error lost");
         console.Log(ellipsis, "", LogType.Error);
         Check(Text(console).Contains(ellipsis) && console.ErrorCount == 2, "Ellipsis error lost");
-        Console.WriteLine(checks + " missing-glyph console filter checks passed.");
+        console.Log(gas, "", LogType.Error);
+        Check(Text(console).Contains(gas) && console.ErrorCount == 3, "Gas error lost");
+        Console.WriteLine(checks + " console filter checks passed.");
         return 0;
     }
 }

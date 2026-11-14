@@ -40,6 +40,15 @@ encounter retirement. Native station-only parking and hauler tow delivery remain
 separate. The native visit harness preserves original tree save paths and checks
 that an unpatched constructor can load them.
 
+`--model bounty` selects the separate bounty scheduler/activation/service slice;
+ordinary pilot constructors do not cover its existing-hull departure shortcut.
+Its native harness and coverage boundaries are documented under
+`Navigation/BehaviorGraph/Bounty/README.md`.
+
+`--model encounters` selects BeatManager faction staging and its deferred
+navigation-screen caller. It compares native fresh/reserve/active-actor selection
+with the local encounter policy; subsequent combat and flight remain external.
+
 `coverage --assembly <Assembly-CSharp.dll>` inventories native concrete pilot
 types, directly constructed command types, role entrypoints and command execution
 entrypoints against all declared source bindings. It reads metadata only.

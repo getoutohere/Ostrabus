@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "snapshot": "assembly-baselines/05695abe511aeb964a35cbcf711c3e04860ecae1ce5db306664c815fbda79f22.json.br",
-  "reason": "0.4.0 source-reference review: native-tested valid-registration stale timer cancellation and station-chain predicate extraction for moored towing previews; modeled transitions unchanged. See REVIEW.md.",
-  "acceptedUtc": "2026-11-12T23:38:42.7106998Z",
-  "previousSnapshot": "assembly-baselines/1ad9ae43f16e1b26cde525936663131e03a07f5b20c1d8c1b81989d2acc3859b.json.br"
+  "snapshot": "assembly-baselines/6dd199aa04c3658cc4fe0c6dfdb66f18da3f94474ed7822bed34b5267767dc87.json.br",
+  "reason": "Reviewed native FlyTo/pause, direct RCS and explicit shallow TorchOff release. 213 control checks preserve owned courses, physical/player inputs, missing hardware, momentum and fuel tolerance; 60 retarget, 174 Ceres and 23 composed fuel checks pass. Numerical flight remains an explicitly unexpanded boundary.",
+  "acceptedUtc": "2026-11-13T23:51:18.4651815Z",
+  "previousSnapshot": "assembly-baselines/eddf779460e4bc52a54a32da9a506ef28166592f33aaa4a6ba536d4189dba25d.json.br"
 }

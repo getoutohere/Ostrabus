@@ -20,12 +20,15 @@ internal static class NavigationFuel {
     }
 }
 
-// Zero propulsion produces 0/0 in native arithmetic. It is no usable delta-v,
-// rather than an unordered value that defeats every native low-fuel comparison.
+// Invert native fuel consumption, including the pilot efficiency multiplier.
+// Zero/invalid capability must not bypass native low-fuel comparisons through NaN.
 [HarmonyPatch(typeof(Ship), nameof(Ship.DeltaVRemainingRCS), MethodType.Getter)]
 internal static class InvalidRcsBudgetPatch {
+    static readonly AccessTools.FieldRef<Ship, double> Efficiency = AccessTools.FieldRefAccess<Ship, double>("fFuelEfficiencyMod");
     [HarmonyPostfix]
-    internal static void Postfix(ref double __result) {
+    internal static void Postfix(Ship __instance, ref double __result) {
+        double efficiency = Efficiency(__instance);
+        __result = NavigationFuel.Finite(efficiency) && efficiency > 0 ? __result / efficiency : 0;
         if (!NavigationFuel.Finite(__result) || __result < 0) __result = 0;
     }
 }

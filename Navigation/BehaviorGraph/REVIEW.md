@@ -1,5 +1,13 @@
 # Coverage, tradeoffs and expansion queue
 
+The [ranked Ceres traffic investigation](../TRAFFIC-CONTROL-AUDIT.md) reproduces
+engine-force handoff and route-execution affordability defects inside flight
+leaves. Current graphs treat numerical flight as an external outcome; their
+successful transitions do not prove those internal ownership/admission contracts.
+The [implemented control repair](../FLIGHT-CONTROL-HANDOFF.md) is now source- and
+assembly-bound as an explicit unexpanded numerical-flight dependency. Its native
+tests cover force ownership; transition-only success still is not a physics proof.
+
 The first slice contains 22 control points, 38 native edges, eight overlays and
 20 conditional cases. It is pinned to game 1.0.1.10 and committed runtime sources
 from the 0.2.2 baseline, plus the source-fingerprinted working shared flight-fuel
@@ -8,6 +16,24 @@ reviewed abstraction with explicit holes, not an automatically extracted program
 or a proof of all possible Unity/game behavior.
 
 ## What the effective graph actually includes
+
+The later [bounty slice](Bounty/README.md) closes a specific omitted activation
+caller: `SpawnBountyTarget` reuses an existing hull and bypasses ordinary
+`CreateAIShip` service. The pilot/command coverage inventory did not enumerate
+independent world-manager activation paths. Reviewing a constructor or its normal
+caller does not establish the initialization contract for every supplied-hull
+caller. Future lifecycle reviews must separately enumerate fresh construction,
+reserve reuse, bounty relaunch, save restoration and region-entry reactivation,
+and record which initialization steps each intentionally skips. This remains a
+coverage requirement, not a claim those boundaries are now fully modeled.
+
+The [encounter slice](Encounters/README.md) adds BeatManager's weighted and
+post-finale staging plus the deferred `GUIOrbitDraw.CrewSwitch` caller. These
+can create actors or recruit existing Navy ships independently of station
+dispatch. Native code can overwrite their position, velocity and mission.
+Reviewing `CreateAIShip` alone therefore also misses this caller's post-construction
+physical-state writes. The native-tested local encounter policy is separately
+classified as a simulation change; it does not expand the full Navy combat tree.
 
 Retriever SFF continuation, the already-attached instant-Dock guard and their
 inner/outer call composition, representative crew registration/execution guards,

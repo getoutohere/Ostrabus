@@ -12,6 +12,7 @@ internal static class MicrometeoroidInspection {
             "reason", result.Triggered ? null : "BeatManager eligibility rejected the event (station, station docking, torch drive or atmosphere).",
             "shipId", result.ShipId, "angleDegrees", result.Angle,
             "detectionProbability", result.DetectionProbability, "detected", result.Detected,
-            "intercepted", result.Intercepted, "bursts", result.Bursts, "rounds", result.Rounds));
+            "intercepted", result.Intercepted, "bursts", result.Bursts, "rounds", result.Rounds,
+            "groupShips", result.GroupShips, "defendingShips", result.DefendingShips, "blockedGuns", result.BlockedGuns));
     }
 }

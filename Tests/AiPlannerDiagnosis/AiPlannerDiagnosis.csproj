@@ -10,7 +10,8 @@
     <Compile Include="../../MiscBugFixes/NavigationTargetRecovery.cs" Link="NavigationTargetRecovery.cs" />
     <Compile Include="../../Venus/VorbNavPlanGuard.cs" Link="VorbNavPlanGuard.cs" />
     <Compile Include="../../CeresNavigation/CeresNavigationGuardrails.cs" Link="CeresNavigationGuardrails.cs" />
-    <Compile Include="../../Navigation/*.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="../../CeresNavigation/CeresCombatRetreat.cs" Link="CeresCombatRetreat.cs" />
+    <Compile Include="../../Navigation/*.cs" Exclude="../../Navigation/OrbitalWaiting.cs;../../Navigation/ScavengerReturn.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../Orbital/NativeEphemeris.cs" Link="NativeEphemeris.cs" />
     <Compile Include="../../Orbital/OrbitalMotion.cs" Link="OrbitalMotion.cs" />
     <Compile Include="../../Orbital/OrbitAcceleration.cs" Link="OrbitAcceleration.cs" />

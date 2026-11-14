@@ -1,5 +1,17 @@
 Our replacement has two phases per incoming fragment.
 
+The original design below is preserved. A subsequent agreed extension shares
+detection and eligible interception across connected docked/towed hulls. Each
+defender uses its own orientation against the same world-space fragment. Before
+phase-two firing, the interlock checks native ballistic proxy paths against
+connected hulls' native collision circles over the ammo's lifetime. It uses the
+actual gun mount, native lead aiming, projectile radius and salvo offsets, with
+a small bound for native lateral jitter. Sector occupancy alone does not bar
+a shot; a potential collision by any proxy does. Continuing rounds beyond the
+fragment also count. Blocked guns spend no ammo and receive no intercept roll;
+another member's clear outward gun may still defend the selected target. Sensor
+and per-burst formulas below are unchanged. See README.md for implementation.
+
 **1. Detection**
 
 Only installed, operational, switched-on sensors contribute:

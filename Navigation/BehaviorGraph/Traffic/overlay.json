@@ -487,6 +487,8 @@
     }
   ],
   "documentedDependencies": [
+{"id":"shallow_flight_control_handoff","sources":["flight_handoff_native","flight_shutdown_native","flight_control_repair","flight_control_stop","flight_rcs_native"],"status":"native_tested_boundary_not_transition_expanded","reason":"Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."},
+
     {
       "id": "native_economy_tests",
       "sources": [
@@ -529,6 +531,27 @@
       ],
       "status": "native_harness_boundary",
       "reason": "ApplySaveData removes only the unique original INTERREGIONAL cargo plus local Scav/Police fallback pattern with matching native cargo ownership/origin. Native restore and unchanged captured payloads are tested; ambiguous histories/missing hulls and historical orphan refunds are excluded."
+    },
+    {
+      "id": "local_navigation_frames",
+      "sources": [
+        "local_frame_navy",
+        "local_frame_blockade",
+        "local_frame_pirate",
+        "local_frame_police",
+        "local_frame_lurk",
+        "local_frame_guard",
+        "local_frame_lock",
+        "local_frame_encounter",
+        "local_frame_manager",
+        "local_frame_situ",
+        "local_frame_world",
+        "local_frame_resolver",
+        "local_frame_hooks",
+        "local_frame_departure"
+      ],
+      "status": "boundary_not_transition_expanded",
+      "reason": "Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md."
     }
   ],
   "notApplicable": []

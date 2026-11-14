@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/27786c67d43c009ca6704e2211eefaccc9d49dc6f2d1c4e3138835a891c43764.json.br",
+  "reason": "Patrol admission and isolated recovery, one-shot shared native leaf identity, FIFO and removable metadata: 122 native baseline/production checks, 174 Ceres regressions, 28 mixed-accounting assertions.",
+  "acceptedUtc": "2026-11-14T00:38:23.6190936Z",
+  "previousSnapshot": "assembly-baselines/bb0018142a201614348f24c926dd72f617a1444d6a8f6197b50d6d9c0eba85f6.json.br"
+}

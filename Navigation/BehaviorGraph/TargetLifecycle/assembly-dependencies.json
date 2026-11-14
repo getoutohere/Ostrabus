@@ -2,6 +2,10 @@
   "schemaVersion": 1,
   "description": "Shared target lifecycle and cross-actor retirement; native method bindings.",
   "bindings": {
+"flight_rcs_native":[{"methods":["Maneuver"],"type":"Ship"}],
+
+"flight_handoff_native":[{"methods":["RunCommand","CanExecute","ResolveInstantly"],"type":"Ostranauts.Ships.Commands.FlyTo"}],"flight_shutdown_native":[{"methods":["RunCommand","TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_repair":[{"methods":["RunCommand"],"type":"Ostranauts.Ships.Commands.FlyTo"},{"methods":["TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_stop":[{"methods":["SetThrust","StopManeuver"],"type":"Ship"},{"methods":["ResetNavData"],"type":"ShipSitu"}],
+
     "scav": [
       {
         "type": "Ostranauts.Ships.AIPilots.ScavPilot",
@@ -155,6 +159,202 @@
           "GetJSON"
         ]
       }
+    ],
+    "local_frame_navy": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.NavyPilot",
+        "methods": [
+          "GetTarget",
+          "GetRandomSpotsWithinInfluenceRange"
+        ]
+      }
+    ],
+    "local_frame_blockade": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.BlockadePilot",
+        "methods": [
+          "GetTarget",
+          "GetRandomSpotsWithinInfluenceRange"
+        ]
+      }
+    ],
+    "local_frame_pirate": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.PiratePilot",
+        "methods": [
+          "GetTarget"
+        ]
+      }
+    ],
+    "local_frame_police": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.PolicePilot",
+        "methods": [
+          "FFWD"
+        ]
+      }
+    ],
+    "local_frame_lurk": [
+      {
+        "type": "Ostranauts.Ships.Commands.Lurk",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "local_frame_guard": [
+      {
+        "type": "Ostranauts.Ships.Commands.Guard",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "local_frame_lock": [
+      {
+        "type": "Ostranauts.Ships.Commands.LockPirate",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "local_frame_encounter": [
+      {
+        "type": "BeatManager",
+        "methods": [
+          "Pirate",
+          "FactionShip",
+          "FactionBattle",
+          "GenerateTutorialDerelict"
+        ]
+      }
+    ],
+    "local_frame_manager": [
+      {
+        "type": "AIShipManager",
+        "methods": [
+          "CheckLocalAuthorityScenario",
+          "SpawnNewBeaconResponse"
+        ]
+      }
+    ],
+    "local_frame_situ": [
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "LockToBO",
+          "UpdateTime"
+        ]
+      }
+    ],
+    "local_frame_world": [
+      {
+        "type": "StarSystem",
+        "methods": [
+          "GetNearestBO",
+          "GetNearestStationRegional"
+        ]
+      }
+    ],
+    "local_frame_resolver": [
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "LockToBO",
+          "UpdateTime"
+        ]
+      },
+      {
+        "type": "StarSystem",
+        "methods": [
+          "GetNearestBO",
+          "GetNearestStationRegional"
+        ]
+      }
+    ],
+    "local_frame_hooks": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.NavyPilot",
+        "methods": [
+          "GetTarget",
+          "GetRandomSpotsWithinInfluenceRange"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.BlockadePilot",
+        "methods": [
+          "GetTarget",
+          "GetRandomSpotsWithinInfluenceRange"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.PiratePilot",
+        "methods": [
+          "GetTarget"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.PolicePilot",
+        "methods": [
+          "FFWD"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Lurk",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Guard",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.LockPirate",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "BeatManager",
+        "methods": [
+          "Pirate",
+          "FactionShip",
+          "FactionBattle",
+          "GenerateTutorialDerelict"
+        ]
+      },
+      {
+        "type": "AIShipManager",
+        "methods": [
+          "CheckLocalAuthorityScenario",
+          "SpawnNewBeaconResponse"
+        ]
+      },
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "LockToBO",
+          "UpdateTime"
+        ]
+      },
+      {
+        "type": "StarSystem",
+        "methods": [
+          "GetNearestBO",
+          "GetNearestStationRegional"
+        ]
+      }
+    ],
+    "local_frame_departure": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToPath",
+        "methods": [
+          "PlanTrip4"
+        ]
+      }
     ]
   },
   "predicateSources": {},
@@ -165,6 +365,24 @@
       "entry": "TIsDerelictCollector",
       "sources": [
         "retriever"
+      ]
+    },
+    {
+      "id": "local_frame_station_orbits",
+      "path": "star_systems/star_system.json",
+      "entry": "NewGame",
+      "sources": [
+        "local_frame_navy",
+        "local_frame_blockade",
+        "local_frame_pirate",
+        "local_frame_police",
+        "local_frame_lurk",
+        "local_frame_guard",
+        "local_frame_lock",
+        "local_frame_encounter",
+        "local_frame_manager",
+        "local_frame_situ",
+        "local_frame_world"
       ]
     }
   ]
