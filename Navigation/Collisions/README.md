@@ -7,6 +7,12 @@ The consolidated repair also covers native safe placement, group merging,
 tethering, inspection handoffs and AI prediction. Offline validation passes;
 live validation of this follow-up is pending.
 
+Selected-target range, docking/mooring controls and proximity warning thresholds
+use the individual hull pair; AI avoidance and formation placement retain
+complete-group bounds. This repairs zero range beside an asteroid-moored ship
+and alarms firing late relative to displayed hull clearance. See the
+[reproduction and range repair](MOORED-TARGET-RANGE.md).
+
 Optional simulation enhancement, enabled by default. **MOD SETTINGS → Hull-shaped
 collisions** changes saved BepInEx `[Navigation] HullCollisions` live. Off restores
 the native circle branch immediately. No reload or save migration is required.
@@ -33,14 +39,16 @@ separate station-docked hull exemption remains authoritative, including chains.
 Free-space towing groups retain native group mass and translation handling.
 
 ShipSitu.Size, GetCollisionDistanceAU, WillCollide, projectile scans, railgun/PDC
-hit tests, DamageRay, weapon accuracy and proximity distances are
-unchanged. Native damage, relative-speed severity, crew effects, collision
+hit tests, DamageRay and weapon accuracy are unchanged. Ship proximity warnings
+use the revised hull pair allowance plus the original speed-scaled/configured
+buffer; comparison and warning intensity agree. Body warnings remain native.
+Native damage, relative-speed severity, crew effects, collision
 events, grace and momentum rules remain in ProcessCollision. Contact normal and
 separating displacement are its only revised geometric inputs.
 
 Docking-specific calls in `GUIDockSys.CanDock`, `ConvertShipToRing` and `SetUI`
-use the cached hull-radius sum rather than the shared native circle helper.
-`Ship.PlaceAtAirlocks` uses that sum plus its original 10 m gap, preserving its
+use the selected pair's cached hull-radius sum rather than the shared native circle helper.
+`Ship.PlaceAtAirlocks` retains complete-group bounds plus its original 10 m gap, preserving its
 selected-port orientation and native formation/group handling. Positioning
 remains the game's bounding-circle approximation; this does not replace its
 interior-grid port alignment with a second layout system. The existing 10-percent

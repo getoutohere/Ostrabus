@@ -1,5 +1,18 @@
 # Release abandoned AI flight controls
 
+Successful route completion is handled by the separate
+[shared playback fix](ROUTE-COMPLETION.md), including non-GUI PASS updates.
+The repairs below retain their own rejection and control-transfer responsibilities.
+
+The feature also repairs [pilot refusal](CERES-SFF-DISPLACEMENT.md).
+Native `FlyToPath.RunCommand` returned success when no awake AI pilot was
+available, leaving old RCS acceleration active. `FlightPilotAvailabilityPatch`
+changes only that refusal return: autonomous AI stops its native maneuver and
+waits with the command's cached Running status. Existing plotted courses, player
+takeover and current-player/non-AI controls retain native behavior. The native
+`TIsHumanAwake` asset remains authoritative; the patch does not heal crew or erase
+momentum. This adds one transpiler to the existing `ai-flight-controls` feature.
+
 Native `FlyTo.RunCommand` clears NavData when handing control to its RCS/manual
 or pause branch, but leaves the old torch acceleration. `FlyToPath.TorchOff`
 also depends on a reactor GUI and only calls SetThrust in Edit/Full. A shallow
@@ -70,7 +83,7 @@ This adds four patch classes covering five methods to the feature's original
 three classes. The registry checks are allocation-free linear scans at native
 dispatch/withdrawal, not a new actor table, frame callback or world sweep.
 No state is serialized. Custom builds selecting only ai-flight-controls contain
-all seven classes; the retreat correction composes with navigation-targets and
+all eight classes; the retreat correction composes with navigation-targets and
 Ceres without requiring either feature.
 
 Ordinary course completion, direct command calls, physical reactor settings,

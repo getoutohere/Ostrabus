@@ -1,0 +1,823 @@
+{
+  "schemaVersion": 1,
+  "binding": "native-navy-1.0.1.10-prototype-v1/c6b794d3-c948-412a-ab78-aeb855ec3826/5687d6f5-a475-4109-b334-13ff828ce8b7",
+  "assertions": 475,
+  "allocationSample": {
+    "iterations": 2000,
+    "allocationCounterReliable": false,
+    "counterCalibrationBytes": 0,
+    "totalAllocatedBytes": null,
+    "bytesPerDispatch": null,
+    "elapsedMilliseconds": 74.1696,
+    "nativeCalls": 22000
+  },
+  "gameAssemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+  "pluginSha256": "fc9bdbdb211c11482c3a875c13d6077233719573a5ea33f58a9612be56e6723b",
+  "replacementModelSha256": "f3734a653011957c1565c84bd3de3cec406b3901dfc9c78b78e43270af909cce",
+  "abilityContractsSha256": "eb0daf337d6bbbc26cec34f4385cbdfe8c113a554bc800b27c1bf10413b02af6",
+  "replacementCoreModuleId": "9fe30b75-3b78-4a98-a723-23011c496700",
+  "navyWorldEvidence": [
+    {
+      "scenario": "mixed-native-world-entrypoints",
+      "routeSeconds": 40000,
+      "epoch": 41000.0,
+      "fuel": 295.0,
+      "Segments": 3,
+      "NativeDispatches": 3,
+      "SuppressedCatchups": 3,
+      "arrivalCalls": 1,
+      "playerRouteRetained": true,
+      "playerTorchFuel": 80.0,
+      "excludedSceneCalls": 0
+    },
+    {
+      "scenario": "native-world-reload-residual",
+      "epoch": 1720.0,
+      "fuel": 295.0,
+      "Segments": 2,
+      "arrivalCalls": 1
+    }
+  ],
+  "retainedWorldEvidence": [
+    {
+      "scenario": "production-PASS-negative-control",
+      "openedScopes": 0,
+      "nativeWorldEpoch": 8200.0
+    },
+    {
+      "scenario": "shared-world-production",
+      "source": "normal",
+      "epoch": 8200.0,
+      "metal": 6,
+      "fuel": 298.20001220703125,
+      "windows": [],
+      "dispatchChecks": 0
+    },
+    {
+      "scenario": "shared-world-production",
+      "source": "SFF",
+      "epoch": 8200.0,
+      "metal": 6,
+      "fuel": 298.20001220703125,
+      "windows": [
+        {
+          "service": "SffEconomy",
+          "start": 1000.0,
+          "seconds": 7200.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 1000.0,
+          "seconds": 7200.0
+        }
+      ],
+      "dispatchChecks": 1
+    },
+    {
+      "scenario": "shared-world-production",
+      "source": "PASS",
+      "epoch": 8200.0,
+      "metal": 6,
+      "fuel": 298.20001220703125,
+      "windows": [
+        {
+          "service": "SffEconomy",
+          "start": 1000.0,
+          "seconds": 7200.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 1000.0,
+          "seconds": 7200.0
+        }
+      ],
+      "dispatchChecks": 1
+    },
+    {
+      "scenario": "route-loss-ownership",
+      "binding": false,
+      "mode": "partial",
+      "fuel": 300.0,
+      "displacementAU": -5.8995904227276382E-07
+    },
+    {
+      "scenario": "route-loss-ownership",
+      "binding": true,
+      "mode": "coast",
+      "fuel": 300.0,
+      "displacementAU": -2.9184093001662168E-11
+    },
+    {
+      "scenario": "freight-and-Navy-arrival",
+      "source": "SFF",
+      "navyFuel": 295.0,
+      "cargoFuel": 290.0,
+      "product": 1,
+      "metal": 3,
+      "arrivals": [
+        {
+          "Key": "SUBJECT",
+          "Value": 1
+        },
+        {
+          "Key": "CARGO",
+          "Value": 1
+        }
+      ],
+      "windows": [
+        {
+          "service": "SffEconomy",
+          "start": 1040.0,
+          "seconds": 10760.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 1040.0,
+          "seconds": 10760.0
+        }
+      ]
+    },
+    {
+      "scenario": "freight-and-Navy-arrival",
+      "source": "PASS",
+      "navyFuel": 295.0,
+      "cargoFuel": 290.0,
+      "product": 1,
+      "metal": 3,
+      "arrivals": [
+        {
+          "Key": "SUBJECT",
+          "Value": 1
+        },
+        {
+          "Key": "CARGO",
+          "Value": 1
+        }
+      ],
+      "windows": [
+        {
+          "service": "SffEconomy",
+          "start": 1040.0,
+          "seconds": 10760.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 1040.0,
+          "seconds": 10760.0
+        }
+      ]
+    },
+    {
+      "scenario": "partial-freight-native-controller",
+      "epoch": 15400.0,
+      "rcs": 292.79998779296875,
+      "fusion": 92.800003051757813,
+      "cargo": 4,
+      "nativePlaybackCalls": 2,
+      "mixedOwners": 0
+    },
+    {
+      "scenario": "multi-day-PASS",
+      "elapsed": 172800,
+      "windows": [
+        {
+          "service": "SffEconomy",
+          "start": 1000.0,
+          "seconds": 86400.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 1000.0,
+          "seconds": 86400.0
+        },
+        {
+          "service": "SffEconomy",
+          "start": 87400.0,
+          "seconds": 86400.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 87400.0,
+          "seconds": 86400.0
+        }
+      ],
+      "metal": 48,
+      "dispatchChecks": 24,
+      "fuel": 297.1199951171875
+    },
+    {
+      "scenario": "unresolved-unmanaged-PASS-completion",
+      "expectedNativeDefect": true,
+      "productionReady": false,
+      "extraVelocityMps": 89.758722841341836,
+      "intervalSeconds": 600,
+      "arrivalAfterSeconds": 300,
+      "nativePlaybackCalls": 1
+    }
+  ],
+  "nativeSaveEvidence": {
+    "collectorCalls": 13,
+    "threadedArchiveWrites": 3,
+    "synchronousArchiveWrites": 4,
+    "excludedSceneCalls": 0,
+    "excludedSteeringCalls": 0,
+    "scope": "One actor; native collector/writer/parser, arrival policy and unregister; physical ship/crew/scene and unrelated subsystem snapshots retain providers.",
+    "performanceQualified": false
+  },
+  "retainedWorldServicePatches": [
+    "OrbitalStepObservationPatch",
+    "OrbitalGravityPatch",
+    "CoastScopePatch",
+    "CoastMotionPatch",
+    "SffMotionPatch",
+    "SffBeforeCatchupPatch",
+    "SffCatchupPatch",
+    "Economy.EconomicFreightMotionPatch",
+    "Economy.EconomicCatchupPatch",
+    "Economy.EconomicFreightCatchupPatch",
+    "Economy.EconomicProductionPatch",
+    "Economy.EconomicDispatchPatch",
+    "Economy.EconomicTraderSyncPatch",
+    "Economy.CargoTransferPatch",
+    "Economy.MarketWithdrawalPatch",
+    "Economy.MarketBatchDepositPatch"
+  ],
+  "reviewedSources": [
+    {
+      "path": "Navigation/FlightControlHandoffPatch.cs",
+      "sha256": "be2eab769cb6bb45de7f6cd50029a99cca0ad33b5aa4f25fd37eeb40591d2eab"
+    },
+    {
+      "path": "Navigation/CivilianAsteroidVisits.cs",
+      "sha256": "6d772b8c587dadf7cbae7fa9268710f25988b72db17b0ea794a6ae82a43f552f"
+    },
+    {
+      "path": "MiscBugFixes/SffNavigationDestinationPatch.cs",
+      "sha256": "07e8d4a4da042b3b1bdade6317f6ea8b6a661e13ec62d4328db11d0ccb3a79bf"
+    },
+    {
+      "path": "MiscBugFixes/CivilianVisitWaiting.cs",
+      "sha256": "e1f545c55672409d9b74ea0ae4b042a52a8ff502294399ae5ba667af9bd1dbee"
+    },
+    {
+      "path": "Orbital/SffSimulation.cs",
+      "sha256": "eadc6fc44b6a678376e6a31dd0a9402574b9f7b1c68a62f7b87810adf1403f5e"
+    },
+    {
+      "path": "Orbital/Economy/CargoArrivalPatches.cs",
+      "sha256": "37f7dfe9972547dcce5f720c517abf765c12936ab92c06d230df31da9c9d0237"
+    },
+    {
+      "path": "Orbital/Economy/CargoDelivery.cs",
+      "sha256": "bf08cd86dbf6940ac0286350e6de55448e5f5761b2492d819d309284ce52dfe9"
+    },
+    {
+      "path": "Orbital/Economy/MarketStockPatches.cs",
+      "sha256": "38f270c013270b38f1c6f449bd46bbf0ca82d1dfef7add3795f0fe4bb1fc09fe"
+    },
+    {
+      "path": "Orbital/OrbitalPatches.cs",
+      "sha256": "e7f27fb97a07fd9f3836cb15591aff17c70ca44b2b05d15455372d3fcdb022ea"
+    },
+    {
+      "path": "Orbital/CoastIntegration.cs",
+      "sha256": "95cfa17ee554b58a95a126ab0e9864ee94045648ae357cc3b88c137df9b24e94"
+    },
+    {
+      "path": "Orbital/NativeEphemeris.cs",
+      "sha256": "602b2c8fd83fd5d3f62fb194c91b347747f1bd2b973755124da347d5a300775e"
+    },
+    {
+      "path": "Orbital/SffDynamics.cs",
+      "sha256": "e3d058f7e24317763ee5e06215f295a0207187fc8958b7adaee2418a43d97edd"
+    },
+    {
+      "path": "Orbital/Economy/EconomyPatches.cs",
+      "sha256": "12a2e18e669c6e208b666a2ef1c07777baaab9d6595f74bf02921e8a6a9a2351"
+    },
+    {
+      "path": "Orbital/Economy/SffEconomy.cs",
+      "sha256": "11fd3f11208b9d0a20485d81c8621b49086074a933fe3317b1e6721a04dea001"
+    },
+    {
+      "path": "Orbital/Economy/FreightRoute.cs",
+      "sha256": "7370334d7d429ce890467a3ddde28b8ff85496cf688bc10b4d915d705a21b29f"
+    }
+  ],
+  "results": [
+    {
+      "name": "native Navy patrol -> combat -> low-fuel retreat -> station arrival",
+      "passed": true,
+      "assertions": 8
+    },
+    {
+      "name": "ordinary patrol admission cannot monopolize combat; stale lease rejected",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "fresh-object checkpoint resumes native nested retreat and route fuel",
+      "passed": true,
+      "assertions": 10
+    },
+    {
+      "name": "normal / SFF / shuttle labels share route boundary semantics",
+      "passed": true,
+      "assertions": 18
+    },
+    {
+      "name": "no-pilot refusal waits; existing course can finish without pilot",
+      "passed": true,
+      "assertions": 9
+    },
+    {
+      "name": "failed native approach cannot fall through to Dock",
+      "passed": true,
+      "assertions": 1
+    },
+    {
+      "name": "native arrival without observed effect waits rather than replaying",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "native damage/surrender selection preserves authored return",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "typed blackboard retains empty lists, references and emergency tuple",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "directive FIFO, one-shot and fresh-graph round trip",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "canonical target rebind / disappearance / stale actor / version refusal",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "directive capacity is bounded and completed command objects are released",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "native export is repeatable for supported ordinary flight",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "combat time-skip is an explicit integration blocker",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "urgent native dodge returns control without suppressing combat",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "nested alias graph survives reconstruction",
+      "passed": true,
+      "assertions": 21
+    },
+    {
+      "name": "replacement ability contracts bind native symbols and authored asset examples",
+      "passed": true,
+      "assertions": 33
+    },
+    {
+      "name": "replacement model is executable and independent of native/Harmony types",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "replacement owns suspended goals, revalidation and stale completions",
+      "passed": true,
+      "assertions": 7
+    },
+    {
+      "name": "replacement arrival requires durable intent and correlated world proof",
+      "passed": true,
+      "assertions": 9
+    },
+    {
+      "name": "replacement reload refuses ambiguous replay and invalidates old callbacks",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "replacement distinguishes waits, failed goals and waypoint completion",
+      "passed": true,
+      "assertions": 11
+    },
+    {
+      "name": "replacement resume preserves failure boundaries and combat intent",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "replacement actor retirement invalidates suspended missions",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "replacement authority release revokes every executive writer",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "replacement withstands bounded adversarial event sequences",
+      "passed": true,
+      "assertions": 1
+    },
+    {
+      "name": "replacement native return omits opaque retreat and commits before scene effect",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "replacement native midpoint reload uses explicit phase and flight payload",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "replacement native pilot wait, failed planning and arrival refusal stay distinct",
+      "passed": true,
+      "assertions": 7
+    },
+    {
+      "name": "replacement prepare/scene-commit crash windows reconcile without replay",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "replacement qualified handback continues through the real native dispatcher",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "replacement combat-sensitive handback defers without erasing native policy",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "replacement return conserves route accounting across interval partitions",
+      "passed": true,
+      "assertions": 15
+    },
+    {
+      "name": "reference prototype lacks the replacement's pre-invocation barrier (negative control)",
+      "passed": true,
+      "assertions": 1
+    },
+    {
+      "name": "replacement directives distinguish progress, completion and failure",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy shipped command aliases include core and generated surrender interactions",
+      "passed": true,
+      "assertions": 15
+    },
+    {
+      "name": "Navy native policy: patrol, combat, timed dodge, resume, retreat and arrival",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "Navy native damage and surrender policy chooses return",
+      "passed": true,
+      "assertions": 1
+    },
+    {
+      "name": "Navy live dodge checkpoint preserves remaining simulation duration",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "Navy actual world entrypoints: normal, SFF iterator and PASS iterator",
+      "passed": true,
+      "assertions": 9
+    },
+    {
+      "name": "Navy native factory rejection is explicit and unsupported bodies remain in the inbox",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "Navy checkpoint retains missile IDs and rejects duplicated directive identities",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "Navy native comms loot retains counterpart and write-only command arguments",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "Navy native typed one-shot and target directive preserve ordinary intent",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy urgent producer's late target publication and repeated dodge are bounded",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy native TakeFuel constructor pause survives reload and failure does not retry",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy native surrender offer accepts only after attacker breaks target lock",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy native demand result can terminate combat without running hidden retreat",
+      "passed": true,
+      "assertions": 1
+    },
+    {
+      "name": "Navy explicit ComeHere reaches player, reloads native hold timer, then resumes ATC intent",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy TakeFuel matches native receipt, transfers and completion across two fresh reloads",
+      "passed": true,
+      "assertions": 9
+    },
+    {
+      "name": "Navy delayed and typed fuel receipts retain native shared clock ordering",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy full inbox refuses raw fuel construction before side effects",
+      "passed": true,
+      "assertions": 1
+    },
+    {
+      "name": "Navy external native takeover does not reconstruct an admitted fuel side effect",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "Navy fuel receipt during a reaction restores the latest shared clock without replay",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy shipped surrender reply order and target-lock rules execute through native evaluators",
+      "passed": true,
+      "assertions": 13
+    },
+    {
+      "name": "Navy received surrender message restores canonical roles and does not replay reception effects",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "Navy expired and unavailable surrender requests retain native refusal semantics",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "Navy shipped boarding reply admits ComeHere on sender and survives reload without resending",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "Navy native in-flight message queue survives request and reply reloads without duplicate delivery",
+      "passed": true,
+      "assertions": 7
+    },
+    {
+      "name": "Native arrival accounts for group crew through authored transfer and destruction branches",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "Native arrival missing crew stays uncertain after hull unregister and can reconcile without another docking",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Native partial arrival fails closed and the capture fence releases after exceptions",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Native synchronous capture and threaded archive keep executive state with the matching world",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "Native capture rejects partial ship serialization and mixed snapshot metadata",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Native capture fence blocks reentrant simulation and saves during crew transfer",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "Native coherent prepared arrival can resume, while standalone uncertain checkpoints cannot guess",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Native archive preserves mixed crew outcomes after retirement without a per-arrival journal",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Native partial-arrival archive does not retry a crew transfer after reload",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "Native archive does not resurrect a captain destroyed by authored station drop-off policy",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "Native patrol handback survives its native archive and resumes the actual dispatcher",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "Native handback defers executive inbox and reaction state without discarding either",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "Navy real SFF suppresses a live legacy flight callback without swallowing player playback",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "Navy actual world route reload consumes the residual interval exactly once",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "Navy combat bulk advancement refuses before world integration",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "world services baseline: real GUI SFF scopes run around executive route",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "world services baseline: production scopes do not cover PASS",
+      "passed": true,
+      "assertions": 1
+    },
+    {
+      "name": "world services shared binding preserves normal, SFF and PASS production and route fuel",
+      "passed": true,
+      "assertions": 11
+    },
+    {
+      "name": "world services route-loss negative control proves stale status can reacquire navigation",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "world services shared scopes preserve player torch playback and unadopted native dispatch",
+      "passed": true,
+      "assertions": 12
+    },
+    {
+      "name": "world services leave authored holding under executive control",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "world services freight delivers before production while Navy retires once",
+      "passed": true,
+      "assertions": 10
+    },
+    {
+      "name": "world services scopes close after native arrival throws without replay",
+      "passed": true,
+      "assertions": 8
+    },
+    {
+      "name": "world services partial freight switches ownership without double settlement",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "world services multi-day PASS uses bounded windows and retains scheduled clocks",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "world services real finalizers release scopes when native physical body throws",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "world services shared binding honors disabled production modules",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "world services negative control: scopes alone do not repair unmanaged PASS route completion",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "world services rebind a saved Navy route without reconstructing economic scopes",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy native long-range geometry becomes an explicit tactical waypoint",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "Navy missing long-range geometry falls through native flee policy",
+      "passed": true,
+      "assertions": 2
+    }
+  ],
+  "fixtureMethods": [
+    "AIShipManager.BingoFuelCheck",
+    "AIShipManager.BingoFuelCheck",
+    "AIShipManager.BingoFuelCheck",
+    "AIShipManager.GetAllStationsInATCRegion",
+    "AIShipManager.IsOnCollisionCourse",
+    "AIShipManager.LowFuel",
+    "CollisionManager.GetCollisionDistanceAU",
+    "CondOwner.GetCondAmount",
+    "CondOwner.GetFactionScore",
+    "CrewSim.DockAndDespawn",
+    "DataHandler.GetCondTrigger",
+    "GUIOrbitDraw.TriggerShipRedraw",
+    "Ostranauts.ShipGUIs.NavStation.NavModTorchDrive.GetLimiterSafetyMax",
+    "Ostranauts.Ships.AIPilots.NavyPilot.GetTarget",
+    "Ostranauts.Ships.AIPilots.NavyPilot.MaxSpeed",
+    "Ostranauts.Ships.Commands.AmIArmed.RunCommand",
+    "Ostranauts.Ships.Commands.AreThreatsNearby.RunCommand",
+    "Ostranauts.Ships.Commands.DoIHaveDecoys.RunCommand",
+    "Ostranauts.Ships.Commands.FlyToPath.PlanTrip4",
+    "Ostranauts.Ships.Commands.FlyToPath.TorchOff",
+    "Ostranauts.Ships.Commands.SetEngagementProfile.RunCommand",
+    "Ostranauts.Ships.Commands.Shoot.RunCommand",
+    "Ostranauts.Ships.Commands.SurrenderDemand.RunCommand",
+    "Ostranauts.Ships.Commands.TargetNewIfNone.GenerateNavData",
+    "Ostranauts.Ships.Comms.Comms.AIGetClearance",
+    "Ostranauts.Ships.Comms.Comms.GetCaptain",
+    "Ostranauts.Ships.Comms.Comms.SendMessage",
+    "Ostranauts.Ships.Sensors.ElectronicSystems.GetSensorRangeKm",
+    "Ostranauts.Ships.Sensors.ElectronicSystems.TurnOffActiveSensors",
+    "Ostranauts.Ships.Sensors.ElectronicSystems.TurnOnAllSensors",
+    "Ostranauts.Ships.Sensors.ShipSignature..ctor",
+    "Ostranauts.Ships.WeaponsSystem.GetWeaponsAndRotations",
+    "Ship.get_HasDockingPorts",
+    "Ship.get_NavAIManned",
+    "Ship.get_NavPlayerManned",
+    "Ship.get_RCSAccelMax",
+    "Ship.get_RCSCount",
+    "Ship.GetPeople",
+    "Ship.HasOpenDockingPorts",
+    "Ship.IsDocked",
+    "Ship.IsStation",
+    "Ship.Maneuver",
+    "Ship.RemoveGasMass",
+    "Ship.SetThrust",
+    "Ship.StopManeuver",
+    "ShipSitu.UpdateTime",
+    "StarSystem.GetNearestStation",
+    "StarSystem.GetNearestStationRegional",
+    "StarSystem.GetShipOwner",
+    "UnityEngine.Object.op_Equality",
+    "UnityEngine.Object.op_Inequality"
+  ],
+  "retainedPatchMethods": [
+    "Ostranauts.Ships.Commands.FlyTo.ApplyTripFuel",
+    "Ostranauts.Ships.Commands.FlyTo.FetchFuelData",
+    "Ostranauts.Ships.Commands.FlyTo.get_SaveData",
+    "Ostranauts.Ships.Commands.FlyTo.RunCommand",
+    "Ostranauts.Ships.Commands.FlyTo.set_SaveData",
+    "Ostranauts.Ships.Commands.FlyToPath.RunCommand",
+    "Ostranauts.Ships.Commands.FlyToPath.TorchOff",
+    "Ostranauts.Ships.Commands.LowFuelRetreat.RunCommand",
+    "Ship.Maneuver"
+  ]
+}

@@ -10,6 +10,8 @@ dotnet run --project Tests/SaveJsonCompatibility/Host -c Release -- Tests/TorchT
 The actual production sources are linked into the harness. It first reproduces
 the native member-course/group-anchor overwrite and missing tow-mass defects,
 then installs the repair and exercises native planner and playback methods.
+The shared route-completion patch is installed during the repaired phase, so
+end-of-course formation, fuel and brace checks also test their composition.
 
 The November 12 station-departure update passes **343,871 assertions**, including
 100 moored-preview checks. These cover clamped-brace departure chains, either-side

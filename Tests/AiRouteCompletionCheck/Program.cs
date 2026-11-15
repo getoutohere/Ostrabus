@@ -81,8 +81,8 @@ static partial class Program {
         Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"), nameof(Unequal));
         // Body ephemerides and final placement integration are Unity boundaries.
         // Native playback, destination writes/copies, command exits and JSON reconstruction run unchanged.
-        Patch(AccessTools.Method(typeof(ShipSitu), nameof(ShipSitu.UpdateTime)), nameof(Skip));
-        Patch(AccessTools.Method(typeof(ShipSitu), nameof(ShipSitu.TimeAdvance)), nameof(Skip));
+        Patch(AccessTools.Method(typeof(ShipSitu), nameof(ShipSitu.UpdateTime)), nameof(RefreshBoundary));
+        Patch(AccessTools.Method(typeof(ShipSitu), nameof(ShipSitu.TimeAdvance)), nameof(AdvanceBoundary));
         Patch(AccessTools.Method(typeof(StarSystem), nameof(StarSystem.GetShipOwner)), nameof(Owner));
         Patch(AccessTools.Method(typeof(Ship), nameof(Ship.StopManeuver)), nameof(Stop));
         Patch(AccessTools.Method(typeof(Ship), nameof(Ship.IsStation)), nameof(Station));
@@ -95,9 +95,12 @@ static partial class Program {
         var production = new Harmony("offline.ai-route.production");
         production.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.MiscBugFixes.SffNavigationDestinationPatch", true)).Patch();
         Completion(true);
+        MooringCompletion(boundary);
+        PilotRefusal(boundary, production);
         Recovery();
         HoldContinuation();
         Transport();
+        PlaybackCompletion(boundary, production);
         AccessTools.Field(typeof(GUIFFWD), "bFFWDActive").SetValue(null, false);
         Console.WriteLine(checks + " native route-completion/recovery checks passed.");
         return 0;

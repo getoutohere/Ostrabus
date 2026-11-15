@@ -137,6 +137,7 @@ static class Program {
         if (args.Length != 0 && args[0] == "traffic") { TrafficChecks.Run(); return 0; }
         if (args.Length != 0 && args[0] == "hidden-visits") { TrafficChecks.Run(true); return 0; }
         if (args.Length != 0 && args[0] == "civilian-visits") { TrafficChecks.Run(false, true); return 0; }
+        if (args.Length != 0 && args[0] == "civilian-waiting") { TrafficChecks.Waiting(); return 0; }
         if (args.Length != 0 && args[0] == "traffic-conversion") { LifecycleChecks.Run(null, true); return 0; }
         if (args.Length != 0 && args[0] == "region-cleanup") { LifecycleChecks.Run(null, false, true); return 0; }
         h.Patch(AccessTools.PropertyGetter(typeof(Ship), "RCSAccelMax"), prefix: new HarmonyMethod(typeof(Program), nameof(Acceleration)));

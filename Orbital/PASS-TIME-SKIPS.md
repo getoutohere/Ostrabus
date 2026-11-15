@@ -1,6 +1,9 @@
 # PASS and shared time advancement: investigation
 
-Status: diagnosis and integration proposal; production code is unchanged.
+Status: the [shared route-completion defect](../Navigation/ROUTE-COMPLETION.md)
+is repaired and offline validated. The wider shared PASS time-advance integration
+below remains a proposal; GUI-gated motion/economy/discontinuity boundaries have
+not been changed by that repair.
 
 ## Reproduced failure
 
@@ -59,7 +62,7 @@ individual role callbacks. That threshold must not simply be removed.
 1. Introduce a scoped shared time-advance identity for actual GUI and shuttle
    world jumps. It must not fake `GUIFFWD.Active`, remain active during loading
    yields, or turn ordinary frames into world scans. Honor existing module flags.
-2. Repair successful route completion at the shared playback/physics handoff:
+2. **Implemented separately:** repair successful route completion at the shared playback/physics handoff:
    account for elapsed trajectory time once, stop the completed engine command,
    and propagate only the remaining coast interval. Retain the mission target
    and distinguish successful completion from abort/manual-control paths.
@@ -76,5 +79,6 @@ individual role callbacks. That threshold must not simply be removed.
 Validation must cover short trips, the recorded 1,500-second case, hour-boundary
 and multi-day trips, free/docked groups, route completion inside a jump, multiple
 ship roles, recovery holds, freight accounting, exceptions/nesting and player
-torch/braced courses. The numerical replay proves the defect; it is not yet
-validation of this proposed integration.
+torch/braced courses. The numerical replay proves the defect. The completion
+repair has its own native regression harness; that is not validation of the whole
+proposed PASS integration.

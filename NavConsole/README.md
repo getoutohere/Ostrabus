@@ -2,6 +2,10 @@
 
 Planned: [compact target periapsis/apoapsis readout](TARGET-ORBIT-DISPLAY.md).
 
+[RCS rotation module](Rotation/README.md) adds a physical 1x1 ROTATION panel with
+target-relative turns and bearing hold. It reuses native Controls artwork, consumes
+native RCS fuel and continues through console closure/save loading.
+
 [Parallel hull outlines](HULL-OUTLINES.md) replace incomplete/stale nav silhouettes
 with cached exterior perimeters that preserve hull corners, recesses and relative
 sizes independently of grid orientation. Useful
@@ -115,8 +119,13 @@ For ship contacts the new buffer is `max(selected km, vanilla speed-scaled km)`.
 For body contacts it is the selected range. Selecting 20 does **not** multiply the
 speed-based range into 200 km. At 5 both paths preserve native constants exactly.
 The threshold comparison and normalized distance used for pitch receive the same
-buffer. Actual collision boundaries, collision processing, exclusion filters,
-time-scale reset, objectives, sound and mute logic remain native.
+buffer. With optional hull-shaped collisions enabled, the warning comparison
+and pitch also use the individual hull radii used by the range display; group
+placement enclosures do not count as selected-hull surface. This prevents a
+5 km warning arriving at roughly 4 km of displayed clearance. See the
+[geometry integration repair](../Navigation/Collisions/MOORED-TARGET-RANGE.md).
+The dial itself does not change collision processing, exclusion filters,
+time-scale reset, objectives, sound or mute logic.
 
 Changing range clears the ship's acknowledged proximity contacts, allowing the
 next native collision check to warn under the new range. No collision scan is

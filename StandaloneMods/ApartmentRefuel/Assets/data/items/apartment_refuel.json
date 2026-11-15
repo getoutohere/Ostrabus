@@ -1,0 +1,222 @@
+[
+    {
+        "strName":  "ItmOstrabusApartmentRefuel",
+        "strImg":  "ItmKiosk01",
+        "strImgNorm":  "ItmKiosk01n",
+        "strImgDamaged":  "",
+        "strDmgColor":  "DamageTintGrey",
+        "fDmgComplexity":  700,
+        "fZScale":  0.5,
+        "nCols":  2,
+        "aLights":  [
+                        "Kiosk01"
+                    ],
+        "aSocketAdds":  [
+                            "TILFixtureAdds",
+                            "TILFixtureAdds",
+                            "TILFixtureAdds",
+                            "TILFixtureAdds"
+                        ],
+        "aSocketForbids":  [
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "TILObstruction",
+                               "TILObstruction",
+                               "Blank",
+                               "Blank",
+                               "TILObstruction",
+                               "TILObstruction",
+                               "Blank",
+                               "Blank",
+                               "TILObstruction",
+                               "TILObstruction",
+                               "Blank"
+                           ],
+        "aSocketReqs":  [
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank"
+                        ]
+    },
+    {
+        "strName":  "ItmOstrabusApartmentRefuelLoose",
+        "strImg":  "ItmKiosk01",
+        "strImgNorm":  "ItmKiosk01n",
+        "strImgDamaged":  "",
+        "strDmgColor":  "DamageTintGrey",
+        "fDmgComplexity":  700,
+        "fZScale":  0.02,
+        "nCols":  2,
+        "aLights":  [
+
+                    ],
+        "aSocketAdds":  [
+                            "TILItemAdds",
+                            "TILItemAdds",
+                            "TILItemAdds",
+                            "TILItemAdds"
+                        ],
+        "aSocketForbids":  [
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank"
+                           ],
+        "aSocketReqs":  [
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank"
+                        ]
+    },
+    {
+        "strName":  "ItmOstrabusApartmentRefuelDmg",
+        "strImg":  "ItmKiosk01",
+        "strImgNorm":  "ItmKiosk01n",
+        "strImgDamaged":  "",
+        "strDmgColor":  "DamageTintGrey",
+        "fDmgComplexity":  700,
+        "fZScale":  0.5,
+        "nCols":  2,
+        "aLights":  [
+                        "Kiosk01"
+                    ],
+        "aSocketAdds":  [
+                            "TILFixtureAdds",
+                            "TILFixtureAdds",
+                            "TILFixtureAdds",
+                            "TILFixtureAdds"
+                        ],
+        "aSocketForbids":  [
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "TILObstruction",
+                               "TILObstruction",
+                               "Blank",
+                               "Blank",
+                               "TILObstruction",
+                               "TILObstruction",
+                               "Blank",
+                               "Blank",
+                               "TILObstruction",
+                               "TILObstruction",
+                               "Blank"
+                           ],
+        "aSocketReqs":  [
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank"
+                        ]
+    },
+    {
+        "strName":  "ItmOstrabusApartmentRefuelDmgLoose",
+        "strImg":  "ItmKiosk01",
+        "strImgNorm":  "ItmKiosk01n",
+        "strImgDamaged":  "",
+        "strDmgColor":  "DamageTintGrey",
+        "fDmgComplexity":  700,
+        "fZScale":  0.02,
+        "nCols":  2,
+        "aLights":  [
+
+                    ],
+        "aSocketAdds":  [
+                            "TILItemAdds",
+                            "TILItemAdds",
+                            "TILItemAdds",
+                            "TILItemAdds"
+                        ],
+        "aSocketForbids":  [
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank"
+                           ],
+        "aSocketReqs":  [
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank",
+                            "Blank",
+                            "TILFloor",
+                            "TILFloor",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank"
+                        ]
+    }
+]

@@ -148,4 +148,7 @@ flowchart TD
   n_t_fly -->|"station_collision_other_region"| n_t_fly
   n_t_atc -->|"region_cleanup"| n_t_removed
   n_t_atc -->|"region_cleanup"| n_t_removed
+  n_t_hold -->|"start_visit"| n_t_hold
+  n_t_hold -->|"wait_time_skip"| n_t_hold
+  n_t_pick -->|"home_call"| n_t_pick
 ```

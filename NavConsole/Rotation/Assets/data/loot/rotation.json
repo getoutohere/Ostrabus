@@ -1,0 +1,6 @@
+[
+  { "strName": "ItmOstrabusNavRotation", "aCOs": ["ItmOstrabusNavRotation=1.0x1"], "aLoots": [], "strType": "item" },
+  { "strName": "ItmOstrabusNavRotationDmg", "aCOs": ["ItmOstrabusNavRotationDmg=1.0x1"], "aLoots": [], "strType": "item" },
+  { "strName": "CNDOLNavOstrabusRotation", "aCOs": ["-StatBasePrice=1.0x255"], "aLoots": [], "strType": "condition" },
+  { "strName": "CNDOLNavOstrabusRotationDmg", "aCOs": ["-StatBasePrice=1.0x53"], "aLoots": [], "strType": "condition" }
+]

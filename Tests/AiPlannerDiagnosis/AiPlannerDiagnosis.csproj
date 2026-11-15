@@ -7,6 +7,8 @@
     <Compile Include="../../MiscBugFixes/AIShipLifecyclePatches.cs" Link="AIShipLifecyclePatches.cs" />
     <Compile Include="../../MiscBugFixes/ActiveShipRetirement.cs" Link="ActiveShipRetirement.cs" />
     <Compile Include="../../MiscBugFixes/CivilianVisitsPatch.cs" Link="CivilianVisitsPatch.cs" />
+    <Compile Include="../../MiscBugFixes/CivilianVisitWaiting.cs" Link="CivilianVisitWaiting.cs" />
+    <Compile Include="../../MiscBugFixes/AiHoldClockPatch.cs" Link="AiHoldClockPatch.cs" />
     <Compile Include="../../MiscBugFixes/NavigationTargetRecovery.cs" Link="NavigationTargetRecovery.cs" />
     <Compile Include="../../Venus/VorbNavPlanGuard.cs" Link="VorbNavPlanGuard.cs" />
     <Compile Include="../../CeresNavigation/CeresNavigationGuardrails.cs" Link="CeresNavigationGuardrails.cs" />

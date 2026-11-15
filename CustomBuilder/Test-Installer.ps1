@@ -20,8 +20,10 @@ try {
     $pda=Get-ChildItem -LiteralPath (Join-Path $repo 'dist') -Directory -Filter 'Ostrabus-Custom-crew-and-nav-*' | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
     & (Join-Path $PSScriptRoot 'Build-Custom.ps1') -Features quick-pda-hack -NoMenu -GameDirectory $GameDirectory
     $hack=Get-ChildItem -LiteralPath (Join-Path $repo 'dist') -Directory -Filter 'Ostrabus-Custom-custom-*' | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
-    Assert ($null -ne $empty -and $null -ne $pda -and $null -ne $hack) 'all three packages produced'
-    foreach ($package in @($empty,$pda,$hack)) {
+    & (Join-Path $PSScriptRoot 'Build-Custom.ps1') -Features rotation-module -NoMenu -GameDirectory $GameDirectory
+    $rotation=Get-ChildItem -LiteralPath (Join-Path $repo 'dist') -Directory -Filter 'Ostrabus-Custom-custom-*' | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
+    Assert ($null -ne $empty -and $null -ne $pda -and $null -ne $hack -and $null -ne $rotation) 'all four packages produced'
+    foreach ($package in @($empty,$pda,$hack,$rotation)) {
         $dlls=@(Get-ChildItem -LiteralPath $package.FullName -Recurse -Filter '*.dll')
         Assert ($dlls.Count -eq 1 -and $dlls[0].Name -eq 'Ostrabus.dll') 'no game/tool DLL redistribution'
         foreach ($file in Get-ChildItem -LiteralPath $package.FullName -Recurse -File | Where-Object { $_.Extension -in @('.json','.ps1','.txt','.cmd') }) {
@@ -78,6 +80,17 @@ try {
     & (Join-Path $pda.FullName 'Install-Custom.ps1') -GameDirectory $game -SettingsPath $settings
     $order=Get-Content -LiteralPath $orderPath -Raw | ConvertFrom-Json
     Assert ($order[0].aLoadOrder -contains 'OstrabusPdaHack|disabled' -and $order[0].aLoadOrder -contains 'TemplateSettings') 'switching back disables only omitted native hacking assets'
+    & (Join-Path $rotation.FullName 'Install-Custom.ps1') -GameDirectory $game -SettingsPath $settings
+    $rotationDefinition=Join-Path $mods 'OstrabusRotation\data\cooverlays\rotation.json'
+    $rotationStock=Join-Path $mods 'OstrabusRotation\data\loot\rotation_stock.json'
+    Assert ((Test-Path -LiteralPath $rotationDefinition) -and (Test-Path -LiteralPath $rotationStock)) 'rotation profile installs item definitions and stock'
+    $definitionHash=Hash $rotationDefinition
+    & (Join-Path $empty.FullName 'Install-Custom.ps1') -GameDirectory $game -SettingsPath $settings
+    $order=Get-Content -LiteralPath $orderPath -Raw | ConvertFrom-Json
+    Assert ((Hash $rotationDefinition) -eq $definitionHash -and $order[0].aLoadOrder -contains 'OstrabusRotation') 'omitted rotation retains enabled item definitions'
+    Assert (-not (Test-Path -LiteralPath $rotationStock)) 'omitted rotation removes only future stock'
+    & (Join-Path $rotation.FullName 'Install-Custom.ps1') -GameDirectory $game -SettingsPath $settings
+    Assert (Test-Path -LiteralPath $rotationStock) 'rotation reselection restores stock'
     # Fail after new native assets were copied, then require both their contents
     # and load-order enablement to roll back with the DLL.
     [IO.File]::WriteAllText($hackMetadata,'[{"strName":"Previous asset metadata"}]')
@@ -99,12 +112,14 @@ try {
     # Permit backup reads but deny replacement of the PDB: fail after assets/load
     # order and the DLL changed, then require complete file rollback.
     $beforeDll=Hash (Join-Path $plugin 'Ostrabus.dll'); $beforeOrder=Hash $orderPath
+    $beforeRotationStock=Hash $rotationStock
     $locked=[IO.File]::Open((Join-Path $plugin 'Ostrabus.pdb'),[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
     $rejected=$false
     try { & (Join-Path $empty.FullName 'Install-Custom.ps1') -GameDirectory $game -SettingsPath $settings } catch { $rejected=$true } finally { $locked.Dispose() }
     Assert $rejected 'blocked write rejected'
     Assert ((Hash (Join-Path $plugin 'Ostrabus.dll')) -eq $beforeDll) 'DLL rolled back after later failure'
     Assert ((Hash $orderPath) -eq $beforeOrder) 'load order rolled back after later failure'
+    Assert ((Hash $rotationStock) -eq $beforeRotationStock -and (Hash $rotationDefinition) -eq $definitionHash) 'retained rotation omission rolled back after later failure'
     $sourceManifest=Join-Path $empty.FullName 'package.json'
     $manifestText=[IO.File]::ReadAllText($sourceManifest)
     try {

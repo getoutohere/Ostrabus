@@ -77,6 +77,66 @@ not establish fuel-accounting corruption as the cause of these two empty tanks.
 
 ## 3. Fuel predictions versus deliberately fuel-tolerant travel
 
+### Civilian Hold follow-up, 2026-11-14
+
+Read-only live/save/asset review and a native offline investigation confirm that
+the civilian wait is not generally a lack of maneuver capability. Of ten sampled
+Civilian holders, nine had zero RCS and one had 170.975 kg. Six empty holders were
+moored to **asteroids**, not shipwrecks; three were free with asteroid targets.
+All ten saved controller trees were at `/BehaviorTree/Main` child 4 (`Hold`),
+without queued command payloads. Their captains had no incapacitation or
+`ShipRequestedHelp` flags. Nine empty hulls were still holding about 2.36 game
+hours later; the fueled control was absent from the later registry, with its
+disposal path not established by that follow-up.
+
+Native `Hold` normally visits for 100-650 game seconds. At expiry, its raw
+`GetRCSRemain() < 1` gate starts another visit instead of allowing native Main to
+continue. This repeats indefinitely without refueling, lift or interruption.
+`CivilianPilot.FFWD` likewise resets an empty Hold to 1-30 seconds rather than
+taking its positive-fuel instant-docking branch. Our clock fixes preserve this
+fuel gate; the scavenger visit exception intentionally does not include civilians.
+
+In contrast, native peaceful shallow AI `Maneuver` calls
+`RemoveGasMass(..., aiSkip: true)` and can thrust with an empty stored tank.
+A ship with a combat target consumes fuel; materialized fuel removal does not
+take the shallow skip. Course playback also debits planned fuel independently.
+The same raw empty tank can therefore permit travel but permanently veto the
+completion of an ordinary mining visit. No active rescue wait explains these
+sampled holds. The native SOS response requires an undocked recipient, and its
+caller excludes Civilian, so simply broadcasting while moored is not a solution.
+
+An isolated investigation harness executes native Hold, Civilian FFWD and
+Maneuver, both with and without the deployed clock repairs: 911 assertions pass.
+Four-hour empty/sub-kilogram waits remain Running; a fueled control finishes;
+an intentional two-hour visit is preserved; help still vetoes completion.
+Captain/help lookup, Unity identity, mass and docked propagation are controlled
+fixtures. That investigation applied no candidate production policy patch or
+live intervention.
+
+The investigation recommended letting peaceful shallow civilian visit completion follow the
+existing fuel-tolerant flight abstraction, while preserving real fuel checks,
+help waits, scripted holds and native docking. The implementation below tests
+the full continuation and SFF path, including the known home-dispatch/faction
+filtering defect above. Hour-scale mining visits are an explicit duration policy
+rather than a side effect of empty tanks. It reuses existing command timers and
+decision boundaries; no extra fleet scan, journal or frequent route solver is
+needed. Neutral ATC recovery remains separate future simulation policy.
+
+Agreed asteroid-visit policy: draw a uniform duration of **5-120 game minutes**
+(300-7,200 seconds) once per ordinary civilian asteroid visit. Short visits
+represent prospecting that finds nothing worthwhile; longer visits represent
+pretend mining. Fuel must not extend that visit indefinitely. Preserve the
+remaining duration through SFF and save/load instead of drawing a fresh visit
+each time. Station visits, non-asteroid encounters, scripted Holds and actual
+assistance waits retain their separate semantics. This range is an agreed design
+constraint. It is now implemented as the separate civilian-asteroid-visits
+simulation feature, alongside the civilian-visits continuation repair. See
+[implementation and native regression scope](../MiscBugFixes/CIVILIAN-VISIT-WAITS.md).
+Existing visit remainders are preserved. Only real Asteroid-class attachment
+receives the new duration; other ships and detached holds keep native timing.
+Empty actors without a safe faction home retain the existing wait rather than
+being released into an unsafe retirement. Live testing is pending.
+
 O-1JKY has 53.39 kg RCS. Recorded mass (9577.49 kg), pilot efficiency (1.0), and
 relative speed (647.33 m/s) imply about 78.78 kg merely to cancel that velocity
 under native CalculateRCSFuelConsumption. Its route ends at -26.02 kg. O-NNH is

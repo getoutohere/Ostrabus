@@ -1,0 +1,30 @@
+[
+  {
+    "strName": "ItmOstrabusNavRotation",
+    "strNameFriendly": "Polaris RCS Rotation Module",
+    "strNameShort": "Rotation",
+    "strDesc": "A hot-swappable 1x1 RCS rotation module for the Polaris Standard Navigation Console.\n\nThe arrows face toward, away from, or sideways to the selected sensors contact. With no contact, the up/down arrows reverse heading and the side arrows turn 90 degrees. HOLD BEARING keeps the commanded orientation relative to the original contact, even after selecting another contact or closing the console. Manual rotation cancels the command. Requires working RCS and propellant.",
+    "strImg": "navmod/ItmNavModControlToggle",
+    "strImgNorm": "navmod/ItmNavModControlTogglen",
+    "strPortraitImg": "navmod/ItmNavModControlToggle",
+    "strCondLoot": "CNDOLNavOstrabusRotation",
+    "strCOBase": "ItmNavModMoboScreen",
+    "mapGUIPropMaps": ["NavMod", "NavModOstrabusRotation"],
+    "mapModeSwitches": ["ItmNavModMoboScreen", "ItmOstrabusNavRotation", "ItmNavModMoboScreenDmg", "ItmOstrabusNavRotationDmg"],
+    "mapSlotEffects": ["heldL", "HeldItmDefaultL", "heldR", "HeldItmDefaultR"]
+  },
+  {
+    "strName": "ItmOstrabusNavRotationDmg",
+    "strNameFriendly": "Polaris RCS Rotation Module (Damaged)",
+    "strNameShort": "Rotation (Dmg)",
+    "strDesc": "A damaged Polaris RCS Rotation Module. Restore it before use.",
+    "strImg": "navmod/ItmNavModControlToggleDmg",
+    "strImgNorm": "navmod/ItmNavModControlToggleDmgn",
+    "strPortraitImg": "navmod/ItmNavModControlToggleDmg",
+    "strCondLoot": "CNDOLNavOstrabusRotationDmg",
+    "strCOBase": "ItmNavModMoboScreenDmg",
+    "mapGUIPropMaps": ["NavMod", "NavModOstrabusRotation"],
+    "mapModeSwitches": ["ItmNavModMoboScreen", "ItmOstrabusNavRotation", "ItmNavModMoboScreenDmg", "ItmOstrabusNavRotationDmg"],
+    "mapSlotEffects": ["heldL", "HeldItmDefaultL", "heldR", "HeldItmDefaultR"]
+  }
+]

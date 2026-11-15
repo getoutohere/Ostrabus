@@ -108,7 +108,7 @@ internal static partial class FreightRecovery {
     // batch-adder can reuse a full input list after partial acceptance; native
     // UnregisterCargoShip deletes the source before capacity/errors are known.
     // Neither is suitable as an unchecked recovery transaction.
-    static ShipMarket Stage(ShipMarket destination, Dictionary<string,List<MarketItem>> manifest) {
+    static ShipMarket CopyStock(ShipMarket destination, Dictionary<string,List<MarketItem>> manifest) {
         var staged=(ShipMarket)ShallowClone.Invoke(destination,null);
         var actors=new Dictionary<string,MarketActorConfig>();
         foreach (var pair in Actors(destination)) {
@@ -120,9 +120,13 @@ internal static partial class FreightRecovery {
         Actors(staged)=actors;StockCache(staged)=new Dictionary<string,int>(StockCache(destination));
         CapacityCache(staged)=new Dictionary<string,int>(CapacityCache(destination));Recipes(staged)=new List<Producer>(Recipes(destination));
         AccessTools.Field(typeof(ShipMarket),"_priceModifiers").SetValue(staged,new Dictionary<string,float>(destination.PriceModifiers));
+        return staged;
+    }
+    static ShipMarket Stage(ShipMarket destination, Dictionary<string,List<MarketItem>> manifest) {
+        var staged=CopyStock(destination,manifest);
         foreach (var pair in manifest) {
             var pending=pair.Value;
-            foreach (var actor in actors.Values) {
+            foreach (var actor in Actors(staged).Values) {
                 int remainder=actor.TryAddStock(pair.Key,pending);
                 if (remainder==0) { pending=null;break; }
                 if (remainder<pending.Count) pending=pending.GetRange(pending.Count-remainder,remainder);

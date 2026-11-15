@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/2ad13660f21ed19440650e0f703b2ecb134327510a10dec9676ef9eb4f09f2bd.json.br",
+  "reason": "Reviewed native stock arithmetic, sizing, normal/SFF cargo retirement gates and preserved valid-destination overflow disposal; 520 native reproduction/repair assertions. Add stock/actor boundary dependencies and update freight handoff transitions.",
+  "acceptedUtc": "2026-11-14T23:05:43.2261968Z",
+  "previousSnapshot": "assembly-baselines/8324fc2eba1aa5e2366105f27eafb5baac8b46e660e0ce5af9fa6dbf682e29ec.json.br"
+}

@@ -43,6 +43,7 @@ internal sealed class InspectionApi : IDisposable {
         internal bool DryRun, Force;
         internal double RadiusKm, MinDistanceKm;
         internal double? FuelTargetKg;
+        internal FreightRecovery.Quantity FreightQuantity;
         internal long Deadline;
         internal readonly TaskCompletionSource<Reply> Completion = new TaskCompletionSource<Reply>(TaskCreationOptions.RunContinuationsAsynchronously);
     }
@@ -147,6 +148,7 @@ internal sealed class InspectionApi : IDisposable {
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/events/combat") { reply = new Reply(200, InspectionEventHistory.Read(since, limit, shipFilter, "combat")); }
             else if (!ShipPruning.Parse(http, out string pruneId, out bool dryRun, out bool force, out string pruneError)) { reply = Error(400, pruneError); }
             else if (!ShipRefueling.Parse(http, out double? fuelTarget, out string fuelError)) { reply = Error(400, fuelError); }
+            else if (!FreightRecovery.ParseQuantity(http, out var freightQuantity, out string quantityError)) { reply = Error(400, quantityError); }
             else if (!ParseDerelictRequest(http, out string stationId, out double minDistanceKm, out int maxShips, out string confirm, out string derelictError)) { reply = Error(400, derelictError); }
             else if (!PersonnelCombatRequest.Parse(http, out string coId, out int traceSeconds)) { reply = Error(400, "coId: URL-encoded ID up to 64 characters; seconds: integer 1..300 (default 120)."); }
             else {
@@ -156,6 +158,7 @@ internal sealed class InspectionApi : IDisposable {
                     ShipId = pruneId ?? shipFilter, Since = since, DryRun = dryRun, Force = force,
                     CoId = coId, TraceSeconds = traceSeconds,
                     FuelTargetKg = fuelTarget,
+                    FreightQuantity = freightQuantity,
                     Generation = Volatile.Read(ref generation), Deadline = Now + Stopwatch.Frequency * TimeoutMs / 1000
                 };
                 // Timed-out work can remain queued while Unity is stalled; bound that too.
@@ -299,7 +302,7 @@ internal sealed class InspectionApi : IDisposable {
                     if (request.Path == "/orbital") {
                         reply = new Reply(200, global::Ostrabus.Orbital.OrbitalSimulation.Snapshot());
                     } else if (FreightRecovery.IsRoute(request.Path)) {
-                        reply = FreightRecovery.Run(request.Path,request.Method == "POST",request.Confirm);
+                        reply = FreightRecovery.Run(request.Path,request.Method == "POST",request.Confirm,request.FreightQuantity);
                     } else if (request.Path == "/economy" || request.Path.StartsWith("/economy/", StringComparison.Ordinal)) {
                         reply = EconomyInspection.Query(request.Path, request.Offset, request.Limit, start);
                     } else if (FlightJournal.IsControl(request.Path) && request.Method == "POST") {

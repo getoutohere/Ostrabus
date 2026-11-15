@@ -1,0 +1,10 @@
+[
+  {
+    "strName": "NavModOstrabusRotation",
+    "dictGUIPropMap": [
+      "strGUIPrefab", "NavModOstrabusRotation",
+      "strGUIPrefabDmg", "NavModOstrabusRotationDmg",
+      "strDefaultPos", "0.15|0.6|0.25|0.8"
+    ]
+  }
+]

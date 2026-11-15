@@ -19,6 +19,12 @@ static class SelfTest {
         Plan Make(params string[] ids) => Inventory.Plan(catalog, new Profile { Features = ids }, declarations);
         string Read(string file) => File.ReadAllText(Path.Combine(root, file));
         var pdaHack = Make("quick-pda-hack");
+        var rotation = Make("rotation-module");
+        Check(rotation.Included.Contains("ai-flight-controls") && rotation.NativeMods.Length == 1 && rotation.NativeMods[0].Name == "OstrabusRotation",
+            "Rotation includes its native item and controller-lifetime safeguards");
+        Check(rotation.TickCalls == 0 && rotation.Patches.Any(patch => patch.Type == "Ostrabus.NavConsole.Rotation.RotationPhysicsPatch"),
+            "Rotation uses physical simulation steps without a plugin frame poll");
+        Check(!Make("quick-pda-hack").Included.Contains("rotation-module"), "PDA hacking does not pull in rotation");
         Check(pdaHack.Patches.Length == 0 && pdaHack.TickCalls == 0 && !pdaHack.PdaAssets,
             "PDA hacking needs no game hooks, tick or Settings app");
         Check(pdaHack.NativeMods.Length == 1 && pdaHack.NativeMods[0].Name == "OstrabusPdaHack",
@@ -38,6 +44,28 @@ static class SelfTest {
         Check(Make("torch-fuel-cache").Patches.Length == 1, "fuel cache remains independently selectable");
         Check(Make("sff-navigation-destination").Included.Length == 1 && Make("sff-navigation-destination").Patches.Length == 1,
             "SFF destination integrity is independent of orbital and torch modifications");
+        var flightControls = Make("ai-flight-controls");
+        Check(flightControls.Patches.Length == 8 && flightControls.Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.FlightPilotAvailabilityPatch") && flightControls.TickCalls == 0,
+            "flight control handoffs include native pilot-refusal repair without a polling callback");
+        var crewIdentities = Make("ai-crew-identities");
+        var consoleBuffer = Make("console-buffer");
+        Check(consoleBuffer.Included.Length == 1 && consoleBuffer.Patches.Length == 1 && consoleBuffer.TickCalls == 0 &&
+            consoleBuffer.Patches[0].Type == "Ostrabus.MiscBugFixes.ConsoleBufferPatch",
+            "console retention is independently selectable without a polling callback");
+        var completion = Make("route-completion");
+        Check(completion.Included.Length == 1 && completion.Patches.Length == 1 && completion.TickCalls == 0 &&
+            completion.Patches[0].Type == "Ostrabus.ShipNavigation.RouteCompletionPatch",
+            "route completion repairs both native handoffs without an orbital dependency or frame callback");
+        Check(crewIdentities.Included.Length == 1 && crewIdentities.Patches.Length == 1 &&
+            crewIdentities.Patches[0].Type == "Ostrabus.MiscBugFixes.AiCrewIdentityPatch" && crewIdentities.TickCalls == 0,
+            "fresh AI crew identity protection is independently selectable without polling");
+        var population = Make("population-gender");
+        Check(population.Included.Length == 1 && population.Patches.Length == 1 && population.TickCalls == 0,
+            "population distribution is independently selectable without polling");
+        Check(catalog.Features.Single(feature => feature.Id == "population-gender").Category == "simulation" &&
+            !Presets.Create(catalog, "bugfixes").Features.Contains("population-gender") &&
+            Presets.Create(catalog, "recommended").Features.Contains("population-gender"),
+            "population distribution is simulation policy, excluded from bugfix-only builds");
         Check(Make("inspection").Patches.Any(patch => patch.Type == "Ostrabus.Inspection.ShipVelocityRecoverySffPatch") &&
             !Make("sff-navigation-destination").Patches.Any(patch => patch.Type == "Ostrabus.Inspection.ShipVelocityRecoverySffPatch"),
             "recovery Hold SFF protection belongs to the inspection feature only");
@@ -105,6 +133,12 @@ static class SelfTest {
         Check(civilianCoordinates.Patches.Length == 1 && civilianCoordinates.TickCalls == 0,
             "civilian coordinate repair has one independent transpiler and no frame callback");
         var civilianVisits = Make("civilian-visits");
+        Check(civilianVisits.Included.Contains("ai-hold-clock") && !civilianVisits.Included.Contains("civilian-asteroid-visits"),
+            "civilian wait repair includes clocks without the mining-duration policy");
+        var asteroidVisits = Make("civilian-asteroid-visits");
+        Check(asteroidVisits.Included.Contains("civilian-visits") && asteroidVisits.TickCalls == 0 &&
+            asteroidVisits.Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.CivilianAsteroidVisitPatch"),
+            "asteroid duration policy includes its ordinary-visit mechanism without a frame callback");
         Check(civilianVisits.TickCalls == 0 && civilianVisits.Included.Contains("navigation-targets") && civilianVisits.Included.Contains("ai-crew-integrity"),
             "civilian visit lifetime includes saved-target and connected-hull protection without a frame callback");
         var visitPatches = declarations.Where(declaration => declaration.File == "MiscBugFixes/CivilianVisitsPatch.cs").Select(declaration => declaration.Type).ToArray();

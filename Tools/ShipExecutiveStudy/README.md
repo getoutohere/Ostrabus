@@ -1,8 +1,40 @@
 # Ship mission executive feasibility study
 
-Read-only analysis tools for the [architecture evaluation](../../Navigation/Architecture/README.md).
-These are characterization programs, not a replacement executive or deployable
-patch. They do not contact the running game or edit game/mod sources or assets.
+Offline tools for the [architecture evaluation](../../Navigation/Architecture/README.md).
+`Scan` and `Native` characterize the original mechanisms. `Prototype` tests both
+the original tree-scheduling experiment and the explicit replacement lifecycle.
+`Contracts` is the game-independent reducer for the separate
+[normative mission model](../../Navigation/Architecture/Replacement/README.md).
+None are deployable patches or contact the running game or edit game/mod sources
+or assets.
+
+Run the prototype from the repository root (requires a current full Debug plugin):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File Tools/ShipExecutiveStudy/Prototype/Run.ps1
+```
+
+The runner builds only the prototype and existing offline Mono host. See
+[prototype scope and results](../../Navigation/Architecture/PROTOTYPE.md) before
+interpreting a pass. Detailed output is in ignored `obj/ShipExecutivePrototype`.
+The project also builds the Contracts library; its conformance report and
+generated model diagram go to ignored `obj/ShipExecutiveModel`.
+The Navy pass also writes a direct authored-command inventory there, including
+generated surrender-stakes interactions. Its native entrypoint tests execute
+the world update and queue under explicit scene/economy fixtures; see
+[qualification](../../Navigation/Architecture/Replacement/NAVY-LIFECYCLE.md).
+Integrated world cases install the real existing Orbital/SFF/Economy patches
+offline with synthetic world/market data. See their
+[ownership, accounting and remaining playback gap](../../Navigation/Architecture/Replacement/WORLD-SERVICES.md).
+The [command-effect pass](../../Navigation/Architecture/Replacement/COMMAND-EFFECTS.md)
+compares native fuel transfers across fresh reloads and executes selected shipped
+surrender/boarding rules, including native received and in-flight message DTOs.
+Physical tanks, personality inputs, scene fanout and crew effects have explicit
+qualification limits; these tests do not install a replacement executive.
+The [native save/arrival pass](../../Navigation/Architecture/Replacement/SAVE-ARRIVAL.md)
+also executes the real collector, threaded/synchronous archive writer and native
+wire parser, with mixed crew disposition and ordinary patrol handback tests.
+Its ZIP fixtures stay under ignored `obj/ShipExecutiveNativeSaves`.
 
 From the repository root:
 

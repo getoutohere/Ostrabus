@@ -165,6 +165,10 @@ static class SffChecks {
         } finally { SffSimulation.Current?.Dispose();harmony.UnpatchSelf(); }
     }
     static void FixtureCapture(Action<bool,string> check,Harmony harmony,SffEnvironment environment,MotionState initial,double epoch,double duration,BodyOrbit sun,BodyOrbit venus) {
+        harmony.Patch(AccessTools.PropertyGetter(typeof(Ship), nameof(Ship.NavPlayerManned)), prefix: new HarmonyMethod(typeof(SffChecks), nameof(NoPlayer)));
+        harmony.Patch(AccessTools.PropertyGetter(typeof(Ship), nameof(Ship.NavAIManned)), prefix: new HarmonyMethod(typeof(SffChecks), nameof(AvailablePilot)));
+        harmony.Patch(AccessTools.Method(typeof(Ship), nameof(Ship.StopManeuver)), prefix: new HarmonyMethod(typeof(SffChecks), nameof(StopControls)));
+        availablePilot = true;
         Ship Make(string id) {
             var ship=Empty<Ship>();ship.strRegID=id;ship.nCols=4;ship.nRows=4;
             AccessTools.Property(typeof(Ship),nameof(Ship.objSS)).SetValue(ship,Empty<ShipSitu>());
@@ -250,8 +254,51 @@ static class SffChecks {
                 var trace=(Dictionary<string,object>)SffSimulation.Snapshot();
                 check((int)trace["failures"]==0,"AI integration silently fell back to native");
             }
+            availablePilot = false;
+            OrbitalMotion.Write(traveler.objSS, initial);
+            traveler.objSS.vAccRCS = new UnityEngine.Vector2(-3.814619e-11f, -3.994418e-11f);
+            double savedFuel = traveler.fShallowRCSRemass;
+            StarSystem.fEpoch = epoch;
+            var paused = SffSimulation.Begin(world, 7200, true);
+            StarSystem.fEpoch = epoch + 7200;
+            traveler.objSS.TimeAdvance(7200); paused.BeforeAi();
+            var pausedMotion = OrbitalMotion.Read(traveler.objSS);
+            var ballistic = SffDynamics.Propagate(environment, initial, epoch, 7200, default, null, .2, null);
+            check((pausedMotion.Position - ballistic.State.Position).Length < .001, "Incapacitated pilot received invented SFF guidance");
+            check(traveler.objSS.vAccRCS.x == 0 && traveler.objSS.vAccRCS.y == 0 && traveler.fShallowRCSRemass == savedFuel,
+                "Pilot refusal retained abandoned controls or changed fuel");
+            check(!paused.AllowCatchup(pilot), "Incapacitated pilot allowed instant docking/retirement");
+            paused.Dispose();
+            check((int)((Dictionary<string, object>)SffSimulation.Snapshot())["failures"] == 0, "No-pilot SFF silently fell back");
+            // A crewed tug's existing command remains eligible when another
+            // controller in its group has no available pilot.
+            var relief = Make("relief"); relief.IsAIShip = true; relief.RCSCount = .1745f;
+            relief.shipScanTarget = goal; relief.shipSituTarget = goal.objSS;
+            var reliefAi = Empty<AIShip>(); var reliefProfile = new Pilot { ShipUs = relief };
+            AccessTools.Field(typeof(AIShip), "_shipUs").SetValue(reliefAi, relief);
+            AccessTools.Field(typeof(AIShip), "_aiCharacter").SetValue(reliefAi, reliefProfile);
+            AccessTools.Field(typeof(AIShip), "_activeCommand").SetValue(reliefAi, new TravelCommand(reliefProfile));
+            AIShipManager.dictAIs["fixture"].Add(reliefAi); world.dictShips.Add(relief.strRegID, relief);
+            var reliefGroup = new SolarSystem.DockGroup { Anchor = Empty<ShipSitu>() };
+            OrbitalMotion.Write(reliefGroup.Anchor, initial);
+            traveler.objSS._dockGroup = reliefGroup; relief.objSS._dockGroup = reliefGroup;
+            reliefGroup.DockedShips.Add(new SolarSystem.DockGroupMember(traveler, false));
+            reliefGroup.DockedShips.Add(new SolarSystem.DockGroupMember(relief, false));
+            StarSystem.fEpoch = epoch;
+            using (var rescue = SffSimulation.Begin(world, 300, true)) {
+                var plans = (IList)typeof(SffSimulation).GetField("plans", Private).GetValue(rescue);
+                SffSimulation.Plan selected = null;
+                foreach (SffSimulation.Plan candidate in plans) if (ReferenceEquals(candidate.Anchor, reliefGroup.Anchor)) selected = candidate;
+                check(selected != null && ReferenceEquals(selected.Pilot, reliefAi) && !selected.AwaitingPilot && selected.Travel,
+                    "Unavailable member vetoed an authorized attached pilot");
+            }
+            availablePilot = true;
         } finally { AIShipManager.dictAIs=oldAis; }
     }
+    static bool availablePilot;
+    static bool NoPlayer(ref bool __result) { __result = false; return false; }
+    static bool AvailablePilot(Ship __instance, ref bool __result) { __result = availablePilot || __instance.strRegID == "relief"; return false; }
+    static bool StopControls(Ship __instance) { __instance.objSS.vAccRCS = default; __instance.objSS.fA = 0; return false; }
     static bool SkipSetter() => false;
     static bool DensityProbe(ref double __result) { __result=1;return false; }
     sealed class FixedTarget : ISffTarget {

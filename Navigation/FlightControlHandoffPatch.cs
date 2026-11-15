@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Ostranauts.Ships.Commands;
+using Ostranauts.Core;
 
 namespace Ostrabus.ShipNavigation;
 
@@ -10,6 +11,18 @@ namespace Ostrabus.ShipNavigation;
 // its RCS/pause path, release that command rather than integrating it forever.
 // Physical reactor controls and player manual thrust retain their native paths.
 internal static class FlightControlHandoff {
+    static readonly Func<BaseCommand, CommandStatus> Running = AccessTools.MethodDelegate<Func<BaseCommand, CommandStatus>>(AccessTools.PropertyGetter(typeof(BaseCommand), "Running"));
+    static readonly Func<BaseCommand, CommandStatus> Finished = AccessTools.MethodDelegate<Func<BaseCommand, CommandStatus>>(AccessTools.PropertyGetter(typeof(BaseCommand), "Success"));
+    internal static CommandStatus AwaitPilot(FlyToPath command) {
+        var ship = command.ShipUs;
+        // Called only by the native no-pilot branch, after any existing course
+        // playback has been handled. Player takeover keeps its native success.
+        if (ship.IsAIShip && !ship.NavPlayerManned && !ReferenceEquals(ship, CrewSim.coPlayer?.ship)) {
+            ship.StopManeuver(false, false);
+            return Running(command);
+        }
+        return Finished(command);
+    }
     internal static void StopShallowTorch(Ship ship) {
         if (ship?.objSS != null && ship.IsAIShip && ship.LoadState == Ship.Loaded.Shallow)
             NavigationRoute.StopTorch(ship);
@@ -23,6 +36,26 @@ internal static class FlightControlHandoff {
         // Combat/undock/tow steering can bypass FlyTo. Do not interfere with
         // RCS alongside a still-owned course, physical reactors or player input.
         if (seconds > 0 && ship?.objSS != null && ship.objSS.NavData == null) StopShallowTorch(ship);
+    }
+}
+
+[HarmonyPatch(typeof(FlyToPath), nameof(FlyToPath.RunCommand))]
+internal static class FlightPilotAvailabilityPatch {
+    [HarmonyTranspiler]
+    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+        var code = new List<CodeInstruction>(instructions);
+        var available = AccessTools.PropertyGetter(typeof(Ship), nameof(Ship.NavAIManned));
+        var success = AccessTools.PropertyGetter(typeof(BaseCommand), "Success");
+        var awaitPilot = AccessTools.Method(typeof(FlightControlHandoff), nameof(FlightControlHandoff.AwaitPilot));
+        int gate = code.FindIndex(c => c.Calls(available));
+        if (gate < 0 || code.FindLastIndex(c => c.Calls(available)) != gate)
+            throw new InvalidOperationException("Expected one flight pilot-availability gate.");
+        int result = code.FindIndex(gate, c => c.Calls(success));
+        if (result < 0 || result > gate + 10 || result + 1 >= code.Count || code[result + 1].opcode != OpCodes.Ret)
+            throw new InvalidOperationException("Flight pilot refusal return changed.");
+        code[result].opcode = OpCodes.Call;
+        code[result].operand = awaitPilot;
+        return code;
     }
 }
 

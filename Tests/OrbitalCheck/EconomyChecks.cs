@@ -53,10 +53,10 @@ static partial class EconomyChecks {
     static bool Constructor(AIShip __instance, string stationID) {
         var ship = Hull("CARGO" + ++serial); ship.MarketConfigs = new Dictionary<string, string> { { "pod", "fixture" } };
         ship.fShallowRCSRemass = 100; ship.fShallowFusionRemain = 100;
-        var character = Empty<HaulerCargoPilot>(); Field(character, "<ShipUs>k__BackingField", ship);
-        Field(character, "<PriorityQueue>k__BackingField", new QueuedCommandsNode("queue", character));
+        var character = new HaulerCargoPilot(stationID, ship, null);
         Field(__instance, "_shipUs", ship); Field(__instance, "_aiCharacter", character);
         Field(__instance, "<HomeStation>k__BackingField", stationID);
+        Field(__instance, "<Blackboard>k__BackingField", character.Blackboard);
         return false;
     }
     static bool Register(AIShip ship) { AIShipManager.dictAIs["INTERREGIONAL"].Add(ship); return false; }
@@ -113,6 +113,7 @@ static partial class EconomyChecks {
     static void Setup() {
         serial = planCalls = syncs = 0; rejectPlan = throwPlan = false; stagedPlan=null; hulls.Clear(); markets.Clear();
         CrewSim.system = Empty<StarSystem>(); CrewSim.system.dictShips = new Dictionary<string, Ship>();
+        Field(CrewSim.system, "dictShipOwners", new Dictionary<string, string>());
         var root = Empty<BodyOrbit>(); root.strName = "Sol"; root.fPeriod = 31556926;
         CrewSim.system.aBOs = new Dictionary<string, BodyOrbit> { { "Sol", root } };
         CrewSim.coPlayer = Empty<CondOwner>();
@@ -141,6 +142,7 @@ static partial class EconomyChecks {
         void Patch(System.Reflection.MethodBase method, string prefix) => h.Patch(method, prefix: new HarmonyMethod(typeof(EconomyChecks), prefix));
         try {
             Patch(AccessTools.PropertyGetter(typeof(MonoSingleton<MarketManager>), "Instance"), nameof(Manager));
+            Patch(AccessTools.Method(typeof(BaseCharacter), "AssignCaptain"), nameof(StudyQuiet));
             Patch(AccessTools.PropertyGetter(typeof(ShipMarket), nameof(ShipMarket.BlockadeDiscount)), nameof(Blockade));
             Patch(AccessTools.Method(typeof(Ship), nameof(Ship.IsStation)), nameof(Station));
             Patch(AccessTools.PropertyGetter(typeof(Ship), nameof(Ship.ShipCO)), nameof(ShipCo));
@@ -157,7 +159,7 @@ static partial class EconomyChecks {
             Patch(AccessTools.Method(typeof(Ship), nameof(Ship.Destroy)), nameof(Destroy));
             Patch(AccessTools.Method(typeof(FlyToPath), nameof(FlyToPath.PlanTrip4)), nameof(Plan));
             Patch(AccessTools.Method(typeof(ShipMarket), nameof(ShipMarket.RequestTraderUpdate)), nameof(Sync));
-            foreach (var type in new[] { typeof(FreightNoWakePatch), typeof(FreightPlanningClockPatch), typeof(CargoLoadingPatch), typeof(EconomicProductionPatch), typeof(EconomicDispatchPatch), typeof(EconomicTraderSyncPatch), typeof(EconomicFreightMotionPatch), typeof(EconomicFreightCatchupPatch), typeof(EconomicCatchupPatch) })
+            foreach (var type in new[] { typeof(FreightNoWakePatch), typeof(FreightPlanningClockPatch), typeof(CargoLoadingPatch), typeof(CargoTradeBundlePatch), typeof(CargoTransferPatch), typeof(MarketWithdrawalPatch), typeof(MarketBatchDepositPatch), typeof(EconomicProductionPatch), typeof(EconomicDispatchPatch), typeof(EconomicTraderSyncPatch), typeof(EconomicFreightMotionPatch), typeof(EconomicFreightCatchupPatch), typeof(EconomicCatchupPatch) })
                 check(patches.CreateClassProcessor(type).Patch().Count == (type == typeof(FreightPlanningClockPatch) ? 4 : 1), "Economy hook binds " + type.Name);
             TimelineChecks(check);
             LoadingChecks(check, patches);

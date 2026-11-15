@@ -82,20 +82,19 @@ flowchart TD
   n_t_station -->|"sample_station"| n_t_fallback
   n_t_fallback -->|"fallback_exists"| n_t_fly
   n_t_fallback -->|"fallback_missing"| n_t_unresolved
-  n_t_pick -->|"low_fuel_home"| n_t_fly
+  n_t_pick -->|"low_fuel_home [conditional]"| n_t_fly
   n_t_fly -->|"ordinary_tick"| n_t_fly
   n_t_fly -->|"arrival"| n_t_transfer
   n_t_fly -->|"arrival"| n_t_dock
   n_t_fly -->|"arrival"| n_t_dock
   n_t_fly -->|"target_replaced"| n_t_fly
   n_t_dock -->|"dock_nonstation"| n_t_hold
-  n_t_dock -->|"dock_station"| n_t_retire
-  n_t_transfer -->|"unload"| n_t_retire
+  n_t_dock -->|"dock_station [conditional]"| n_t_retire
   n_t_transfer -->|"unload"| n_t_retire
   n_t_retire -->|"retirement [conditional]"| n_t_reserve
   n_t_retire -->|"dropoff_rejected"| n_t_reserve
   n_t_hold -->|"hold_tick"| n_t_hold
-  n_t_hold -->|"hold_tick"| n_t_hold
+  n_t_hold -->|"hold_tick [conditional]"| n_t_hold
   n_t_hold -->|"hold_tick"| n_t_hold
   n_t_hold -->|"hold_tick"| n_t_undock
   n_t_reserve -->|"pool_reuse"| n_t_spawn
@@ -138,7 +137,13 @@ flowchart TD
   n_t_sff_role -->|"validate_visit_sff [conditional]"| n_t_sff_role
   n_t_atc -->|"region_cleanup"| n_t_removed
   n_t_atc -->|"region_cleanup"| n_t_removed
+  n_t_hold -->|"start_visit [conditional]"| n_t_hold
+  n_t_hold -->|"wait_time_skip [conditional]"| n_t_hold
+  n_t_pick -->|"home_call [conditional]"| n_t_pick
   n_t_pick -->|"load_goods / cargo_loading"| n_t_pick
+  n_t_transfer -->|"unload / cargo_arrival_handoff"| n_t_fly
+  n_t_dock -->|"dock_station / cargo_arrival_handoff [conditional]"| n_t_retire
+  n_t_dock -->|"dock_station / cargo_arrival_handoff [conditional]"| n_t_fly
   n_t_sff -->|"ai_ffwd / bounded_catchup [conditional]"| n_t_fly
   n_t_sff -->|"ai_ffwd / economic_catchup [conditional]"| n_t_economy
   n_t_sff -->|"dispatch_opportunities / economic_catchup [conditional]"| n_t_sff
@@ -160,4 +165,9 @@ flowchart TD
   n_t_sff_role -->|"validate_visit_sff / civilian_visit_lifetime [conditional]"| n_t_undock
   n_t_retire -->|"retirement / civilian_visit_lifetime [conditional]"| n_t_hold
   n_t_fly -->|"station_collision_other_region / controller_identity"| n_t_fly
+  n_t_hold -->|"hold_tick / civilian_wait_continuation [conditional]"| n_t_undock
+  n_t_hold -->|"wait_time_skip / civilian_wait_continuation [conditional]"| n_t_hold
+  n_t_pick -->|"home_call / civilian_wait_continuation [conditional]"| n_t_pick
+  n_t_pick -->|"low_fuel_home / civilian_wait_continuation [conditional]"| n_t_fly
+  n_t_hold -->|"start_visit / asteroid_visit_duration [conditional]"| n_t_hold
 ```

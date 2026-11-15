@@ -2,10 +2,63 @@
   "schemaVersion": 1,
   "description": "Cargo/PASS/civilian role trees and reviewed traffic/lifecycle boundaries; all exported native node methods have declared bindings.",
   "bindings": {
-"flight_rcs_native":[{"methods":["Maneuver"],"type":"Ship"}],
-
-"flight_handoff_native":[{"methods":["RunCommand","CanExecute","ResolveInstantly"],"type":"Ostranauts.Ships.Commands.FlyTo"}],"flight_shutdown_native":[{"methods":["RunCommand","TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_repair":[{"methods":["RunCommand"],"type":"Ostranauts.Ships.Commands.FlyTo"},{"methods":["TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_stop":[{"methods":["SetThrust","StopManeuver"],"type":"Ship"},{"methods":["ResetNavData"],"type":"ShipSitu"}],
-
+    "flight_rcs_native": [
+      {
+        "methods": [
+          "Maneuver"
+        ],
+        "type": "Ship"
+      }
+    ],
+    "flight_handoff_native": [
+      {
+        "methods": [
+          "RunCommand",
+          "CanExecute",
+          "ResolveInstantly"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyTo"
+      }
+    ],
+    "flight_shutdown_native": [
+      {
+        "methods": [
+          "RunCommand",
+          "TorchOff"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyToPath"
+      }
+    ],
+    "flight_control_repair": [
+      {
+        "methods": [
+          "RunCommand"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyTo"
+      },
+      {
+        "methods": [
+          "TorchOff",
+          "RunCommand"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyToPath"
+      }
+    ],
+    "flight_control_stop": [
+      {
+        "methods": [
+          "SetThrust",
+          "StopManeuver"
+        ],
+        "type": "Ship"
+      },
+      {
+        "methods": [
+          "ResetNavData"
+        ],
+        "type": "ShipSitu"
+      }
+    ],
     "cargo": [
       {
         "type": "Ostranauts.Ships.AIPilots.HaulerCargoPilot",
@@ -822,6 +875,61 @@
           "PlanTrip4"
         ]
       }
+    ],
+    "patch_civilian_wait": [],
+    "policy_asteroid_visits": [],
+    "market_stock": [
+      {
+        "type": "Ostranauts.Trading.ShipMarket",
+        "methods": [
+          "RemoveStockForCategory",
+          "AddStockForCategory",
+          "BuildConfig",
+          "UpdatePriceModifier"
+        ]
+      }
+    ],
+    "market_actor": [
+      {
+        "type": "Ostranauts.Trading.MarketActorConfig",
+        "methods": [
+          "TryAddStock",
+          "TakeOutStock"
+        ]
+      }
+    ],
+    "patch_market_stock": [],
+    "patch_cargo_arrival": [],
+    "patch_cargo_transfer": [],
+    "test_cargo_delivery": [],
+    "sff_destination_refresh": [
+      {
+        "type": "Ostranauts.ShipGUIs.Utilities.NavData",
+        "methods": [
+          "TimeAdvance"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Dock",
+        "methods": [
+          "ResolveInstantly"
+        ]
+      },
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "UpdateTime",
+          "PlaceOrbitPosition"
+        ]
+      }
+    ],
+    "pilot_availability": [
+      {
+        "type": "Ship",
+        "methods": [
+          "get_NavAIManned"
+        ]
+      }
     ]
   },
   "predicateSources": {
@@ -835,26 +943,88 @@
       "patch_economy"
     ],
     "retained_detached": [
-      "patch_region_retention", "manager", "ship"
+      "patch_region_retention",
+      "manager",
+      "ship"
     ],
     "visit_priority_other": [
-      "patch_visits", "controller", "ai_queue", "cmd_QueuedCommandsNode"
+      "patch_visits",
+      "controller",
+      "ai_queue",
+      "cmd_QueuedCommandsNode"
     ],
     "ordinary_visit": [
-      "patch_visits", "civilian", "controller", "cmd_StickySequenceCommand",
-      "cmd_AmIInCombat", "cmd_AreThreatsNearby"
+      "patch_visits",
+      "civilian",
+      "controller",
+      "cmd_StickySequenceCommand",
+      "cmd_AmIInCombat",
+      "cmd_AreThreatsNearby"
     ],
     "deferred_visit": [
-      "patch_visits", "civilian"
+      "patch_visits",
+      "civilian"
     ],
     "hidden_visit": [
-      "patch_visits", "ship"
+      "patch_visits",
+      "ship"
     ],
     "marked_visit": [
-      "patch_visits", "blackboard"
+      "patch_visits",
+      "blackboard"
     ],
     "civilian_attached": [
-      "patch_visits", "controller", "ship"
+      "patch_visits",
+      "controller",
+      "ship"
+    ],
+    "ordinary_shallow_wait": [
+      "civilian",
+      "base_character",
+      "cmd_Hold",
+      "patch_visits",
+      "patch_civilian_wait",
+      "policy_asteroid_visits"
+    ],
+    "civilian_wait_release": [
+      "civilian",
+      "base_character",
+      "cmd_Hold",
+      "patch_visits",
+      "patch_civilian_wait",
+      "policy_asteroid_visits"
+    ],
+    "attached_asteroid_visit": [
+      "civilian",
+      "base_character",
+      "cmd_Hold",
+      "patch_visits",
+      "patch_civilian_wait",
+      "policy_asteroid_visits"
+    ],
+    "civilian_home_available": [
+      "civilian",
+      "base_character",
+      "cmd_Hold",
+      "patch_visits",
+      "patch_civilian_wait",
+      "policy_asteroid_visits"
+    ],
+    "ordinary_civilian_visit": [
+      "civilian",
+      "base_character",
+      "cmd_Hold",
+      "patch_visits",
+      "patch_civilian_wait",
+      "policy_asteroid_visits"
+    ],
+    "freight_receiver_present": [
+      "market",
+      "patch_cargo_transfer"
+    ],
+    "freight_receiver_missing": [
+      "market",
+      "patch_cargo_transfer"
     ]
   },
   "assets": [
@@ -993,6 +1163,22 @@
         "local_frame_manager",
         "local_frame_situ",
         "local_frame_world"
+      ]
+    },
+    {
+      "id": "pilot_awake",
+      "path": "condtrigs/condtrigs.json",
+      "entry": "TIsHumanAwake",
+      "sources": [
+        "pilot_availability"
+      ]
+    },
+    {
+      "id": "stunned_pilot",
+      "path": "conditions/conditions.json",
+      "entry": "Stunned",
+      "sources": [
+        "pilot_availability"
       ]
     }
   ]

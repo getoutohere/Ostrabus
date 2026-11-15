@@ -71,6 +71,8 @@ try {
     }
     & (Join-Path $PSScriptRoot 'PdaSettings\Install-Assets.ps1') -AssetSource (Join-Path $deploySource 'PdaSettings\Assets') -GameDirectory $gamePath -SettingsPath $SettingsPath
     & (Join-Path $PSScriptRoot 'Build\Install-NativeMod.ps1') -ModName 'OstrabusPdaHack' -AssetSource (Join-Path $deploySource 'QoL\PdaHacking\Assets') -GameDirectory $gamePath -SettingsPath $SettingsPath
+    & (Join-Path $PSScriptRoot 'Build\Install-NativeMod.ps1') -ModName 'OstrabusRotation' -AssetSource (Join-Path $deploySource 'NavConsole\Rotation\Assets') -GameDirectory $gamePath -SettingsPath $SettingsPath
+    & (Join-Path $PSScriptRoot 'Build\Update-ApartmentRefuelStock.ps1') -GameDirectory $gamePath -SettingsPath $SettingsPath
     Disable-LegacyPlugin -PluginsDirectory (Split-Path -Parent $deployDestination) -DisabledFiles $disabledLegacy
     $deploymentComplete = $true
     Write-Host "`nInstalled to $deployDestination" -ForegroundColor Green

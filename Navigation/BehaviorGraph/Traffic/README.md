@@ -1,5 +1,12 @@
 # Cargo and civilian traffic
 
+The [Ceres SFF displacement investigation](../../CERES-SFF-DISPLACEMENT.md)
+establishes stale preserved-target coordinates at instant mooring and false
+flight success with residual RCS when the pilot is incapacitated. The flight/SFF
+nodes now pin those source and trigger boundaries. Physical coordinates, member
+offsets and crew-condition expiry remain outside this lifecycle projection;
+native reproduction tests cover the first two defects separately.
+
 The shared combat leaf has a separately reproduced native failure:
 [SurrenderOffer can clear combat even when sending fails](../../SURRENDER-COMBAT-LOOP.md).
 Its production repair and dedicated assembly tests cover message failure,
@@ -50,8 +57,8 @@ projection's `stale`/`stale_due` variables represent the current conditions;
 registration-time timer bookkeeping and worker interleavings are verified by
 Tests/StaleShipDiagnosis rather than simulated by this lifecycle projection.
 
-The current reference has 29 control points, 112 vanilla / 123 effective edges,
-70 scenarios and 410 consistency checks. It pins 73 source groups and 15 asset
+The current reference has 29 control points, 115 vanilla / 133 effective edges,
+79 scenarios and 457 consistency checks. It pins 83 source groups and 17 asset
 entries. The accepted IL/asset baseline reports no missing selectors or unresolved
 members. These counts describe coverage of the reference, not proof that the
 entire game simulation is correct.
@@ -112,8 +119,27 @@ Navy/Blockade lost-contact cleanup is recorded in the encounter slice's method
 bindings and [native reproduction](../../PATROL-TARGET-HANDOFF.md). It is separate
 from this freight/PASS/civilian lifecycle model and its passing counts.
 
-[Unregistered-course playback](../../UNREGISTERED-COURSES.md) is a newly confirmed
-numerical/lifecycle boundary: removal does not cancel the course; playback restores
-force and can retain it after expiry. The 156-check native investigation is not
-yet a production repair. Retirement edges do not prove stopped movement; this
-remains outside the projection's numerical flight coverage.
+[Civilian wait completion](../../../MiscBugFixes/CIVILIAN-VISIT-WAITS.md) adds
+native-backed cutoff, SFF clock, home-interface and asteroid-duration scenarios.
+Safe-home availability is an explicit input; the reference does not infer a
+successful journey from a released Hold. Native duration/fuel arithmetic and
+serialization are tested separately from these conditional transitions.
+
+[Unregistered-course playback](../../UNREGISTERED-COURSES.md) remains a numerical
+boundary outside this projection. Its controller-ownership repair is implemented
+and tested separately; graph retirement edges alone do not prove stopped motion.
+
+The [cargo bundle audit and repair](../../../Orbital/Economy/CARGO-LOADING-AUDIT.md)
+adds native before/after coverage for repeated seed selection and loaded-pod
+lifetime. The graph's existing remainder witness still represents one accepted
+consignment; it does not expand all bundled commodities or capacity allocation.
+The linked harness supplies that additional evidence rather than treating the
+single-consignment graph scenario as complete loading coverage.
+
+The [freight lifecycle repairs](../../../Orbital/Economy/FREIGHT-LIFECYCLE-AUDIT.md)
+add 521 native reproduction/production checks for shared stock accounting, sizing,
+normal/emergency/SFF handoff and failure isolation. The effective graph models
+emergency handoff and missing-receiver retry. Detailed quantities, intended
+overflow dumping and Main/Flee/priority instance/save ownership remain explicitly
+native-tested boundaries rather than fabricated graph outcomes. The exact
+historical removal caller is still unproved.

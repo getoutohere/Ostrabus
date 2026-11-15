@@ -33,6 +33,15 @@ plugin's actual AI/evasion/hull composition in both patch installation orders.
 Production sources are linked directly into both harnesses. No game assets or
 save files are written, and the running game is not contacted.
 
+The range/proximity audit adds 45 checks for the
+[asteroid-moored selected-range and late-alarm defects](../../Navigation/Collisions/MOORED-TARGET-RANGE.md).
+Native target-data, mooring-slider/tether and collision-scan bodies execute;
+only text/slider assignment is stubbed at the UI boundary. Negative controls
+reproduce both failures. Checks cover four dial ranges just inside/outside each
+boundary, both dial/collision installation orders, feature-off and station
+fallbacks, preserved AI group handoff/clearance, native speed buffers and no
+warmed per-candidate allocation. The default integration total is 1,194 checks.
+
 Rotation regressions execute the shipped Q/E input command bodies and
 `Ship.RotateCW`. The unpatched control reproduces a stale outline despite an
 in-place floor-layout turn: both the floor-list identity and final grid rotation

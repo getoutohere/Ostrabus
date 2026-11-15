@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../Navigation/RouteCompletionPatch.cs" Link="RouteCompletionPatch.cs" />
     <Compile Include="../../Orbital/*.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../Orbital/Economy/*.cs" Link="Economy/%(Filename)%(Extension)" />
     <Compile Include="../../Haulers/*.cs" Link="%(Filename)%(Extension)" />

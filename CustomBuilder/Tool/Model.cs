@@ -24,6 +24,8 @@ sealed class Feature {
 sealed class NativeMod {
     public string Name { get; set; } = "";
     public string Source { get; set; } = "";
+    public bool RetainDefinitionsOnOmission { get; set; }
+    public string[] OmissionFiles { get; set; } = [];
 }
 
 sealed class Hook {

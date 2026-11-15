@@ -32,11 +32,20 @@ For category presets or individual feature choices, run
 Custom builds and packages are isolated from normal build output.
 `Deploy-Mod.cmd` continues deploying the full normal build.
 
+The optional [Apartment Refuel Terminal](../StandaloneMods/ApartmentRefuel/README.md)
+is compiled and installed separately. `Package-Mod.ps1` bundles its standalone
+installer under `StandaloneMods/ApartmentRefuel/` without activating it. Full and
+custom installers preserve an installed companion and refresh its composed supply
+stock after their own native-mod selection changes. They do not replace its DLL.
+
 ## Project layout
 
 Full deployment registers the assets-only `OstrabusPdaHack` native mod alongside
 Settings, honoring custom Mods locations and preserving native disabled states.
-Custom installers enable selected native features and disable omitted ones.
+Full deployment also installs the physical [RCS Rotation Module](../NavConsole/Rotation/README.md).
+Custom installers enable selected native features and disable omitted ones;
+previously installed rotation item definitions are retained without new shop stock
+to preserve items in existing saves.
 PDA hacking installs no game hook and works independently of the Settings app.
 
 - Feature directories contain their own implementation and notes: `AlternativeWork`,
@@ -88,6 +97,8 @@ checked-in fixtures. Build the named project in Release, then pass its
 | `PortraitCompositionCheck` | none | Native portrait cold/warm paths, pixel equivalence, raw channel layouts, fallback handling, buffer allocation and guarded transpiler binding. |
 | `SocialsProfilingCheck` | none | Temporary profiling registration, nested timing, deferred UI capture, native exceptions, timeout and removal of all diagnostic hooks. |
 | `CoursePlotCheck` | none | Native thrust inversion, fine-control increments, limits and course-control patch bindings. |
+| `RotationModuleCheck` | none | RCS PID, native fuel/translation, dock-group anchor rotation, command save/load, SFF queue, hardware and cancellation boundaries. Native asset install fixtures: `Tests/RotationModuleCheck/InstallCheck.ps1`. |
+| `ApartmentRefuelCheck` | none | Standalone native refuel setup/payment/delivery, apartment fit, quote validation and conversion metadata. Installer/stock fixtures: `Tests/ApartmentRefuelCheck/Test-Installer.ps1`; full Unity work/save lifecycle remains a live check. |
 | `MultiShipBarterAudit` | none | Native failure reproductions plus corrected multi-ship zone rows, loader ownership/cancellation and buy/sell/rebuy writeback, with optimization and exception controls. |
 | `TorchTowCheck` | none | Native planner, grouped course playback, combined mass, brace-release aborts, save reconstruction and manual/anchored controls. |
 

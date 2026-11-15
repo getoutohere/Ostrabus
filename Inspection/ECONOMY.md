@@ -29,6 +29,7 @@ credit an absent hull's cargo to a specified destination and remove stale record
 | `/economy/markets/{id}/audit` | Direct audit, including unresolved hulls; also accepts `/freight/{id}/audit` and valid station aliases. |
 | `GET/POST /economy/freight/{id}/approach[/{stationId}]` | Preview/complete travel to the existing destination and resume native arrival; POST requires `confirm=APPROACH`. |
 | `GET/POST /economy/freight/{id}/recover/{stationId}` | Preview/credit surviving orphan cargo to an explicit destination; POST requires `confirm=RECOVER`. |
+| `GET/POST /economy/freight/{id}/recover-quantity/{stationId}` | Exact category/quantity redistribution with expected source/receiver balances; supports bounded selection from larger inventories. Requires `category`, `units`, `sourceStock`, `destinationStock`; POST also requires `confirm=RECOVER`. See [recovery parameters](FREIGHT-RECOVERY.md#exact-commodity-and-quantity-recovery). |
 
 The stock, production, actors, manifest, audit, trade and related-freight views also accept
 `/economy/stations/{id}/...` and `/economy/freight/{id}/...`. Station-prefixed paths

@@ -54,12 +54,16 @@ internal static class CivilianVisits {
     internal sealed class VisitSequence : StickySequenceCommand {
         readonly CivilianPilot pilot;
         readonly ICommand fly, dock;
+        readonly Hold hold;
+        readonly CivilianVisitWaiting.Visit waiting;
         internal VisitSequence(string name, ICommand[] commands, CivilianPilot owner) : base(name, commands) {
             pilot = owner; fly = commands[2]; dock = commands[3];
+            hold = (Hold)commands[4]; waiting = new CivilianVisitWaiting.Visit(owner, hold);
         }
         bool Approach => Phase(this) >= 1 && Phase(this) <= 3;
-        bool OwnLeaf(ICommand command) => ReferenceEquals(command, fly) || ReferenceEquals(command, dock) ||
-            command is OneShotWrapperCommand && (ReferenceEquals(command.FindCommand(typeof(FlyTo)), fly) || ReferenceEquals(command.FindCommand(typeof(Dock)), dock));
+        bool OwnLeaf(ICommand command) => ReferenceEquals(command, fly) || ReferenceEquals(command, dock) || ReferenceEquals(command, hold) ||
+            command is OneShotWrapperCommand && (ReferenceEquals(command.FindCommand(typeof(FlyTo)), fly) ||
+                ReferenceEquals(command.FindCommand(typeof(Dock)), dock) || ReferenceEquals(command.FindCommand(typeof(Hold)), hold));
         bool OtherPriority() {
             var node = pilot.PriorityQueue;
             if (node == null) return false;
@@ -101,14 +105,41 @@ internal static class CivilianVisits {
             if (ai != null && OwnLeaf(Active(ai))) Active(ai) = null;
         }
         internal bool BeforeSff(ICommand command) {
-            if (!OwnLeaf(command) || OtherPriority()) return false;
             var ai = AIShipManager.GetAIShipByRegID(pilot.ShipUs.strRegID);
             if (ai != null && Reaction(ai) != null) return false;
+            if (Phase(this) == 4 && waiting.Shallow && !OtherPriority() &&
+                (ReferenceEquals(command, hold) || OwnLeaf(command))) return true;
+            if (!OwnLeaf(command) || OtherPriority()) return false;
             return Validate();
+        }
+        internal void AfterSff(ICommand command, ref ICommand result) {
+            // Native instant docking has already succeeded. Resume its existing
+            // Main visit instead of creating an independent queued Hold/clock.
+            if (!(result is Hold) || !Approach || !OwnLeaf(command) || OtherPriority() || !waiting.Shallow ||
+                !pilot.ShipUs.IsDocked()) return;
+            var ai = AIShipManager.GetAIShipByRegID(pilot.ShipUs.strRegID);
+            if (ai != null && Reaction(ai) != null) return;
+            Phase(this) = 4; waiting.Reset(); waiting.Begin(); result = null;
         }
         public override CommandStatus RunCommand(Blackboard blackboard) {
             Validate();
-            return base.RunCommand(blackboard);
+            int before = Phase(this);
+            if (before != 4) waiting.Reset();
+            var result = base.RunCommand(blackboard);
+            if (Phase(this) != 4) {
+                if (before == 4 && waiting.Shallow && !pilot.ShipUs.IsDocked() && pilot.ShipUs.objSS.NavData == null)
+                    pilot.ShipUs.ClearShipTarget();
+                waiting.Reset();
+            }
+            return result;
+        }
+        public override List<JsonCommandPayload> GetSaveData(string path) {
+            waiting.Save();
+            return base.GetSaveData(path);
+        }
+        public override void LoadSaveData(string path, JsonCommandPayload[] data) {
+            base.LoadSaveData(path, data);
+            waiting.Load(Phase(this) == 4);
         }
     }
 }
@@ -164,6 +195,8 @@ internal static class CivilianVisitSffPatch {
         __result = null;
         return false;
     }
+    static void Postfix(CivilianPilot __instance, ICommand lastActiveCommand, ref ICommand __result) =>
+        CivilianVisits.Sequence(__instance)?.AfterSff(lastActiveCommand, ref __result);
 }
 
 // Native retirement moves GetPeople(allowDocked:true) and hides the carrier.

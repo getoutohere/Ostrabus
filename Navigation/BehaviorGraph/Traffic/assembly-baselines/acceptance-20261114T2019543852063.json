@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/203627680ffc9c9dfad86cd764f2fb4dd5e1e354597fa92192412da2b367f3a5.json.br",
+  "reason": "Reviewed civilian native Hold/Main/FFWD and home dispatch against SOS assets. Added separate asteroid-duration policy and wait/save/SFF/faction-home scenarios. Native 47 focused assertions, 146 role checks, 82 visit lifecycle checks, flight/Ceres/patrol/regional regressions, full 273-class binding and three selective builds pass. Physical flight and random target selection remain controlled fixture boundaries; live playtesting pending.",
+  "acceptedUtc": "2026-11-14T20:19:54.3832261Z",
+  "previousSnapshot": "assembly-baselines/848857519b117abbe1b326ac5811136d715b83bf9f9a96f7f2182f2e7cbd3fa3.json.br"
+}

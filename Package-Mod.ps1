@@ -3,7 +3,7 @@ param([ValidateSet('Debug', 'Release')][string]$Configuration = 'Debug')
 
 $ErrorActionPreference = 'Stop'
 $packageBuild = Join-Path $PSScriptRoot "bin\$Configuration\netstandard2.1"
-foreach ($packageFile in @('Ostrabus.dll', 'Ostrabus.pdb', 'PdaSettings\Assets\mod_info.json', 'QoL\PdaHacking\Assets\mod_info.json')) {
+foreach ($packageFile in @('Ostrabus.dll', 'Ostrabus.pdb', 'PdaSettings\Assets\mod_info.json', 'QoL\PdaHacking\Assets\mod_info.json', 'NavConsole\Rotation\Assets\mod_info.json')) {
     if (-not (Test-Path -LiteralPath (Join-Path $packageBuild $packageFile) -PathType Leaf)) { throw "Build $Configuration before packaging: missing $packageFile" }
 }
 # Use a fresh directory for every package; never recursively delete a computed path.
@@ -13,10 +13,13 @@ New-Item -ItemType Directory -Path (Join-Path $packageRoot 'PdaSettings') -Force
 New-Item -ItemType Directory -Path (Join-Path $packageRoot 'Build') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Build\Find-Game.ps1') -Destination (Join-Path $packageRoot 'Build')
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Build\Install-NativeMod.ps1') -Destination (Join-Path $packageRoot 'Build')
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Build\Update-ApartmentRefuelStock.ps1') -Destination (Join-Path $packageRoot 'Build')
 foreach ($packageFile in @('Ostrabus.dll', 'Ostrabus.pdb')) { Copy-Item -LiteralPath (Join-Path $packageBuild $packageFile) -Destination (Join-Path $packageRoot 'Plugin') }
 Copy-Item -LiteralPath (Join-Path $packageBuild 'PdaSettings\Assets') -Destination (Join-Path $packageRoot 'Plugin\PdaSettings') -Recurse
 New-Item -ItemType Directory -Path (Join-Path $packageRoot 'Plugin\QoL\PdaHacking') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $packageBuild 'QoL\PdaHacking\Assets') -Destination (Join-Path $packageRoot 'Plugin\QoL\PdaHacking') -Recurse
+New-Item -ItemType Directory -Path (Join-Path $packageRoot 'Plugin\NavConsole\Rotation') -Force | Out-Null
+Copy-Item -LiteralPath (Join-Path $packageBuild 'NavConsole\Rotation\Assets') -Destination (Join-Path $packageRoot 'Plugin\NavConsole\Rotation') -Recurse
 foreach ($packageFile in @('Deploy-Mod.ps1', 'Deploy-Mod.cmd')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $packageFile) -Destination $packageRoot }
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'LICENSE') -Destination $packageRoot
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'PdaSettings\Install-Assets.ps1') -Destination (Join-Path $packageRoot 'PdaSettings')
@@ -31,15 +34,24 @@ Source, feature inventory and module documentation:
 https://github.com/getoutohere/Ostrabus
 
 Close Ostranauts, then double-click Deploy-Mod.cmd to install the plugin, Settings
-app and assets-only Quick PDA Hacking mod. The installer retains other native mods
+app, assets-only Quick PDA Hacking and the physical RCS Rotation Module. The installer retains other native mods
 and their enabled/disabled states.
 Existing TemplateExample plugin copies are disabled with backups retained.
 Restart the game and open MOD SETTINGS from the PDA home screen.
 
+Optional Apartment Refuel Terminal: separately installable under
+StandaloneMods/ApartmentRefuel. Run its own Install.cmd if wanted; the main
+Deploy-Mod.cmd does not activate this companion. See its README for pricing,
+apartment restrictions and saved-item definition retention on removal.
+
 Saved controls persist to BepInEx config. Session controls reset on game restart.
 The existing com.ostranauts.template.cfg filename is retained for compatibility.
 To remove the app, disable Ostrabus Settings in the native Mods screen. Removing
-the BepInEx plugin also removes the code fixes; existing saves need no conversion.
+the BepInEx plugin also removes the code fixes. Saves containing the new Rotation
+Module item still require its native item definitions; keep OstrabusRotation assets
+installed or remove those items before removing the native mod.
 '@ | Set-Content -LiteralPath (Join-Path $packageRoot 'README.txt') -Encoding UTF8
+& (Join-Path $PSScriptRoot 'StandaloneMods\ApartmentRefuel\Package.ps1') -Destination (Join-Path $packageRoot 'StandaloneMods\ApartmentRefuel') -NoArchive | Out-Host
+if (-not (Test-Path -LiteralPath (Join-Path $packageRoot 'StandaloneMods\ApartmentRefuel\Plugin\Ostrabus.ApartmentRefuel.dll'))) { throw 'Standalone companion packaging failed.' }
 Compress-Archive -Path (Join-Path $packageRoot '*') -DestinationPath ($packageRoot + '.zip')
 Write-Output ($packageRoot + '.zip')

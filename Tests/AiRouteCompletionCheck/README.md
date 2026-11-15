@@ -1,5 +1,14 @@
 # Native SFF destination and velocity-recovery checks
 
+The shared [playback completion repair](../../Navigation/ROUTE-COMPLETION.md)
+adds 295 checks for actual native route playback and physics, for 661 total.
+Its dedicated phase enables real physical integration and body ephemerides;
+the earlier destination/velocity-recovery fixtures below keep their original
+boundaries. It reproduces the 89.7587 m/s defect before installing the patch and
+checks ordinary/PASS-sized steps, remaining coast, GUI preservation, ambient
+forces, body-relative endpoints, physical/borrowed torch controls, rejection,
+manual thrust, exceptions, nested handlers and changed IL refusal.
+
 Run from the repository root:
 
 ```powershell
@@ -18,6 +27,20 @@ classification, ownership lookup and maneuver stopping are boundary stand-ins.
 Playback destination writes/copies and the native command exits are not replaced.
 This proves the destination-overwrite mechanism and repair, rather than full
 orbital dynamics, fuel consumption or the exact historical incident chronology.
+
+The November 14 additions run actual locked-body ephemeris updates and native
+`Dock.ResolveInstantly`/`PlaceOrbitPosition`. They reproduce skip-sized stale
+placement, then verify target refresh and mooring separation at one minute,
+two hours and six hours. Final asteroid materialization is a boundary stand-in;
+the position calculation is native. Earlier tests replaced ephemeris updates
+and therefore missed the preserved-target coordinate handoff.
+
+Native no-pilot flight is also tested before/after the production transpiler:
+false success with residual RCS becomes a pending flight with native maneuver
+stop. Momentum, cached status reuse, active-course bypass and player controls
+are checked. Pilot availability is prescribed at its native getter boundary;
+these tests do not simulate biology or hardware failure. See the
+[investigation](../../Navigation/CERES-SFF-DISPLACEMENT.md).
 
 The real API handler runs against fixture controllers, native selector/sticky
 sequences and a simulated registry. It checks read-only preview, ship/body
@@ -40,7 +63,8 @@ parameters. Real loopback TCP GET/POST requests also pass through `Serve`, the
 request queue, `Pump`, the recovery handler and JSON response writer. Recorder
 ticks are replaced at their scene boundary; request handling is unchanged.
 
-On game 1.0.1.10: **346 checks passed**. The complete plugin also bound all 236
+The earlier destination/recovery-only run on game 1.0.1.10 passed **366 checks**;
+the extended suite above passes **661**. That earlier complete plugin bound all 236
 Harmony patch classes without failures or warnings. The isolated Custom Builder
 package bound this one patch with zero frame callbacks; its catalog self-test
 passed 482 checks. The inspection-only package bound nine patch classes, including

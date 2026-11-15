@@ -23,6 +23,7 @@ Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Install-Custom.cmd') -Destinati
 New-Item -ItemType Directory -Path (Join-Path $destination 'Support') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $repo 'Build\Find-Game.ps1') -Destination (Join-Path $destination 'Support')
 Copy-Item -LiteralPath (Join-Path $repo 'Build\Install-NativeMod.ps1') -Destination (Join-Path $destination 'Support')
+Copy-Item -LiteralPath (Join-Path $repo 'Build\Update-ApartmentRefuelStock.ps1') -Destination (Join-Path $destination 'Support')
 if ($plan.pdaAssets) {
     New-Item -ItemType Directory -Path (Join-Path $destination 'PdaSettings') -Force | Out-Null
     Copy-Item -LiteralPath (Join-Path $repo 'PdaSettings\Assets') -Destination (Join-Path $destination 'PdaSettings') -Recurse
@@ -44,7 +45,8 @@ foreach ($mod in @($plan.nativeMods)) {
 }
 $catalog=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'features.json') -Raw | ConvertFrom-Json
 $managed=@($catalog.features | ForEach-Object { $_.nativeMods } | Where-Object { $_ } | ForEach-Object { $_.name } | Sort-Object -Unique)
-$manifest=[ordered]@{schemaVersion=1; kind='Ostrabus custom build'; selectionHash=$plan.fingerprint; pluginFiles=$hashes;managedNativeMods=$managed;nativeModFiles=$nativeHashes}
+$retained=@($catalog.features | ForEach-Object { $_.nativeMods } | Where-Object { $_ -and $_.retainDefinitionsOnOmission } | ForEach-Object { [ordered]@{name=$_.name;omissionFiles=@($_.omissionFiles)} })
+$manifest=[ordered]@{schemaVersion=1; kind='Ostrabus custom build'; selectionHash=$plan.fingerprint; pluginFiles=$hashes;managedNativeMods=$managed;nativeModFiles=$nativeHashes;retainedNativeMods=$retained}
 [IO.File]::WriteAllText((Join-Path $destination 'package.json'),(ConvertTo-Json -InputObject $manifest -Depth 20),[Text.UTF8Encoding]::new($false))
 $readme=@"
 Ostrabus custom build: $($plan.name)
@@ -66,6 +68,8 @@ Target: Ostranauts 1.0.1.10 / BepInEx 5. Game binaries are not redistributed.
 Selected native mods: $(@($plan.nativeMods | ForEach-Object { $_.name }) -join ', ')
 Their assets are included independently of the Settings app; omitted native
 features are disabled in the game's load order when installing this profile.
+Previously installed Rotation Module item definitions are retained for existing
+saves when omitted, with future shop stock removed; its console UI is unavailable.
 "@
 [IO.File]::WriteAllText((Join-Path $destination 'README.txt'),$readme,[Text.UTF8Encoding]::new($false))
 Compress-Archive -LiteralPath $destination -DestinationPath ($destination+'.zip')

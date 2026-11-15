@@ -1,0 +1,455 @@
+{
+  "schemaVersion": 1,
+  "id": "ostrabus-mission-executive-v1-offline",
+  "purpose": "Normative replacement execution model. Not a description of shipped behavior or an installed patch.",
+  "limits": {
+    "suspendedMissions": 4,
+    "pendingWorldEffects": 1
+  },
+  "initialPhase": "Selecting",
+  "lifecycleOperations": [
+    "Begin",
+    "Preempt",
+    "Replace",
+    "Resume",
+    "Rebind",
+    "RequestDisable",
+    "ReleaseToNative",
+    "Restore",
+    "FinishByPolicy",
+    "TransferForSupersedingDirective",
+    "RetargetOrdinaryContinuation"
+  ],
+  "profiles": [
+    {
+      "kind": "Return",
+      "withoutGoal": "Selecting",
+      "withGoal": "Revalidating"
+    },
+    {
+      "kind": "Patrol",
+      "withoutGoal": "Selecting",
+      "withGoal": "Revalidating"
+    },
+    {
+      "kind": "Combat",
+      "withoutGoal": "Engaging",
+      "withGoal": "Engaging"
+    },
+    {
+      "kind": "Reaction",
+      "withoutGoal": "Reacting",
+      "withGoal": "Reacting"
+    },
+    {
+      "kind": "Directive",
+      "withoutGoal": "Operating",
+      "withGoal": "Operating"
+    }
+  ],
+  "phases": [
+    "Selecting",
+    "Approaching",
+    "ArrivalReady",
+    "ArrivalPrepared",
+    "ArrivalUncertain",
+    "Revalidating",
+    "AwaitingPolicy",
+    "Reacting",
+    "Engaging",
+    "Completed",
+    "Operating"
+  ],
+  "events": [
+    "GoalSelected",
+    "NoDestination",
+    "Progress",
+    "Blocked",
+    "ApproachComplete",
+    "ApproachFailed",
+    "GoalUnavailable",
+    "DispatchArrival",
+    "InvocationBoundaryReady",
+    "NoWorldEffectIssued",
+    "WorldOutcomeUnknown",
+    "WorldEffectObserved",
+    "ResumeValidated",
+    "ResumeRejected",
+    "ReactionComplete",
+    "CombatComplete",
+    "DirectiveProgress",
+    "DirectiveComplete",
+    "DirectiveFailed"
+  ],
+  "operations": [
+    "setGoal",
+    "clearGoal",
+    "prepareArrival",
+    "clearArrival",
+    "complete",
+    "observeDisposition"
+  ],
+  "effects": [
+    "SelectNativeGoal",
+    "RunNativeApproach",
+    "StopOwnedControls",
+    "RequestNativePolicy",
+    "PersistArrivalIntent",
+    "InvokeNativeArrival",
+    "ObserveWorldEffect",
+    "RevalidateGoal",
+    "RunNativeReaction",
+    "RunNativeCombat",
+    "RunNativeDirective"
+  ],
+  "transitions": [
+    {
+      "id": "select-goal",
+      "from": "Selecting",
+      "event": "GoalSelected",
+      "to": "Approaching",
+      "operations": [
+        "setGoal"
+      ],
+      "effects": [
+        "RunNativeApproach"
+      ]
+    },
+    {
+      "id": "select-no-destination",
+      "from": "Selecting",
+      "event": "NoDestination",
+      "to": "AwaitingPolicy",
+      "effects": [
+        "StopOwnedControls",
+        "RequestNativePolicy"
+      ]
+    },
+    {
+      "id": "select-blocked",
+      "from": "Selecting",
+      "event": "Blocked",
+      "to": "Selecting"
+    },
+    {
+      "id": "approach-progress",
+      "from": "Approaching",
+      "event": "Progress",
+      "to": "Approaching"
+    },
+    {
+      "id": "approach-blocked",
+      "from": "Approaching",
+      "event": "Blocked",
+      "to": "Approaching"
+    },
+    {
+      "id": "approach-complete",
+      "from": "Approaching",
+      "event": "ApproachComplete",
+      "whenArrival": "Dock",
+      "to": "ArrivalReady"
+    },
+    {
+      "id": "waypoint-reached",
+      "from": "Approaching",
+      "event": "ApproachComplete",
+      "whenArrival": "None",
+      "to": "Completed",
+      "operations": [
+        "complete"
+      ],
+      "effects": [
+        "StopOwnedControls"
+      ]
+    },
+    {
+      "id": "approach-failed",
+      "from": "Approaching",
+      "event": "ApproachFailed",
+      "to": "AwaitingPolicy",
+      "effects": [
+        "StopOwnedControls",
+        "RequestNativePolicy"
+      ]
+    },
+    {
+      "id": "approach-target-lost",
+      "from": "Approaching",
+      "event": "GoalUnavailable",
+      "to": "AwaitingPolicy",
+      "operations": [
+        "clearGoal"
+      ],
+      "effects": [
+        "StopOwnedControls",
+        "RequestNativePolicy"
+      ]
+    },
+    {
+      "id": "arrival-target-lost",
+      "from": "ArrivalReady",
+      "event": "GoalUnavailable",
+      "to": "AwaitingPolicy",
+      "operations": [
+        "clearGoal"
+      ],
+      "effects": [
+        "StopOwnedControls",
+        "RequestNativePolicy"
+      ]
+    },
+    {
+      "id": "arrival-prepare",
+      "from": "ArrivalReady",
+      "event": "DispatchArrival",
+      "to": "ArrivalPrepared",
+      "operations": [
+        "prepareArrival"
+      ],
+      "effects": [
+        "StopOwnedControls",
+        "PersistArrivalIntent"
+      ]
+    },
+    {
+      "id": "arrival-submit",
+      "from": "ArrivalPrepared",
+      "event": "InvocationBoundaryReady",
+      "to": "ArrivalUncertain",
+      "effects": [
+        "InvokeNativeArrival"
+      ]
+    },
+    {
+      "id": "arrival-not-issued",
+      "from": "ArrivalUncertain",
+      "event": "NoWorldEffectIssued",
+      "to": "ArrivalReady",
+      "operations": [
+        "clearArrival"
+      ]
+    },
+    {
+      "id": "arrival-uncertain",
+      "from": "ArrivalUncertain",
+      "event": "WorldOutcomeUnknown",
+      "to": "ArrivalUncertain",
+      "effects": [
+        "ObserveWorldEffect"
+      ]
+    },
+    {
+      "id": "arrival-observed",
+      "from": "ArrivalUncertain",
+      "event": "WorldEffectObserved",
+      "to": "Completed",
+      "operations": [
+        "clearArrival",
+        "complete",
+        "observeDisposition"
+      ],
+      "effects": [
+        "StopOwnedControls"
+      ]
+    },
+    {
+      "id": "resume-valid",
+      "from": "Revalidating",
+      "event": "ResumeValidated",
+      "to": "Approaching",
+      "operations": [
+        "setGoal"
+      ],
+      "effects": [
+        "RunNativeApproach"
+      ]
+    },
+    {
+      "id": "resume-invalid",
+      "from": "Revalidating",
+      "event": "ResumeRejected",
+      "to": "AwaitingPolicy",
+      "operations": [
+        "clearGoal"
+      ],
+      "effects": [
+        "StopOwnedControls",
+        "RequestNativePolicy"
+      ]
+    },
+    {
+      "id": "reaction-progress",
+      "from": "Reacting",
+      "event": "Progress",
+      "to": "Reacting"
+    },
+    {
+      "id": "reaction-blocked",
+      "from": "Reacting",
+      "event": "Blocked",
+      "to": "Reacting"
+    },
+    {
+      "id": "combat-progress",
+      "from": "Engaging",
+      "event": "Progress",
+      "to": "Engaging"
+    },
+    {
+      "id": "combat-blocked",
+      "from": "Engaging",
+      "event": "Blocked",
+      "to": "Engaging"
+    },
+    {
+      "id": "combat-goal-lost",
+      "from": "Engaging",
+      "event": "GoalUnavailable",
+      "to": "AwaitingPolicy",
+      "operations": [
+        "clearGoal"
+      ],
+      "effects": [
+        "StopOwnedControls",
+        "RequestNativePolicy"
+      ]
+    },
+    {
+      "id": "reaction-complete",
+      "from": "Reacting",
+      "event": "ReactionComplete",
+      "to": "Completed",
+      "operations": [
+        "complete"
+      ],
+      "effects": [
+        "StopOwnedControls"
+      ]
+    },
+    {
+      "id": "combat-complete",
+      "from": "Engaging",
+      "event": "CombatComplete",
+      "to": "Completed",
+      "operations": [
+        "complete"
+      ],
+      "effects": [
+        "StopOwnedControls",
+        "RequestNativePolicy"
+      ]
+    },
+    {
+      "id": "directive-progress",
+      "from": "Operating",
+      "event": "DirectiveProgress",
+      "to": "Operating"
+    },
+    {
+      "id": "directive-complete",
+      "from": "Operating",
+      "event": "DirectiveComplete",
+      "to": "Completed",
+      "operations": [
+        "complete"
+      ],
+      "effects": [
+        "StopOwnedControls"
+      ]
+    },
+    {
+      "id": "directive-failed",
+      "from": "Operating",
+      "event": "DirectiveFailed",
+      "to": "Completed",
+      "operations": [
+        "complete"
+      ],
+      "effects": [
+        "StopOwnedControls",
+        "RequestNativePolicy"
+      ]
+    }
+  ],
+  "contracts": [
+    {
+      "id": "actor-identity",
+      "rule": "Actor ID, activation, binding revision, mission ID and ability attempt must match before an observation can advance state."
+    },
+    {
+      "id": "single-writer",
+      "rule": "Revoke owned controls before switching missions. Native world forces retain authority over momentum."
+    },
+    {
+      "id": "goal-ownership",
+      "rule": "A mission retains a logical goal independent of native ship-global target fields. Resume requires canonical revalidation."
+    },
+    {
+      "id": "typed-progress",
+      "rule": "Blocked and failed are distinct from completed. Failed approach never implies arrival."
+    },
+    {
+      "id": "authored-policy",
+      "rule": "Only an admitted native/authored policy choice starts or supersedes a mission. The reducer does not select targets, reserve fuel or invent emergency help."
+    },
+    {
+      "id": "bounded-interruption",
+      "rule": "Preemption is admitted by policy; suspended state is bounded and retained. Capacity or irreversible-effect boundaries refuse admission explicitly."
+    },
+    {
+      "id": "effect-barrier",
+      "rule": "An arrival intent must be recorded and its invocation boundary certified before native effects run. Standalone prepared/submitted snapshots can be ambiguous; only a coherent native snapshot and verified pre-invocation proof can authorize another attempt."
+    },
+    {
+      "id": "effect-correlation",
+      "rule": "Arrival observations must match the pending effect ID and destination. Missing attachment alone does not prove the request was never issued."
+    },
+    {
+      "id": "time-accounting",
+      "rule": "A world coordinator owns each interval. Native route playback consumes only to its boundary; residual time and settlement watermarks survive transitions. Bulk combat has no invented outcome."
+    },
+    {
+      "id": "actor-retirement",
+      "rule": "Verified native retirement clears suspended missions and forbids further execution for that activation. Attachment alone does not retire an actor."
+    },
+    {
+      "id": "handback",
+      "rule": "Export only an explicitly supported native representation. Otherwise disable is deferred; never run old and new controllers together."
+    }
+  ],
+  "implementationScope": {
+    "executable": [
+      "phase transitions",
+      "observation identity",
+      "bounded mission preemption/resume",
+      "checkpoint envelope",
+      "arrival correlation",
+      "unknown-state refusal"
+    ],
+    "nativeFixtureProfile": [
+      "Navy native low-fuel decision",
+      "native station selection",
+      "native FlyTo approach",
+      "native Dock request",
+      "native route playback and fuel settlement",
+      "ordered native Navy role decisions with equipment fixtures",
+      "short/long combat steering primitives",
+      "explicit timed Dodge and context restoration",
+      "native comms command transport and selected directive bodies",
+      "actual StarSystem.Update, GUIFFWD.FFWD and CrewSim._TeleportCO with native AI queue",
+      "real retained Orbital/SFF/Economy scopes and native market algorithms",
+      "scope-safe world coordination outside native prefix chain",
+      "PASS service binding without GUI flag spoofing",
+      "physical-only service binding for executive-owned actors"
+    ],
+    "notImplemented": [
+      "complete equipment and authored directive effect equivalence",
+      "all-state native handback",
+      "coherent production save/arrival boundary",
+      "live crew and scene transactions",
+      "shared non-GUI native playback completion repair",
+      "materialized physical/crew group qualification"
+    ]
+  }
+}

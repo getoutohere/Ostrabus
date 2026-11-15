@@ -39,6 +39,14 @@ internal static class SffNavigationDestinationPatch {
         bool autonomous = ship.IsAIShip && !ship.NavPlayerManned && !ReferenceEquals(ship, CrewSim.coPlayer?.ship) &&
             (CrewSim.coPlayer == null || CrewSim.system?.GetShipOwner(ship.strRegID) != CrewSim.coPlayer.strID);
         if (!autonomous) ship.shipSituTarget = point;
+        else {
+            // Playback normally replaced this field with an end-of-skip point.
+            // Keeping the real destination also requires advancing its locked
+            // coordinates: Dock.ResolveInstantly places beside this situation
+            // without the UpdateTime performed by ordinary Dock.RunCommand.
+            // Otherwise mooring saves a skip-sized offset from the real asteroid.
+            ship.shipSituTarget?.UpdateTime(StarSystem.fEpoch);
+        }
         return point;
     }
 }

@@ -53,7 +53,7 @@ internal sealed class SffEconomy : IDisposable {
         var ai = AIShipManager.GetAIShipByRegID(ship.strRegID);
         if (ai == null || ai.AIType != AIType.HaulerCargo || Reaction(ai) != null) return false;
         string command = ai.ActiveCommandName;
-        return string.IsNullOrEmpty(command) || command == "FlyTo" || command == "DockCargoAndDespawn";
+        return (string.IsNullOrEmpty(command) || command == "FlyTo" || command == "DockCargoAndDespawn") && FreightMission.IsDelivery(ai);
     }
     internal static SffEconomy Begin(StarSystem world, double seconds, bool sff) {
         if (!ActiveForSkip || !sff || Current != null || world?.dictShips == null || CrewSim.coPlayer == null ||
@@ -120,7 +120,10 @@ internal sealed class SffEconomy : IDisposable {
             if (route.Ship.bDestroyed || route.Ship.shipScanTarget == null || route.Ship.shipScanTarget.bDestroyed) return double.PositiveInfinity;
             Record("arrival", route.Ship.strRegID, route.Ship.shipScanTarget.strRegID, at);
             MarketManager.UnregisterCargoShip(route.Ship.strRegID, route.Ship.shipScanTarget.strRegID);
-            route.Delivered = true; deliveries++;
+            // A missing receiver or a failed handoff leaves the manifest and
+            // carrier alive. Full valid markets still discard native overflow.
+            route.Delivered = MarketManager.GetShipMarket(route.Ship.strRegID) == null;
+            if (route.Delivered) deliveries++;
             return double.PositiveInfinity;
         });
     }
@@ -148,6 +151,7 @@ internal sealed class SffEconomy : IDisposable {
         var pilot = new AIShip(first.OriginStation, AIType.HaulerCargo, loot);
         var ship = pilot.Ship;
         if (ship == null) return;
+        var spawn = OrbitalMotion.Read(ship.objSS);
         try {
             // Factories execute at the real final epoch. Only this new hull's departure position is historical.
             var displacement = OrbitalMotion.Read(ship.objSS).Position - OrbitalMotion.Read(source.objSS).Position;
@@ -159,21 +163,31 @@ internal sealed class SffEconomy : IDisposable {
             ship.TargetData = new TargetData(destination);
             MarketManager.RegisterAICargoHauler(ship, routes);
             var course = FreightRoute.Plan(pilot, destination, departure);
-            if (course == null) { Reject(ship, source); return; }
+            if (course == null) { Reject(pilot, source, spawn); return; }
             var flight = new FreightRoute(pilot, destination, departure, end, environment, course);
-            if (!flight.Prepare()) { Reject(ship, source); return; }
+            if (!flight.Prepare()) { Reject(pilot, source, spawn); return; }
             AIShipManager.AddAIToDict(pilot, "INTERREGIONAL");
             Add(flight); departures++;
             Record("departure", ship.strRegID, destination.strRegID, departure);
         } catch {
             // Return the manifest before destroying a hull which never entered managed flight.
-            if (!freight.ContainsKey(ship)) Reject(ship, source);
+            if (!freight.ContainsKey(ship)) Reject(pilot, source, spawn);
             throw;
         } finally { RestoreBodies(); }
     }
-    void Reject(Ship ship, Ship source) {
+    void Reject(AIShip pilot, Ship source, MotionState spawn) {
         rejected++;
-        if (MarketManager.GetShipMarket(ship.strRegID) != null) MarketManager.UnregisterCargoShip(ship.strRegID, source.strRegID);
+        var ship = pilot.Ship;
+        if (!CargoDelivery.Refund(ship.strRegID, source.strRegID)) {
+            // Do not destroy a failed departure with an unreturned load. Restore
+            // this new hull's real spawn state and leave native cargo AI to dock
+            // at its origin; no rerouting or alternate buyer is introduced.
+            OrbitalMotion.Write(ship.objSS, spawn);
+            ship.objSS.ResetNavData(); ship.objSS.ResetAccelerations();
+            new TargetData(source).ApplyToShip(ship);
+            AIShipManager.AddAIToDict(pilot, "INTERREGIONAL");
+            return;
+        }
         CrewSim.DockAndDespawn(ship, source);
         ship.Destroy(isDespawning: false);
     }

@@ -31,6 +31,22 @@ internal static class HullCollisionScanPatch {
         // superficially similar proximity/planet/projectile comparison.
         if(Local(code[start],false)!=Local(code[at-6],true)||Local(code[start+1],false)!=Local(code[at+1],true))
             throw new InvalidOperationException("Physical distance/radius locals changed.");
+        int radiusLocal=Local(code[at+1],true), bufferLocal=-1, buffers=0;
+        for(int i=start+3;i+1<code.Count;i++)
+            if(code[i].opcode==OpCodes.Ldc_R4 && code[i].operand is float f && f==3.3422936E-08f && Local(code[i+1],true)>=0) {
+                bufferLocal=Local(code[i+1],true);buffers++;
+            }
+        var thresholds=new HashSet<int>();
+        for(int i=start+3;i<code.Count;i++) {
+            if(code[i].opcode!=OpCodes.Add || Local(code[i-1],false)!=radiusLocal) continue;
+            int buffer=i-2;
+            // The independent range dial can be installed first or later.
+            // Preserve its original buffer/radius Add pattern in our output.
+            if(code[buffer].operand is MethodInfo m && m.DeclaringType?.FullName=="Ostrabus.NavConsole.ProximityCollisionPatch" && m.Name=="ShipBuffer") buffer--;
+            if(Local(code[buffer],false)==bufferLocal) thresholds.Add(i);
+        }
+        if(buffers!=1 || thresholds.Count!=2)
+            throw new InvalidOperationException("Expected two ship proximity threshold expressions; refusing an unverified warning geometry change.");
         for(int i=0;i<code.Count;i++) {
             if(i==start) {
                 yield return new CodeInstruction(code[i]){opcode=OpCodes.Ldarg_0,operand=null};
@@ -41,6 +57,11 @@ internal static class HullCollisionScanPatch {
                 yield return new CodeInstruction(OpCodes.Brfalse,code[i+2].operand);i+=2;
             } else {
                 yield return code[i];
+                if(thresholds.Contains(i)) {
+                    yield return new CodeInstruction(OpCodes.Ldarg_0);
+                    yield return new CodeInstruction(code[at-1].opcode,code[at-1].operand);
+                    yield return new CodeInstruction(OpCodes.Call,AccessTools.Method(typeof(HullDocking),nameof(HullDocking.WarningThreshold)));
+                }
                 if(i==at-7) {
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(code[at-1].opcode,code[at-1].operand);

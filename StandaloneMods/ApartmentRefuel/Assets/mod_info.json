@@ -1,0 +1,9 @@
+[
+    {
+        "strName":  "Apartment Refuel Terminal",
+        "strAuthor":  "Jon",
+        "strGameVersion":  "1.0.1.10",
+        "strModVersion":  "0.1.0",
+        "strNotes":  "Requires the standalone ApartmentRefuel BepInEx plugin. Item definitions should remain installed for saves containing terminals."
+    }
+]

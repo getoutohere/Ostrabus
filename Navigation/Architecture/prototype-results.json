@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "binding": "native-navy-1.0.1.10-prototype-v1/c6b794d3-c948-412a-ab78-aeb855ec3826/9de84e18-8fa1-44d8-820e-d8eaa34f5fc3",
+  "assertions": 108,
+  "allocationSample": {
+    "iterations": 2000,
+    "allocationCounterReliable": false,
+    "counterCalibrationBytes": 0,
+    "totalAllocatedBytes": null,
+    "bytesPerDispatch": null,
+    "elapsedMilliseconds": 66.5641,
+    "nativeCalls": 22000
+  },
+  "gameAssemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+  "pluginSha256": "d949582583b3ea413cc19111ef9495efb03e92bac5465dd006180c232461bb25",
+  "reviewedSources": [
+    {
+      "path": "Navigation/FlightControlHandoffPatch.cs",
+      "sha256": "be2eab769cb6bb45de7f6cd50029a99cca0ad33b5aa4f25fd37eeb40591d2eab"
+    },
+    {
+      "path": "Navigation/CivilianAsteroidVisits.cs",
+      "sha256": "6d772b8c587dadf7cbae7fa9268710f25988b72db17b0ea794a6ae82a43f552f"
+    },
+    {
+      "path": "MiscBugFixes/SffNavigationDestinationPatch.cs",
+      "sha256": "07e8d4a4da042b3b1bdade6317f6ea8b6a661e13ec62d4328db11d0ccb3a79bf"
+    },
+    {
+      "path": "MiscBugFixes/CivilianVisitWaiting.cs",
+      "sha256": "e1f545c55672409d9b74ea0ae4b042a52a8ff502294399ae5ba667af9bd1dbee"
+    },
+    {
+      "path": "Orbital/SffSimulation.cs",
+      "sha256": "eadc6fc44b6a678376e6a31dd0a9402574b9f7b1c68a62f7b87810adf1403f5e"
+    },
+    {
+      "path": "Orbital/Economy/CargoArrivalPatches.cs",
+      "sha256": "37f7dfe9972547dcce5f720c517abf765c12936ab92c06d230df31da9c9d0237"
+    },
+    {
+      "path": "Orbital/Economy/CargoDelivery.cs",
+      "sha256": "bf08cd86dbf6940ac0286350e6de55448e5f5761b2492d819d309284ce52dfe9"
+    },
+    {
+      "path": "Orbital/Economy/MarketStockPatches.cs",
+      "sha256": "38f270c013270b38f1c6f449bd46bbf0ca82d1dfef7add3795f0fe4bb1fc09fe"
+    }
+  ],
+  "results": [
+    {
+      "name": "native Navy patrol -> combat -> low-fuel retreat -> station arrival",
+      "passed": true,
+      "assertions": 8
+    },
+    {
+      "name": "ordinary patrol admission cannot monopolize combat; stale lease rejected",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "fresh-object checkpoint resumes native nested retreat and route fuel",
+      "passed": true,
+      "assertions": 10
+    },
+    {
+      "name": "normal / SFF / shuttle labels share route boundary semantics",
+      "passed": true,
+      "assertions": 18
+    },
+    {
+      "name": "no-pilot refusal waits; existing course can finish without pilot",
+      "passed": true,
+      "assertions": 9
+    },
+    {
+      "name": "failed native approach cannot fall through to Dock",
+      "passed": true,
+      "assertions": 1
+    },
+    {
+      "name": "native arrival without observed effect waits rather than replaying",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "native damage/surrender selection preserves authored return",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "typed blackboard retains empty lists, references and emergency tuple",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "directive FIFO, one-shot and fresh-graph round trip",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "canonical target rebind / disappearance / stale actor / version refusal",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "directive capacity is bounded and completed command objects are released",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "native export is repeatable for supported ordinary flight",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "combat time-skip is an explicit integration blocker",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "urgent native dodge returns control without suppressing combat",
+      "passed": true,
+      "assertions": 4
+    },
+    {
+      "name": "nested alias graph survives reconstruction",
+      "passed": true,
+      "assertions": 21
+    }
+  ],
+  "fixtureMethods": [
+    "AIShipManager.BingoFuelCheck",
+    "AIShipManager.BingoFuelCheck",
+    "AIShipManager.BingoFuelCheck",
+    "AIShipManager.GetAllStationsInATCRegion",
+    "AIShipManager.IsOnCollisionCourse",
+    "AIShipManager.LowFuel",
+    "CollisionManager.GetCollisionDistanceAU",
+    "CondOwner.GetCondAmount",
+    "CondOwner.GetFactionScore",
+    "CrewSim.DockAndDespawn",
+    "DataHandler.GetCondTrigger",
+    "GUIOrbitDraw.TriggerShipRedraw",
+    "Ostranauts.ShipGUIs.NavStation.NavModTorchDrive.GetLimiterSafetyMax",
+    "Ostranauts.Ships.AIPilots.NavyPilot.GetTarget",
+    "Ostranauts.Ships.AIPilots.NavyPilot.MaxSpeed",
+    "Ostranauts.Ships.Commands.AmIArmed.RunCommand",
+    "Ostranauts.Ships.Commands.AreThreatsNearby.RunCommand",
+    "Ostranauts.Ships.Commands.DoIHaveDecoys.RunCommand",
+    "Ostranauts.Ships.Commands.FlyToPath.PlanTrip4",
+    "Ostranauts.Ships.Commands.FlyToPath.TorchOff",
+    "Ostranauts.Ships.Commands.SetEngagementProfile.RunCommand",
+    "Ostranauts.Ships.Commands.Shoot.RunCommand",
+    "Ostranauts.Ships.Commands.SurrenderDemand.RunCommand",
+    "Ostranauts.Ships.Commands.TargetNewIfNone.GenerateNavData",
+    "Ostranauts.Ships.Comms.Comms.AIGetClearance",
+    "Ostranauts.Ships.Comms.Comms.GetCaptain",
+    "Ostranauts.Ships.Comms.Comms.SendMessage",
+    "Ostranauts.Ships.Sensors.ElectronicSystems.GetSensorRangeKm",
+    "Ostranauts.Ships.Sensors.ElectronicSystems.TurnOffActiveSensors",
+    "Ostranauts.Ships.Sensors.ElectronicSystems.TurnOnAllSensors",
+    "Ostranauts.Ships.Sensors.ShipSignature..ctor",
+    "Ostranauts.Ships.WeaponsSystem.GetWeaponsAndRotations",
+    "Ship.get_HasDockingPorts",
+    "Ship.get_NavAIManned",
+    "Ship.get_NavPlayerManned",
+    "Ship.get_RCSAccelMax",
+    "Ship.get_RCSCount",
+    "Ship.GetPeople",
+    "Ship.HasOpenDockingPorts",
+    "Ship.IsDocked",
+    "Ship.IsStation",
+    "Ship.Maneuver",
+    "Ship.RemoveGasMass",
+    "Ship.SetThrust",
+    "Ship.StopManeuver",
+    "ShipSitu.UpdateTime",
+    "StarSystem.GetNearestStation",
+    "StarSystem.GetNearestStationRegional",
+    "StarSystem.GetShipOwner",
+    "UnityEngine.Object.op_Equality",
+    "UnityEngine.Object.op_Inequality"
+  ],
+  "retainedPatchMethods": [
+    "Ostranauts.Ships.Commands.FlyTo.ApplyTripFuel",
+    "Ostranauts.Ships.Commands.FlyTo.FetchFuelData",
+    "Ostranauts.Ships.Commands.FlyTo.get_SaveData",
+    "Ostranauts.Ships.Commands.FlyTo.RunCommand",
+    "Ostranauts.Ships.Commands.FlyTo.set_SaveData",
+    "Ostranauts.Ships.Commands.FlyToPath.RunCommand",
+    "Ostranauts.Ships.Commands.FlyToPath.TorchOff",
+    "Ostranauts.Ships.Commands.LowFuelRetreat.RunCommand",
+    "Ship.Maneuver"
+  ]
+}

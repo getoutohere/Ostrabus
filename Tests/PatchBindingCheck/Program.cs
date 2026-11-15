@@ -31,6 +31,17 @@ static class Program {
                     failures++; Console.WriteLine("FAILED " + type.FullName + ": " + error);
                 }
             }
+            if (args.Length == 2 && args[0] == "--companion") {
+                if (assembly.GetType("Ostrabus.ApartmentRefuel.Plugin") != null) { failures++; Console.WriteLine("FAILED companion was compiled into omnibus"); }
+                var companion = Assembly.LoadFrom(System.IO.Path.GetFullPath(args[1]));
+                foreach (var type in companion.GetTypes().Where(t => t.GetCustomAttributes(typeof(HarmonyPatch), false).Length > 0)) {
+                    try {
+                        var targets = h.CreateClassProcessor(type).Patch();
+                        if (targets == null || targets.Count != 1) throw new Exception("Companion target count changed");
+                        classes++; Console.WriteLine("BOUND COMPANION " + type.FullName);
+                    } catch (Exception error) { failures++; Console.WriteLine("FAILED COMPANION " + type.FullName + ": " + error); }
+                }
+            }
             Console.WriteLine("Patch binding audit: " + classes + " classes bound; " + skipped + " disabled by Prepare; " + failures + " failed; " + warnings + " warnings.");
             return failures == 0 && warnings == 0 ? 0 : 1;
         } finally { h.UnpatchSelf(); engine.UnpatchSelf(); source.Dispose(); }

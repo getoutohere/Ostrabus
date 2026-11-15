@@ -73,7 +73,7 @@
         "internal static void ResetForRcs",
         "class ShallowTorchShutdownPatch"
       ],
-      "sha256": "7d0f7932dcde09f5ae3749d799597d3c3accc53353ac19f30dedf4b21236a0f1"
+      "sha256": "be2eab769cb6bb45de7f6cd50029a99cca0ad33b5aa4f25fd37eeb40591d2eab"
     },
     "flight_control_stop": {
       "origin": "repo",
@@ -442,7 +442,7 @@
       "anchors": [
         "class SffSimulation"
       ],
-      "sha256": "e7565a26e8412120444bff374476de35f91490e951252128cf8e719f119eb926"
+      "sha256": "eadc6fc44b6a678376e6a31dd0a9402574b9f7b1c68a62f7b87810adf1403f5e"
     },
     "patch_economy": {
       "origin": "repo",
@@ -451,7 +451,7 @@
       "anchors": [
         "class SffEconomy"
       ],
-      "sha256": "d1b164348cc20e492c6e6c91e32e14b05cc0bbbf7b7f3998e0aac3816827c200"
+      "sha256": "11fd3f11208b9d0a20485d81c8621b49086074a933fe3317b1e6721a04dea001"
     },
     "patch_economy_hooks": {
       "origin": "repo",
@@ -465,11 +465,11 @@
     "patch_loading": {
       "origin": "repo",
       "path": "Orbital/Economy/CargoLoadingPatch.cs",
-      "symbol": "Cargo loading remainder conservation",
+      "symbol": "Cargo bundle identity, pod lifetime and remainder conservation",
       "anchors": [
         "TryAddStock"
       ],
-      "sha256": "9b0cef54de3c7878e2f3a762aae6d9818affd9ef36614136728589e35535c1bd"
+      "sha256": "27e465b3e67921a92c15efd42ebd223177171393ab4f2557a85f5450ff7c7c49"
     },
     "patch_return": {
       "origin": "repo",
@@ -567,7 +567,7 @@
         "internal static void Retired",
         "internal static void Registered"
       ],
-      "sha256": "c727fd6ca9219086cd1d3fa5ed6291f1b7deda8ee207ae7330eb98f8687d9f34"
+      "sha256": "c127dc5e4858bc6d99ea7cd64028e38664692f6f5bbd3847738ad43b13e886e7"
     },
     "patch_identity": {
       "origin": "repo",
@@ -705,6 +705,99 @@
         "class DepartureWaypointPatch"
       ],
       "sha256": "c50cc807b6b6132241acd2b743a43620c43f4a15fd4376e7a6b03d7a790eda34"
+    },
+    "patch_civilian_wait": {
+      "origin": "repo",
+      "path": "MiscBugFixes/CivilianVisitWaiting.cs",
+      "symbol": "CivilianVisitWaiting/hold fuel boundary/home dispatch",
+      "anchors": [
+        "class CivilianVisitWaiting",
+        "class CivilianHomeDispatchPatch"
+      ],
+      "sha256": "e1f545c55672409d9b74ea0ae4b042a52a8ff502294399ae5ba667af9bd1dbee"
+    },
+    "policy_asteroid_visits": {
+      "origin": "repo",
+      "path": "Navigation/CivilianAsteroidVisits.cs",
+      "symbol": "CivilianAsteroidVisitPatch: one duration draw for attached asteroid visit",
+      "anchors": [
+        "class CivilianAsteroidVisitPatch"
+      ],
+      "sha256": "6d772b8c587dadf7cbae7fa9268710f25988b72db17b0ea794a6ae82a43f552f"
+    },
+    "patch_market_stock": {
+      "origin": "repo",
+      "path": "Orbital/Economy/MarketStockPatches.cs",
+      "symbol": "Market stock remainder arithmetic and accumulated cargo hull sizing",
+      "anchors": [
+        "class MarketWithdrawalPatch"
+      ],
+      "sha256": "38f270c013270b38f1c6f449bd46bbf0ca82d1dfef7add3795f0fe4bb1fc09fe"
+    },
+    "patch_cargo_arrival": {
+      "origin": "repo",
+      "path": "Orbital/Economy/CargoArrivalPatches.cs",
+      "symbol": "Cargo normal/escape retirement gates and SFF branch ownership",
+      "anchors": [
+        "class CargoArrivalPatch"
+      ],
+      "sha256": "37f7dfe9972547dcce5f720c517abf765c12936ab92c06d230df31da9c9d0237"
+    },
+    "patch_cargo_transfer": {
+      "origin": "repo",
+      "path": "Orbital/Economy/CargoDelivery.cs",
+      "symbol": "Atomic accepted cargo handoff, native overflow disposal and refund contract",
+      "anchors": [
+        "class CargoDelivery"
+      ],
+      "sha256": "bf08cd86dbf6940ac0286350e6de55448e5f5761b2492d819d309284ce52dfe9"
+    },
+    "test_cargo_delivery": {
+      "origin": "repo",
+      "path": "Tests/OrbitalCheck/CargoDeliveryRepairs.cs",
+      "symbol": "Native production cargo lifecycle checks",
+      "anchors": [
+        "static void DeliveryRepairs"
+      ],
+      "sha256": "ae08db4004335378583b5d3f1ea80548777e2756651983519cd34218d9f0a6fd"
+    },
+    "market_stock": {
+      "origin": "game",
+      "path": "Ostranauts.Trading/ShipMarket.cs",
+      "symbol": "Shared stock withdrawal and deposit overloads",
+      "anchors": [
+        "public List\u003CMarketItem\u003E RemoveStockForCategory"
+      ],
+      "sha256": "62c4ad1458b1ada613f165781b7e6cbf0b4ec9d99bcb924c65b0948dcb77c46e"
+    },
+    "market_actor": {
+      "origin": "game",
+      "path": "Ostranauts.Trading/MarketActorConfig.cs",
+      "symbol": "Native actor acceptance, capacity and concrete item cloning",
+      "anchors": [
+        "public int TryAddStock"
+      ],
+      "sha256": "6a8708e867a6cc8ae483ad6aa26b5c06d4a2edfd4476f5f5d1024d83cff8ae1c"
+    },
+    "sff_destination_refresh": {
+      "origin": "repo",
+      "path": "MiscBugFixes/SffNavigationDestinationPatch.cs",
+      "symbol": "SffNavigationDestinationPatch.CompletionPoint: preserve and refresh mission target",
+      "anchors": [
+        "ship.shipSituTarget?.UpdateTime(StarSystem.fEpoch)",
+        "CompletionPoint"
+      ],
+      "sha256": "07e8d4a4da042b3b1bdade6317f6ea8b6a661e13ec62d4328db11d0ccb3a79bf"
+    },
+    "pilot_availability": {
+      "origin": "game",
+      "path": "Ship.cs",
+      "symbol": "Ship.NavAIManned: native awake-crew and navigation-hardware admission",
+      "anchors": [
+        "public bool NavAIManned",
+        "TIsHumanAwake"
+      ],
+      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
     }
   },
   "evidence": {
@@ -757,6 +850,16 @@
       "level": "native_harness",
       "artifact": "Tests/AIShipLifecycleCheck/ControllerIdentityChecks.cs",
       "supports": "Native station collisions create cross-region duplicates; saved records retain both; local cleanup destroys the shared cargo hull while its market survives. Production reuse/load correction and native cargo delivery are verified offline. Ship/pilot construction, damage and Unity retirement services have explicit fixtures."
+    },
+    "civilian_wait_native": {
+      "level": "native_offline",
+      "artifact": "Tests/AiPlannerDiagnosis/CivilianWaitingChecks.cs",
+      "supports": "Actual native Hold/Main, Civilian FFWD and home dispatch, save reconstruction and unpatched-tree loading. Faction score, physical docking/undocking, planning and next random target are explicit fixture boundaries. Both native selector branches remain available; no simulated successful flight is claimed."
+    },
+    "delivery_native": {
+      "level": "native_offline",
+      "artifact": "Tests/OrbitalCheck/CargoDeliveryRepairs.cs",
+      "supports": "521 native baseline/production checks include multi-actor stock, sizing, normal/SFF/refund handoffs, overflow disposal, save restoration, failure isolation and escape ownership. Crew materialization, physical placement and planner failure inputs are fixtures."
     }
   },
   "variables": {
@@ -1276,6 +1379,38 @@
       ],
       "description": "A physical nonstation connection has a registered civilian participant; station-only parking and ordinary hauler tow delivery are separate.",
       "kind": "state"
+    },
+    "visit_home_safe": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "A live nonhostile faction station was resolved; not a proof of physical arrival or docking clearance.",
+      "kind": "state"
+    },
+    "visit_duration": {
+      "values": [
+        "native",
+        "prospecting"
+      ],
+      "description": "Native ordinary duration or one 300-7200 second attached-asteroid draw; numerical remaining time is covered by native tests.",
+      "kind": "state"
+    },
+    "visit_clock": {
+      "values": [
+        "intact",
+        "reset"
+      ],
+      "description": "Whether SFF preserves the current ordinary visit clock instead of restarting it.",
+      "kind": "state"
+    },
+    "home_filter": {
+      "values": [
+        "native",
+        "faction"
+      ],
+      "description": "Base nearest-station versus the existing civilian faction-home implementation when one resolves.",
+      "kind": "state"
     }
   },
   "predicates": {
@@ -1444,6 +1579,131 @@
       },
       "require": [],
       "forbid": []
+    },
+    "ordinary_shallow_wait": {
+      "facts": {
+        "scene": [
+          "shallow"
+        ]
+      },
+      "require": [
+        "ordinary_civilian_visit"
+      ],
+      "forbid": []
+    },
+    "civilian_wait_release": {
+      "facts": {
+        "help": [
+          "false"
+        ],
+        "visit_home_safe": [
+          "true"
+        ]
+      },
+      "require": [
+        "ordinary_shallow_wait"
+      ],
+      "forbid": []
+    },
+    "attached_asteroid_visit": {
+      "facts": {
+        "goal": [
+          "asteroid"
+        ],
+        "connection": [
+          "attached"
+        ]
+      },
+      "require": [
+        "ordinary_civilian_visit"
+      ],
+      "forbid": []
+    },
+    "civilian_home_available": {
+      "facts": {
+        "role": [
+          "civilian"
+        ],
+        "visit_home_safe": [
+          "true"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "ordinary_civilian_visit": {
+      "facts": {
+        "role": [
+          "civilian"
+        ],
+        "registry": [
+          "local",
+          "interregional"
+        ],
+        "hull": [
+          "visible"
+        ],
+        "crew": [
+          "aboard"
+        ],
+        "scene": [
+          "shallow",
+          "loaded"
+        ],
+        "nav": [
+          "none"
+        ],
+        "main": [
+          "4"
+        ],
+        "visit_command": [
+          "main"
+        ],
+        "queue": [
+          "empty"
+        ],
+        "reaction": [
+          "none"
+        ],
+        "combat": [
+          "false"
+        ],
+        "threat": [
+          "false"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "freight_receiver_present": {
+      "facts": {
+        "role": [
+          "freight"
+        ],
+        "manifest": [
+          "aboard"
+        ],
+        "market": [
+          "present"
+        ]
+      },
+      "require": [],
+      "forbid": []
+    },
+    "freight_receiver_missing": {
+      "facts": {
+        "role": [
+          "freight"
+        ],
+        "manifest": [
+          "aboard"
+        ],
+        "market": [
+          "missing"
+        ]
+      },
+      "require": [],
+      "forbid": []
     }
   },
   "nodes": {
@@ -1577,9 +1837,10 @@
       "sources": [
         "cmd_FlyTo",
         "cmd_FlyToPath",
-        "cmd_FlyToManual"
+        "cmd_FlyToManual",
+        "pilot_availability"
       ],
-      "detail": ""
+      "detail": "Native no-pilot refusal and stale RCS have dedicated shipped-assembly reproductions in Tests/AiRouteCompletionCheck. This lifecycle projection does not calculate physical acceleration or crew-condition expiry; see Navigation/CERES-SFF-DISPLACEMENT.md."
     },
     "t_dock": {
       "label": "Ordinary Dock handoff",
@@ -1637,9 +1898,11 @@
       "layer": "control",
       "sources": [
         "manager",
-        "controller"
+        "controller",
+        "sff_destination_refresh",
+        "patch_sff"
       ],
-      "detail": ""
+      "detail": "Completed-course destination coordinates must be current before instant mooring; waiting for a pilot cannot become invented guidance or instant arrival. Separate native/offline tests cover these physical handoffs, outside this lifecycle projection."
     },
     "t_sff_role": {
       "label": "Role-specific FFWD",
@@ -3011,7 +3274,13 @@
         "role_native"
       ],
       "note": "Civilian new virtual GetTargetHome does not override the IAICharacter slot used by shared target selection.",
-      "guards": [],
+      "guards": [
+        {
+          "predicate": "civilian_home_available",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
       "patch": ""
     },
     {
@@ -3218,7 +3487,18 @@
         "arrival_native"
       ],
       "note": "Ordinary Dock calls DockAndDespawn without TransferMarketCargo, including cargo flee/StationReturn.",
-      "guards": [],
+      "guards": [
+        {
+          "predicate": "freight_receiver_present",
+          "negated": true,
+          "probeSet": {}
+        },
+        {
+          "predicate": "freight_receiver_missing",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
       "patch": ""
     },
     {
@@ -3249,36 +3529,6 @@
         "economy_native"
       ],
       "note": "",
-      "guards": [],
-      "patch": ""
-    },
-    {
-      "id": "transfer.missing_market",
-      "from": "t_transfer",
-      "to": "t_retire",
-      "event": "unload",
-      "when": {
-        "facts": {
-          "market": [
-            "missing"
-          ],
-          "role": [
-            "freight"
-          ]
-        },
-        "require": [],
-        "forbid": []
-      },
-      "set": {
-        "cargo_unregistered": "true"
-      },
-      "sources": [
-        "market"
-      ],
-      "evidence": [
-        "review"
-      ],
-      "note": "UnregisterCargoShip removes carrier market before checking the destination market; no successful credit is inferred. Cargo disposition after market removal remains unresolved; no orphaning or permanent loss is asserted.",
       "guards": [],
       "patch": ""
     },
@@ -3390,7 +3640,13 @@
         "review"
       ],
       "note": "Native hold can remain running; Civilian is excluded from TargetNewIfNone.RequestHelp.",
-      "guards": [],
+      "guards": [
+        {
+          "predicate": "civilian_wait_release",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
       "patch": ""
     },
     {
@@ -4764,6 +5020,110 @@
       "patch": ""
     },
     {
+      "id": "hold.duration",
+      "from": "t_hold",
+      "to": "t_hold",
+      "event": "start_visit",
+      "when": {
+        "facts": {
+          "role": [
+            "civilian"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "visit_duration": "native"
+      },
+      "sources": [
+        "cmd_Hold"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Civilian-to-civilian and other non-asteroid visits retain native timing.",
+      "guards": [
+        {
+          "predicate": "attached_asteroid_visit",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
+      "id": "hold.sff_clock",
+      "from": "t_hold",
+      "to": "t_hold",
+      "event": "wait_time_skip",
+      "when": {
+        "facts": {
+          "role": [
+            "civilian"
+          ],
+          "fuel": [
+            "empty"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "visit_clock": "reset"
+      },
+      "sources": [
+        "civilian",
+        "cmd_Hold"
+      ],
+      "evidence": [
+        "review"
+      ],
+      "note": "Native FFWD resets the empty Hold via ResolveInstantly; no successful journey is inferred.",
+      "guards": [
+        {
+          "predicate": "ordinary_shallow_wait",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
+      "id": "home.filter.query",
+      "from": "t_pick",
+      "to": "t_pick",
+      "event": "home_call",
+      "when": {
+        "facts": {
+          "role": [
+            "civilian"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "home_filter": "native"
+      },
+      "sources": [
+        "civilian",
+        "base_character"
+      ],
+      "evidence": [
+        "role_native"
+      ],
+      "note": "Civilian\u0027s new virtual method does not override the interface mapping.",
+      "guards": [
+        {
+          "predicate": "civilian_home_available",
+          "negated": true,
+          "probeSet": {}
+        }
+      ],
+      "patch": ""
+    },
+    {
       "id": "fix.load.accepted",
       "from": "t_pick",
       "to": "t_pick",
@@ -4795,6 +5155,125 @@
       "note": "Clear fully accepted cloned input lists before origin remainder return.",
       "guards": [],
       "patch": "cargo_loading"
+    },
+    {
+      "id": "fix.transfer.missing_market",
+      "from": "t_transfer",
+      "to": "t_fly",
+      "event": "unload",
+      "when": {
+        "facts": {
+          "market": [
+            "missing"
+          ],
+          "role": [
+            "freight"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "cargo_unregistered": "false"
+      },
+      "sources": [
+        "market",
+        "patch_cargo_arrival",
+        "patch_cargo_transfer",
+        "patch_market_stock"
+      ],
+      "evidence": [
+        "review",
+        "delivery_native"
+      ],
+      "note": "Unify normal/emergency cargo handoff before retirement; retain manifest and native target when the receiver is absent. Valid receiver overflow is still dumped.",
+      "guards": [],
+      "patch": "cargo_arrival_handoff"
+    },
+    {
+      "id": "fix.dock.freight_handoff",
+      "from": "t_dock",
+      "to": "t_retire",
+      "event": "dock_station",
+      "when": {
+        "facts": {
+          "goal": [
+            "station",
+            "source",
+            "destination"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "manifest": "delivered"
+      },
+      "sources": [
+        "cmd_Dock",
+        "crew",
+        "patch_cargo_arrival",
+        "patch_cargo_transfer",
+        "patch_market_stock"
+      ],
+      "evidence": [
+        "arrival_native",
+        "delivery_native"
+      ],
+      "note": "Unify normal/emergency cargo handoff before retirement; retain manifest and native target when the receiver is absent. Valid receiver overflow is still dumped.",
+      "guards": [
+        {
+          "predicate": "freight_receiver_present",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "cargo_arrival_handoff"
+    },
+    {
+      "id": "fix.dock.freight_missing_market",
+      "from": "t_dock",
+      "to": "t_fly",
+      "event": "dock_station",
+      "when": {
+        "facts": {
+          "goal": [
+            "station",
+            "source",
+            "destination"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "cargo_unregistered": "false"
+      },
+      "sources": [
+        "cmd_Dock",
+        "crew",
+        "patch_cargo_arrival",
+        "patch_cargo_transfer",
+        "patch_market_stock"
+      ],
+      "evidence": [
+        "arrival_native",
+        "delivery_native"
+      ],
+      "note": "Unify normal/emergency cargo handoff before retirement; retain manifest and native target when the receiver is absent. Valid receiver overflow is still dumped.",
+      "guards": [
+        {
+          "predicate": "freight_receiver_present",
+          "negated": true,
+          "probeSet": {}
+        },
+        {
+          "predicate": "freight_receiver_missing",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "cargo_arrival_handoff"
     },
     {
       "id": "fix.skip.bounded",
@@ -5544,6 +6023,194 @@
       "note": "Unsaved registration reuses an existing controller across regions rather than enrolling the same hull under a second role.",
       "guards": [],
       "patch": "controller_identity"
+    },
+    {
+      "id": "fix.hold.empty",
+      "from": "t_hold",
+      "to": "t_undock",
+      "event": "hold_tick",
+      "when": {
+        "facts": {
+          "hold_ready": [
+            "true"
+          ],
+          "hold_fuel_blocked": [
+            "true"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "leaf": "undock",
+        "main": "0"
+      },
+      "sources": [
+        "cmd_Hold",
+        "patch_visits",
+        "patch_civilian_wait"
+      ],
+      "evidence": [
+        "review",
+        "civilian_wait_native"
+      ],
+      "note": "Release eligible ordinary shallow civilian waits under the existing fuel abstraction, preserve SFF clocks and use the native faction home method.",
+      "guards": [
+        {
+          "predicate": "civilian_wait_release",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "civilian_wait_continuation"
+    },
+    {
+      "id": "fix.hold.sff_clock",
+      "from": "t_hold",
+      "to": "t_hold",
+      "event": "wait_time_skip",
+      "when": {
+        "facts": {
+          "role": [
+            "civilian"
+          ],
+          "fuel": [
+            "empty"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "visit_clock": "intact"
+      },
+      "sources": [
+        "civilian",
+        "cmd_Hold",
+        "patch_visits",
+        "patch_civilian_wait"
+      ],
+      "evidence": [
+        "review",
+        "civilian_wait_native"
+      ],
+      "note": "Release eligible ordinary shallow civilian waits under the existing fuel abstraction, preserve SFF clocks and use the native faction home method.",
+      "guards": [
+        {
+          "predicate": "ordinary_shallow_wait",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "civilian_wait_continuation"
+    },
+    {
+      "id": "fix.home.interface",
+      "from": "t_pick",
+      "to": "t_pick",
+      "event": "home_call",
+      "when": {
+        "facts": {
+          "role": [
+            "civilian"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "home_filter": "faction"
+      },
+      "sources": [
+        "civilian",
+        "base_character",
+        "patch_visits",
+        "patch_civilian_wait"
+      ],
+      "evidence": [
+        "role_native",
+        "civilian_wait_native"
+      ],
+      "note": "Release eligible ordinary shallow civilian waits under the existing fuel abstraction, preserve SFF clocks and use the native faction home method.",
+      "guards": [
+        {
+          "predicate": "civilian_home_available",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "civilian_wait_continuation"
+    },
+    {
+      "id": "fix.home.low_fuel",
+      "from": "t_pick",
+      "to": "t_fly",
+      "event": "low_fuel_home",
+      "when": {
+        "facts": {},
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "goal": "station",
+        "home": "owner_filtered",
+        "leaf": "fly"
+      },
+      "sources": [
+        "base_character",
+        "civilian",
+        "patch_visits",
+        "patch_civilian_wait"
+      ],
+      "evidence": [
+        "role_native",
+        "civilian_wait_native"
+      ],
+      "note": "Release eligible ordinary shallow civilian waits under the existing fuel abstraction, preserve SFF clocks and use the native faction home method.",
+      "guards": [
+        {
+          "predicate": "civilian_home_available",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "civilian_wait_continuation"
+    },
+    {
+      "id": "policy.hold.asteroid_duration",
+      "from": "t_hold",
+      "to": "t_hold",
+      "event": "start_visit",
+      "when": {
+        "facts": {
+          "role": [
+            "civilian"
+          ]
+        },
+        "require": [],
+        "forbid": []
+      },
+      "set": {
+        "visit_duration": "prospecting"
+      },
+      "sources": [
+        "cmd_Hold",
+        "policy_asteroid_visits",
+        "patch_civilian_wait"
+      ],
+      "evidence": [
+        "review",
+        "civilian_wait_native"
+      ],
+      "note": "Draw a 5-120 game minute prospecting duration once on actual asteroid attachment.",
+      "guards": [
+        {
+          "predicate": "attached_asteroid_visit",
+          "negated": false,
+          "probeSet": {}
+        }
+      ],
+      "patch": "asteroid_visit_duration"
     }
   ],
   "findings": [
@@ -5722,9 +6389,9 @@
         "market"
       ],
       "evidence": [
-        "review"
+        "delivery_native"
       ],
-      "note": "Destination market missing after carrier market unregister; backing inventory lifetime remains to be diagnosed."
+      "note": "Native receiver absence removes the source manifest; production retains cargo and carrier for native retry at the same target."
     },
     {
       "id": "traffic.lost_target",
@@ -5893,7 +6560,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "arrival",
@@ -5982,7 +6653,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "arrival",
@@ -6071,7 +6746,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "arrival",
@@ -6161,7 +6840,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "choose_target",
@@ -6250,7 +6933,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "sample_ship",
@@ -6338,7 +7025,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "sample_ship"
@@ -6425,7 +7116,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "low_fuel_home"
@@ -6512,7 +7207,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "hold_tick"
@@ -6599,7 +7298,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "hold_tick"
@@ -6686,7 +7389,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "arrival",
@@ -6704,14 +7411,14 @@
         },
         "effective": {
           "node": "t_reserve",
-          "finding": "traffic.freight_parked_loaded",
-          "without": null,
+          "finding": null,
+          "without": "traffic.freight_parked_loaded",
           "fact": "manifest",
-          "value": "aboard",
-          "stop": ""
+          "value": "delivered",
+          "stop": null
         }
       },
-      "note": ""
+      "note": "Native ordinary emergency Dock parks loaded. Repaired normal arrival matches native cargo FFWD: accept what fits, dump overflow and retire through the native crew mechanism."
     },
     {
       "id": "freight-cleared-goal-falls-back-source",
@@ -6775,7 +7482,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "choose_target"
@@ -6862,7 +7573,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "tick",
@@ -6950,7 +7665,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "tick",
@@ -7038,7 +7757,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "tick",
@@ -7126,7 +7849,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "tick",
@@ -7214,7 +7941,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "tick",
@@ -7302,7 +8033,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "tick",
@@ -7390,7 +8125,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "tick",
@@ -7478,7 +8217,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "leave_region",
@@ -7566,7 +8309,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "leave_region",
@@ -7654,7 +8401,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "leave_region",
@@ -7742,7 +8493,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "load_goods"
@@ -7829,7 +8584,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "load_goods"
@@ -7916,7 +8675,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -8006,7 +8769,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -8095,7 +8862,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -8184,7 +8955,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -8273,7 +9048,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -8362,7 +9141,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -8450,7 +9233,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -8538,7 +9325,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "dispatch_opportunities"
@@ -8625,7 +9416,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -8713,7 +9508,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -8801,7 +9600,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "crew_transfer",
@@ -8889,7 +9692,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "unmoor_unvisited_asteroid",
@@ -8977,7 +9784,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "unload"
@@ -8992,12 +9803,12 @@
           "stop": ""
         },
         "effective": {
-          "node": "t_retire",
-          "finding": "traffic.missing_market",
-          "without": null,
-          "fact": null,
-          "value": null,
-          "stop": ""
+          "node": "t_fly",
+          "finding": null,
+          "without": "traffic.missing_market",
+          "fact": "cargo_unregistered",
+          "value": "false",
+          "stop": null
         }
       },
       "note": ""
@@ -9064,7 +9875,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "target_removed"
@@ -9151,7 +9966,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "target_replaced"
@@ -9238,7 +10057,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "dropoff_rejected"
@@ -9325,7 +10148,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "stale_cleanup"
@@ -9412,7 +10239,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "save_reload"
@@ -9499,7 +10330,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "leave_region",
@@ -9587,7 +10422,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "leave_region",
@@ -9675,7 +10514,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -9764,7 +10607,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -9853,7 +10700,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -9942,7 +10793,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -10031,7 +10886,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -10120,7 +10979,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -10209,7 +11072,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -10298,7 +11165,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -10387,7 +11258,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "begin_sff",
@@ -10476,7 +11351,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "hold_tick"
@@ -10563,7 +11442,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "conversion_failed"
@@ -10650,7 +11533,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "queue_refill"
@@ -10737,7 +11624,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "queue_refill"
@@ -10824,7 +11715,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "queue_refill"
@@ -10911,7 +11806,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "destination_retires"
@@ -10998,7 +11897,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "visit_tick"
@@ -11085,7 +11988,11 @@
         "visit_pending": "true",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "visit_tick"
@@ -11172,7 +12079,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "destination_retires"
@@ -11259,7 +12170,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "explicit",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "destination_retires"
@@ -11346,7 +12261,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "validate_visit_sff"
@@ -11433,7 +12352,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "true",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "validate_visit_sff"
@@ -11520,7 +12443,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "true"
+        "visit_encounter": "true",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "retirement"
@@ -11607,7 +12534,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "retirement"
@@ -11694,7 +12625,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "true"
+        "visit_encounter": "true",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "retirement"
@@ -11781,7 +12716,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "retirement"
@@ -11868,7 +12807,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "visit_tick"
@@ -11955,7 +12898,11 @@
         "visit_pending": "false",
         "visit_queue_owned": "false",
         "visit_command": "main",
-        "visit_encounter": "false"
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
       },
       "events": [
         "station_collision_other_region",
@@ -11981,6 +12928,825 @@
         }
       },
       "note": "Native collision creates a second local controller for a global shipment; real regional cleanup then removes its hull. The repair reuses its original controller, preserving native freight travel and delivery. Saved duplicate normalization is a separate native-harness boundary, not a graph-invented successful recovery."
+    },
+    {
+      "id": "civilian-empty-visit-can-end",
+      "start": "t_hold",
+      "facts": {
+        "role": "civilian",
+        "registry": "local",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "asteroid",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "hold",
+        "main": "4",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "empty",
+        "help": "false",
+        "hold_ready": "true",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "attached",
+        "hold_fuel_blocked": "true",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "true",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
+      },
+      "events": [
+        "hold_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "empty",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_undock",
+          "finding": null,
+          "without": null,
+          "fact": "fuel",
+          "value": "empty",
+          "stop": ""
+        }
+      },
+      "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
+    },
+    {
+      "id": "civilian-empty-without-safe-home-waits",
+      "start": "t_hold",
+      "facts": {
+        "role": "civilian",
+        "registry": "local",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "asteroid",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "hold",
+        "main": "4",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "empty",
+        "help": "false",
+        "hold_ready": "true",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "attached",
+        "hold_fuel_blocked": "true",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
+      },
+      "events": [
+        "hold_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        }
+      },
+      "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
+    },
+    {
+      "id": "civilian-actual-help-wait-preserved",
+      "start": "t_hold",
+      "facts": {
+        "role": "civilian",
+        "registry": "local",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "asteroid",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "hold",
+        "main": "4",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "empty",
+        "help": "true",
+        "hold_ready": "true",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "attached",
+        "hold_fuel_blocked": "true",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "true",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
+      },
+      "events": [
+        "hold_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        }
+      },
+      "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
+    },
+    {
+      "id": "civilian-full-empty-not-waived",
+      "start": "t_hold",
+      "facts": {
+        "role": "civilian",
+        "registry": "local",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "asteroid",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "hold",
+        "main": "4",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "empty",
+        "help": "false",
+        "hold_ready": "true",
+        "scene": "loaded",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "attached",
+        "hold_fuel_blocked": "true",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "true",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
+      },
+      "events": [
+        "hold_tick"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": null,
+          "value": null,
+          "stop": ""
+        }
+      },
+      "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
+    },
+    {
+      "id": "civilian-sff-preserves-mining-clock",
+      "start": "t_hold",
+      "facts": {
+        "role": "civilian",
+        "registry": "local",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "asteroid",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "hold",
+        "main": "4",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "empty",
+        "help": "false",
+        "hold_ready": "true",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "attached",
+        "hold_fuel_blocked": "true",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "true",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
+      },
+      "events": [
+        "wait_time_skip"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": "visit_clock",
+          "value": "reset",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": "visit_clock",
+          "value": "intact",
+          "stop": ""
+        }
+      },
+      "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
+    },
+    {
+      "id": "asteroid-prospecting-duration-only",
+      "start": "t_hold",
+      "facts": {
+        "role": "civilian",
+        "registry": "local",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "asteroid",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "hold",
+        "main": "4",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "empty",
+        "help": "false",
+        "hold_ready": "true",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "attached",
+        "hold_fuel_blocked": "true",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "true",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
+      },
+      "events": [
+        "start_visit"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": "visit_duration",
+          "value": "native",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": "visit_duration",
+          "value": "prospecting",
+          "stop": ""
+        }
+      },
+      "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
+    },
+    {
+      "id": "hull-visit-keeps-native-duration",
+      "start": "t_hold",
+      "facts": {
+        "role": "civilian",
+        "registry": "local",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "ship",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "hold",
+        "main": "4",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "empty",
+        "help": "false",
+        "hold_ready": "true",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "attached",
+        "hold_fuel_blocked": "true",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "true",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
+      },
+      "events": [
+        "start_visit"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": "visit_duration",
+          "value": "native",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_hold",
+          "finding": null,
+          "without": null,
+          "fact": "visit_duration",
+          "value": "native",
+          "stop": ""
+        }
+      },
+      "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
+    },
+    {
+      "id": "civilian-home-dispatch-faction-filter",
+      "start": "t_pick",
+      "facts": {
+        "role": "civilian",
+        "registry": "local",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "asteroid",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "hold",
+        "main": "4",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "empty",
+        "help": "false",
+        "hold_ready": "true",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "attached",
+        "hold_fuel_blocked": "true",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "true",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
+      },
+      "events": [
+        "home_call"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "t_pick",
+          "finding": null,
+          "without": null,
+          "fact": "home_filter",
+          "value": "native",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_pick",
+          "finding": null,
+          "without": null,
+          "fact": "home_filter",
+          "value": "faction",
+          "stop": ""
+        }
+      },
+      "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
+    },
+    {
+      "id": "civilian-low-fuel-home-uses-faction",
+      "start": "t_pick",
+      "facts": {
+        "role": "civilian",
+        "registry": "local",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "asteroid",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "hold",
+        "main": "4",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "empty",
+        "help": "false",
+        "hold_ready": "true",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "attached",
+        "hold_fuel_blocked": "true",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "true",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native"
+      },
+      "events": [
+        "low_fuel_home"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "t_fly",
+          "finding": null,
+          "without": null,
+          "fact": "home",
+          "value": "base_nearest",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_fly",
+          "finding": null,
+          "without": null,
+          "fact": "home",
+          "value": "owner_filtered",
+          "stop": ""
+        }
+      },
+      "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
     }
   ]
 }

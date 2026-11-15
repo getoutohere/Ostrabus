@@ -5,7 +5,9 @@ param(
     [Parameter(Mandatory=$true)][string]$GameDirectory,
     [string]$SettingsPath=(Join-Path $env:USERPROFILE 'AppData\LocalLow\Blue Bottle Games\Ostranauts\settings.json'),
     [switch]$Enable,
-    [switch]$Disabled
+    [switch]$Disabled,
+    [switch]$RetainDefinitions,
+    [string[]]$OmissionFiles=@()
 )
 $ErrorActionPreference='Stop'
 if ($Enable -and $Disabled) { throw 'Enable and Disabled cannot be combined.' }
@@ -47,6 +49,24 @@ if ($exists) {
 $entries=@($order.aLoadOrder)
 $own=@($entries | Where-Object { ($_ -split '\|',2)[0] -eq $ModName })
 if ($own.Count -gt 1) { throw "Duplicate native mod entries: $ModName" }
+if ($RetainDefinitions) {
+    if (-not $Disabled) { throw 'RetainDefinitions is only valid for an omitted feature.' }
+    $targets=@(foreach ($relative in $OmissionFiles) {
+        if ($relative -notmatch '^data[/\\]' -or $relative -notmatch '\.json$') { throw 'Omission files must be relative native data JSON files.' }
+        $target=[IO.Path]::GetFullPath((Join-Path $destination $relative))
+        if (-not $target.StartsWith($destination.TrimEnd('\')+'\',[StringComparison]::OrdinalIgnoreCase)) { throw 'Omission file escaped its native mod directory.' }
+        $target
+    })
+    if ($own.Count -gt 0 -and (Test-Path -LiteralPath (Join-Path $destination 'mod_info.json') -PathType Leaf)) {
+        foreach ($target in $targets) {
+            if (Test-Path -LiteralPath $target -PathType Leaf) {
+                Move-Item -LiteralPath $target -Destination ($target+'.omitted-'+[Guid]::NewGuid().ToString('N'))
+            }
+        }
+        Write-Host "Retained $ModName item definitions for existing saves; omitted feature stock disabled."
+        return
+    }
+}
 if (-not $Disabled -and $entries -notcontains 'core') { throw 'Cannot install native assets without an enabled core entry.' }
 $changed=$false
 if ($own.Count -eq 0) {

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/8324fc2eba1aa5e2366105f27eafb5baac8b46e660e0ce5af9fa6dbf682e29ec.json.br",
+  "reason": "Reviewed native GetTradeRoute duplicate seed and RegisterAICargoHauler pod-factory overwrite against authored pod JSON. Production instruction repairs pass 16 reproduction/repair assertions and 1477 economy checks; full bindings and cargo-only/SFF selective builds pass. Existing graph remainder witness remains a single-consignment projection; bundled allocation evidence is explicitly external. Explicit freight recovery/partial credit has 55 native tests and adds no simulation policy.",
+  "acceptedUtc": "2026-11-14T22:12:35.9443797Z",
+  "previousSnapshot": "assembly-baselines/203627680ffc9c9dfad86cd764f2fb4dd5e1e354597fa92192412da2b367f3a5.json.br"
+}

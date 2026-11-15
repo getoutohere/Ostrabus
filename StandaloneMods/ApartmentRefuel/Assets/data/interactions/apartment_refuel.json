@@ -1,0 +1,96 @@
+[
+    {
+        "strName":  "MSOstrabusApartmentRefuelDestroy",
+        "strThemType":  "Self",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "Blank",
+        "CTTestThem":  "Blank",
+        "objLootModeSwitch":  "OutputOstrabusApartmentRefuelDestroy"
+    },
+    {
+        "strName":  "MSOstrabusApartmentRefuelLooseDestroy",
+        "strThemType":  "Self",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "Blank",
+        "CTTestThem":  "Blank",
+        "objLootModeSwitch":  "OutputOstrabusApartmentRefuelLooseDestroy"
+    },
+    {
+        "strName":  "MSOstrabusApartmentRefuelDmgDestroy",
+        "strThemType":  "Self",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "Blank",
+        "CTTestThem":  "Blank",
+        "objLootModeSwitch":  "ItmTVDismantle"
+    },
+    {
+        "strName":  "MSOstrabusApartmentRefuelDmgLooseDestroy",
+        "strThemType":  "Self",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "Blank",
+        "CTTestThem":  "Blank",
+        "objLootModeSwitch":  "ItmTVDismantle"
+    },
+    {
+        "strName":  "GUIOstrabusApartmentRefuel",
+        "strTitle":  "Use",
+        "strDesc":  "[us] [accesses] [them].",
+        "strTooltip":  "Buy native station services for vessels directly docked to your owned residence.",
+        "strActionGroup":  "Use",
+        "strTargetPoint":  "use",
+        "fTargetPointRange":  0,
+        "strAnim":  "Use",
+        "strBubble":  "BblTouch",
+        "aInverse":  [
+                         "GUIOstrabusApartmentRefuelAllow"
+                     ],
+        "fDuration":  0.00027,
+        "strThemType":  "Other",
+        "strRaiseUI":  null,
+        "nLogging":  1,
+        "bOpener":  true,
+        "bHumanOnly":  true,
+        "bIgnoreFeelings":  true,
+        "LootCTsUs":  null,
+        "LootCTsThem":  null,
+        "CTTestUs":  "TIsHuman",
+        "CTTestThem":  "TOstrabusApartmentRefuelWorking",
+        "aLootItms":  [
+
+                      ],
+        "objLootModeSwitch":  null
+    },
+    {
+        "strName":  "GUIOstrabusApartmentRefuelAllow",
+        "strTitle":  "",
+        "strDesc":  "[us] shows [them] [us]\u0027s services.",
+        "strActionGroup":  "Use",
+        "strTargetPoint":  null,
+        "fTargetPointRange":  0,
+        "strAnim":  null,
+        "strBubble":  "BblTouch",
+        "aInverse":  [
+
+                     ],
+        "fDuration":  1.0,
+        "strThemType":  "Other",
+        "strRaiseUI":  "Panel A",
+        "bIgnoreFeelings":  true,
+        "LootCTsUs":  null,
+        "LootCTsThem":  null,
+        "CTTestUs":  "TOstrabusApartmentRefuelWorking",
+        "CTTestThem":  null,
+        "aLootItms":  [
+
+                      ],
+        "objLootModeSwitch":  null
+    }
+]

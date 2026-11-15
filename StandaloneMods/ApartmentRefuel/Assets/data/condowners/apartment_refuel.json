@@ -1,0 +1,201 @@
+[
+    {
+        "strName":  "ItmOstrabusApartmentRefuel",
+        "strNameShort":  "Residential Refuel Terminal",
+        "strItemDef":  "ItmOstrabusApartmentRefuel",
+        "strNameFriendly":  "Residential Dockside Refuel Terminal",
+        "strDesc":  "A private dockside connection to station fuel, life-support and electrical utilities. Install only in your owned station residence. Services directly docked vessels at normal station prices. The terminal contains no fuel. Uninstall before selling the residence to retain this expensive equipment.",
+        "strType":  "Item",
+        "strLoot":  null,
+        "aInteractions":  [
+                              "GUIOstrabusApartmentRefuel"
+                          ],
+        "aStartingConds":  [
+                               "IsOstrabusApartmentRefuel=1.0x1",
+                               "IsSalvageValueHigh=1.0x1",
+                               "IsSolid=1.0x1",
+                               "IsMechanical=1.0x1",
+                               "IsCumbersome=1.0x1",
+                               "StatMass=1.0x31",
+                               "StatDamageMax=1.0x70",
+                               "StatInstallProgressMax=1.0x150",
+                               "StatUninstallProgressMax=1.0x150",
+                               "StatRepairProgressMax=1.0x120",
+                               "StatDismantleProgressMax=1.0x240",
+                               "StatBasePrice=1.0x2500",
+                               "IsInstalled=1.0x1"
+                           ],
+        "mapCondTolerance":  [
+
+                             ],
+        "mapPoints":  [
+                          "use,0,-24"
+                      ],
+        "aUpdateCommands":  [
+                                "Destructable,StatDamage,MSOstrabusApartmentRefuelDestroy,StatDamageMax,1.0"
+                            ],
+        "mapGUIPropMaps":  [
+                               "Panel A",
+                               "OstrabusApartmentRefuel"
+                           ],
+        "strPortraitImg":  "ItmKiosk01",
+        "jsonPI":  null,
+        "mapSlotEffects":  [
+                               "heldL",
+                               "HeldItmDefaultL",
+                               "heldR",
+                               "HeldItmDefaultR",
+                               "drag",
+                               "Blank"
+                           ]
+    },
+    {
+        "strName":  "ItmOstrabusApartmentRefuelLoose",
+        "strNameShort":  "Residential Refuel Terminal",
+        "strItemDef":  "ItmOstrabusApartmentRefuelLoose",
+        "strNameFriendly":  "Residential Dockside Refuel Terminal (Loose)",
+        "strDesc":  "A private dockside connection to station fuel, life-support and electrical utilities. Install only in your owned station residence. Services directly docked vessels at normal station prices. The terminal contains no fuel. Uninstall before selling the residence to retain this expensive equipment.",
+        "strType":  "Item",
+        "strLoot":  null,
+        "aInteractions":  [
+                              "DropItem",
+                              "PickupItem"
+                          ],
+        "aStartingConds":  [
+                               "IsOstrabusApartmentRefuel=1.0x1",
+                               "IsSalvageValueHigh=1.0x1",
+                               "IsSolid=1.0x1",
+                               "IsMechanical=1.0x1",
+                               "IsCumbersome=1.0x1",
+                               "StatMass=1.0x31",
+                               "StatDamageMax=1.0x70",
+                               "StatInstallProgressMax=1.0x150",
+                               "StatUninstallProgressMax=1.0x150",
+                               "StatRepairProgressMax=1.0x120",
+                               "StatDismantleProgressMax=1.0x240",
+                               "StatBasePrice=1.0x250000"
+                           ],
+        "mapCondTolerance":  [
+
+                             ],
+        "mapPoints":  [
+
+                      ],
+        "aUpdateCommands":  [
+                                "Destructable,StatDamage,MSOstrabusApartmentRefuelLooseDestroy,StatDamageMax,1.0"
+                            ],
+        "mapGUIPropMaps":  [
+
+                           ],
+        "strPortraitImg":  "ItmKiosk01",
+        "jsonPI":  null,
+        "mapSlotEffects":  [
+                               "heldL",
+                               "HeldItmDefaultL",
+                               "heldR",
+                               "HeldItmDefaultR",
+                               "drag",
+                               "Blank"
+                           ]
+    },
+    {
+        "strName":  "ItmOstrabusApartmentRefuelDmg",
+        "strNameShort":  "Residential Refuel Terminal",
+        "strItemDef":  "ItmOstrabusApartmentRefuelDmg",
+        "strNameFriendly":  "Residential Dockside Refuel Terminal (Damaged)",
+        "strDesc":  "A private dockside connection to station fuel, life-support and electrical utilities. Install only in your owned station residence. Services directly docked vessels at normal station prices. The terminal contains no fuel. Uninstall before selling the residence to retain this expensive equipment.",
+        "strType":  "Item",
+        "strLoot":  null,
+        "aInteractions":  [
+
+                          ],
+        "aStartingConds":  [
+                               "IsOstrabusApartmentRefuel=1.0x1",
+                               "IsSalvageValueHigh=1.0x1",
+                               "IsSolid=1.0x1",
+                               "IsMechanical=1.0x1",
+                               "IsCumbersome=1.0x1",
+                               "StatMass=1.0x31",
+                               "StatDamageMax=1.0x70",
+                               "StatInstallProgressMax=1.0x150",
+                               "StatUninstallProgressMax=1.0x150",
+                               "StatRepairProgressMax=1.0x120",
+                               "StatDismantleProgressMax=1.0x240",
+                               "StatBasePrice=1.0x500",
+                               "IsInstalled=1.0x1",
+                               "IsDamaged=1.0x1"
+                           ],
+        "mapCondTolerance":  [
+
+                             ],
+        "mapPoints":  [
+                          "use,0,-24"
+                      ],
+        "aUpdateCommands":  [
+                                "Destructable,StatDamage,MSOstrabusApartmentRefuelDmgDestroy,StatDamageMax,1.0"
+                            ],
+        "mapGUIPropMaps":  [
+
+                           ],
+        "strPortraitImg":  "ItmKiosk01",
+        "jsonPI":  null,
+        "mapSlotEffects":  [
+                               "heldL",
+                               "HeldItmDefaultL",
+                               "heldR",
+                               "HeldItmDefaultR",
+                               "drag",
+                               "Blank"
+                           ]
+    },
+    {
+        "strName":  "ItmOstrabusApartmentRefuelDmgLoose",
+        "strNameShort":  "Residential Refuel Terminal",
+        "strItemDef":  "ItmOstrabusApartmentRefuelDmgLoose",
+        "strNameFriendly":  "Residential Dockside Refuel Terminal (Damaged)",
+        "strDesc":  "A private dockside connection to station fuel, life-support and electrical utilities. Install only in your owned station residence. Services directly docked vessels at normal station prices. The terminal contains no fuel. Uninstall before selling the residence to retain this expensive equipment.",
+        "strType":  "Item",
+        "strLoot":  null,
+        "aInteractions":  [
+                              "DropItem",
+                              "PickupItem"
+                          ],
+        "aStartingConds":  [
+                               "IsOstrabusApartmentRefuel=1.0x1",
+                               "IsSalvageValueHigh=1.0x1",
+                               "IsSolid=1.0x1",
+                               "IsMechanical=1.0x1",
+                               "IsCumbersome=1.0x1",
+                               "StatMass=1.0x31",
+                               "StatDamageMax=1.0x70",
+                               "StatInstallProgressMax=1.0x150",
+                               "StatUninstallProgressMax=1.0x150",
+                               "StatRepairProgressMax=1.0x120",
+                               "StatDismantleProgressMax=1.0x240",
+                               "StatBasePrice=1.0x50000",
+                               "IsDamaged=1.0x1"
+                           ],
+        "mapCondTolerance":  [
+
+                             ],
+        "mapPoints":  [
+
+                      ],
+        "aUpdateCommands":  [
+                                "Destructable,StatDamage,MSOstrabusApartmentRefuelDmgLooseDestroy,StatDamageMax,1.0"
+                            ],
+        "mapGUIPropMaps":  [
+
+                           ],
+        "strPortraitImg":  "ItmKiosk01",
+        "jsonPI":  null,
+        "mapSlotEffects":  [
+                               "heldL",
+                               "HeldItmDefaultL",
+                               "heldR",
+                               "HeldItmDefaultR",
+                               "drag",
+                               "Blank"
+                           ]
+    }
+]

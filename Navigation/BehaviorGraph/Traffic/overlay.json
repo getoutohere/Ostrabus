@@ -32,6 +32,61 @@
       ]
     },
     {
+      "id": "cargo_arrival_handoff",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_cargo_arrival",
+        "patch_cargo_transfer",
+        "patch_market_stock"
+      ],
+      "evidence": [
+        "delivery_native"
+      ],
+      "summary": "Unify normal/emergency cargo handoff before retirement; retain manifest and native target when the receiver is absent. Valid receiver overflow is still dumped.",
+      "removes": [
+        "Ordinary cargo emergency retirement without unloading.",
+        "Carrier market removal before validating the receiver."
+      ],
+      "preserves": [
+        "Native clearance and escape routing.",
+        "Native overflow disposal and crew retirement.",
+        "PASS and noncargo docking."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "transfer.missing_market",
+          "id": "fix.transfer.missing_market",
+          "to": "t_fly",
+          "set": {
+            "cargo_unregistered": "false"
+          }
+        },
+        {
+          "kind": "intercept",
+          "edge": "dock.retire",
+          "id": "fix.dock.freight_handoff",
+          "predicate": "freight_receiver_present",
+          "phase": "before",
+          "to": "t_retire",
+          "set": {
+            "manifest": "delivered"
+          }
+        },
+        {
+          "kind": "intercept",
+          "edge": "dock.retire",
+          "id": "fix.dock.freight_missing_market",
+          "predicate": "freight_receiver_missing",
+          "phase": "before",
+          "to": "t_fly",
+          "set": {
+            "cargo_unregistered": "false"
+          }
+        }
+      ]
+    },
+    {
       "id": "bounded_catchup",
       "classification": "native_control_flow_repair",
       "sources": [
@@ -484,11 +539,129 @@
           }
         }
       ]
+    },
+    {
+      "id": "civilian_wait_continuation",
+      "classification": "native_control_flow_repair",
+      "sources": [
+        "patch_visits",
+        "patch_civilian_wait"
+      ],
+      "evidence": [
+        "civilian_wait_native"
+      ],
+      "summary": "Release eligible ordinary shallow civilian waits under the existing fuel abstraction, preserve SFF clocks and use the native faction home method.",
+      "removes": [
+        "Permanent below-1kg visit lock when a safe faction home exists.",
+        "SFF restarting a routine mining clock.",
+        "Interface dispatch bypassing civilian home filtering."
+      ],
+      "preserves": [
+        "Actual tanks, native planning/selection and physical docking.",
+        "Materialized/combat fuel, explicit help and scripted/priority holds.",
+        "No resolved home retains native fallback and cannot release an empty waiter."
+      ],
+      "operations": [
+        {
+          "kind": "intercept",
+          "edge": "hold.empty",
+          "id": "fix.hold.empty",
+          "predicate": "civilian_wait_release",
+          "phase": "before",
+          "to": "t_undock",
+          "set": {
+            "leaf": "undock",
+            "main": "0"
+          },
+          "removeSet": []
+        },
+        {
+          "kind": "intercept",
+          "edge": "hold.sff_clock",
+          "id": "fix.hold.sff_clock",
+          "predicate": "ordinary_shallow_wait",
+          "phase": "before",
+          "to": "t_hold",
+          "set": {
+            "visit_clock": "intact"
+          },
+          "removeSet": []
+        },
+        {
+          "kind": "intercept",
+          "edge": "home.filter.query",
+          "id": "fix.home.interface",
+          "predicate": "civilian_home_available",
+          "phase": "before",
+          "to": "t_pick",
+          "set": {
+            "home_filter": "faction"
+          },
+          "removeSet": []
+        },
+        {
+          "kind": "intercept",
+          "edge": "home.interface",
+          "id": "fix.home.low_fuel",
+          "predicate": "civilian_home_available",
+          "phase": "before",
+          "to": "t_fly",
+          "set": {
+            "goal": "station",
+            "home": "owner_filtered",
+            "leaf": "fly"
+          },
+          "removeSet": []
+        }
+      ]
+    },
+    {
+      "id": "asteroid_visit_duration",
+      "classification": "simulation_policy",
+      "sources": [
+        "policy_asteroid_visits",
+        "patch_civilian_wait"
+      ],
+      "evidence": [
+        "civilian_wait_native"
+      ],
+      "summary": "Draw a 5-120 game minute prospecting duration once on actual asteroid attachment.",
+      "removes": [
+        "Uniformly brief mining visits after the deadlock is removed."
+      ],
+      "preserves": [
+        "Other visit durations and native next-job selection.",
+        "An existing saved remaining duration."
+      ],
+      "operations": [
+        {
+          "kind": "intercept",
+          "edge": "hold.duration",
+          "id": "policy.hold.asteroid_duration",
+          "predicate": "attached_asteroid_visit",
+          "phase": "before",
+          "to": "t_hold",
+          "set": {
+            "visit_duration": "prospecting"
+          },
+          "removeSet": []
+        }
+      ]
     }
   ],
   "documentedDependencies": [
-{"id":"shallow_flight_control_handoff","sources":["flight_handoff_native","flight_shutdown_native","flight_control_repair","flight_control_stop","flight_rcs_native"],"status":"native_tested_boundary_not_transition_expanded","reason":"Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."},
-
+    {
+      "id": "shallow_flight_control_handoff",
+      "sources": [
+        "flight_handoff_native",
+        "flight_shutdown_native",
+        "flight_control_repair",
+        "flight_control_stop",
+        "flight_rcs_native"
+      ],
+      "status": "native_tested_boundary_not_transition_expanded",
+      "reason": "Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."
+    },
     {
       "id": "native_economy_tests",
       "sources": [
@@ -552,6 +725,19 @@
       ],
       "status": "boundary_not_transition_expanded",
       "reason": "Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md."
+    },
+    {
+      "id": "cargo_stock_and_flight_ownership",
+      "sources": [
+        "market_stock",
+        "market_actor",
+        "patch_market_stock",
+        "patch_cargo_arrival",
+        "patch_cargo_transfer",
+        "test_cargo_delivery"
+      ],
+      "status": "native_tested_numeric_boundary",
+      "reason": "Multi-actor quantities, concrete item acceptance, hull pool sizing, price/cache identity, refund staging and Main/Flee/priority/save-load eligibility are native-tested outside the finite graph. The delivery label denotes handled cargo including deliberately discarded overflow; it does not assert all units fit. No new route or economic destination is invented."
     }
   ],
   "notApplicable": []

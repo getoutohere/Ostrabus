@@ -5,6 +5,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../Navigation/RouteCompletionPatch.cs" Link="RouteCompletionPatch.cs" />
     <Compile Include="../../Navigation/Towing/*.cs" Link="Towing/%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>

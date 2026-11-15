@@ -23,9 +23,16 @@ try {
     $run=Join-Path $repo ('obj\CustomBuilder\tests-'+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $run -Force | Out-Null
     $cases=[ordered]@{
+        'rotation-module'=@('rotation-module');
         'bounty-departure-fuel'=@('bounty-departure-fuel');
+        'civilian-visits'=@('civilian-visits');
+        'civilian-asteroid-visits'=@('civilian-asteroid-visits');
         'faction-encounters'=@('faction-encounters');
         'ai-flight-controls'=@('ai-flight-controls');
+        'ai-crew-identities'=@('ai-crew-identities');
+        'route-completion'=@('route-completion');
+        'console-buffer'=@('console-buffer');
+        'population-gender'=@('population-gender');
         'ai-patrol-priority'=@('ai-patrol-priority');
         'quick-pda-hack'=@('quick-pda-hack');
         'sff-navigation-destination'=@('sff-navigation-destination');

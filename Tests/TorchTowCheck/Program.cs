@@ -129,6 +129,7 @@ static partial class Program {
             Baseline();
             var production = new Harmony("offline.torch-tow.production");
             try {
+                production.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.RouteCompletionPatch)).Patch();
                 production.CreateClassProcessor(typeof(DockedCourseMemberPatch)).Patch();
                 production.CreateClassProcessor(typeof(DockedCourseGroupPatch)).Patch();
                 production.CreateClassProcessor(typeof(TorchTowMassPatch)).Patch();

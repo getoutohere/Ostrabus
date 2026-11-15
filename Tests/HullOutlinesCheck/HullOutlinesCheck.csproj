@@ -5,6 +5,8 @@
     <Compile Include="../../NavConsole/Outlines/*.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../Navigation/Collisions/*.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../Navigation/StationDockedCollisions.cs" Link="StationDockedCollisions.cs" />
+    <Compile Include="../../NavConsole/ProximityRange.cs" Link="ProximityRange.cs" />
+    <Compile Include="../../NavConsole/ProximityCollisionPatch.cs" Link="ProximityCollisionPatch.cs" />
     <Reference Include="BepInEx"><HintPath>$(GameDir)/BepInEx/core/BepInEx.dll</HintPath></Reference>
     <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>

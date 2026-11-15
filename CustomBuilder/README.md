@@ -18,6 +18,11 @@ can request Windows elevation when installing into Program Files.
 generation uses fresh directories under `obj/CustomBuilder/`; it never overwrites
 the normal `bin/Debug` plugin or changes the maintained gameplay source.
 
+The optional standalone Apartment Refuel Terminal is outside the feature menu
+and remains independently installed. Switching profiles preserves its DLL and
+saved-item definitions; installers refresh its supply stock to match the newly
+enabled native shop mods. See [the companion guide](../StandaloneMods/ApartmentRefuel/README.md).
+
 ## Presets and automation
 
 | Preset | Requested features |
@@ -31,6 +36,9 @@ the normal `bin/Debug` plugin or changes the maintained gameplay source.
 | `empty` | No features; useful as a starting point or composition control |
 
 All presets exclude experiments; `save-json` can be selected explicitly.
+`civilian-visits` includes ordinary visit completion and home-dispatch repairs.
+The separate simulation feature `civilian-asteroid-visits` sets attached asteroid
+visits to 5-120 game minutes; bugfix-only selections retain native visit timing.
 Hidden support features are included through dependencies. These groupings are
 packaging choices, not a promise of compatibility with future game patches.
 Recommended includes `massfix` through `legacy-commands` and `navfix` through
@@ -52,6 +60,19 @@ Torch features are individually selectable: `torch-fuel-cache` repairs fuel chec
 for its shared nav-console planning scope/integration. `torch-towing` remains
 independent. Bugfix presets include the fuel and towing repairs; Recommended and
 Full also include the momentum-aware simulation improvement.
+
+`cargo-loading` includes bundle loading, shared multi-actor market accounting,
+freighter sizing and normal/emergency cargo arrival handoffs. Valid destination
+overflow is still dumped; missing receivers retain the carrier. `economy-sff`
+requires this feature so skipped-time and ordinary transfers use the same contract.
+
+`rotation-module` adds the physical 1x1 RCS Rotation Module as QoL and requires
+`ai-flight-controls` for native controller-lifetime safety. Its native item assets
+are independent of the PDA app. Omitting it from a later profile retains already
+installed item definitions, removes future stock additions and registers no rotation
+hooks. Existing fitted modules have no custom UI in that build; remove them from
+their console if the native UI warns about a missing prefab. Reselecting the feature
+or full deployment restores stock. See the [module guide](../NavConsole/Rotation/README.md).
 
 Run commands from the repository root:
 

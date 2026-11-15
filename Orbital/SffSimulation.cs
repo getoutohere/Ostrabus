@@ -23,7 +23,7 @@ internal sealed class SffSimulation : IDisposable {
         internal Ship TargetShip;
         internal ShipSitu Target;
         internal double Handoff, ArrivalSpeed, Rotation, AngularVelocity, AngularAcceleration;
-        internal bool Travel, Applied, Ready, ImpactResolved;
+        internal bool Travel, Applied, Ready, ImpactResolved, AwaitingPilot;
         internal bool Detour;
         internal string Mode;
         internal int AeroModels;
@@ -116,6 +116,23 @@ internal sealed class SffSimulation : IDisposable {
             }
             SffFlight flight = null;
             if (plan.Pilot != null) {
+                // Match FlyToPath's native authority gate. An incapacitated crew
+                // cannot supply manual guidance or instant docking during a skip.
+                plan.AwaitingPilot = !ReferenceEquals(plan.Pilot.Ship, CrewSim.coPlayer?.ship) &&
+                    !plan.Pilot.Ship.NavPlayerManned && !plan.Pilot.Ship.NavAIManned;
+                if (plan.AwaitingPilot && members.Count > 1) {
+                    // A disabled member must not veto another attached ship's
+                    // existing, authorized navigation command.
+                    foreach (var member in members) {
+                        var other = AIShipManager.GetAIShipByRegID(member.strRegID);
+                        if (other == null || ReferenceEquals(other, plan.Pilot) || !IsTravelCommand(other.ActiveCommandName) ||
+                            !member.NavAIManned || member.NavPlayerManned) continue;
+                        plan.Pilot = other; plan.AwaitingPilot = false; break;
+                    }
+                }
+                if (plan.AwaitingPilot) plan.AngularAcceleration = 0;
+            }
+            if (plan.Pilot != null && !plan.AwaitingPilot) {
                 var ship = plan.Pilot.Ship;
                 plan.TargetShip = ship.shipScanTarget;
                 plan.Target = ship.shipScanTarget?.objSS ?? ship.shipSituTarget;
@@ -147,7 +164,7 @@ internal sealed class SffSimulation : IDisposable {
                     Offset = new DVector(ship.objSS._dockOffsetPos.X, ship.objSS._dockOffsetPos.Y) * OrbitalMotion.KmPerAU,
                     RotationOffset = ship.objSS._dockOffsetRot };
                 var ai = AIShipManager.dictAIs != null ? AIShipManager.GetAIShipByRegID(ship.strRegID) : null;
-                if (ai != null && plan.Travel) pilots[ai] = plan;
+                if (ai != null && (plan.Travel || plan.AwaitingPilot)) pilots[ai] = plan;
             }
         } catch (Exception ex) {
             failures++;
@@ -234,6 +251,11 @@ internal sealed class SffSimulation : IDisposable {
         if (situation.NavData != null || situation.bIsBO || situation.bBOLocked || situation.bOrbitLocked || situation.bIgnoreGrav) return false;
         var plan = entry.Plan;
         if (Hidden(plan)) return false;
+        if (plan.AwaitingPilot && !entry.Member) {
+            // End the abandoned maneuver without altering velocity, fuel, or
+            // the mission. Ordinary native AI retries when the pilot recovers.
+            foreach (var ship in plan.Ships) ship.StopManeuver(false, false);
+        }
         OrbitalMotion.Write(situation, EndState(entry));
         Rotation(plan, out double rotation, out double angularVelocity);
         situation.fRot = (float)(rotation + (entry.Member ? entry.RotationOffset : 0));
@@ -282,7 +304,7 @@ internal sealed class SffSimulation : IDisposable {
     }
     internal bool AllowCatchup(AIShip pilot) {
         if (!pilots.TryGetValue(pilot, out Plan plan) || !plan.Applied || Hidden(plan)) return true;
-        if (plan.Ready && plan.Outcome.Impact == null) return true;
+        if (!plan.AwaitingPilot && plan.Ready && plan.Outcome.Impact == null) return true;
         suppressedCatchup++; return false;
     }
     void AddRow(object row) { if (rows.Count < 512) rows.Add(row); else rowsTruncated = true; }
@@ -295,6 +317,7 @@ internal sealed class SffSimulation : IDisposable {
             foreach (var plan in plans) AddRow(SnapshotJson.Map("ships", Ids(plan.Ships), "mode", plan.Mode, "applied", plan.Applied,
                 "targetId", plan.TargetShip?.strRegID, "arrivalAfterSeconds", plan.Outcome.Arrived ? (object)plan.Outcome.ArrivalAfter : null,
                 "nativeArrivalAllowed", plan.Ready, "steps", plan.Outcome.Steps, "gravitySwitches", plan.Outcome.Switches,
+                "awaitingPilot", plan.AwaitingPilot,
                 "atmosphere", plan.Outcome.Atmosphere, "budgetFallback", plan.Outcome.BudgetFallback,
                 "planetaryDetour", plan.Detour, "impactBody", plan.Outcome.Impact?.Native.strName, "aerodynamicModels", plan.AeroModels));
             last = SnapshotJson.Map("startEpoch", start, "skipSeconds", seconds, "prepared", plans.Count,

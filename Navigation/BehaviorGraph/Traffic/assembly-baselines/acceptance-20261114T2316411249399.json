@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/765a120ebf062164e01953dbfb47c4149c85980095a30db0c6325faea40701c2.json.br",
+  "reason": "Final reviewed freight accounting and normal/SFF handoff repair, including legacy over-capacity batch control; 521 native assertions. Preserve overflow dumping. Native assembly unchanged; repository hashes and receiver predicate dependencies updated.",
+  "acceptedUtc": "2026-11-14T23:16:41.1214905Z",
+  "previousSnapshot": "assembly-baselines/f8557977c414a0ef1d97039fa68435e8dc807651f66ac80f4fe6eb0592e4c735.json.br"
+}

@@ -1,0 +1,11 @@
+[
+    {
+        "strName":  "OstrabusApartmentRefuel",
+        "dictGUIPropMap":  [
+                               "strGUIPrefab",
+                               "GUIStationRefuel",
+                               "strFriendlyName",
+                               "Residential Refuel Terminal"
+                           ]
+    }
+]

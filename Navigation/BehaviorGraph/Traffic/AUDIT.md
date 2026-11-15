@@ -15,7 +15,7 @@ These are conditional reference traces, not live-game measurements or new native
 | civilian-owner-home-interface | t_fly; traffic.home_dispatch | t_fly; traffic.home_dispatch |
 | civilian-empty-hold | t_hold; traffic.empty_civilian_hold | t_hold; traffic.empty_civilian_hold |
 | civilian-help-hold | t_hold; no modeled finding | t_hold; no modeled finding |
-| freight-flee-ordinary-dock-keeps-cargo | t_reserve; traffic.freight_parked_loaded | t_reserve; traffic.freight_parked_loaded |
+| freight-flee-ordinary-dock-keeps-cargo | t_reserve; traffic.freight_parked_loaded | t_reserve; no modeled finding |
 | freight-cleared-goal-falls-back-source | t_fly; no modeled finding | t_fly; no modeled finding |
 | healthy-freighter-threat-main | t_pick; no modeled finding | t_pick; no modeled finding |
 | damaged-freighter-threat-flee | t_flee; no modeled finding | t_flee; no modeled finding |
@@ -41,7 +41,7 @@ These are conditional reference traces, not live-game measurements or new native
 | sff-bounded-off-native | t_sff_role; no modeled finding | t_sff_role; no modeled finding |
 | crew-transfer-native-keeps-controller | t_fly; no modeled finding | t_uncrewed; no modeled finding |
 | asteroid-conversion-preserves-goal | t_pick; no modeled finding | t_pick; no modeled finding |
-| market-disappears-before-unload | t_retire; traffic.missing_market | t_retire; traffic.missing_market |
+| market-disappears-before-unload | t_retire; traffic.missing_market | t_fly; no modeled finding |
 | lost-ship-goal | t_fly; traffic.lost_target | t_root; no modeled finding |
 | same-id-replacement-keeps-route | t_fly; no modeled finding | t_fly; no modeled finding |
 | crew-dropoff-rejected-by-assets | t_reserve; traffic.freight_parked_loaded | t_reserve; traffic.freight_parked_loaded |
@@ -76,10 +76,20 @@ These are conditional reference traces, not live-game measurements or new native
 | visit-repair-ordinary-hauler-retirement | t_reserve; no modeled finding | t_reserve; no modeled finding |
 | visit-repair-visible-unchanged | t_fly; no modeled finding | t_fly; no modeled finding |
 | freight-station-collision-duplicates-then-orphans | t_removed; traffic.collision_orphaned_freight | t_fly; no modeled finding |
+| civilian-empty-visit-can-end | t_hold; traffic.empty_civilian_hold | t_undock; traffic.empty_civilian_hold |
+| civilian-empty-without-safe-home-waits | t_hold; traffic.empty_civilian_hold | t_hold; traffic.empty_civilian_hold |
+| civilian-actual-help-wait-preserved | t_hold; traffic.empty_civilian_hold | t_hold; traffic.empty_civilian_hold |
+| civilian-full-empty-not-waived | t_hold; traffic.empty_civilian_hold | t_hold; traffic.empty_civilian_hold |
+| civilian-sff-preserves-mining-clock | t_hold; traffic.empty_civilian_hold | t_hold; traffic.empty_civilian_hold |
+| asteroid-prospecting-duration-only | t_hold; traffic.empty_civilian_hold | t_hold; traffic.empty_civilian_hold |
+| hull-visit-keeps-native-duration | t_hold; traffic.empty_civilian_hold | t_hold; traffic.empty_civilian_hold |
+| civilian-home-dispatch-faction-filter | t_pick; traffic.empty_civilian_hold | t_pick; traffic.empty_civilian_hold |
+| civilian-low-fuel-home-uses-faction | t_fly; traffic.empty_civilian_hold, traffic.home_dispatch | t_fly; traffic.empty_civilian_hold |
 
 ## Behavioral tradeoffs
 
 - **cargo_loading / native_control_flow_repair**: Clear fully accepted cloned input lists before origin remainder return. Removes: Clear fully accepted cloned input lists before origin remainder return.. Preserves: Native overflow/remainder behavior..
+- **cargo_arrival_handoff / native_control_flow_repair**: Unify normal/emergency cargo handoff before retirement; retain manifest and native target when the receiver is absent. Valid receiver overflow is still dumped. Removes: Ordinary cargo emergency retirement without unloading.; Carrier market removal before validating the receiver.. Preserves: Native clearance and escape routing.; Native overflow disposal and crew retirement.; PASS and noncargo docking..
 - **bounded_catchup / native_control_flow_repair**: Suppress native instant catch-up for a captured/applied party that has not reached a valid handoff. Removes: Suppress native instant catch-up for a captured/applied party that has not reached a valid handoff.. Preserves: Uncaptured/native fallback.; Existing routes and combat exclusions.; Toggles..
 - **economic_catchup / native_control_flow_repair**: Manage eligible real freight chronologically, suppress its duplicated native FFWD and replay due dispatch opportunities. Removes: Manage eligible real freight chronologically, suppress its duplicated native FFWD and replay due dispatch opportunities.. Preserves: PASS has no cargo market and is excluded.; Loaded, combat, connected and unprepared freight retain native paths.; Native production/dispatch choices and rollback..
 - **crew_integrity / native_control_flow_repair**: Stop and unregister uncrewed execution without introducing a stale disposal marker. Removes: Stop and unregister uncrewed execution without introducing a stale disposal marker.. Preserves: Existing stale status.; Crewed traffic and legitimate police boarding exception..
@@ -89,6 +99,8 @@ These are conditional reference traces, not live-game measurements or new native
 - **player_connected_region_retention / native_control_flow_repair**: Extend the native player-connection exemption to hull destruction; temporarily use native global scheduling, then restore physical regional membership at queue refill after detachment. Removes: Unconditional destruction after skipping player-connected crew relocation and undocking.; Retained controllers becoming unscheduled or permanently global after detachment.. Preserves: Native recursive ownership/docking predicate and station-body handling.; Same controller, crew, pilot, home, orders, routes, motion and fuel; no forced departure.; Native queue priority, genuine interregional freight and primitive save serialization.; Unregistered crewless captures retain native derelict cleanup protection without inventing a controller..
 - **civilian_visit_lifetime / native_control_flow_repair**: Reject new hidden civilian rendezvous; invalidate retired/restored ordinary visits, defer to native combat/priority ownership, and protect physical civilian encounters from retirement. Removes: Selecting administrative reserve/vendor hulls as new space rendezvous.; Continuing a retired/reused ordinary visit with its obsolete route and fuel estimate.; Retiring a hull while a civilian encounter remains physically attached.. Preserves: Native Main children, order, sticky/save paths and random/low-fuel selection.; Combat, reaction, queued/explicit commands, passenger/freight destinations and player navigation.; Motion and spent fuel; visible empty/derelict visits and detached reserve supply.; Native station-only parking and hauler tow-delivery retirement..
 - **controller_identity / native_control_flow_repair**: Unsaved registration reuses an existing controller across regions rather than enrolling the same hull under a second role. Removes: Cross-region collision fallback creating an additional local controller for an active interregional freighter.. Preserves: Original role, region, home, behavior/blackboard state, route, fuel and manifest.; Native fallback creation when no controller exists and explicit saved/player-autopilot setup..
+- **civilian_wait_continuation / native_control_flow_repair**: Release eligible ordinary shallow civilian waits under the existing fuel abstraction, preserve SFF clocks and use the native faction home method. Removes: Permanent below-1kg visit lock when a safe faction home exists.; SFF restarting a routine mining clock.; Interface dispatch bypassing civilian home filtering.. Preserves: Actual tanks, native planning/selection and physical docking.; Materialized/combat fuel, explicit help and scripted/priority holds.; No resolved home retains native fallback and cannot release an empty waiter..
+- **asteroid_visit_duration / simulation_policy**: Draw a 5-120 game minute prospecting duration once on actual asteroid attachment. Removes: Uniformly brief mining visits after the deadlock is removed.. Preserves: Other visit durations and native next-job selection.; An existing saved remaining duration..
 
 ## Dependencies not transition-expanded
 
@@ -99,5 +111,6 @@ These are conditional reference traces, not live-game measurements or new native
 - **full_npc_socials**: People may transfer during a nonstation visit; character-level pledges, permissions and agendas remain native. No prisoner-transfer policy is inferred.
 - **collision_duplicate_save_repair**: ApplySaveData removes only the unique original INTERREGIONAL cargo plus local Scav/Police fallback pattern with matching native cargo ownership/origin. Native restore and unchanged captured payloads are tested; ambiguous histories/missing hulls and historical orphan refunds are excluded.
 - **local_navigation_frames**: Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md.
+- **cargo_stock_and_flight_ownership**: Multi-actor quantities, concrete item acceptance, hull pool sizing, price/cache identity, refund staging and Main/Flee/priority/save-load eligibility are native-tested outside the finite graph. The delivery label denotes handled cargo including deliberately discarded overflow; it does not assert all units fit. No new route or economic destination is invented.
 
 These unresolved boundaries prevent calling this an all-patches effective simulation. Native inner/outer Harmony phases and side effects must be expanded before drawing conclusions across them.

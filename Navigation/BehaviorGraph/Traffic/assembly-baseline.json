@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "snapshot": "assembly-baselines/848857519b117abbe1b326ac5811136d715b83bf9f9a96f7f2182f2e7cbd3fa3.json.br",
-  "reason": "Reviewed native FlyTo/pause, direct RCS and explicit shallow TorchOff release. 213 control checks preserve owned courses, physical/player inputs, missing hardware, momentum and fuel tolerance; 60 retarget, 174 Ceres and 23 composed fuel checks pass. Numerical flight remains an explicitly unexpanded boundary.",
-  "acceptedUtc": "2026-11-13T23:53:28.0429240Z",
-  "previousSnapshot": "assembly-baselines/f609c2f594387bdd30c7c21cf236821c09d507491bdf838a4bb3370c680c22eb.json.br"
+  "snapshot": "assembly-baselines/7e8feaf67544002703e0bc6843db19a787fa11cfafd3c13920c72856b9ab731b.json.br",
+  "reason": "Reviewed preserved-target coordinate refresh before native instant mooring and native no-pilot false success with residual RCS. Added real-ephemeris/native-placement and refusal controls (366 checks), SFF no-guidance/ballistic/attached-pilot controls (4855 checks), 282-class binding, independent custom features, and civilian/Ceres/flight/patrol regressions. Physical coordinates and crew-condition expiry remain outside this lifecycle projection; live validation and historical momentum recovery remain separate.",
+  "acceptedUtc": "2026-11-15T00:40:02.3303680Z",
+  "previousSnapshot": "assembly-baselines/765a120ebf062164e01953dbfb47c4149c85980095a30db0c6325faea40701c2.json.br"
 }

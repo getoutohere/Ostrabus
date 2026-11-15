@@ -1,0 +1,98 @@
+[
+    {
+        "strName":  "TOstrabusApartmentRefuelReady",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+
+                  ],
+        "aForbids":  [
+
+                     ],
+        "aTriggers":  [
+                          "TNever"
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusApartmentRefuelWorking",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusApartmentRefuel",
+                      "IsInstalled"
+                  ],
+        "aForbids":  [
+                         "IsDamaged"
+                     ],
+        "aTriggers":  [
+                          "TOstrabusApartmentRefuelReady"
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusApartmentRefuel",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusApartmentRefuel",
+                      "IsInstalled"
+                  ],
+        "aForbids":  [
+                         "IsDamaged"
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusApartmentRefuelLoose",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusApartmentRefuel"
+                  ],
+        "aForbids":  [
+                         "IsInstalled",
+                         "IsDamaged"
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusApartmentRefuelDmg",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusApartmentRefuel",
+                      "IsInstalled",
+                      "IsDamaged"
+                  ],
+        "aForbids":  [
+
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusApartmentRefuelDmgLoose",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusApartmentRefuel",
+                      "IsDamaged"
+                  ],
+        "aForbids":  [
+                         "IsInstalled"
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    }
+]

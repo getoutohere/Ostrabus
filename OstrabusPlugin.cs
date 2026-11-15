@@ -98,6 +98,7 @@ namespace Ostrabus {
             SceneManager.sceneUnloaded -= global::Ostrabus.NavConsole.ProximityRange.Reset;
             global::Ostrabus.NavConsole.ProximityRange.Reset(default);
             global::Ostrabus.NavConsole.RoundKnobArt.Release();
+            global::Ostrabus.NavConsole.Rotation.RotationRuntime.Cleanup();
             SceneManager.sceneUnloaded -= global::Ostrabus.Venus.VorbNavPlanGuard.ResetRuntimeState;
             global::Ostrabus.ShipboardAction.ShipboardActionSimulation.ResetRuntimeState();
             global::Ostrabus.CeresNavigation.CeresNavigationGuardrails.ResetRuntimeState();

@@ -1,0 +1,72 @@
+[
+    {
+        "strName":  "OutputOstrabusApartmentRefuelDestroy",
+        "strType":  "item",
+        "aCOs":  [
+                     "ItmOstrabusApartmentRefuelDmg=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "MSOstrabusApartmentRefuelDestroy",
+        "strType":  "interaction",
+        "aCOs":  [
+                     "MSOstrabusApartmentRefuelDestroy=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputOstrabusApartmentRefuelLooseDestroy",
+        "strType":  "item",
+        "aCOs":  [
+                     "ItmOstrabusApartmentRefuelDmgLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "MSOstrabusApartmentRefuelLooseDestroy",
+        "strType":  "interaction",
+        "aCOs":  [
+                     "MSOstrabusApartmentRefuelLooseDestroy=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "MSOstrabusApartmentRefuelDmgDestroy",
+        "strType":  "interaction",
+        "aCOs":  [
+                     "MSOstrabusApartmentRefuelDmgDestroy=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "MSOstrabusApartmentRefuelDmgLooseDestroy",
+        "strType":  "interaction",
+        "aCOs":  [
+                     "MSOstrabusApartmentRefuelDmgLooseDestroy=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "ItmOstrabusApartmentRefuelStock",
+        "strType":  "item",
+        "aCOs":  [
+                     "ItmOstrabusApartmentRefuelLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    }
+]

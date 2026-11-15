@@ -64,7 +64,7 @@ internal static class HullDockingGeometryPatch {
                 code[i].opcode=OpCodes.Call;code[i].operand=AccessTools.Method(typeof(HullDocking),nameof(HullDocking.MooringDistance));calls++;
             } else if (code[i].Calls(distance)) {
                 code[i].opcode = OpCodes.Call;
-                code[i].operand = AccessTools.Method(typeof(HullDocking),nameof(HullDocking.DistanceAU));
+                code[i].operand = AccessTools.Method(typeof(HullDocking),inspection ? nameof(HullDocking.DistanceAU) : nameof(HullDocking.PairDistanceAU));
                 calls++;
             } else if (__originalMethod.Name == "ConvertShipToRing" && code[i].opcode == OpCodes.Ldc_R4 &&
                 code[i].operand is float value && value == 6.684587E-08f) {

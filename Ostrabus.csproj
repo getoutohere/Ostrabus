@@ -15,10 +15,11 @@
 
   <!-- Local Game and Unity Engine References -->
   <ItemGroup><Reference Include="Vectrosity"><HintPath>$(Managed)/Vectrosity.dll</HintPath><Private>False</Private></Reference></ItemGroup>
-  <ItemGroup><Compile Remove="Tests/**/*.cs;Tools/**/*.cs;Build/**/*.cs;CustomBuilder/**/*.cs" /></ItemGroup>
+  <ItemGroup><Compile Remove="Tests/**/*.cs;Tools/**/*.cs;Build/**/*.cs;CustomBuilder/**/*.cs;StandaloneMods/**/*.cs" /></ItemGroup>
   <ItemGroup>
     <None Update="PdaSettings/Assets/**/*" CopyToOutputDirectory="PreserveNewest" />
     <None Update="QoL/PdaHacking/Assets/**/*" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="NavConsole/Rotation/Assets/**/*" CopyToOutputDirectory="PreserveNewest" />
     <EmbeddedResource Include="NavConsole/Assets/RoundKnob-v3.png" LogicalName="Ostrabus.NavConsole.RoundKnob.png" />
   </ItemGroup>
   <ItemGroup Condition="Exists('$(GameDir)')">
@@ -55,6 +56,10 @@
     </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(Managed)/UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(Managed)/UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">

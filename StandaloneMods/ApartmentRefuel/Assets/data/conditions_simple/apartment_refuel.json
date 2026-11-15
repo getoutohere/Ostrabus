@@ -1,0 +1,14 @@
+[
+    {
+        "strName":  "Apartment Refuel Conditions",
+        "aValues":  [
+                        "IsOstrabusApartmentRefuel",
+                        "Private Refuel Terminal",
+                        "Residential station service terminal.",
+                        "0",
+                        "0",
+                        "Neutral",
+                        "false"
+                    ]
+    }
+]

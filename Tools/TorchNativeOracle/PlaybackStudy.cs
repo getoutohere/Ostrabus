@@ -116,6 +116,7 @@ static partial class Program {
     }
     static void RunPlaybackStudy(bool controlChecksOnly = false, bool transferChecksOnly = false, bool clockChecksOnly = false) {
         var harness = new Harmony("offline.torch.playback.boundaries");
+        harness.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.RouteCompletionPatch)).Patch();
         foreach (var patch in new[] { typeof(Ostrabus.MiscBugFixes.TorchCoursePlaybackPatch), typeof(Ostrabus.MiscBugFixes.TorchCourseReactantsPatch), typeof(Ostrabus.MiscBugFixes.TorchCourseReactorPatch), typeof(Ostrabus.MiscBugFixes.TorchCourseFuelConsumptionPatch) }) harness.CreateClassProcessor(patch).Patch();
         void Patch(MethodBase method, string name) => harness.Patch(method, prefix: new HarmonyMethod(typeof(Program), name));
         harness.Patch(AccessTools.Method(typeof(NavData), nameof(NavData.TimeAdvance)), transpiler: new HarmonyMethod(typeof(Program), nameof(ComponentBoundary)));

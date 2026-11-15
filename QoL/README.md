@@ -20,3 +20,8 @@ Each feature has its own subdirectory and namespace.
 - [Kang auto-vents](AutoVents/README.md): short tolerance for marginal oxygen
   dips, with immediate emergency closure. BepInEx tuning and a PDA feature toggle;
   no remote device settings.
+
+- [Apartment refuel kiosk](../StandaloneMods/ApartmentRefuel/README.md): optional standalone
+  an expensive Sundries item restricted to owned station apartments, using
+  native paid services for directly docked ships. Separate plugin bundled
+  alongside Ostrabus; implemented, pending live acceptance testing.

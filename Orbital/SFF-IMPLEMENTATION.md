@@ -21,6 +21,15 @@ explicit gravity-ignore flags, projectiles, active combat targets or combat comm
 Combat and plotted-course behavior remains native. Active plans also get a dispatch
 recheck in case another mod installed a route during the update.
 
+Unplotted manual travel now honors native `Ship.NavAIManned`. If the autonomous
+pilot is unavailable, the adapter uses ballistic motion, releases the abandoned
+RCS maneuver on application and suppresses instant docking for this skip.
+`awaitingPilot` in the bounded existing report distinguishes this from guided
+travel. Angular velocity and linear momentum remain; no fuel or health is
+invented. Existing plotted courses stay on native playback, including unattended
+and INTERREGIONAL courses. See the [Ceres SFF investigation](../Navigation/CERES-SFF-DISPLACEMENT.md)
+for the native refusal bug and separate stale mooring-coordinate regression.
+
 Hidden/background hulls (`Ship.HideFromSystem`) are excluded before trajectory
 capture and reported as `nativeHidden`. A docking group containing a hidden hull
 also stays native. Gravity/motion dispatch and post-jump impact handling recheck

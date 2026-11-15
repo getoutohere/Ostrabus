@@ -1,6 +1,10 @@
 {
   "schemaVersion": 1,
-  "status": "researched_design_not_installed",
+  "status": "offline_prototype_not_installed",
+  "prototypeReport": "PROTOTYPE.md",
+  "replacementModel": "Replacement/mission-model.json",
+  "replacementContracts": "Replacement/ability-contracts.json",
+  "replacementWorldQualification": "Replacement/WORLD-SERVICES.md",
   "gameVersion": "1.0.1.10",
   "gameAssemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
   "decision": "Replace command execution and mission lifecycle behind native role policy and native world services; prototype offline first.",
@@ -57,8 +61,9 @@
       "id":"shared_world_time",
       "nativeSymbols":["CrewSim.Update", "GUIFFWD.FFWD", "CrewSim._TeleportCO", "StarSystem.Update", "AIShipManager.FFWD", "Ostranauts.Ships.AIPilots.AIShip.FFWD"],
       "proposedOwner":"shared_interval_coordinator_with_existing_motion_economy_contexts",
-      "obligation":"Coordinate before bulk movement and across completion boundaries. Suppress legacy callbacks only for an owned interval/actor. Never fake GUI flags or invent combat results.",
-      "evidence":["native-sff", "direct_IL_inventory", "Orbital/PASS-TIME-SKIPS.md"]
+      "obligation":"Coordinate outside the native Update prefix chain and across completion boundaries. Retained motion may coast an adopted actor but cannot infer independent navigation from stale native status. Suppress legacy callbacks only for an owned interval/actor. Never fake GUI flags or invent combat results.",
+      "evidence":["native-sff", "direct_IL_inventory", "Orbital/PASS-TIME-SKIPS.md", "Replacement/WORLD-SERVICES.md"],
+      "qualification":"bounded_native_retained_services_fixture; non_GUI_playback_completion_still_open"
     },
     {
       "id":"persistence",

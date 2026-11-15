@@ -11,7 +11,9 @@ checks reachability, loads virtual market stock, sets the buyer as destination
 and registers the controller under INTERREGIONAL. Its pilot's home is the source,
 not necessarily the current buyer. Reachability is tested before cargo loading;
 the later flight command plans with the resulting ship state. Hull sizing and
-the preflight/loaded-mass difference require further quantitative analysis.
+the preflight/loaded-mass difference are separate. The [freight lifecycle
+audit](../../../Orbital/Economy/FREIGHT-LIFECYCLE-AUDIT.md) now reproduces wrong
+hull sizing; loaded-mass affordability consequences remain unquantified.
 
 `SpawnPassShip` also creates a HaulerCargo pilot, but without a freight market.
 It moves up to four eligible occupants from an overpopulated station to a station
@@ -35,8 +37,8 @@ armed engagement and escape branches.
 | Civilian's owner-filtered `new virtual GetTargetHome` is bypassed through `IAICharacter`; the base unfiltered method executes. | Native interface map plus direct and interface calls with recorded filter arguments. | Dispatch difference confirmed. Review individual-owner fallback before prescribing faction-return policy. |
 | Civilian targeting accepts a hidden reserve hull which the spawn pool can also select. | Native selectors and creator reproduce selection/repositioning with unchanged estimates. | Repaired selection and retired/restored visits with native priority/SFF ownership and physical encounter protection. 82 production lifecycle assertions pass. See [scope and consequences](HIDDEN-VISIT-INVESTIGATION.md). |
 | Our first target-removal hook invalidated another actor's independent asteroid goal during native Ship-to-stellar conversion. | Native shallow `Undock.AttemptToUnMoor` run with and without production lifetime hooks. | Repaired by an exception-safe conversion scope; independent/copied/direct targets, restoration, failure and nesting pass. |
-| Ordinary Dock can retire a freight carrier without the cargo-specific market handoff. | Source review and existing native station-arrival fixtures distinguish Dock from DockCargoAndDespawn. | Manifest remains aboard a hidden carrier; permanent loss or subsequent reuse consequences are not established. |
-| Missing destination market is checked after the carrier market is unregistered. | `MarketManager.UnregisterCargoShip` source ordering. | Further inventory-lifetime reproduction needed; no assumption of permanent goods destruction. |
+| Ordinary Dock can retire a freight carrier without the cargo-specific market handoff. | Native baseline parks loaded while native role FFWD unloads the same escape. | Repaired normal/emergency handoff and actual SFF flight ownership. Historical permanent removal/reuse remains unproved. |
+| Missing destination market is checked after the carrier market is unregistered. | Native baseline removes the manifest when receiver is absent. | Repaired transfer and retirement gates; ordinary reachability of missing station market remains open. |
 | Empty-fuel civilian Hold has no equivalent of scavenger SOS routing. | Hold/TargetNewIfNone and role tree review. | Authored behavior gap; first establish whether fuel was legitimately exhausted. |
 
 Existing cargo-loading conservation and chronological SFF economy repairs are

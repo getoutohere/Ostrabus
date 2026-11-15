@@ -35,6 +35,14 @@ and route clearing remain in place. Player-owned/current-player and manually
 piloted ships retain the native target replacement. Ordinary playback and
 unfinished routes never execute the helper.
 
+The preserved target must also be refreshed to the current epoch. Native
+`Dock.ResolveInstantly` omits the coordinate update performed by ordinary
+`Dock.RunCommand`. Omitting it from our helper caused civilian ships to moor at
+a stale asteroid position and retain a roughly 135,000 km group offset after a
+two-hour skip. The helper now invokes native `UpdateTime` on the preserved
+target before native instant placement. See the [Ceres reproduction and related
+pilot-refusal defect](../Navigation/CERES-SFF-DISPLACEMENT.md).
+
 The transpiler checks exactly one target write and four target reads, rejecting
 an unfamiliar assembly layout. It adds no per-frame prefix, recorder, saved key
 or retained object collection. Custom Builder exposes this as the independent
@@ -61,4 +69,6 @@ then verify its scope, unchanged final placement, target JSON reconstruction,
 unfinished/ordinary playback, and recovery refusal/preservation cases. Live
 recovery of E-KRQD initially exposed an unsafe recovery-API continuation: failed
 retargeting led to native disposal. That API defect and its correction are
-recorded in the recovery document; the SFF prevention patch is unchanged.
+recorded in the recovery document. The November 14 mooring regression adds real
+locked-body ephemeris and native instant-placement checks; the earlier harness
+substituted ephemeris updates and did not exercise that handoff.

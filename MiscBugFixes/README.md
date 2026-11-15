@@ -1,5 +1,10 @@
 # Miscellaneous vanilla bug fixes
 
+The [civilian visit repair](CIVILIAN-VISIT-WAITS.md) releases ordinary peaceful
+shallow visits from the raw 1 kg fuel deadlock, preserves visit clocks through
+SFF/save/load and restores native faction-home dispatch. The separate asteroid
+duration policy is a simulation feature; other visit durations remain native.
+
 The [preview market isolation repair](PREVIEW-MARKET-ISOLATION.md) prevents ship
 rating/visual copies from registering persistent phantom cargo pods under the
 real ship's call sign. Real offscreen barter ships retain their live markets.
@@ -100,6 +105,13 @@ normal native waypoint/plot-FLOW data supports save/reload without custom saved
 types. See [scope, lifecycle and validation](../Navigation/TORCH-COURSE-FIX.md).
 
 ## AI rendezvous and crew lifecycle
+
+`AiCrewIdentityPatch.cs` disambiguates fresh AI recruits against the native live
+and saved actor dictionaries before character creation. This prevents a name
+collision from regenerating an existing pilot and moving them off their ship.
+Existing station recruits, actor restoration and authored character references
+remain native. One creation-site substitution adds no scan, frame callback or
+persistent state. See the [native reproduction and repair](NPC-IDENTITY-COLLISION-AUDIT.md).
 
 `AIShipLifecyclePatches.cs` prevents instant station docking while already attached
 to another hull, and prevents reuse of hidden hulls before they detach. Crewless
@@ -476,6 +488,10 @@ from an intentional hold-open. See [DOOR-AUTO-CLOSE.md](DOOR-AUTO-CLOSE.md) for 
 root cause, scope and 50 offline checks.
 
 ## Font and recovered gas-buffer console spam
+
+Console history retention and display sizing are repaired separately by
+`ConsoleBufferPatch`; see [CONSOLE-BUFFER.md](CONSOLE-BUFFER.md). This works
+independently of the following noise filter.
 
 `MissingGlyphConsoleFilter` hides TextMeshPro's standard missing-character
 warnings for `robotocondensed SDF` and `robotocondensed SDF No Outline` from the

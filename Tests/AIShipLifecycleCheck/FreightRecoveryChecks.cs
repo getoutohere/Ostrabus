@@ -28,7 +28,7 @@ static partial class Program {
     static bool NoFreightThreat(ref CommandStatus __result) { __result=new CommandStatus(CommandCode.Failure,null);return false; }
     static (int status,Dictionary<string,object> body) Freight(string path,bool apply=false,string confirm=null) {
         var type=typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.Inspection.FreightRecovery",true);
-        var reply=AccessTools.Method(type,"Run").Invoke(null,new object[]{path,apply,confirm});
+        var reply=AccessTools.Method(type,"Run").Invoke(null,new object[]{path,apply,confirm,null});
         return ((int)AccessTools.Field(reply.GetType(),"Status").GetValue(reply),(Dictionary<string,object>)AccessTools.Field(reply.GetType(),"Body").GetValue(reply));
     }
     static MarketActorConfig RecoveryActor(int amount,int capacity,bool cargo=false,int first=0) {
@@ -173,6 +173,39 @@ static partial class Program {
             Check(result.status==200 && (bool)result.body["credited"] && result.body["traderSynchronizationError"]!=null && !recoveryMarkets.ContainsKey("FREIGHT"),"Post-credit trader sync failure made the transfer retryable or lost cargo");
             RecoveryWorld(true,0);result=Freight("/economy/freight/FREIGHT/recover/MTRS",true,"RECOVER");
             Check(result.status==200 && !recoveryMarkets.ContainsKey("FREIGHT") && recoveryMarkets["MTRS"].GetStockCountForCategory("Electronics")==0,"Empty orphan cleanup fabricated stock");
+            RecoveryWorld(true,800);
+            saved=RecoverySave();
+            preview=Freight("/economy/freight/FREIGHT/recover-available/MTRS");
+            var partialPlan=(Dictionary<string,object>)preview.body["plan"];
+            Check(preview.status==200 && (bool)preview.body["eligible"] && (int)partialPlan["units"]==700 &&
+                (int)partialPlan["remainingUnits"]==100 && saved==RecoverySave(),"Partial recovery preview changed stock or miscounted capacity");
+            Check(Freight("/economy/freight/FREIGHT/recover-available/MTRS",true).status==400,"Partial recovery bypassed confirmation");
+            source=recoveryMarkets["FREIGHT"];
+            var sourceActor=source.GetConfigs()[0];var sourceList=sourceActor.Stock["Electronics"];
+            result=Freight("/economy/freight/FREIGHT/recover-available/MTRS",true,"RECOVER");
+            Check(result.status==200 && (bool)result.body["applied"] && !(bool)result.body["sourceMarketRemoved"] &&
+                (long)result.body["remainingUnits"]==100,"Partial recovery did not retain the overflow market");
+            Check(ReferenceEquals(source,recoveryMarkets["FREIGHT"]) && ReferenceEquals(sourceList,sourceActor.Stock["Electronics"]) &&
+                source.GetStockCountForCategory("Electronics")==100 && recoveryMarkets["MTRS"].GetStockCountForCategory("Electronics")==700,
+                "Partial recovery lost market/list identity or quantity conservation");
+            var remainingNames=source.GetConfigs().SelectMany(c=>c.Stock.Values.SelectMany(v=>v)).Select(i=>i.COName).ToArray();
+            var deliveredNames=recoveryMarkets["MTRS"].GetConfigs().SelectMany(c=>c.Stock.Values.SelectMany(v=>v)).Select(i=>i.COName).ToArray();
+            Check(!remainingNames.Intersect(deliveredNames).Any() && remainingNames.Concat(deliveredNames).Distinct().Count()==800,
+                "Partial withdrawal and delivery duplicated or lost concrete item types");
+            Check(recoveryMarkets["MTRS"].GetConfigs().Sum(c=>c.MaxVirtualInventorySize["Electronics"])==700 &&
+                new ShipMarket(MarketManager.GetJSONSave().mapMarket["FREIGHT"]).GetStockCountForCategory("Electronics")==100,
+                "Partial recovery changed capacities or failed native save restoration");
+            saved=RecoverySave();preview=Freight("/economy/freight/FREIGHT/recover-available/MTRS");
+            Check(!(bool)preview.body["eligible"] && saved==RecoverySave(),"Full destination allowed duplicate partial credit");
+            recoveryMarkets["MTRS"].GetConfigs()[0].TakeOutStock("Electronics",100);
+            recoveryMarkets["MTRS"].BuildConfig();
+            result=Freight("/economy/freight/FREIGHT/recover-available/MTRS",true,"RECOVER");
+            Check(result.status==200 && (bool)result.body["sourceMarketRemoved"] && !recoveryMarkets.ContainsKey("FREIGHT") &&
+                recoveryMarkets["MTRS"].GetStockCountForCategory("Electronics")==700,"Final partial recovery failed ordinary completion cleanup");
+            RecoveryWorld(true,800);saved=RecoverySave();recoveryStageFailure=true;
+            result=Freight("/economy/freight/FREIGHT/recover-available/MTRS",true,"RECOVER");
+            Check(result.status==500 && !(bool)result.body["applied"] && saved==RecoverySave(),"Partial staging failure changed live inventory");
+            CheckQuantityRecovery();
             Console.WriteLine(checks+" native freight approach/recovery checks passed.");
         } finally { h.UnpatchSelf(); }
     }

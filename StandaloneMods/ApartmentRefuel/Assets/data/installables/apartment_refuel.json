@@ -1,0 +1,328 @@
+[
+    {
+        "strName":  "OstrabusApartmentRefuelInstall",
+        "strActionCO":  "ItmOstrabusApartmentRefuelLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Installs item.",
+        "strInteractionTemplate":  "ACTInstallTEMP",
+        "CTThem":  "TOstrabusApartmentRefuelLoose",
+        "aInputs":  [
+                        "TOstrabusApartmentRefuelLoose=1.0x1"
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusApartmentRefuel"
+                     ],
+        "strStartInstall":  "ItmOstrabusApartmentRefuel",
+        "strBuildType":  "APPS",
+        "strJobType":  "install",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDInstallProgressx5",
+        "strProgressStat":  "StatInstallProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS",
+        "CTUs":  "TOstrabusApartmentRefuelReady",
+        "CTAllowUs":  "TOstrabusApartmentRefuelReady"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelUninstall",
+        "strActionCO":  "ItmOstrabusApartmentRefuel",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Uninstalls item.",
+        "strInteractionTemplate":  "ACTUninstallTEMP",
+        "CTThem":  "TOstrabusApartmentRefuel",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusApartmentRefuelLoose"
+                     ],
+        "strJobType":  "uninstall",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDUninstallProgressx5",
+        "strProgressStat":  "StatUninstallProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelDmgInstall",
+        "strActionCO":  "ItmOstrabusApartmentRefuelDmgLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Installs item.",
+        "strInteractionTemplate":  "ACTInstallTEMP",
+        "CTThem":  "TOstrabusApartmentRefuelDmgLoose",
+        "aInputs":  [
+                        "TOstrabusApartmentRefuelDmgLoose=1.0x1"
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusApartmentRefuelDmg"
+                     ],
+        "strStartInstall":  "ItmOstrabusApartmentRefuelDmg",
+        "strBuildType":  "APPS",
+        "strJobType":  "install",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDInstallProgressx5",
+        "strProgressStat":  "StatInstallProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS",
+        "CTUs":  "TOstrabusApartmentRefuelReady",
+        "CTAllowUs":  "TOstrabusApartmentRefuelReady"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelDmgUninstall",
+        "strActionCO":  "ItmOstrabusApartmentRefuelDmg",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Uninstalls item.",
+        "strInteractionTemplate":  "ACTUninstallTEMP",
+        "CTThem":  "TOstrabusApartmentRefuelDmg",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusApartmentRefuelDmgLoose"
+                     ],
+        "strJobType":  "uninstall",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDUninstallProgressx5",
+        "strProgressStat":  "StatUninstallProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelDmgRepair",
+        "strActionCO":  "ItmOstrabusApartmentRefuelDmg",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Repairs item to a functional state.",
+        "strInteractionTemplate":  "ACTRepairTEMP",
+        "CTThem":  "TIsRepairableNotContained",
+        "aInputs":  [
+                        "TIsMotor=1.0x1",
+                        "TIsHeatSink=1.0x1",
+                        "TIsPartsMechSmall=1.0x2",
+                        "TIsScrapSteel=1.0x2"
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolSoldering"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusApartmentRefuel"
+                     ],
+        "strJobType":  "repair",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDRepairProgressx5",
+        "strProgressStat":  "StatRepairProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelUndamage",
+        "strActionCO":  "ItmOstrabusApartmentRefuel",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Reduces item\u0027s wear and tear to prevent damage.",
+        "strInteractionTemplate":  "ACTUndamageTEMP",
+        "CTThem":  "TIsUndamageableNotContained",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolSoldering"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusApartmentRefuel"
+                     ],
+        "strJobType":  "repair",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDUndamageProgress",
+        "strProgressStat":  "StatDamage",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelDmgLooseRepair",
+        "strActionCO":  "ItmOstrabusApartmentRefuelDmgLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Repairs item to a functional state.",
+        "strInteractionTemplate":  "ACTRepairTEMP",
+        "CTThem":  "TIsRepairableNotContained",
+        "aInputs":  [
+                        "TIsMotor=1.0x1",
+                        "TIsHeatSink=1.0x1",
+                        "TIsPartsMechSmall=1.0x2",
+                        "TIsScrapSteel=1.0x2"
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolSoldering"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusApartmentRefuelLoose"
+                     ],
+        "strJobType":  "repair",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDRepairProgressx5",
+        "strProgressStat":  "StatRepairProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelLooseUndamage",
+        "strActionCO":  "ItmOstrabusApartmentRefuelLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Reduces item\u0027s wear and tear to prevent damage.",
+        "strInteractionTemplate":  "ACTUndamageTEMP",
+        "CTThem":  "TIsUndamageableNotContained",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolSoldering"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusApartmentRefuelLoose"
+                     ],
+        "strJobType":  "repair",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDUndamageProgress",
+        "strProgressStat":  "StatDamage",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelDismantle",
+        "strActionCO":  "ItmOstrabusApartmentRefuel",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Carefully deconstructs item into component parts (Non-reversible).",
+        "strInteractionTemplate":  "ACTDismantleTEMP",
+        "CTThem":  "TCanBeDismantled",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolSoldering"
+                        ],
+        "strLootOut":  "ItmTVDismantle",
+        "strJobType":  "dismantle",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDDismantleProgress",
+        "strProgressStat":  "StatDismantleProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelLooseDismantle",
+        "strActionCO":  "ItmOstrabusApartmentRefuelLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Carefully deconstructs item into component parts (Non-reversible).",
+        "strInteractionTemplate":  "ACTDismantleTEMP",
+        "CTThem":  "TCanBeDismantled",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolSoldering"
+                        ],
+        "strLootOut":  "ItmTVDismantle",
+        "strJobType":  "dismantle",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDDismantleProgress",
+        "strProgressStat":  "StatDismantleProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelDmgDismantle",
+        "strActionCO":  "ItmOstrabusApartmentRefuelDmg",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Carefully deconstructs item into component parts (Non-reversible).",
+        "strInteractionTemplate":  "ACTDismantleTEMP",
+        "CTThem":  "TCanBeDismantled",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolSoldering"
+                        ],
+        "strLootOut":  "ItmTVDismantle",
+        "strJobType":  "dismantle",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDDismantleProgress",
+        "strProgressStat":  "StatDismantleProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    },
+    {
+        "strName":  "OstrabusApartmentRefuelDmgLooseDismantle",
+        "strActionCO":  "ItmOstrabusApartmentRefuelDmgLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Carefully deconstructs item into component parts (Non-reversible).",
+        "strInteractionTemplate":  "ACTDismantleTEMP",
+        "CTThem":  "TCanBeDismantled",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolSoldering"
+                        ],
+        "strLootOut":  "ItmTVDismantle",
+        "strJobType":  "dismantle",
+        "strAllowLootCTsUs":  "CTWorkProgressAPPS",
+        "strAllowLootCTsThem":  "CONDDismantleProgress",
+        "strProgressStat":  "StatDismantleProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateAPPS"
+    }
+]

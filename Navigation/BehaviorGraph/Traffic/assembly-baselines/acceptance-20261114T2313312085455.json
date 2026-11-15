@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/f8557977c414a0ef1d97039fa68435e8dc807651f66ac80f4fe6eb0592e4c735.json.br",
+  "reason": "Declare new repository-owned cargo source bindings explicitly, preserve separate source fingerprints, and bind receiver predicates to native market dependencies. Same native-tested stock and handoff repairs; no game assembly change.",
+  "acceptedUtc": "2026-11-14T23:13:31.2046111Z",
+  "previousSnapshot": "assembly-baselines/2ad13660f21ed19440650e0f703b2ecb134327510a10dec9676ef9eb4f09f2bd.json.br"
+}

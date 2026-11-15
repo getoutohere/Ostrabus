@@ -12,7 +12,7 @@ static class Inventory {
         // Discover new module directories too: a new hook must fail validation
         // until it has an owner, rather than quietly disappearing from customs.
         var ignored = new HashSet<string>(new[] {
-            "Tests", "Tools", "Build", "CustomBuilder", "bin", "obj", "dist", "OldAnalysisData", "vendor"
+            "Tests", "Tools", "Build", "CustomBuilder", "StandaloneMods", "bin", "obj", "dist", "OldAnalysisData", "vendor"
         }, StringComparer.OrdinalIgnoreCase);
 
         IEnumerable<string> Walk(string directory) {

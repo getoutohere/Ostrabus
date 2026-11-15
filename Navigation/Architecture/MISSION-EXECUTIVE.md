@@ -1,6 +1,9 @@
 # Decision: replace the command runtime behind native role behavior
 
-Status: selected direction for an offline prototype. No production changes.
+Status: selected direction with an [offline prototype](PROTOTYPE.md). No production changes.
+The current [normative replacement model](Replacement/README.md) is separate
+from the descriptive game/patch behavior graph. Its first explicit ability
+profile replaces the nested return lifecycle; full Navy adoption remains gated.
 This is an intentional architectural replacement; it must not be presented as
 another small bugfix or quietly introduced as a competing controller.
 
@@ -221,7 +224,20 @@ This study supplies a selected architecture, a machine-readable seam/disposition
 map, a native constructor snapshot, a direct assembly inventory and 16 fresh
 characterization assertions. Source references and limitations are in EVIDENCE.md.
 
-The next implementation step is an **offline executive/native-adapter prototype**
-for the complete Navy lifecycle. It must pass the acceptance gates above before
-any production dispatcher, patch or asset is changed. A clean standalone state
-machine with fake successful flights does not satisfy that milestone.
+The [offline executive/native-adapter prototype](PROTOTYPE.md) now runs selected
+Navy lifecycle paths through actual native commands. It identifies remaining
+acceptance blockers, including native handback during retreat, complete incoming
+directive coverage and live world-time/scene integration. Those gates remain
+required before any production dispatcher, patch or asset is changed.
+
+The subsequent [replacement-model pass](Replacement/README.md) makes return
+phases explicit, adds a pre-invocation effect barrier, validates a native handback
+subset and revokes executive authority after release. The subsequent
+[Navy lifecycle pass](Replacement/NAVY-LIFECYCLE.md) runs native combat/reaction
+abilities, selected authored commands and actual world entrypoints offline.
+The [retained world-service pass](Replacement/WORLD-SERVICES.md) integrates
+existing Orbital/SFF/Economy scopes offline and separates physical propagation
+from executive navigation ownership. It also reproduces non-GUI playback
+completion fallthrough, which remains a blocker alongside complete directive
+effects and production save/arrival integration. This progress does not certify
+all-state removal.

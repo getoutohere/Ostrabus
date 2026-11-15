@@ -37,6 +37,15 @@ if ($selection.pdaAssets) {
 }
 $nativeMods=@($selection.nativeMods | Where-Object { $_ })
 $managedNativeMods=@($manifest.managedNativeMods | Where-Object { $_ })
+$retainedNativeMods=@($manifest.retainedNativeMods | Where-Object { $_ })
+foreach ($mod in $retainedNativeMods) {
+    if ($managedNativeMods -notcontains $mod.name -or $mod.name -notmatch '^[A-Za-z][A-Za-z0-9_-]*$') { throw 'Unknown retained native mod.' }
+    foreach ($relative in @($mod.omissionFiles)) {
+        $nativeRoot=[IO.Path]::GetFullPath((Join-Path $modRoot $mod.name)).TrimEnd('\')
+        $nativeFile=[IO.Path]::GetFullPath((Join-Path $nativeRoot $relative))
+        if ($relative -notmatch '^data[/\\]' -or $relative -notmatch '\.json$' -or -not $nativeFile.StartsWith($nativeRoot+'\',[StringComparison]::OrdinalIgnoreCase)) { throw 'Invalid retained native mod omission file.' }
+    }
+}
 foreach ($name in $managedNativeMods) {
     if ($name -notmatch '^[A-Za-z][A-Za-z0-9_-]*$') { throw "Invalid managed native mod: $name" }
 }
@@ -125,10 +134,18 @@ try {
             }
             & (Join-Path $PSScriptRoot 'Support\Install-NativeMod.ps1') -ModName $name -AssetSource $source -GameDirectory $gamePath -SettingsPath $SettingsPath -Enable
         } else {
-            & (Join-Path $PSScriptRoot 'Support\Install-NativeMod.ps1') -ModName $name -GameDirectory $gamePath -SettingsPath $SettingsPath -Disabled
+            $retain=$retainedNativeMods | Where-Object name -eq $name | Select-Object -First 1
+            if ($retain) {
+                foreach ($relative in @($retain.omissionFiles)) { Backup-File (Join-Path $modRoot ($name+'\'+$relative)) }
+                & (Join-Path $PSScriptRoot 'Support\Install-NativeMod.ps1') -ModName $name -GameDirectory $gamePath -SettingsPath $SettingsPath -Disabled -RetainDefinitions -OmissionFiles @($retain.omissionFiles)
+            } else {
+                & (Join-Path $PSScriptRoot 'Support\Install-NativeMod.ps1') -ModName $name -GameDirectory $gamePath -SettingsPath $SettingsPath -Disabled
+            }
         }
     }
     if (Test-Path -LiteralPath $loadingOrderPath -PathType Leaf) { Write-LoadOrder }
+    Backup-File (Join-Path $modRoot 'OstrabusApartmentRefuel\data\loot\supply_stock.json')
+    & (Join-Path $PSScriptRoot 'Support\Update-ApartmentRefuelStock.ps1') -GameDirectory $gamePath -SettingsPath $SettingsPath
     foreach ($name in @('Ostrabus.dll','Ostrabus.pdb')) {
         Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('Plugin\'+$name)) -Destination (Join-Path $destination $name) -Force
         if ((Get-FileHash -LiteralPath (Join-Path $destination $name)).Hash -ne $manifest.pluginFiles.$name) { throw "Installed checksum mismatch: $name" }

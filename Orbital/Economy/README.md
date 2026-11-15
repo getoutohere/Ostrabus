@@ -20,6 +20,21 @@ It then adds the consignment back to the origin. `CargoLoadingPatch` clears the
 accepted input list after `TryAddStock` has cloned its entries. Overflow handling
 retains the native list and count. This small correction also applies outside SFF.
 
+The [2026-11-14 cargo audit](CARGO-LOADING-AUDIT.md) reproduces the incomplete
+repair's cargo loss and tests its correction: native trade selection now includes
+its seed consignment once, and loading reuses each pod's actual carrier-market
+configuration across consignments. Ordinary and SFF loading preserve previously
+loaded goods and return uncarried stock through native overflow handling. The
+audit separately brackets three lost hulls whose inventories remained registered,
+without guessing their disposal cause.
+
+The [delivery lifecycle repairs](FREIGHT-LIFECYCLE-AUDIT.md) correct multi-actor
+stock accounting, order-dependent hull sizing, missing-market loss and normal/SFF
+emergency-retirement differences. A valid receiver still accepts what fits and
+discards overflow; there is no alternate buyer or delivery waiting policy. Failed
+handoffs retain the carrier and native target. These repairs do not establish the
+exact historical removal caller or close every possible freight lifecycle gap.
+
 ## Timeline
 
 The world-update prefix prepares a finite event queue from native producer clocks,
@@ -38,7 +53,9 @@ native AI FFWD, after the world's physical update reaches the final epoch.
   same skip, rather than treating every endpoint as final approach. Once nearby,
   bounded local SFF navigation handles the final approach. Arrival requires
   distance/speed inside the native docking threshold; expiration alone is not delivery.
-- Arrival transfers inventory through `UnregisterCargoShip`. At equal timestamps,
+- Arrival transfers inventory through corrected `UnregisterCargoShip`, committing
+  accepted stock before carrier removal and preserving native overflow disposal.
+  Missing receivers do not count as delivery or retire the carrier. At equal timestamps,
   arrivals precede production, which precedes dispatch. Physical crew/hull retirement
   uses native `DockAndDespawn` at the end of the skip.
 - Unfinished shipments retain ordinary market manifests and native NavData (when
@@ -52,7 +69,9 @@ bounded scalar reports, not live game objects.
 
 Eligibility requires an actual cargo market, a shallow visible AI freighter, an
 isolated hull, a station destination, and no combat target or active reaction. Only
-idle, FlyTo and DockCargoAndDespawn commands qualify. PASS passenger transports share
+idle and native Main-owned FlyTo/DockCargoAndDespawn commands qualify. Flee leaves,
+saved in-progress escapes and priority instructions retain native handling.
+PASS passenger transports share
 the cargo pilot class but lack cargo markets and are excluded. Player ships, loaded
 ships, combatants, docked groups and unrelated AI retain their native paths. Flights
 which cannot be safely prepared remain native; their eventual end-of-skip deliveries

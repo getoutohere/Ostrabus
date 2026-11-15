@@ -2,8 +2,9 @@
 
 Namespace/subdirectory `Ostrabus.Orbital`. Experimental; default off.
 
-[PASS time-skip audit](PASS-TIME-SKIPS.md) documents a confirmed shuttle boundary
-gap and native completed-route fall-through, with the proposed shared integration.
+[PASS time-skip audit](PASS-TIME-SKIPS.md) documents the remaining shuttle boundary
+integration work. The separate [route-completion bugfix](../Navigation/ROUTE-COMPLETION.md)
+repairs native completed-route fall-through without changing the GUI SFF scopes.
 
 [Economic SFF catch-up](Economy/README.md) processes production, freight dispatch and
 eligible cargo arrivals in simulation-time order without changing the player's course.

@@ -1,6 +1,10 @@
 # Public snapshot preparation
 
 Current target: Ostranauts 1.0.1.10 (`public_test`), BepInEx 5, Windows.
+The accumulated work after 0.5.0 is now captured as the
+[preserved 1.0.1.10 baseline](BASELINE-1.0.1.10.md), before 1.1 compatibility
+changes. It retains 0.5.0 metadata and is a source checkpoint, not a new release.
+Use a preserved 1.0.1.10 installation for its builds and tests.
 Current staging scope: [Ostrabus 0.5.0](RELEASE-0.5.0.md): AI control ownership,
 combat/patrol and time-skip repairs, local navigation frames, Ceres and scavenger
 behavior, docked-group micrometeoroid defense, cargo-pod market isolation, bounty

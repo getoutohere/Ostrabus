@@ -36,12 +36,13 @@ internal static partial class FreightRecovery {
     internal static bool IsRoute(string path) {
         if (path == null || !path.StartsWith("/economy/freight/",StringComparison.Ordinal)) return false;
         var parts=path.Split('/');
-        return parts.Length>=5 && (parts[4]=="approach" || parts[4]=="recover");
+        return parts.Length>=5 && (parts[4]=="approach" || parts[4]=="recover" || parts[4]=="recover-available" || parts[4]=="recover-quantity");
     }
-    internal static InspectionApi.Reply Run(string path, bool apply, string confirm) {
+    internal static InspectionApi.Reply Run(string path, bool apply, string confirm, Quantity quantity = null) {
         var parts=path.Split('/');
-        if (!IsRoute(path) || (parts.Length!=5 && parts.Length!=6)) return Reply(400,"error","Expected /economy/freight/{id}/approach[/{stationId}] or /recover/{stationId}.");
-        bool recover=parts[4]=="recover";
+        if (!IsRoute(path) || (parts.Length!=5 && parts.Length!=6)) return Reply(400,"error","Expected /economy/freight/{id}/approach[/{stationId}], /recover/{stationId}, /recover-available/{stationId} or /recover-quantity/{stationId}.");
+        bool exact=parts[4]=="recover-quantity", available=parts[4]=="recover-available", recover=parts[4]=="recover" || available || exact;
+        if (exact != (quantity != null)) return Reply(400,"error","Exact quantity selection is required only for recover-quantity.");
         string id,stationId;
         try { id=Uri.UnescapeDataString(parts[3]);stationId=parts.Length==6 ? Uri.UnescapeDataString(parts[5]) : null; }
         catch (UriFormatException) { return Reply(400,"error","Malformed registry ID."); }
@@ -75,7 +76,18 @@ internal static partial class FreightRecovery {
             !station.objSS.bIsBO || !station.IsStation() || stationId==id || !markets.TryGetValue(stationId,out var destination) || destination == null ||
             destination.ShipRegId!=stationId || !Finite(station.objSS.vPosx) || !Finite(station.objSS.vPosy) || !Finite(station.objSS.vVelX) || !Finite(station.objSS.vVelY))
             return Reply(409,"error","Destination must resolve to an available native station and matching market.");
-        var error=Manifest(source,out var manifest,out int total);
+        Dictionary<string,List<MarketItem>> manifest;
+        int total;
+        long originalTotal;
+        string error;
+        if (exact) {
+            error=QuantityManifest(source,destination,quantity,out manifest,out originalTotal);
+            total=quantity.Units;
+        } else {
+            error=Manifest(source,out manifest,out total);
+            originalTotal=total;
+        }
+        if (error == null && available) error=FitAvailable(destination,manifest,out manifest,out total);
         if (error == null) error=ValidateDestination(markets,id,destination,manifest,out _);
         if (error != null) return Reply(apply ? 409 : 200,"id",id,"stationId",stationId,"eligible",false,"reason",error);
         var stale=new HashSet<AIShip>();
@@ -86,11 +98,20 @@ internal static partial class FreightRecovery {
         var quantities=new Dictionary<string,object>();foreach (var pair in manifest) quantities.Add(pair.Key,pair.Value.Count);
         var plan=Map("stationId",stationId,"destinationSource",recover ? "explicit-caller-choice" : "current-native-target",
             "cargo",quantities,"units",total,"staleControllers",stale.Count,
+            "partial",(available || exact) && total<originalTotal,"remainingUnits",exact ? (object)(originalTotal-total) : (int)(originalTotal-total),
             "nativeTravelStepOnly",!recover,"deliverImmediately",recover,"fuelRefill",false,
             "stagingDistanceKm",recover ? null : (object)10,"nextNativeCommand",recover ? null : "DockCargoAndDespawn",
-            "note",recover ? "Caller must establish the historical destination. Credit surviving cargo once; remove only its orphaned market/AI/hub/ownership references. No NPCs or hulls are deleted." :
+            "note",exact ? "Explicit redistribution destination and exact category/quantity. Expected balances are rechecked; caller must separately refresh demand and inbound reservations. Unselected source cargo is retained." :
+                available && total<originalTotal ? "Caller must establish the historical destination. Credit only available capacity and retain the original overflow market/items and ownership references." :
+                recover ? "Caller must establish the historical destination. Credit surviving cargo once; remove only its orphaned market/AI/hub/ownership references. No NPCs or hulls are deleted." :
                 "Complete native FlyTo travel, stage 10 km away with matching velocity and resume the existing saved arrival checkpoint. AI delivers on a subsequent tick. Capacity is checked now, not reserved.");
+        if (exact) {
+            plan["category"]=quantity.Category;
+            plan["expectedSourceStock"]=quantity.SourceStock;
+            plan["expectedDestinationStock"]=quantity.DestinationStock;
+        }
         if (!apply) return Reply(200,"id",id,"eligible",true,"applied",false,"plan",plan);
+        if ((available || exact) && total<originalTotal) return RecoverPartial(markets,id,source,destination,manifest,plan);
         return recover ? Recover(manager,id,stationId,source,destination,manifest,stale,plan) : Approach(ship,ai,station,plan);
     }
     static string ApproachEligibility(Ship ship, AIShip ai, CondOwner player) {

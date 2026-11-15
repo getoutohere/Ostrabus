@@ -1,0 +1,68 @@
+{
+  "modelId": "ostrabus-mission-executive-v1-offline",
+  "modelSha256": "f3734a653011957c1565c84bd3de3cec406b3901dfc9c78b78e43270af909cce",
+  "coveredTransitionIds": [
+    "approach-blocked",
+    "approach-complete",
+    "approach-failed",
+    "approach-progress",
+    "approach-target-lost",
+    "arrival-not-issued",
+    "arrival-observed",
+    "arrival-prepare",
+    "arrival-submit",
+    "arrival-target-lost",
+    "arrival-uncertain",
+    "combat-blocked",
+    "combat-complete",
+    "combat-goal-lost",
+    "combat-progress",
+    "directive-complete",
+    "directive-failed",
+    "directive-progress",
+    "reaction-blocked",
+    "reaction-complete",
+    "reaction-progress",
+    "resume-invalid",
+    "resume-valid",
+    "select-blocked",
+    "select-goal",
+    "select-no-destination",
+    "waypoint-reached"
+  ],
+  "unexercisedTransitionIds": [],
+  "adversarialWalk": {
+    "seed": 2079,
+    "sequences": 64,
+    "eventsPerSequence": 24,
+    "accepted": 721,
+    "rejected": 815,
+    "exhaustive": false
+  },
+  "nativeProfiles": [
+    {
+      "scenario": "explicit-return",
+      "nativeRetreatCalls": 0,
+      "finalFuel": 295.0,
+      "finalEpoch": 1060.0,
+      "committedAtInvocation": true
+    },
+    {
+      "scenario": "midpoint-reload",
+      "executiveBytes": 800,
+      "fuel": 295.0
+    }
+  ],
+  "referencePrototypeViolations": [
+    "no durable pre-invocation arrival barrier",
+    "opaque nested retreat persistence remains in reference prototype"
+  ],
+  "productionReady": false,
+  "limitations": [
+    "native world/physics fixtures; no live Unity",
+    "Navy ability fixture results are in test-results.json and NAVY-LIFECYCLE.md",
+    "authored reply/subsystem outcomes and constructor effect closure still open",
+    "all-state native handback pending; ordinary return subset qualified",
+    "retained world-service integration qualified only for WORLD-SERVICES.md fixture cases; coherent production save boundary still open"
+  ]
+}

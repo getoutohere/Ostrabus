@@ -7,6 +7,15 @@
   ],
   "features": [
     {
+      "id": "rotation-module",
+      "title": "1x1 RCS rotation and original-target bearing hold module",
+      "category": "qol",
+      "requires": ["ai-flight-controls"],
+      "patchFiles": ["NavConsole/Rotation/RotationPatches.cs"],
+      "stop": ["global::Ostrabus.NavConsole.Rotation.RotationRuntime.Cleanup();"],
+      "nativeMods": [{ "name": "OstrabusRotation", "source": "NavConsole/Rotation/Assets", "retainDefinitionsOnOmission": true, "omissionFiles": ["data/loot/rotation_stock.json"] }]
+    },
+    {
       "id": "ai-combat-handoff",
       "title": "Run native combat cleanup before resuming patrol after lost contact",
       "category": "bugfix",
@@ -142,6 +151,12 @@
       ]
     },
     {
+      "id": "route-completion",
+      "title": "Prevent completed routes replaying phantom thrust outside GUI SFF",
+      "category": "bugfix",
+      "patchFiles": ["Navigation/RouteCompletionPatch.cs"]
+    },
+    {
       "id": "ai-patrol-priority",
       "title": "Keep Navy patrols interruptible and preserve AI command queues",
       "category": "bugfix",
@@ -178,6 +193,20 @@
         "MiscBugFixes/NavigationTargetRecovery.cs",
         "MiscBugFixes/ShipReplacementTargetsPatch.cs"
       ]
+    },
+    {
+      "id": "ai-crew-identities",
+      "title": "Prevent fresh AI crew from stealing existing NPC identities",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/AiCrewIdentityPatch.cs"
+      ]
+    },
+    {
+      "id": "population-gender",
+      "title": "Random NPC genders: 1% non-binary, 49.5% male, 49.5% female",
+      "category": "simulation",
+      "patchFiles": ["Population/RandomGenderPatch.cs"]
     },
     {
       "id": "ai-crew-integrity",
@@ -462,6 +491,14 @@
       "category": "bugfix",
       "patchFiles": [
         "MiscBugFixes/CommsDisplayPatch.cs"
+      ]
+    },
+    {
+      "id": "console-buffer",
+      "title": "Keep recent console output bounded and scrollable",
+      "category": "bugfix",
+      "patchFiles": [
+        "MiscBugFixes/ConsoleBufferPatch.cs"
       ]
     },
     {
@@ -971,10 +1008,12 @@
     },
     {
       "id": "cargo-loading",
-      "title": "Avoid cargo duplication while loading native freight",
+      "title": "Correct freight loading, market accounting and arrival handoffs",
       "category": "bugfix",
       "patchFiles": [
-        "Orbital/Economy/CargoLoadingPatch.cs"
+        "Orbital/Economy/CargoLoadingPatch.cs",
+        "Orbital/Economy/MarketStockPatches.cs",
+        "Orbital/Economy/CargoArrivalPatches.cs"
       ]
     },
     {
@@ -1217,10 +1256,17 @@
     },
     {
       "id": "civilian-visits",
-      "title": "Keep civilian visits and attached retirement valid",
+      "title": "Keep civilian visits, wait completion and home returns valid",
       "category": "bugfix",
-      "requires": [ "navigation-targets", "ai-crew-integrity" ],
-      "patchFiles": [ "MiscBugFixes/CivilianVisitsPatch.cs" ]
+      "requires": [ "navigation-targets", "ai-crew-integrity", "ai-hold-clock" ],
+      "patchFiles": [ "MiscBugFixes/CivilianVisitsPatch.cs", "MiscBugFixes/CivilianVisitWaiting.cs" ]
+    },
+    {
+      "id": "civilian-asteroid-visits",
+      "title": "Let civilian asteroid prospecting visits last 5 minutes to 2 hours",
+      "category": "simulation",
+      "requires": [ "civilian-visits" ],
+      "patchFiles": [ "Navigation/CivilianAsteroidVisits.cs" ]
     },
     {
       "id": "civilian-sff-coordinates",

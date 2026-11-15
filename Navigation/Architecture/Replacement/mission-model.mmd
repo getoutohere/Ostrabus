@@ -1,0 +1,29 @@
+flowchart TD
+  %% Generated from mission-model.json; normative replacement, not native behavior.
+  Selecting -->|GoalSelected| Approaching
+  Selecting -->|NoDestination| AwaitingPolicy
+  Selecting -->|Blocked| Selecting
+  Approaching -->|Progress| Approaching
+  Approaching -->|Blocked| Approaching
+  Approaching -->|ApproachComplete [Dock]| ArrivalReady
+  Approaching -->|ApproachComplete [None]| Completed
+  Approaching -->|ApproachFailed| AwaitingPolicy
+  Approaching -->|GoalUnavailable| AwaitingPolicy
+  ArrivalReady -->|GoalUnavailable| AwaitingPolicy
+  ArrivalReady -->|DispatchArrival| ArrivalPrepared
+  ArrivalPrepared -->|InvocationBoundaryReady| ArrivalUncertain
+  ArrivalUncertain -->|NoWorldEffectIssued| ArrivalReady
+  ArrivalUncertain -->|WorldOutcomeUnknown| ArrivalUncertain
+  ArrivalUncertain -->|WorldEffectObserved| Completed
+  Revalidating -->|ResumeValidated| Approaching
+  Revalidating -->|ResumeRejected| AwaitingPolicy
+  Reacting -->|Progress| Reacting
+  Reacting -->|Blocked| Reacting
+  Engaging -->|Progress| Engaging
+  Engaging -->|Blocked| Engaging
+  Engaging -->|GoalUnavailable| AwaitingPolicy
+  Reacting -->|ReactionComplete| Completed
+  Engaging -->|CombatComplete| Completed
+  Operating -->|DirectiveProgress| Operating
+  Operating -->|DirectiveComplete| Completed
+  Operating -->|DirectiveFailed| Completed

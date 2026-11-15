@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Normative adapter contracts. Qualification here is offline and limited to the stated fixture profile.",
+  "abilities": [
+    {
+      "id": "select-return-goal",
+      "status": "native-fixture-qualified",
+      "nativeSymbols": [
+        "AIShipManager.LowFuel",
+        "Ostranauts.Ships.Commands.TargetNearestStation.RunCommand"
+      ],
+      "inputs": [
+        "admitted native return choice",
+        "current actor and epoch",
+        "native faction, station and fuel evaluators"
+      ],
+      "state": [
+        "mission goal reference"
+      ],
+      "outcomes": [
+        "GoalSelected",
+        "NoDestination",
+        "Blocked"
+      ],
+      "rules": [
+        "Target selection runs only while this mission owns control; native selection can reset routes.",
+        "No station is created, forced reachable or made friendly by the executive.",
+        "Already-stranded actors and native cleanup policy require a separate adapter before adoption."
+      ]
+    },
+    {
+      "id": "approach",
+      "status": "native-fixture-qualified",
+      "nativeSymbols": [
+        "Ostranauts.Ships.Commands.FlyTo.RunCommand",
+        "Ostranauts.Ships.Commands.FlyTo.get_SaveData",
+        "Ostranauts.ShipGUIs.Utilities.NavData.TimeAdvance"
+      ],
+      "inputs": [
+        "canonical mission goal",
+        "movement authority ticket",
+        "native route/manual navigation services"
+      ],
+      "state": [
+        "explicit native FlyTo SaveData payload",
+        "native world ShipSitu/NavData snapshot and existing fuel settlement state"
+      ],
+      "outcomes": [
+        "Progress",
+        "Blocked",
+        "ApproachComplete",
+        "ApproachFailed",
+        "GoalUnavailable"
+      ],
+      "rules": [
+        "Pilot unavailability is not completion.",
+        "An existing authorized route can continue without new pilot input.",
+        "Native authored CanExecute skip is not proof that an arrival prerequisite was met.",
+        "Failure revokes movement and requests a policy decision; it does not advance to docking or impose endless retries.",
+        "Current native fuel and geometry repairs remain lower-level services."
+      ]
+    },
+    {
+      "id": "arrival",
+      "status": "native-fixture-qualified",
+      "nativeSymbols": [
+        "Ostranauts.Ships.Commands.Dock.RunCommand",
+        "Ostranauts.Ships.Comms.Comms.AIGetClearance",
+        "CrewSim.DockAndDespawn"
+      ],
+      "inputs": [
+        "current destination identity",
+        "correlated pending arrival intent",
+        "certified invocation boundary (standalone checkpoint or coherent native-save operation fence)"
+      ],
+      "state": [
+        "one pending effect ID and destination",
+        "prepared versus uncertain phase",
+        "bounded native adapter participant manifest and witnessed destruction outcomes"
+      ],
+      "outcomes": [
+        "NoWorldEffectIssued",
+        "WorldOutcomeUnknown",
+        "WorldEffectObserved"
+      ],
+      "rules": [
+        "Intent preparation and InvocationBoundaryReady certification must precede native invocation.",
+        "A restored prepared record is ambiguous until world readback resolves it.",
+        "Command return codes and lack of visible attachment do not prove crew/cargo transaction outcome.",
+        "Only proof that the world-effect seam was not entered permits another invocation.",
+        "The native-arrival provider executes DockAndDespawn and shipped drop-off/reputation decisions for mixed group crew; physical scene movement/destruction and company policy remain providers or open gates.",
+        "All captured crew must be at the destination or have a witnessed native destruction outcome; absence alone cannot complete retirement.",
+        "Readback can continue after native unregister for the same canonical hull without resubmitting docking.",
+        "The standalone fixture uses one checkpoint file. The integrated native save port uses a fenced in-memory intent and performs no per-arrival disk write.",
+        "Only a coherent native snapshot with a matching original prepared phase can prove that native invocation had not begun; ordinary standalone prepared records remain ambiguous."
+      ]
+    },
+    {
+      "id": "combat-steering",
+      "status": "native-fixture-qualified-subset",
+      "nativeSymbols": [
+        "Ostranauts.Ships.Commands.KeepWithinFiringDistance.RunCommand",
+        "Ostranauts.Ships.Commands.KeepAtDistance.RunCommand",
+        "Ostranauts.Ships.Commands.Shoot.RunCommand",
+        "Ostranauts.Ships.Commands.LowFuelRetreat.RunCommand",
+        "Ostranauts.Ships.Commands.KeepWithinFiringDistance.KeepRange",
+        "Ostranauts.Ships.Commands.KeepAtDistance.SetCourse"
+      ],
+      "inputs": [
+        "native engagement choice, target, sensors and weapon eligibility",
+        "movement authority ticket"
+      ],
+      "state": [
+        "canonical combat goal and native negotiation blackboard",
+        "engagement mode and failed-mode fallthrough",
+        "explicit tactical waypoint and native FlyTo payload"
+      ],
+      "outcomes": [
+        "Progress",
+        "Blocked",
+        "GoalUnavailable",
+        "CombatComplete",
+        "native policy choice to return, surrender or react"
+      ],
+      "rules": [
+        "Do not run embedded LowFuelRetreat as a hidden second mission controller.",
+        "Low-fuel retreat is a native policy decision translated into an explicit return mission.",
+        "Damage, defeat, hostility, unsafe policy choices and native weapon limits remain authoritative.",
+        "No synthetic combat outcome during bulk travel.",
+        "Native role tree guards/actions run in authored order; embedded combat/retreat controllers are forbidden.",
+        "Equipment eligibility/profile and empty weapon list are fixtures; no actual projectile/decoy outcome claim.",
+        "Active Ceres reserve/home selection integration remains unqualified."
+      ]
+    },
+    {
+      "id": "urgent-reaction",
+      "status": "native-fixture-qualified-subset",
+      "nativeSymbols": [
+        "Ostranauts.Ships.AIPilots.AIShip.AddUrgentCommand",
+        "Ostranauts.Ships.Commands.Dodge.RunCommand"
+      ],
+      "inputs": [
+        "native urgent directive with full payload and source context"
+      ],
+      "state": [
+        "explicit target/direction, remaining reaction and pause clocks",
+        "original gravity flag and started marker",
+        "suspended mission identity and named missile-check interval"
+      ],
+      "outcomes": [
+        "Progress",
+        "Blocked",
+        "ReactionComplete"
+      ],
+      "rules": [
+        "Ordinary patrol admission is not an urgent directive.",
+        "Completing a reaction does not resurrect stale movement authority.",
+        "Resume requires target and capability revalidation.",
+        "Repeated urgent inputs must respect bounded admission; never silently discard an authored event.",
+        "Native WeaponsSystem publishes DodgeTarget after enqueue; read context at dispatch or capture from its producer.",
+        "Repeated dodge updates context without stacking reactions or resetting the shared timer.",
+        "Missing-target completion must restore owned gravity state too."
+      ]
+    },
+    {
+      "id": "authored-comms",
+      "status": "native-receipt-transfer-and-dialogue-qualified-subsets; crew-effects-fixtured",
+      "nativeSymbols": [
+        "Ostranauts.Ships.Comms.Comms.ApplyLoot",
+        "Ostranauts.Ships.AIPilots.AIShip.AddCommandLoot",
+        "Ostranauts.Ships.Commands.SurrenderOffer.RunCommand",
+        "Ostranauts.Ships.Commands.ComeHere.RunCommand"
+      ],
+      "assetBindings": [
+        {
+          "alias": "CMDComeHere",
+          "command": "ComeHere",
+          "interaction": "SHIPComingAllow"
+        },
+        {
+          "alias": "CMDConsiderSurrender",
+          "command": "SurrenderConsiderOffer",
+          "interaction": "SHIPSurrenderAI"
+        },
+        {
+          "alias": "CMDDeployHauler",
+          "command": "DeployHauler",
+          "interaction": "SHIPSOSDispatchHauler"
+        }
+      ],
+      "rules": [
+        "Native assets retain acceptance, reputation, faction and condition policy.",
+        "Counterparty, issuer, loot arguments, one-shot semantics, FIFO and expiry are part of the input contract.",
+        "Unknown or unsupported directives prevent adoption or require a certified handback; they must not disappear.",
+        "The listed aliases are examples checked against shipped assets, not complete authored-command closure.",
+        "Direct shipped CMD aliases and core/generated-stakes references are inventoried in authored-inputs.json; recursive conditional closure remains open.",
+        "ApplyLoot character receives the effects; it is not necessarily the issuer.",
+        "External subsystem directives first release executive authority; their native outcomes remain unqualified.",
+        "New TakeFuel commands execute the native constructor at receipt; reconstruction restores its reviewed fields without replaying SyncFuel or restarting its pause.",
+        "Primitive shared clocks restore from the native world, not an older per-command sample; delayed receipts and reaction checkpoints retain the latest write.",
+        "Raw full-inbox admission refuses before construction. Typed callers have already constructed their command before AddCommand; no rollback guarantee is claimed.",
+        "Native TakeFuel and SyncFuel match an uninterrupted native baseline under physical-tank and docking providers; real gas/container storage remains unqualified.",
+        "Selected shipped surrender replies execute native GetReply, Triggered, person/ship-spec and relationship evaluators; personality scoring, crew effects and scene presentation remain fixtures.",
+        "Native comms DTOs restore roles, chain context, received logs and pending-message identities without replaying command loot or receipt effects.",
+        "The native send queue deduplicates messages. Delivery event fanout is a fixture with the native strict timestamp rule, not a qualified Unity event lifecycle."
+      ]
+    },
+    {
+      "id": "native-save-boundary",
+      "status": "single-actor-native-pipeline-qualified-under-providers",
+      "nativeSymbols": [
+        "Ostranauts.Core.LoadManager.SaveGameData",
+        "Ostranauts.Core.Models.SavingJob.StartWithoutThreading",
+        "CrewSim.SetCustomInfos",
+        "Ostranauts.Ships.AIPilots.AIShip.LoadBehaviorTreeSave"
+      ],
+      "rules": [
+        "Capture executive state with the native DTO under the owner-thread operation fence; do not write an independent later sidecar.",
+        "Detach mutable DTO references before handing the snapshot to the native save worker.",
+        "Bind native wire data, epoch and versioned executive state; native LitJson can normalize empty arrays to null when reading.",
+        "Raw command receipt is fenced before construction. Arbitrary typed constructors executing before admission are not covered by that guard.",
+        "Physical ship/inventory serialization, unrelated subsystem snapshots and Unity scene restoration retain explicit providers.",
+        "The experimental fingerprint/copy path is allocation-heavy; no runtime performance or generic uninstall guarantee is claimed."
+      ]
+    },
+    {
+      "id": "native-handback",
+      "status": "native-fixture-qualified-subset",
+      "nativeSymbols": [
+        "Ostranauts.Ships.AIPilots.AIShip.GetBehaviorTreeSaveData",
+        "Ostranauts.Ships.Commands.FlyToPatrol.get_SaveData",
+        "Ostranauts.Ships.Commands.StickySequenceCommand.set_SaveData"
+      ],
+      "rules": [
+        "Ordinary funded Navy return may project target, native flight state and main cursor 2 or 3, provided no native combat or queued directive conflicts.",
+        "Check native serialization before releasing executive authority.",
+        "After release, executive event admission, ticking and time advance are disabled, including after reload.",
+        "Nested combat retreat, suspended missions, pending world effects and unqualified profiles defer disable without erasing their policy state.",
+        "A retired actor is a qualified release boundary. Generic removal/upgrade compatibility is not established.",
+        "A native MainBehavior patrol approach to a non-docking waypoint may export its flight payload and main cursor 2; native archive reload and dispatcher continuation are fixture-qualified.",
+        "The executive inbox and reaction state must be checked in addition to the native queue; handback cannot silently discard their work."
+      ]
+    }
+  ],
+  "retainedWorldServices": [
+    "orbital gravity",
+    "collision geometry and avoidance",
+    "target reconstruction and ephemerides",
+    "fuel accounting",
+    "shallow travel policy",
+    "station and crew lifetimes",
+    "cargo/market conservation",
+    "native AI dispatch budget"
+  ],
+  "timeCoordinator": {
+    "status": "native-retained-services-fixture-qualified; shared-playback-completion-open",
+    "nativeEntrypointsToIntegrate": [
+      "StarSystem.Update",
+      "GUIFFWD.FFWD",
+      "CrewSim._TeleportCO"
+    ],
+    "rules": [
+      "There is one world interval owner; actors do not independently advance StarSystem time in production.",
+      "A route uses actual elapsed time to its boundary and the next phase receives only the residual interval.",
+      "Persist the existing native fuel settlement watermark instead of adding a competing fuel ledger.",
+      "The native queue budget remains authoritative; no new per-frame whole-world polling or background Unity access.",
+      "Tests cross native 3600-second catch-up threshold and retain unrelated shallow player torch playback.",
+      "Bulk combat is refused offline; no production restriction or fabricated outcome is selected.",
+      "Coordinate outside the native Update prefix chain so later prefixes cannot create a phantom future interval.",
+      "GUI SFF uses existing production scopes; experimental PASS binding calls their factories without changing GUIFFWD.Active and honors module flags.",
+      "Retained motion can coast executive-owned actors but must not infer independent navigation from stale native active-command labels.",
+      "Native market algorithms, existing freighter controller and retained timeline run under synthetic data; physical scene and crew outcomes retain fixtures.",
+      "A negative control still reproduces non-GUI successful route completion falling through into full-interval integration; opening scopes alone is not a complete PASS repair.",
+      "Native dispatch occurs between bounded daily windows; uncertain arrival blocks residual time and scope finalizers release writers on failure."
+    ]
+  }
+}

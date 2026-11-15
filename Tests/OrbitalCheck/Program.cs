@@ -20,6 +20,16 @@ static class Program {
     static double Error(OrbitAcceleration.Acceleration a,OrbitAcceleration.Acceleration b) => Math.Sqrt((a.X-b.X)*(a.X-b.X)+(a.Y-b.Y)*(a.Y-b.Y));
     static double D(JToken node,string key) => (double)node[key];
     public static int Main(string[] args) {
+        var completion = new Harmony("offline.orbital.route-completion-interop");
+        try {
+            completion.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.RouteCompletionPatch)).Patch();
+            return Run(args);
+        } finally { completion.UnpatchSelf(); }
+    }
+    static int Run(string[] args) {
+        if (args.Length > 1 && args[0] == "ceres-study") { CeresSffStudy.Run(args[1]); return 0; }
+        if (args.Length != 0 && args[0] == "delivery-study") { EconomyChecks.DeliveryStudy(Check); Console.WriteLine(checks + " delivery investigation assertions passed."); return 0; }
+        if (args.Length != 0 && args[0] == "cargo-study") { EconomyChecks.CargoStudy(Check); Console.WriteLine(checks + " cargo investigation assertions passed."); return 0; }
         if (args.Length != 0 && args[0] == "economy") { EconomyChecks.Run(Check); Console.WriteLine(checks + " economic checks passed."); return 0; }
         EphemerisBoundaryChecks.Run(Check);
         if (args.Length != 0 && args[0] == "ephemeris") { Console.WriteLine(checks + " ephemeris boundary checks passed."); return 0; }

@@ -4,8 +4,8 @@ using Ostrabus.NavConsole.Outlines;
 
 namespace Ostrabus.ShipNavigation.Collisions;
 
-// Docking's own symbolic bounding circles must enclose the same hulls as its
-// physical collision model. Shared combat/planet/avoidance radius helpers stay
+// Selected-target controls measure the two hulls. Formation placement and AI
+// handoff keep complete group bounds. Shared combat/planet radius helpers stay
 // native. No actor cache, geometry scan, snapshot or worker wait is added here.
 internal static class HullDocking {
     static readonly AccessTools.FieldRef<Ostranauts.ShipGUIs.NavStation.NavModBase,CondOwner> MooringOwner =
@@ -22,6 +22,14 @@ internal static class HullDocking {
         return true;
     }
     internal static bool Applies(Ship a, Ship b) => PhysicalCollisions.Enabled && Ordinary(a) && Ordinary(b);
+    internal static float PairRadiusSum(Ship a, Ship b, float native) {
+        if (!Applies(a,b)) return native;
+        return ValidRadius((double)HullDisplay.Radius(a)+HullDisplay.Radius(b),native);
+    }
+    static float ValidRadius(double metres, float native) {
+        double au = metres*HullZoom.MetresToAU;
+        return metres > 0 && !double.IsInfinity(au) && !double.IsNaN(au) && au <= float.MaxValue ? (float)au : native;
+    }
     internal static float RadiusSum(Ship a, Ship b, float native) {
         if (!Applies(a,b)) return native;
         // Radius reads the immutable published envelope even during native
@@ -29,10 +37,18 @@ internal static class HullDocking {
         // existing two-dimensional header bound, without blocking a frame.
         bool shared=a.DockGroup != null && ReferenceEquals(a.DockGroup,b.DockGroup);
         double radius = shared ? (double)HullDisplay.Radius(a)+HullDisplay.Radius(b) : Around(a)+Around(b);
-        double au = radius*HullZoom.MetresToAU;
-        return radius > 0 && !double.IsInfinity(au) && !double.IsNaN(au) && au <= float.MaxValue ? (float)au : native;
+        return ValidRadius(radius,native);
     }
     internal static float DistanceAU(Ship a, Ship b) => RadiusSum(a,b,CollisionManager.GetCollisionDistanceAU(a,b));
+    internal static float PairDistanceAU(Ship a, Ship b) => PairRadiusSum(a,b,CollisionManager.GetCollisionDistanceAU(a,b));
+    // Keep the native buffer (including speed scaling and the optional range
+    // dial), replacing only its hull allowance. Both warning comparison and
+    // intensity must consume this same value. Physical overlap retains its
+    // original radius local and runs the existing hull solver separately.
+    internal static float WarningThreshold(float nativeCombined, Ship a, Ship b) {
+        float native = CollisionManager.GetCollisionDistanceAU(a,b);
+        return nativeCombined+(PairRadiusSum(a,b,native)-native);
+    }
     internal static float PlacementRadius(float nativeA, float nativeB, Ship ship, Ship target) => RadiusSum(ship,target,nativeA+nativeB);
     internal static float InspectionRange(float native, Ostranauts.Ships.Commands.ShakeDown command, Ship target) {
         if (!Applies(command.ShipUs,target)) return native;
@@ -96,13 +112,13 @@ internal static class HullDocking {
         var us=MooringOwner(panel)?.ship;
         var them=GUIOrbitDraw.CrossHairTarget?.Ship;
         float native=CollisionManager.GetCollisionDistanceAU(a,b);
-        return us != null && them != null && ReferenceEquals(a,them.objSS) && ReferenceEquals(b,us.objSS) ? RadiusSum(us,them,native) : native;
+        return us != null && them != null && ReferenceEquals(a,them.objSS) && ReferenceEquals(b,us.objSS) ? PairRadiusSum(us,them,native) : native;
     }
     internal static float RingOuterLimit(float native, GUIDockSys panel, Ship target) {
         var ship = panel.COSelf?.ship;
         if (!Applies(ship,target)) return native;
         // Native ring interpolation divides by (10 km - contact radius).
         // A large hull must still have a positive approach window.
-        return Math.Max(native,DistanceAU(ship,target)*1.5f);
+        return Math.Max(native,PairDistanceAU(ship,target)*1.5f);
     }
 }

@@ -58,6 +58,64 @@ GET  /economy/freight/{id}/recover/{stationId}
 POST /economy/freight/{id}/recover/{stationId}?confirm=RECOVER
 ```
 
+To preserve current market caps and retain any overflow, use:
+
+```
+GET  /economy/freight/{id}/recover-available/{stationId}
+POST /economy/freight/{id}/recover-available/{stationId}?confirm=RECOVER
+```
+
+This variant transfers only the quantities the destination can presently store.
+It stages source withdrawal and destination stocking before committing either,
+using the exact items removed from the source. Concrete item types and total
+quantities are conserved. Partial transfers retain the source market, its native
+remaining inventory and ownership/controller references; a later call rechecks
+capacity and can finish recovery. No capacity is increased. A full destination
+refuses without changes. Once the last cargo fits, ordinary full-recovery cleanup
+removes the orphan market and prevents another credit. The remaining inventory
+persists through the native market save format without a new saved type.
+
+### Exact commodity and quantity recovery
+
+For a planned redistribution ledger, use:
+
+```
+GET  /economy/freight/{id}/recover-quantity/{stationId}?category=AnyWater&units=100&sourceStock=3993&destinationStock=0
+POST /economy/freight/{id}/recover-quantity/{stationId}?category=AnyWater&units=100&sourceStock=3993&destinationStock=0&confirm=RECOVER
+```
+
+The balances above are illustrative. All four parameters are mandatory. `units`
+is an exact quantity, 1 through 4,096; it is never silently reduced. `sourceStock`
+and `destinationStock` are the expected current category totals across all pods
+or stores in each market, not the entire manifest or projected stock after inbound
+freight. Both are rechecked on the Unity thread before mutation. A successful
+transfer reduces the source balance, so repeating its old request is refused.
+Refresh the ledger after a refusal rather than automatically retrying with guessed
+balances. The receipt includes the expected balances and selected cargo quantity.
+
+This operation permits an explicitly chosen redistribution receiver. The caller
+must refresh native demand, current capacities, live inbound reservations and
+earlier ledger credits before choosing the quantity. To target half capacity,
+allocate `max(0, floor(capacity / 2) - current stock - confirmed inbound - pending
+planned credits)`. Do not subtract already applied credits again: they are included
+in refreshed current stock. The API enforces the requested quantity and actual available
+capacity; it does not install a demand policy or an incoming-shipment registry.
+
+A source's complete inventory may exceed 4,096 units. Selection checks bounded
+market metadata/counts and validates only the concrete items to be withdrawn,
+following native per-pod list-tail order. Unselected categories/items remain in
+place. Existing affected-category stock is limited to 16,384 items in both source
+and receiver to bound staging copies, while the selected payload remains capped
+at 4,096. Actor/metadata/alias bounds still apply. Larger affected categories are
+refused without mutation. The original full-manifest endpoints keep their 4,096
+unit limit.
+
+Selected source withdrawal and receiver stocking are staged and checked for
+conservation before either is committed. Partial recovery preserves market/config/
+list identity, original remaining item types and native save compatibility. The
+final debit uses ordinary orphan-market/controller/hub/ownership cleanup. There
+are no new hooks, background workers, persistent counters or custom save fields.
+
 The destination is mandatory. RegisterAICargoHauler does not persist the route's
 DestinationStation in its cargo market/pod records; home/origin/hub metadata is
 not proof of the intended receiver. The caller must establish the historical
@@ -111,7 +169,9 @@ dotnet build Tests/AIShipLifecycleCheck -c Release
 dotnet run --project Tests/SaveJsonCompatibility/Host -c Release --no-build -- Tests/AIShipLifecycleCheck/bin/Release/netstandard2.1/AIShipLifecycleCheck.dll freight-recovery
 ```
 
-46 bundled-Mono checks execute production endpoints against the shipped assembly.
+98 bundled-Mono checks execute production endpoints against the shipped assembly,
+including 43 exact-quantity checks through raw HTTP parsing and production
+parameter validation.
 They cover read-only previews, confirmation/destination handling, unsafe approaches,
 native 10 km travel completion, checkpoint save/restore without mod-specific types,
 subsequent native AI-tree delivery, unchanged fuel/crew, exact 633-item conservation
@@ -119,6 +179,11 @@ across two destination stores, concrete item identity/type distributions, cache 
 GUI object identity, scheduler/hub/ownership cleanup, native cargo save/reload,
 repeat protection, full destinations, invalid/shared manifests, isolated staging
 failure, synchronization failure after commitment and empty orphan cleanup.
+Exact-quantity coverage additionally checks stale source/receiver balances,
+duplicate POST refusal, capacity rejection without clamping, native tail item
+selection, invalid selected items, untouched unselected categories, a 4,868-item
+mixed source, 4,096-unit payload conservation, source/receiver staging bounds,
+native save restoration and unchanged live-hull/ownership/alias protections.
 
 Fixtures replace reactor/Unity maneuver work, ship position advancement, pilot
 materialization, threat/collision searches, trader synchronization and the final
