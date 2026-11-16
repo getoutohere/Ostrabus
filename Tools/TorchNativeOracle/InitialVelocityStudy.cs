@@ -36,11 +36,11 @@ static partial class Program {
             double u = velocity.Item1, cross = velocity.Item2, distance = distanceKm * 1000;
             var path = Empty<FlyToPath>(); Field(path,"_shipUs",ship);
             Field(path,"fTorchSpeedLimit",1d); // No drift/peak-speed cap in this kernel comparison.
-            var origin = new NavDataPoint(fixtureEpoch,new ShipSitu(false) { vVelX = u / metersPerAu, vVelY = cross / metersPerAu },1e9,0,1e9);
-            var target = new NavDataPoint(fixtureEpoch,new ShipSitu(false) { vPosx = distance / metersPerAu },1e9,0,1e9);
+            var origin = new NavDataPoint(fixtureEpoch,new ShipSitu(false) { vVelX = u / metersPerAu, vVelY = cross / metersPerAu },1e9,0,1e9,rcsCount:0F);
+            var target = new NavDataPoint(fixtureEpoch,new ShipSitu(false) { vPosx = distance / metersPerAu },1e9,0,1e9,rcsCount:0F);
             double expectedMatch = Math.Sqrt(u*u + cross*cross) / a;
             double estimate = 2 * Math.Sqrt(distance / a) + expectedMatch;
-            var native = (NavData)kernel.Invoke(path,new object[] { origin,target,limiter,estimate,true,false });
+            var native = (NavData)kernel.Invoke(path,new object[] { origin,target,limiter,estimate,true,false,false });
             var matched = StudyPoints(native)[19]; // Native initial easing: 10 fine + 9 coarse waypoints.
             Near(matched.ArrivalTime - fixtureEpoch,expectedMatch,"Native first burn duration",1e-7);
             Check(matched.ObjSS.vVel.magnitude * metersPerAu < 1e-6,"Native first burn cancels ALL incoming relative velocity");

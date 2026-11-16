@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Include="../../Navigation/RouteCompletionPatch.cs" Link="RouteCompletionPatch.cs" />
     <Compile Include="../../Navigation/Towing/*.cs" Link="Towing/%(Filename)%(Extension)" />
+    <Compile Include="../../Navigation/Attachments/*.cs" Link="Attachments/%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>

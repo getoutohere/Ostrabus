@@ -1,51 +1,72 @@
 using System.Runtime.InteropServices;
 
-string root = Ostrabus.Development.InstallationPaths.Game;
-string managed = root + "/Ostranauts_Data/Managed";
-string local = Path.GetFullPath("obj/MonoHost/runtime/lib");
-Directory.CreateDirectory(local + "/mono/4.5");
-File.Copy(managed + "/mscorlib.dll", local + "/mono/4.5/mscorlib.dll", true);
-IntPtr library = NativeLibrary.Load(root + "/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll");
-T Export<T>(string name) where T : Delegate => Marshal.GetDelegateForFunctionPointer<T>(NativeLibrary.GetExport(library, name));
-Export<SetDirs>("mono_set_dirs")(local, root + "/MonoBleedingEdge/etc");
-Export<SetString>("mono_set_assemblies_path")(managed);
-Export<SetString>("mono_config_parse")(null);
-IntPtr domain = Export<Init>("mono_jit_init_version")("OfflineJsonBenchmark", "v4.0.30319");
-if (domain == IntPtr.Zero) throw new Exception("Mono initialization failed");
-// Deterministic stand-ins for Unity-native constructor defaults; saved fields overwrite these.
-RangeFloat floatRange = (min, max) => min + (max - min) * 0.5f;
-RangeInt intRange = (min, max) => min;
-RandomValue randomValue = () => 0.5f;
-FrameValue frameValue = () => 1;
-FrameValue objectOffset = () => 0;
-Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Object::GetOffsetOfInstanceIDInCPlusPlusObject", Marshal.GetFunctionPointerForDelegate(objectOffset));
-RandomValue unscaledTime = () => 0f;
-RandomValue deltaTime = () => 1f / 60;
-Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_deltaTime", Marshal.GetFunctionPointerForDelegate(deltaTime));
-Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_unscaledTime", Marshal.GetFunctionPointerForDelegate(unscaledTime));
-Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_frameCount", Marshal.GetFunctionPointerForDelegate(frameValue));
-Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::get_value", Marshal.GetFunctionPointerForDelegate(randomValue));
-Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::Range(System.Single,System.Single)", Marshal.GetFunctionPointerForDelegate(floatRange));
-Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::Range(System.Int32,System.Int32)", Marshal.GetFunctionPointerForDelegate(intRange));
-Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::Range", Marshal.GetFunctionPointerForDelegate(floatRange));
-Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::RandomRangeInt", Marshal.GetFunctionPointerForDelegate(intRange));
-string assemblyPath = Path.GetFullPath(args[0]);
-IntPtr assembly = Export<Open>("mono_domain_assembly_open")(domain, assemblyPath);
-if (assembly == IntPtr.Zero) throw new Exception("Cannot open benchmark assembly");
-string[] arguments = new[] { assemblyPath }.Concat(args.Skip(1)).ToArray();
-IntPtr[] strings = arguments.Select(Marshal.StringToCoTaskMemUTF8).ToArray();
-IntPtr argv = Marshal.AllocHGlobal(IntPtr.Size * strings.Length);
-Marshal.Copy(strings, 0, argv, strings.Length);
-Console.WriteLine("Running offline with the game's bundled Mono runtime.");
-int result = Export<Exec>("mono_jit_exec")(domain, assembly, strings.Length, argv);
-GC.KeepAlive(floatRange); GC.KeepAlive(intRange); GC.KeepAlive(randomValue); GC.KeepAlive(frameValue);
-GC.KeepAlive(unscaledTime);
-GC.KeepAlive(deltaTime);
-GC.KeepAlive(objectOffset);
-Marshal.FreeHGlobal(argv);
-foreach (IntPtr text in strings) Marshal.FreeCoTaskMem(text);
-Export<Cleanup>("mono_jit_cleanup")(domain);
-return result;
+// Offline failures must stay in the test log, never open Windows error dialogs.
+// This applies only to this harness process; it does not change the game or OS policy.
+if (OperatingSystem.IsWindows()) NativeErrors.SetErrorMode(0x8003);
+try {
+    return Run(args);
+} catch (Exception exception) {
+    Console.Error.WriteLine("Offline host failed: " + exception);
+    return 1;
+}
+
+static int Run(string[] args) {
+    if (args.Length == 0 || !File.Exists(args[0])) {
+        Console.Error.WriteLine("Offline host requires an existing harness assembly: " + (args.FirstOrDefault() ?? "<missing>"));
+        return 1;
+    }
+    string root = Ostrabus.Development.InstallationPaths.Game;
+    string managed = root + "/Ostranauts_Data/Managed";
+    string local = Path.GetFullPath("obj/MonoHost/runtime/lib");
+    Directory.CreateDirectory(local + "/mono/4.5");
+    File.Copy(managed + "/mscorlib.dll", local + "/mono/4.5/mscorlib.dll", true);
+    IntPtr library = NativeLibrary.Load(root + "/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll");
+    T Export<T>(string name) where T : Delegate => Marshal.GetDelegateForFunctionPointer<T>(NativeLibrary.GetExport(library, name));
+    Export<SetDirs>("mono_set_dirs")(local, root + "/MonoBleedingEdge/etc");
+    Export<SetString>("mono_set_assemblies_path")(managed);
+    Export<SetString>("mono_config_parse")(null);
+    IntPtr domain = Export<Init>("mono_jit_init_version")("OfflineJsonBenchmark", "v4.0.30319");
+    if (domain == IntPtr.Zero) throw new Exception("Mono initialization failed");
+    // Deterministic stand-ins for Unity-native constructor defaults; saved fields overwrite these.
+    RangeFloat floatRange = (min, max) => min + (max - min) * 0.5f;
+    RangeInt intRange = (min, max) => min;
+    RandomValue randomValue = () => 0.5f;
+    FrameValue frameValue = () => 1;
+    FrameValue objectOffset = () => 0;
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Object::GetOffsetOfInstanceIDInCPlusPlusObject", Marshal.GetFunctionPointerForDelegate(objectOffset));
+    RandomValue unscaledTime = () => 0f;
+    RandomValue deltaTime = () => 1f / 60;
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_deltaTime", Marshal.GetFunctionPointerForDelegate(deltaTime));
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_unscaledTime", Marshal.GetFunctionPointerForDelegate(unscaledTime));
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_frameCount", Marshal.GetFunctionPointerForDelegate(frameValue));
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::get_value", Marshal.GetFunctionPointerForDelegate(randomValue));
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::Range(System.Single,System.Single)", Marshal.GetFunctionPointerForDelegate(floatRange));
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::Range(System.Int32,System.Int32)", Marshal.GetFunctionPointerForDelegate(intRange));
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::Range", Marshal.GetFunctionPointerForDelegate(floatRange));
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Random::RandomRangeInt", Marshal.GetFunctionPointerForDelegate(intRange));
+    string assemblyPath = Path.GetFullPath(args[0]);
+    IntPtr assembly = Export<Open>("mono_domain_assembly_open")(domain, assemblyPath);
+    if (assembly == IntPtr.Zero) throw new Exception("Cannot open benchmark assembly");
+    string[] arguments = new[] { assemblyPath }.Concat(args.Skip(1)).ToArray();
+    IntPtr[] strings = arguments.Select(Marshal.StringToCoTaskMemUTF8).ToArray();
+    IntPtr argv = Marshal.AllocHGlobal(IntPtr.Size * strings.Length);
+    Marshal.Copy(strings, 0, argv, strings.Length);
+    Console.WriteLine("Running offline with the game's bundled Mono runtime.");
+    int result = Export<Exec>("mono_jit_exec")(domain, assembly, strings.Length, argv);
+    GC.KeepAlive(floatRange); GC.KeepAlive(intRange); GC.KeepAlive(randomValue); GC.KeepAlive(frameValue);
+    GC.KeepAlive(unscaledTime);
+    GC.KeepAlive(deltaTime);
+    GC.KeepAlive(objectOffset);
+    Marshal.FreeHGlobal(argv);
+    foreach (IntPtr text in strings) Marshal.FreeCoTaskMem(text);
+    Export<Cleanup>("mono_jit_cleanup")(domain);
+    return result;
+}
+
+static class NativeErrors {
+    [DllImport("kernel32.dll")]
+    internal static extern uint SetErrorMode(uint mode);
+}
 
 [UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate void SetDirs([MarshalAs(UnmanagedType.LPUTF8Str)] string lib, [MarshalAs(UnmanagedType.LPUTF8Str)] string etc);
 [UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate void SetString([MarshalAs(UnmanagedType.LPUTF8Str)] string value);

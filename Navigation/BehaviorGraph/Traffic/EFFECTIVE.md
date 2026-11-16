@@ -32,10 +32,14 @@ flowchart TD
   n_t_retire["Transfer crew / hide / unregister"]
   n_t_reserve["Hidden hull reserve"]
   n_t_atc["Region cleanup"]
-  n_t_sff["World SFF AI catch-up"]
+  n_t_sff["World SFF/PASS AI catch-up"]
   n_t_sff_role["Role-specific FFWD"]
   n_t_sff_queue["FFWD result / queued continuation"]
   n_t_economy["Chronological freight timeline"]
+  n_p_group["Physical docking-group attachment"]
+  n_p_wait["Passive Hold / tether / paused haul"]
+  n_p_motion["Native body following or free motion"]
+  n_p_end["Visitor departed; wreck disposition"]
   n_t_uncrewed["Uncrewed controller boundary"]
   n_t_dispatch -->|"dispatch"| n_t_spawn
   n_t_dispatch -->|"dispatch"| n_t_dispatch
@@ -140,6 +144,26 @@ flowchart TD
   n_t_hold -->|"start_visit [conditional]"| n_t_hold
   n_t_hold -->|"wait_time_skip [conditional]"| n_t_hold
   n_t_pick -->|"home_call [conditional]"| n_t_pick
+  n_p_group -->|"hold"| n_p_wait
+  n_p_wait -->|"tether"| n_p_wait
+  n_p_wait -->|"unmoor"| n_p_wait
+  n_p_wait -->|"advance"| n_p_motion
+  n_p_wait -->|"advance"| n_p_motion
+  n_p_wait -->|"advance"| n_p_motion
+  n_p_wait -->|"time_skip"| n_p_motion
+  n_p_wait -->|"time_skip"| n_p_motion
+  n_p_wait -->|"time_skip"| n_p_motion
+  n_p_motion -->|"depart"| n_p_end
+  n_p_motion -->|"depart"| n_p_end
+  n_p_wait -->|"rcs [conditional]"| n_p_motion
+  n_p_wait -->|"rcs"| n_p_motion
+  n_p_wait -->|"rcs"| n_p_motion
+  n_p_wait -->|"course [conditional]"| n_p_motion
+  n_p_wait -->|"course"| n_p_motion
+  n_p_wait -->|"restore"| n_p_wait
+  n_p_wait -->|"restore"| n_p_wait
+  n_p_wait -->|"unmoor"| n_p_wait
+  n_p_motion -->|"depart"| n_p_end
   n_t_pick -->|"load_goods / cargo_loading"| n_t_pick
   n_t_transfer -->|"unload / cargo_arrival_handoff"| n_t_fly
   n_t_dock -->|"dock_station / cargo_arrival_handoff [conditional]"| n_t_retire
@@ -170,4 +194,8 @@ flowchart TD
   n_t_pick -->|"home_call / civilian_wait_continuation [conditional]"| n_t_pick
   n_t_pick -->|"low_fuel_home / civilian_wait_continuation [conditional]"| n_t_fly
   n_t_hold -->|"start_visit / asteroid_visit_duration [conditional]"| n_t_hold
+  n_t_dock -->|"passive_dock / passive_docking_attachment"| n_p_group
+  n_p_wait -->|"rcs / passive_docking_attachment [conditional]"| n_p_motion
+  n_p_wait -->|"course / passive_docking_attachment [conditional]"| n_p_motion
+  n_p_wait -->|"haul_pause / passive_docking_attachment"| n_p_wait
 ```

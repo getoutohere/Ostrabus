@@ -30,7 +30,7 @@ Check(output[index].opcode == OpCodes.Ldarg_0 && output[index + 1].Calls(AccessT
 Check(output[index] == input[index], "Original branch target was discarded");
 Check(Enumerable.Range(0, input.Count).Where(i => i != index).All(i => output[i < index ? i : i + 1].opcode == before[i].opcode && Equals(output[i < index ? i : i + 1].operand, before[i].operand)), "Vanilla speed/pilot/lock logic was altered");
 Check(output.All(i => !i.Calls(nearest)), "Original lookup remains");
-Check(output.Count(i => i.operand is MethodInfo m && m.Name == "LockToBO") == 1, "Vanilla lock call modified");
+Check(output.Count(i => i.operand is MethodInfo m && m.Name == "TryRelockToBO") == 1, "Vanilla orbital-relative relock call modified");
 var empty = new List<CodeInstruction> { new CodeInstruction(OpCodes.Ret) };
 Check(((IEnumerable<CodeInstruction>)Invoke(typeof(VorbUndockAnchorPatch), "Transpiler", empty)).Single() == empty[0], "Unknown IL changed");
 VorbWreckSpawnPatch.CurrentLoot = VenusDerelicts.VenusLoot;
@@ -48,6 +48,7 @@ Invoke(typeof(VorbWreckLootPatch), "Prefix", loot);
 Check((string)loot[0] == "OtherLoot", "Explicit loot replaced");
 Invoke(typeof(VorbWreckSpawnPatch), "Finalizer", null!, null!);
 Check(VorbWreckSpawnPatch.CurrentLoot == null, "Finished spawn retained state");
+OrbitCompatibility.Run(Check);
 Console.WriteLine($"Passed {checks} Venus fix checks using bundled Mono and real Undock IL.");
 
 namespace Ostrabus {

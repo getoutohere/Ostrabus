@@ -2,9 +2,11 @@
 
 Accepted design and native-code evidence. Implemented for Ostranauts 1.0.1.10;
 see README.md and the offline test README for current validation and live checks.
+Version 0.1.1 is built/tested against 1.1.0.0 and corrects saved-apartment identity,
+heavy-item handling and the Sundries/Furnishings stock mapping.
 
 Add an expensive private refuel terminal that the player buys from a station's
-Sundries/supply kiosk and installs in a purchased station apartment. It uses the
+Sundries/Furnishings kiosk and installs in a purchased station apartment. It uses the
 existing paid refueling screen and services only vessels physically docked
 directly to that apartment. This is an optional QoL feature, not a vanilla bugfix.
 
@@ -54,25 +56,26 @@ The player buys convenience and equipment; every subsequent purchase still costs
 the normal native rate. No subscription, new fuel market, discount or private
 station economy is introduced.
 
-Proposed loose-item base price: **$250,000**. The generic supply kiosk's native
-`DiscountSell` range is 1.2-1.3, giving approximately **$300,000-$325,000** before
+Loose-item base price: **$250,000**. The native Furnishings kiosk's
+`DiscountSell` range is 2-3, giving approximately **$500,000-$750,000** before
 other native condition/vendor/market adjustments. For scale, the HyperHandy's
 native base value is $33,480 and a nav station's is $16,880. Price is authored in
 the assets rather than enforced by another purchase hook.
 
 Reuse the fuel kiosk's existing artwork, 2x2 fixture footprint and 31 kg mass.
-The loose form is cumbersome equipment that can be transported on a ship or
-dolly, but cannot function there. Use the existing install/uninstall work system,
+The loose form is oversized, drag/dolly-only equipment with no hand/back slot
+effects, matching native beds and heavy equipment. It can be transported on a
+ship but cannot function there. Use the existing install/uninstall work system,
 Mortorq tool checks and normal damage/repair mechanics. Do not inherit the public
 kiosk's indestructibility or NPC use interaction. One loose unit must be consumed
 to produce one installed unit, and uninstalling must return exactly one unit.
 
 One unit is offered per native Sundries restock. In the inspected assets the
-general-supply family is `ItmKioskSupplies01` with `TraderChargenSupplyKiosk*`
-property maps and 17 `ItmSupplyKiosk*Inv` stock tables. Add it to those retail
+Sundries family is `ItmKioskFurnishings01` with `Trader*FurnishingsKiosk*`
+property maps and 14 Furnishings stock tables. Add it to those retail
 inventories, not scrap merchants, licensed salvage desks or freight manifests.
-The local UI label must be confirmed against these identifiers during playtest;
-the shipped item definition calls this family Supply Kiosk.
+The shipped item definition calls this Furnishings Kiosk; its artwork says
+SUNDRIES. General Supply is a separate vendor and must not stock the terminal.
 
 The service screen retains native He-3, D2O, RCS N2, installed life-support
 O2/N2, reactor ablator and battery services where supported by the selected ship.
@@ -109,13 +112,17 @@ when it was installed. A valid installation requires all of the following:
    owner registry. Merely standing there, claiming it in a character list, or
    belonging to its faction does not grant permission.
 2. The hull has the broker's residential ID structure, a currently valid station
-   body state, and an authenticated residential template. Its host ID resolves
+   body state, and residential template metadata when available. Its host ID resolves
    to an existing station. A renamed ship, player-built ship, captured pirate
    vessel, purchased freighter or ship docked to a station is not an apartment.
-3. The template belongs to the shipped residential offerings. The inspected
+3. Where retained, the template belongs to the shipped residential offerings. The inspected
    `Res*.json` family contains 11 residences, including OKLG, BCER/BCRS, MSUZ,
    MLAB, EJDR and aerostat variants. Validate this set against broker offer loot
-   during implementation; a newly added or unknown template requires review.
+   during implementation; a newly added or unknown explicit template requires review.
+   Native saves use the registry ID in `json.strName`, not the original template.
+   Older residences can omit `strTemplateName` entirely. Those saved residences
+   are recognized by broker-format identity, registered ownership, station/body
+   state and an existing station host; no fabricated template is written back.
 4. All required floor/support cells beneath the fixture belong to that same
    apartment. Reject placement on the visiting ship or across a docking seam.
 
@@ -257,9 +264,9 @@ necessary; do not silently expand the patch surface.
 
 ## Stock composition and packaging
 
-The existing rotation module already overrides supply stock loot. Independent
-full-record overrides for overlapping stock IDs would have last-mod-wins behavior
-and can remove either product or leave references to an omitted feature.
+The existing rotation module overrides general Supply stock. The terminal now
+uses separate Sundries/Furnishings tables. Independent full-record overrides by
+other mods for those same Furnishings IDs would have last-mod-wins behavior.
 
 Provide a shared Sundries stock composer with the standalone installer as well
 as the main/custom installers. It produces one final native loot override per
@@ -270,7 +277,7 @@ DLL or source checkout; it bundles the composer and the terminal's item/stock de
 The final shared stock mod loads after the contributing item-definition mods.
 Do not add a runtime trader/restock hook or edit installed vanilla files.
 Preserve existing quantities and unrelated stock entries, with regression
-comparisons against the current rotation-only output.
+comparisons proving general Supply/Rotation stock is not overridden.
 
 The normal custom-builder feature selection must not compile this plugin's
 sources or classify its native mod as an omitted omnibus feature. Bundling a

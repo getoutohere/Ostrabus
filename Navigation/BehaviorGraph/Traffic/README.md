@@ -1,5 +1,24 @@
 # Cargo and civilian traffic
 
+The [passive docking/orbit-lock investigation](../../DOCKED-ORBIT-LOCK.md)
+reproduces and now models a native physical side effect:
+reciprocal docking clears a wreck's body attachment, and a later tether removal
+can transfer the civilian Hold's gravity-ignore flag into the shared anchor.
+The 449-check production-DLL harness includes the initial native controls;
+physical A/B controls show that ordinary corrected gravity retains native relock
+eligibility in the Phobos setup without that alternative. A separate native Hold
+counterexample falls into Mars when gravity is enabled; blanket space-waiting
+expansion is therefore held. The additional real-ephemeris comparison retains
+the native Hold exemption and the wreck's existing body attachment through a
+passive visit. The implemented release boundary is actual movement or authorized
+course execution, preserving native visit logic. The physical projection also
+models paused-haul saved-state coherence. Eleven explicit scenarios distinguish
+native from effective transitions; free-coast velocity mismatch remains an
+external input, not a numerical prediction inferred by the graph.
+The independent review adds permanent substation/ground identity exclusions to
+manual/course release. Their native methods participate in assembly invalidation.
+The Traffic slice currently passes 529 conditional expectations/safety checks.
+
 The [Ceres SFF displacement investigation](../../CERES-SFF-DISPLACEMENT.md)
 establishes stale preserved-target coordinates at instant mooring and false
 flight success with residual RCS when the pilot is incapacitated. The flight/SFF
@@ -57,8 +76,8 @@ projection's `stale`/`stale_due` variables represent the current conditions;
 registration-time timer bookkeeping and worker interleavings are verified by
 Tests/StaleShipDiagnosis rather than simulated by this lifecycle projection.
 
-The current reference has 29 control points, 115 vanilla / 133 effective edges,
-79 scenarios and 457 consistency checks. It pins 83 source groups and 17 asset
+The current reference has 33 control points, 137 vanilla / 157 effective edges,
+90 scenarios and 529 consistency checks. It pins 94 source groups and 19 asset
 entries. The accepted IL/asset baseline reports no missing selectors or unresolved
 members. These counts describe coverage of the reference, not proof that the
 entire game simulation is correct.
@@ -143,3 +162,10 @@ emergency handoff and missing-receiver retry. Detailed quantities, intended
 overflow dumping and Main/Flee/priority instance/save ownership remain explicitly
 native-tested boundaries rather than fabricated graph outcomes. The exact
 historical removal caller is still unproved.
+
+The [shared PASS time adapter](../../../Orbital/PASS-TIME-SKIPS.md) is referenced
+at `t_sff`. Source pins include the shared world stepper and discontinuity scope;
+native tests establish original-hour callback eligibility, newborn-controller
+exclusion, course completion, target refresh and economic equivalence. This role
+projection still does not simulate elapsed-time geometry or Unity coroutine
+dispatch. Its lifecycle scenarios must not be cited as complete shuttle tests.

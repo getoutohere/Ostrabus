@@ -167,8 +167,8 @@ sealed class NativeReturnActor
         });
     }
 
-    internal GoalReference CaptureGoal() => GoalCaptureOverride != null ? GoalCaptureOverride() : World.Subject.shipScanTarget != null
-        ? new GoalReference { TargetId = World.Subject.shipScanTarget.strRegID, Arrival = "Dock" }
+    internal GoalReference CaptureGoal() => GoalCaptureOverride != null ? GoalCaptureOverride() : World.NavigationTargetId != null
+        ? new GoalReference { TargetId = World.NavigationTargetId, Arrival = "Dock" }
         : new GoalReference { FrameId = World.Subject.shipSituTarget.strBOPORShip ?? World.Home.strRegID, X = World.Subject.shipSituTarget.vPosx, Y = World.Subject.shipSituTarget.vPosy, Arrival = "None" };
 
     bool BindGoal()
@@ -178,10 +178,10 @@ sealed class NativeReturnActor
             return false;
         if (goal.TargetId != null)
         {
-            var target = World.Resolve(goal.TargetId);
-            if (target == null || target.bDestroyed || target.HideFromSystem)
+            var target = World.ResolveTarget(goal.TargetId);
+            if (target == null)
                 return false;
-            new TargetData(target).ApplyToShip(World.Subject);
+            target.ApplyToShip(World.Subject);
         }
         else
             new TargetData(new ShipSitu(false) { vPosx = goal.X, vPosy = goal.Y, strBOPORShip = goal.FrameId, bBOLocked = true }).ApplyToShip(World.Subject);
@@ -417,6 +417,7 @@ sealed class NativeReturnActor
     internal static NativeReturnActor Restore(Definition model, string checkpoint)
     {
         var saved = JsonConvert.DeserializeObject<ReturnCheckpoint>(checkpoint);
+        Machine.Restore(model, saved.Executive, "SUBJECT", "fixture-activation", Executive.RuntimeBinding);
         var world = WorldCheckpoint.Restore(saved.World);
         var machine = Machine.Restore(model, saved.Executive, world.Subject.strRegID, "fixture-activation", Executive.RuntimeBinding);
         if (machine.State.ActorDisposition == "Retired" && !world.Retired)

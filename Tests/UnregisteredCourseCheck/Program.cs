@@ -61,8 +61,8 @@ static partial class Program {
         var acceleration = new Vector2(1e-10f, -8e-11f);
         if (torch) first.vAccIn = last.vAccIn = acceleration;
         else first.vAccRCS = last.vAccRCS = acceleration;
-        path.AddNavDataPoint(new NavDataPoint(1000, first, 1000, torch ? .3 : 0, 1000));
-        path.AddNavDataPoint(new NavDataPoint(1100, last, 1000, torch ? .3 : 0, torch ? 990 : 1000));
+        path.AddNavDataPoint(new NavDataPoint(1000, first, 1000, torch ? .3 : 0, 1000,rcsCount:0F));
+        path.AddNavDataPoint(new NavDataPoint(1100, last, 1000, torch ? .3 : 0, torch ? 990 : 1000,rcsCount:0F));
         ship.objSS.NavData = path;
         return path;
     }

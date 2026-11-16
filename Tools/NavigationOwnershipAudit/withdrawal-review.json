@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "gameVersion": "1.0.1.10",
-  "assemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
+  "gameVersion": "1.1.0.0",
+  "assemblySha256": "a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07",
   "implementation": {
     "feature": "ai-flight-controls",
     "source": "Navigation/FlightControllerLifetimePatch.cs",
@@ -132,9 +132,9 @@
       "note": "Native failed-target distress can unregister; ScavHelpLifecyclePatch retains the Scav controller instead. Cancellation must not invent a removal where the existing patch deliberately keeps authority."
     },
     {
-      "caller": "Ostranauts.ShipGUIs.Utilities.NavData::TimeAdvance", "sites": 1,
-      "disposition": "reactor-abort", "evidence": "source-and-joint-reactor-suite",
-      "note": "Reactor safety abort resets plan/target and sliders before conditionally unregistering FlyToAutoPilot. Ordinary course completion does not unregister here. Generic completion force changes are outside the narrowed withdrawal repair."
+      "caller": "Ostranauts.ShipGUIs.Utilities.NavData::TimeAdvance", "sites": 2,
+      "disposition": "propulsion-abort", "evidence": "source-and-joint-reactor-suite-and-native-1.1-rcs-abort",
+      "note": "1.1 adds an RCS delivery/capability-loss abort before the existing reactor safety abort. Both reset the plan/target before conditionally unregistering FlyToAutoPilot. Tests/AiPlannerDiagnosis/NativeRcsCompatibility.cs executes intact/damaged RCS playback with and without an exact registered Auto controller and the production completion/withdrawal patches. Ordinary successful completion remains a separate return boundary."
     },
     {
       "caller": "Ostranauts.ShipGUIs.NavStation.NavModCoursePlot::Engage", "sites": 1,

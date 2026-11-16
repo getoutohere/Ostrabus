@@ -57,7 +57,8 @@ internal sealed class SffEconomy : IDisposable {
     }
     internal static SffEconomy Begin(StarSystem world, double seconds, bool sff) {
         if (!ActiveForSkip || !sff || Current != null || world?.dictShips == null || CrewSim.coPlayer == null ||
-            AIShipManager.strATCLast == null || !OrbitAcceleration.Finite(seconds) || seconds < 60 || seconds > 86400) return null;
+            AIShipManager.strATCLast == null || !OrbitAcceleration.Finite(seconds) || seconds <= 0 ||
+            seconds < 60 && !SffAdvance.Active || seconds > 86400) return null;
         SffEconomy context = null;
         try {
             context = new SffEconomy(world, seconds);

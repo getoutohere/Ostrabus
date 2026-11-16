@@ -46,8 +46,8 @@ static partial class Program {
         // A later native planned segment covers the next 50% of this same
         // geometric trip and debits fuel using its own absolute fuel levels.
         var route=new NavData(ship);var origin=Empty<ShipSitu>();origin.vPosx=.25;var dest=Empty<ShipSitu>();dest.vPosx=.75;
-        route.AddNavDataPoint(new NavDataPoint(1000,origin,80,0,0));
-        route.AddNavDataPoint(new NavDataPoint(1100,dest,30,0,0));
+        route.AddNavDataPoint(new NavDataPoint(1000,origin,80,0,0,rcsCount:0F));
+        route.AddNavDataPoint(new NavDataPoint(1100,dest,30,0,0,rcsCount:0F));
         StarSystem.fEpoch=1100;ship.objSS.NavData=route;
         fixtureCollision=false;flight.RunCommand(b);
         Check(route.TimeAdvance(ship.objSS),"Native route did not advance.");
@@ -95,7 +95,7 @@ static partial class Program {
             ship.objSS.vPosx=.875;flight.RunCommand(b);
             Check(Math.Abs(ship.GetRCSRemain()-20)<.001,"Manual travel after first handoff was free.");
             var nextRoute=new NavData(ship);var nextOrigin=Empty<ShipSitu>();nextOrigin.vPosx=.875;var nextEnd=Empty<ShipSitu>();nextEnd.vPosx=.9375;
-            nextRoute.AddNavDataPoint(new NavDataPoint(1100,nextOrigin,20,0,0));nextRoute.AddNavDataPoint(new NavDataPoint(1200,nextEnd,10,0,0));ship.objSS.NavData=nextRoute;
+            nextRoute.AddNavDataPoint(new NavDataPoint(1100,nextOrigin,20,0,0,rcsCount:0F));nextRoute.AddNavDataPoint(new NavDataPoint(1200,nextEnd,10,0,0,rcsCount:0F));ship.objSS.NavData=nextRoute;
             fixtureCollision=false;flight.RunCommand(b);StarSystem.fEpoch=1200;nextRoute.TimeAdvance(ship.objSS);fixtureCollision=true;flight.RunCommand(b);
             Check(Math.Abs(ship.GetRCSRemain()-10)<.001,"A second mode handoff duplicated planned consumption.");
             ship.fShallowRCSRemass=30;ship.objSS.vPosx=.75;

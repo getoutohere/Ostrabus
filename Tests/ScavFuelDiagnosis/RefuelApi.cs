@@ -31,7 +31,7 @@ static partial class Program {
             CrewSim.system.dictShips=new Dictionary<string,Ship>{{ship.strRegID,ship}};
             var before=Refuel(false);
             Check(before.status==200 && (double)before.data["wouldAddKg"]==90 && ship.GetRCSRemain()==10,"Preview changed fuel or misreported capacity.");
-            var route=new NavData(ship);route.AddNavDataPoint(new NavDataPoint(1000,Empty<ShipSitu>(),10,0,0));route.AddNavDataPoint(new NavDataPoint(1100,Empty<ShipSitu>(),0,0,0));ship.objSS.NavData=route;
+            var route=new NavData(ship);route.AddNavDataPoint(new NavDataPoint(1000,Empty<ShipSitu>(),10,0,0,rcsCount:0F));route.AddNavDataPoint(new NavDataPoint(1100,Empty<ShipSitu>(),0,0,0,rcsCount:0F));ship.objSS.NavData=route;
             boundary.Patch(AccessTools.Method(typeof(Ship),nameof(Ship.AIRefuel)),postfix:new HarmonyMethod(typeof(Program),nameof(ExistingRouteRebase)));
             var filled=Refuel(true,1000);
             Check(filled.status==200 && ship.GetRCSRemain()==100 && (double)filled.data["targetKg"]==100,"Full refill failed capacity clamp.");

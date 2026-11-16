@@ -18,7 +18,7 @@ request bodies, or persistent connections are exposed.
 
 | Route | Result |
 | --- | --- |
-| `/health` | Whether the game is ready and the current simulation generation. |
+| `/health` | Whether the game is ready, the current simulation generation, and the actually loaded plugin/game module IDs (`pluginMvid`, `gameMvid`). Module IDs distinguish candidate binaries even when their displayed version is unchanged. |
 | `/cos/{id}/combat` | Raw combat state, queued targets/attack modes, armor/damage and direct equipment slots; also accepts `/npcs/{id}/combat`. |
 | `/combat/personnel/trace?since=0&limit=25` | Read the current/last personnel ranged-combat capture, forward-paged by `nextSince`. |
 | `POST /combat/personnel/trace/start?coId={id}&seconds=120` | Start tracing one shooter; omit `coId` to use selected crew. Duration is 1–300 wall-clock seconds, default 120. |
@@ -39,8 +39,9 @@ request bodies, or persistent connections are exposed.
 | `/shipboard` | Current shallow boarding encounters, including start epoch and per-ship start crew readiness (`alive/active/ranged/other weapon/unarmed`) alongside current crew/load state, next casualty timing, ships ordered to return home, and the latest resolution's prize-capture checks. Weapon counts include detected carried weapons; read-only, captured on the Unity thread. See the [shipboard action module notes](../ShipboardAction/README.md) for the encounter and resolution rules. |
 | `/world` | Ship/CO counts, AI-region count, pause state. |
 | `/ui/scrollbacks` | Current map and docking/comms display bindings, visibility, scroll bounds/positions, follow state and pointer mapping. Read on demand; no recorder or additional hooks. |
+| `/ui/nav-layout` | Current nav-console modules, inactive containers, layout bounds, canvas groups, saved placement, edit palette and course slider component types. Read-only on demand; no fit evaluation, layout changes or pointer events. |
 | `/ui/hulls` | Exterior-perimeter worker/queue state, capture progress, published/applied versions, component/vertex/rendered-point counts, zoom/selection/scale details, collision-cover pieces/errors and optional physical hit/sweep/fallback counters. Read on demand; no diagnostic hooks. |
-| `/orbital` | Orbital/SFF reports, including `lastEconomy` dispatch, production, arrival, failure and timing counts with bounded shipment cargo summaries. |
+| `/orbital` | Orbital/time-skip reports: `lastSffAdvance` GUI/PASS source, decision/course-completion steps, original-interval role callback admissions, affected ships, requested/end times and budget fallback; `lastSff` physical segment/guidance/impact details; `lastEconomy` freight and production counts with bounded shipment summaries. |
 | `/economy` | Economic clocks, market count/settings and last SFF economic report; see [economy inspection](ECONOMY.md). |
 | `/economy/stations` or `/economy/markets` | Paged station markets or all registered markets, including lifecycle and recipe/category counts. |
 | `/economy/markets/{id}` | Market detail; append `/stock`, `/production`, `/actors`, `/manifest` or `/trade/{category}` for paged diagnostics. Station and freight detail aliases support the same views. |
@@ -56,7 +57,7 @@ request bodies, or persistent connections are exposed.
 | `/ai/controllers` | Paged raw regional AI entries, including duplicates, null entries and stale hull references; no controller is repaired or selected. |
 | `/ships/{id}/controllers` | All registrations for a call sign with duplicate/distinct-controller counts and exact hull identity checks. Works when the hull is absent. |
 | `/flight` | Detached flight-journal status, file path, written/dropped counts, errors and recent event metadata. Available during loading. |
-| `POST /flight/start` | Start a bounded, event-driven journal with a baseline, SFF and ATC transition captures and warning/error logs. |
+| `POST /flight/start` | Start a bounded, event-driven journal with a baseline, SFF/ATC transition captures, warning/error logs and calling stacks for native ship-destruction messages. |
 | `POST /flight/mark` | Capture a flight checkpoint, e.g. after engaging the course. |
 | `POST /flight/stop` | Capture final state, remove all temporary observers and asynchronously drain the file writer. See [flight journal](FLIGHT-JOURNAL.md). |
 | `/memory?since=0&limit=25` | Detached bounded memory/lifecycle records; works during loading without Unity calls. |
@@ -182,6 +183,8 @@ velocities. Positive `rangeRateKmPerSecond` means separation is increasing.
 This read does not call `UpdateTime`; if either object has not advanced to the
 current epoch, the comparison may be stale. Compare with a second time sample
 when direction matters. `propulsion` contains raw RCS and fusion/torch fields,
+including weighted `rcsCount`, native `rawRcsThrusterCount`, and `rcsExhaustSum`.
+The latter two expose the new 1.1 caches without scanning canisters or parts.
 including whether the torch is currently thrusting. The API does not project a
 position, calculate fuel consumption, inspect item inventories, or invoke AI
 commands. The ship's `shipSituTarget` can describe an orbit/coordinate

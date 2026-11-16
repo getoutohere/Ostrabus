@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
     "id":  "ostrabus-0.2.2-retriever",
-    "base":  "retriever-1.0.1.10",
+    "base":  "retriever-1.1.0.0",
     "patches":  [
                     {
                         "id":  "instant_attached",
@@ -322,8 +322,18 @@
                     }
                 ],
     "documentedDependencies":  [
-{"id":"shallow_flight_control_handoff","sources":["flight_handoff_native","flight_shutdown_native","flight_control_repair","flight_control_stop","flight_rcs_native"],"status":"native_tested_boundary_not_transition_expanded","reason":"Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."},
-
+                                   {
+                                       "id":  "shallow_flight_control_handoff",
+                                       "sources":  [
+                                                       "flight_handoff_native",
+                                                       "flight_shutdown_native",
+                                                       "flight_control_repair",
+                                                       "flight_control_stop",
+                                                       "flight_rcs_native"
+                                                   ],
+                                       "status":  "native_tested_boundary_not_transition_expanded",
+                                       "reason":  "Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."
+                                   },
                                    {
                                        "id":  "fuel_prediction",
                                        "sources":  [
@@ -365,54 +375,52 @@
                                        "status":  "boundary_not_transition_expanded",
                                        "reason":  "Production escape setter uses coherent native assignment and invalidates obsolete routes for semantic goal changes. Native caller evidence: Notes/AI-RETARGET-CALLER-AUDIT.md. Complete combat/retreat is outside this slice; generic ApplyToShip route invalidation has not been generalized. Navy/Blockade already clear routes through TargetNearestStation."
                                    },
-
-  {
-    "id": "planet_safe_avoidance",
-    "sources": [
-      "avoidance_native",
-      "avoidance_repair",
-      "avoidance_geometry",
-      "avoidance_ephemeris",
-      "avoidance_frame",
-      "avoidance_motion"
-    ],
-    "status": "boundary_not_transition_expanded",
-    "reason": "Shared native evasion rejects past-only warnings and vets opposite dodges against bodies and moving obstacles. No target/retirement policy changes. Full flight geometry remains outside this slice; see Navigation/PLANETARY-AVOIDANCE-AUDIT.md and Tests/PlanetaryNavigationCheck."
-  },
-
-  {
-    "id": "station_docked_traffic",
-    "sources": [
-      "station_collision_native",
-      "station_collision_policy",
-      "station_collision_scan",
-      "avoidance_repair"
-    ],
-    "status": "boundary_not_transition_expanded",
-    "reason": "Saved PDA policy, default on: nonstation hulls connected to stations/apartments are nonhazards while enabled; disabling immediately restores native hull treatment. Enabled hulls are nonhazards for ship contact, AI evasion and proximity scans. Free-space tows, actual stations, weapon/planet hits remain native. Shared-command fixture evidence; no geometric transition model or forced arrival."
-  },
-      {
-        "id": "local_navigation_frames",
-        "sources": [
-          "local_frame_navy",
-          "local_frame_blockade",
-          "local_frame_pirate",
-          "local_frame_police",
-          "local_frame_lurk",
-          "local_frame_guard",
-          "local_frame_lock",
-          "local_frame_encounter",
-          "local_frame_manager",
-          "local_frame_situ",
-          "local_frame_world",
-          "local_frame_resolver",
-          "local_frame_hooks",
-          "local_frame_departure"
-        ],
-        "status": "boundary_not_transition_expanded",
-        "reason": "Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md."
-      }
-    ],
+                                   {
+                                       "id":  "planet_safe_avoidance",
+                                       "sources":  [
+                                                       "avoidance_native",
+                                                       "avoidance_repair",
+                                                       "avoidance_geometry",
+                                                       "avoidance_ephemeris",
+                                                       "avoidance_frame",
+                                                       "avoidance_motion"
+                                                   ],
+                                       "status":  "boundary_not_transition_expanded",
+                                       "reason":  "Shared native evasion rejects past-only warnings and vets opposite dodges against bodies and moving obstacles. No target/retirement policy changes. Full flight geometry remains outside this slice; see Navigation/PLANETARY-AVOIDANCE-AUDIT.md and Tests/PlanetaryNavigationCheck."
+                                   },
+                                   {
+                                       "id":  "station_docked_traffic",
+                                       "sources":  [
+                                                       "station_collision_native",
+                                                       "station_collision_policy",
+                                                       "station_collision_scan",
+                                                       "avoidance_repair"
+                                                   ],
+                                       "status":  "boundary_not_transition_expanded",
+                                       "reason":  "Saved PDA policy, default on: nonstation hulls connected to stations/apartments are nonhazards while enabled; disabling immediately restores native hull treatment. Enabled hulls are nonhazards for ship contact, AI evasion and proximity scans. Free-space tows, actual stations, weapon/planet hits remain native. Shared-command fixture evidence; no geometric transition model or forced arrival."
+                                   },
+                                   {
+                                       "id":  "local_navigation_frames",
+                                       "sources":  [
+                                                       "local_frame_navy",
+                                                       "local_frame_blockade",
+                                                       "local_frame_pirate",
+                                                       "local_frame_police",
+                                                       "local_frame_lurk",
+                                                       "local_frame_guard",
+                                                       "local_frame_lock",
+                                                       "local_frame_encounter",
+                                                       "local_frame_manager",
+                                                       "local_frame_situ",
+                                                       "local_frame_world",
+                                                       "local_frame_resolver",
+                                                       "local_frame_hooks",
+                                                       "local_frame_departure"
+                                                   ],
+                                       "status":  "boundary_not_transition_expanded",
+                                       "reason":  "Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md."
+                                   }
+                               ],
     "notApplicable":  [
                           {
                               "id":  "deployer_recovery",

@@ -4,31 +4,39 @@ using Ostrabus.MiscBugFixes;
 using Ostranauts.Core;
 using Ostranauts.Ships;
 using Ostranauts.Ships.Commands;
+using SolarSystem;
 
-static partial class LifecycleChecks {
+static partial class LifecycleChecks
+{
     static bool failStellarConversion;
     static Action duringStellarConversion;
-    static bool RecreateStellar(StarSystem __instance, string __0, ShipSitu __2, ref IStellarObject __result) {
+    static bool RecreateStellar(string __0, ShipSitu __2, ref IStellarObject __result)
+    {
         if (failStellarConversion) throw new InvalidOperationException("offline: stellar materialization failed");
         var recreated = new StellarFixture { strID = __0 };
         Field(recreated, "<objSS>k__BackingField", new ShipSitu(__2, false));
-        __instance.dictStellarObjects[__0] = recreated;
+        CrewSim.system.dictStellarObjects[__0] = recreated;
         Action nested = duringStellarConversion; duringStellarConversion = null; nested?.Invoke();
         __result = recreated;
         return false;
     }
-    static void TrafficConversion(StarSystem world, Harmony h) {
+    static void TrafficConversion(StarSystem world, Harmony h)
+    {
         var destroy = AccessTools.Method(typeof(Ship), nameof(Ship.Destroy));
         h.Patch(AccessTools.Method(typeof(Ship), "UnMoorFrom"), prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(Quiet)));
         h.Patch(AccessTools.Method(typeof(ShipSitu), "PushbackFrom"), prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(Quiet)));
-        h.Patch(AccessTools.Method(typeof(StarSystem), "CreateStellarObject", new[] { typeof(string), typeof(string), typeof(ShipSitu), typeof(Ship.TypeClassification) }),
+        h.Patch(AccessTools.Method(typeof(EnvironmentEntities), "CreateStellarObject", new[] { typeof(string), typeof(string), typeof(ShipSitu), typeof(Ship.TypeClassification) }),
             prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(RecreateStellar)));
         var attempt = AccessTools.Method(typeof(Undock), "AttemptToUnMoor");
-        foreach (bool repaired in new[] { false, true }) {
-            if (!repaired) {
+        foreach (bool repaired in new[] { false, true })
+        {
+            if (!repaired)
+            {
                 h.Unpatch(destroy, AccessTools.Method(typeof(ShipDestroyedTargetsPatch), "Prefix"));
                 h.Unpatch(destroy, AccessTools.Method(typeof(ShipDestroyedTargetsPatch), "Finalizer"));
-            } else {
+            }
+            else
+            {
                 h.CreateClassProcessor(typeof(ShipDestroyedTargetsPatch)).Patch();
                 h.CreateClassProcessor(typeof(ShipStellarConversionTargetsPatch)).Patch();
             }
@@ -75,7 +83,8 @@ static partial class LifecycleChecks {
                 "Conversion damaged an offset waypoint or retained its old Ship");
             Check(coordinate.shipScanTarget == null && coordinate.shipSituTarget.vPosx == 35 && ReferenceEquals(coordinate.objSS.NavData, coordinateRoute),
                 "Conversion cancelled a scanned-only observer's unrelated coordinate course");
-            foreach (var traveler in new[] { observer, direct, copied }) {
+            foreach (var traveler in new[] { observer, direct, copied })
+            {
                 traveler.CheckTargets();
                 Check(traveler.targetRegID == id && traveler.objSS.NavData != null && traveler.shipScanTarget == null,
                     "Native target restoration lost the converted goal or resurrected a retired Ship");
@@ -94,32 +103,140 @@ static partial class LifecycleChecks {
         var board = LifetimeBoard(approaching);
         var enclosing = LifetimeShip(world, "conversion-enclosing-scope");
         ShipReplacementTargetsPatch.Replacing = enclosing; failStellarConversion = true;
-        try {
+        try
+        {
             bool threw = false;
             try { attempt.Invoke(new Undock(new Program.Pilot { ShipUs = approaching }), new object[] { lost }); }
             catch (System.Reflection.TargetInvocationException ex) { threw = ex.InnerException is InvalidOperationException; }
             Check(threw && ReferenceEquals(ShipReplacementTargetsPatch.Replacing, enclosing), "Failed conversion swallowed an exception or lost its enclosing scope");
             CheckCleared(approaching, board, "failed stellar conversion");
-        } finally { failStellarConversion = false; ShipReplacementTargetsPatch.Replacing = null; }
+        }
+        finally { failStellarConversion = false; ShipReplacementTargetsPatch.Replacing = null; }
 
         var outer = LifetimeShip(world, "nested-conversion-outer"); outer.Classification = Ship.TypeClassification.Asteroid; outer.strTemplateName = "fixture-template";
         var inner = LifetimeShip(world, "nested-conversion-inner"); inner.Classification = Ship.TypeClassification.Asteroid; inner.strTemplateName = "fixture-template";
         var leaving = LifetimeShip(world, "nested-conversion-visitor");
-        duringStellarConversion = () => {
+        duringStellarConversion = () =>
+        {
             Check(ReferenceEquals(ShipReplacementTargetsPatch.Replacing, outer), "Outer conversion scope missing");
             attempt.Invoke(new Undock(new Program.Pilot { ShipUs = leaving }), new object[] { inner });
             Check(ReferenceEquals(ShipReplacementTargetsPatch.Replacing, outer), "Nested conversion did not restore the outer scope");
         };
-        try {
+        try
+        {
             attempt.Invoke(new Undock(new Program.Pilot { ShipUs = leaving }), new object[] { outer });
             Check(ShipReplacementTargetsPatch.Replacing == null && world.dictStellarObjects.TryGetValue(inner.strRegID, out _)
                 && world.dictStellarObjects.TryGetValue(outer.strRegID, out _), "Nested conversion retained scope or lost a stellar object");
-        } finally { duringStellarConversion = null; }
+        }
+        finally { duringStellarConversion = null; }
 
         var permanent = LifetimeShip(world, "permanently-destroyed-asteroid"); permanent.Classification = Ship.TypeClassification.Asteroid;
         permanent.strTemplateName = "fixture-template";
         new TargetData(permanent).ApplyToShip(approaching); SavedGoal(approaching); LifetimeRoute(approaching);
         permanent.Destroy(); CheckCleared(approaching, board, "permanent asteroid destruction outside conversion");
+        EnvironmentConversion(world, h);
         Console.WriteLine("Native asteroid conversion preserves independent/copied goals and routes; production correction rebinds direct goals, clears retired references, and handles failed/nested conversion and permanent destruction.");
+    }
+
+    static CondOwner environmentOwner;
+    static bool dropEnvironmentEntity;
+    static bool EnvironmentDropped(ref bool __result) { __result = dropEnvironmentEntity; return false; }
+    static bool EnvironmentCondition(CondOwner __instance, string __0, ref bool __result)
+    {
+        __result = ReferenceEquals(__instance, environmentOwner) && __0 == "IsEnvironmentEntity";
+        return false;
+    }
+    static bool EmptyPlots(ref System.Collections.Generic.List<string> __result)
+    {
+        __result = new System.Collections.Generic.List<string>(); return false;
+    }
+    static bool EnvironmentStellar(Ship shipToConvert, ref IStellarObject __result)
+    {
+        __result = new StellarFixture { strID = shipToConvert.strRegID };
+        __result.objSS.CopyFrom(shipToConvert.objSS, false);
+        CrewSim.system.dictStellarObjects[__result.strID] = __result;
+        return false;
+    }
+    static void EnvironmentConversion(StarSystem world, Harmony lifecycle)
+    {
+        var boundary = new Harmony("offline.environment-conversion.boundaries");
+        var production = new Harmony("offline.environment-conversion.production");
+        var triggerField = AccessTools.Field(typeof(EnvironmentEntities), "_ctNotTrafficAI");
+        object oldTrigger = triggerField.GetValue(null);
+        try
+        {
+            triggerField.SetValue(null, Empty<CondTrigger>());
+            boundary.Patch(AccessTools.PropertyGetter(typeof(MonoSingleton<GUIOrbitDraw>), "Instance"),
+                prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(Quiet)));
+            boundary.Patch(AccessTools.Method(typeof(CondOwner), "HasCond", new[] { typeof(string), typeof(bool) }),
+                prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(EnvironmentCondition)));
+            boundary.Patch(AccessTools.Method(typeof(PlotManager), nameof(PlotManager.GetShipsInPlots)),
+                prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(EmptyPlots)));
+            boundary.Patch(AccessTools.Method(typeof(EnvironmentEntities), "ConvertShipToStellarObject"),
+                prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(EnvironmentStellar)));
+            boundary.Patch(AccessTools.Method(typeof(EnvironmentEntities), "IsDroppedByEnvironmentChange"),
+                prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(EnvironmentDropped)));
+            boundary.Patch(AccessTools.Method(typeof(AIShipManager), "CrewCleanup"),
+                prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(Quiet)));
+            boundary.Patch(AccessTools.Method(typeof(AIShipManager), "RemoveEntityFromRegionalStationDict"),
+                prefix: new HarmonyMethod(typeof(LifecycleChecks), nameof(Quiet)));
+            var atc = LifetimeShip(world, "environment-atc");
+            foreach (string variant in new[] { "native", "legacy", "current" })
+            {
+                production.UnpatchSelf();
+                var destroy = AccessTools.Method(typeof(Ship), nameof(Ship.Destroy));
+                lifecycle.Unpatch(destroy, AccessTools.Method(typeof(ShipDestroyedTargetsPatch), "Prefix"));
+                lifecycle.Unpatch(destroy, AccessTools.Method(typeof(ShipDestroyedTargetsPatch), "Finalizer"));
+                if (variant != "native") lifecycle.CreateClassProcessor(typeof(ShipDestroyedTargetsPatch)).Patch();
+                if (variant == "current") production.CreateClassProcessor(typeof(EnvironmentConversionTargetsPatch)).Patch();
+                foreach (bool dropped in new[] { false, true })
+                {
+                    if (dropped && variant != "current") continue;
+                    dropEnvironmentEntity = dropped;
+                    string suffix = variant + "-" + dropped;
+                    var hull = LifetimeShip(world, "environment-converted-hull-" + suffix);
+                    hull.Classification = Ship.TypeClassification.Default;
+                    environmentOwner = hull.ShipCO;
+                    var observer = LifetimeShip(world, "environment-observer-" + suffix);
+                    new TargetData(hull).ApplyToShip(observer); SavedGoal(observer);
+                    var route = LifetimeRoute(observer);
+                    var board = LifetimeBoard(observer);
+                    var copiedObserver = LifetimeShip(world, "environment-copy-" + suffix);
+                    var copy = new ShipSitu(hull.objSS, false) { vBOOffsetx = 1e-7 };
+                    new TargetData(hull) { Situ = copy }.ApplyToShip(copiedObserver); SavedGoal(copiedObserver);
+                    var copiedRoute = LifetimeRoute(copiedObserver);
+                    EnvironmentEntities.UnloadEnvironmentForRegion(new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>>(), atc);
+                    Check(hull.bDestroyed && world.GetShipByRegID(hull.strRegID) == null,
+                        "Native region unload did not retire its physical hull");
+                    if (variant == "native")
+                    {
+                        Check(observer.targetRegID == hull.strRegID && ReferenceEquals(observer.objSS.NavData, route) &&
+                            ReferenceEquals(observer.shipScanTarget, hull) && observer.shipSituTarget.strBOPORShip == null,
+                            "Native conversion no longer retains its orphaned physical target");
+                        continue;
+                    }
+                    if (variant == "legacy")
+                    {
+                        CheckCleared(observer, board, "legacy observer incorrectly handles new environment conversion as removal");
+                        continue;
+                    }
+                    if (dropped)
+                    {
+                        Check(!world.dictStellarObjects.TryGetValue(hull.strRegID, out _), "Dropped entity was recreated");
+                        CheckCleared(observer, board, "environment deliberately dropped by native assets");
+                        continue;
+                    }
+                    Check(world.dictStellarObjects.TryGetValue(hull.strRegID, out var stellar), "Conversion lost its stellar representation");
+                    Check(observer.targetRegID == hull.strRegID && ReferenceEquals(observer.objSS.NavData, route),
+                        "Region unload incorrectly invalidated a surviving stellar identity");
+                    Check(observer.shipScanTarget == null && observer.TargetData.Ship == null && ReferenceEquals(observer.shipSituTarget, stellar.objSS),
+                        "Region conversion left physical references or failed to rebind its shared situation");
+                    Check(ReferenceEquals(copiedObserver.shipSituTarget, copy) && ReferenceEquals(copiedObserver.objSS.NavData, copiedRoute) && copy.vBOOffsetx == 1e-7,
+                        "Region conversion replaced an independently owned offset waypoint or route");
+                    Check(ShipReplacementTargetsPatch.Replacing == null, "Region conversion retained a replacement scope");
+                }
+            }
+        }
+        finally { environmentOwner = null; dropEnvironmentEntity = false; triggerField.SetValue(null, oldTrigger); production.UnpatchSelf(); boundary.UnpatchSelf(); }
     }
 }

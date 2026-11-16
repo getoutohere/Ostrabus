@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/54a9fed22841871b0dc5e9fea3ac3a3236e1b6b4cee832f5bca67d50fa47dd72.json.br",
+  "reason": "Reviewed native docking and hauling attachment loss, authored Phobos body locks, production control/course release and paused-haul save coherence. Native production-DLL regression covers normal/SFF/PASS and caller exclusions; graph scenarios retain external trajectory evidence limits.",
+  "acceptedUtc": "2026-11-16T20:30:12.6710689Z",
+  "previousSnapshot": "assembly-baselines/3e1622856f9160f5fec3d9062481d0e951ac425ed59b332e4a3350ae68243fec.json.br"
+}

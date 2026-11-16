@@ -2,8 +2,8 @@
   {
     "strName": "Ostrabus Rotation Module",
     "strAuthor": "Jon",
-    "strGameVersion": "1.0.1.10",
-    "strModVersion": "0.5.0",
+    "strGameVersion": "1.1.0.0",
+    "strModVersion": "0.6.0",
     "strNotes": "Adds a 1x1 Polaris RCS rotation module. Requires the matching Ostrabus rotation feature."
   }
 ]

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "traffic-1.0.1.10",
-  "gameVersion": "1.0.1.10",
-  "assemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
-  "baselineCommit": "21124d5",
+  "id": "traffic-1.1.0.0",
+  "gameVersion": "1.1.0.0",
+  "assemblySha256": "a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07",
+  "baselineCommit": "be8e282",
   "scope": {
     "status": "native_role_trees_and_traffic_lifecycle",
     "roles": [
@@ -19,7 +19,8 @@
       "INTERREGIONAL versus local ATC scheduling; people transit changes population independently.",
       "Current economy/bounded SFF gates and explicit native fallback.",
       "Cross-actor reserve reuse, disappearing destinations and asteroid representation conversion.",
-      "Station-collision duplicate cargo controllers, local bucket cleanup of a global carrier, and resulting orphaned virtual cargo."
+      "Station-collision duplicate cargo controllers, local bucket cleanup of a global carrier, and resulting orphaned virtual cargo.",
+      "Conditional passive docking/body-attachment boundaries, applied control/course release and paused-haul saved-state coherence; physical trajectory samples remain external."
     ],
     "opaque": [
       "Numerical geometry, time-of-flight, weapon hits and stochastic distributions are native/prescribed outcomes.",
@@ -45,7 +46,7 @@
       "anchors": [
         "public void Maneuver("
       ],
-      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+      "sha256": "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
     },
     "flight_handoff_native": {
       "origin": "game",
@@ -63,7 +64,7 @@
       "anchors": [
         "private void TorchOff()"
       ],
-      "sha256": "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+      "sha256": "677658509cd59ee08d4220b6ae6b993df4546336bf7e5521a7cb93c2f839022b"
     },
     "flight_control_repair": {
       "origin": "repo",
@@ -118,7 +119,7 @@
       "anchors": [
         "class AIShip"
       ],
-      "sha256": "713ed29317fc3512c8923c78e4cbf746d177a0057571d177c76035b2016a3103"
+      "sha256": "64c02064a2bb7df7a1106e02c34f17ffc2d03116b44a761d81bffa17eae969ae"
     },
     "manager": {
       "origin": "game",
@@ -127,7 +128,7 @@
       "anchors": [
         "class AIShipManager"
       ],
-      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+      "sha256": "4e5557c959855e4398b80bc198a526b19aeb65c79073270cbe216738fa71c4ba"
     },
     "market": {
       "origin": "game",
@@ -145,7 +146,7 @@
       "anchors": [
         "class CrewSim"
       ],
-      "sha256": "3f4396cd567159dd3a132cc148e72c6df331c6fef08ced4423e0f495afeea038"
+      "sha256": "7e82e6e28014bd71be4a9b55f2255ca12f82706c8ed5b4a3a84f5c9e05fc0123"
     },
     "ship": {
       "origin": "game",
@@ -154,7 +155,7 @@
       "anchors": [
         "class Ship"
       ],
-      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+      "sha256": "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
     },
     "world": {
       "origin": "game",
@@ -163,7 +164,7 @@
       "anchors": [
         "class StarSystem"
       ],
-      "sha256": "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+      "sha256": "319cfe060c9ff22a425b3c76952088defc69dd7b5d9c46f165206cf30df0514d"
     },
     "target": {
       "origin": "game",
@@ -280,7 +281,7 @@
       "anchors": [
         "class Dock"
       ],
-      "sha256": "37515df3429295135b9b3abcecc4341c3026d118199e7513299c49b9e00f8b95"
+      "sha256": "e8da4e7eeaa1c0dc5d531909b17f1a80518d89dc2f4805a6e1dba42913e0f5ff"
     },
     "cmd_TargetNewIfNone": {
       "origin": "game",
@@ -298,7 +299,7 @@
       "anchors": [
         "class DockCargoAndDespawn"
       ],
-      "sha256": "5b8e2e88cb943202406e89bdc0b44a5132cdf27616a9eff7c4045f98f4adedbf"
+      "sha256": "9717d3d0dd508eb46d1adddb3d13c9848a10834fb3664d8774efdee6b95c438b"
     },
     "cmd_AmIInCombat": {
       "origin": "game",
@@ -361,7 +362,7 @@
       "anchors": [
         "class Undock"
       ],
-      "sha256": "aa01b4c2829c0231a7e19251e119c14362173bac574780e9bf15fc8e51b0171c"
+      "sha256": "e09bf024a61385c6cbb3edc69f88639a798b54fbc742d6e58c512098b47f98dc"
     },
     "cmd_DoIPreferShortRange": {
       "origin": "game",
@@ -415,7 +416,7 @@
       "anchors": [
         "class ShipTargetLifetime"
       ],
-      "sha256": "76eef5c6932b1a87f4de59f7b8c02f8a6df37fe6d67f07b08f8cfe47f96e181c"
+      "sha256": "cf8a11dea22b28ee4775da43c3abff2e03a3680024b57e5fbb0a95dd25c87ae3"
     },
     "patch_fuel": {
       "origin": "repo",
@@ -435,6 +436,27 @@
       ],
       "sha256": "3d35726d06dd2067f3169c2b088eb9ef4b156b7a3d05ac52a35006062a4d5a75"
     },
+    "shared_jump_adapter": {
+      "origin": "repo",
+      "path": "Orbital/SffAdvance.cs",
+      "symbol": "SffAdvance and PASS coroutine boundary: world windows and original-hour role budget",
+      "anchors": [
+        "class SffAdvance",
+        "class PassPendingEndTurnsPatch",
+        "CompletePendingEndTurns"
+      ],
+      "sha256": "b61fb1392bd9298922858140b4c48932eb34e23ac21b9509d9439073b6717a18"
+    },
+    "jump_discontinuity": {
+      "origin": "repo",
+      "path": "Orbital/JumpBoundary.cs",
+      "symbol": "JumpBoundary: synchronous source tag and lazy collision-history invalidation",
+      "anchors": [
+        "class JumpBoundary",
+        "Generation"
+      ],
+      "sha256": "5c2d30c79eff9baa719bd3a8190977135867d3d726792d573ff172ea95ecf4e4"
+    },
     "patch_sff": {
       "origin": "repo",
       "path": "Orbital/SffSimulation.cs",
@@ -442,7 +464,7 @@
       "anchors": [
         "class SffSimulation"
       ],
-      "sha256": "eadc6fc44b6a678376e6a31dd0a9402574b9f7b1c68a62f7b87810adf1403f5e"
+      "sha256": "023653853e26f4429d4608fa4d229f610415b06729adfc4a8d305eb41959463d"
     },
     "patch_economy": {
       "origin": "repo",
@@ -451,7 +473,7 @@
       "anchors": [
         "class SffEconomy"
       ],
-      "sha256": "11fd3f11208b9d0a20485d81c8621b49086074a933fe3317b1e6721a04dea001"
+      "sha256": "7416fde24763752a812043fc6c84f2e95231d101ac25c288beacba1bef5d0686"
     },
     "patch_economy_hooks": {
       "origin": "repo",
@@ -487,7 +509,7 @@
       "anchors": [
         "class FlyToPath"
       ],
-      "sha256": "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+      "sha256": "677658509cd59ee08d4220b6ae6b993df4546336bf7e5521a7cb93c2f839022b"
     },
     "cmd_FlyToManual": {
       "origin": "game",
@@ -526,7 +548,7 @@
         "public static void CheckCollisions(Ship shipCheck)",
         "private static void ProcessCollision(Ship a, Ship b, double fOverlap)"
       ],
-      "sha256": "f49512841470ef28b14deec8a1dceb803278d527e5aa6184ec309220a61e865b"
+      "sha256": "bf6c03c908b599225d98a0d84548b4454843184bc45df42e7e4a971932285295"
     },
     "patch_region_retention": {
       "origin": "repo",
@@ -650,7 +672,7 @@
       "anchors": [
         "Pirate("
       ],
-      "sha256": "142978e07bce1a888e38debbaac3c06ea2558568633b1919992148935b983bd6"
+      "sha256": "3f0e11012232530508dea73d8998e06dee83b6f4ead3bd7033e9d278b85d041c"
     },
     "local_frame_manager": {
       "origin": "game",
@@ -659,7 +681,7 @@
       "anchors": [
         "CheckLocalAuthorityScenario("
       ],
-      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+      "sha256": "4e5557c959855e4398b80bc198a526b19aeb65c79073270cbe216738fa71c4ba"
     },
     "local_frame_situ": {
       "origin": "game",
@@ -668,7 +690,7 @@
       "anchors": [
         "LockToBO("
       ],
-      "sha256": "09eba8d52011e3a63659e3bb7d582bf21ecaccd8de8ff0a67711d5dec5169a79"
+      "sha256": "d4eed3718395cf088896a7219ab220186216b56455c704d549872f93dfa049f5"
     },
     "local_frame_world": {
       "origin": "game",
@@ -677,7 +699,7 @@
       "anchors": [
         "GetNearestBO("
       ],
-      "sha256": "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+      "sha256": "319cfe060c9ff22a425b3c76952088defc69dd7b5d9c46f165206cf30df0514d"
     },
     "local_frame_resolver": {
       "origin": "repo",
@@ -782,12 +804,13 @@
     "sff_destination_refresh": {
       "origin": "repo",
       "path": "MiscBugFixes/SffNavigationDestinationPatch.cs",
-      "symbol": "SffNavigationDestinationPatch.CompletionPoint: preserve and refresh mission target",
+      "symbol": "SffNavigationDestinationPatch.CompletionPoint / PlaceCurrent: preserve mission and refresh actual instant-moor placement",
       "anchors": [
         "ship.shipSituTarget?.UpdateTime(StarSystem.fEpoch)",
-        "CompletionPoint"
+        "CompletionPoint",
+        "PlaceCurrent"
       ],
-      "sha256": "07e8d4a4da042b3b1bdade6317f6ea8b6a661e13ec62d4328db11d0ccb3a79bf"
+      "sha256": "b81355181d9a040213165e7235d5692ab55cb0288531f582b3de12324ba05632"
     },
     "pilot_availability": {
       "origin": "game",
@@ -797,7 +820,97 @@
         "public bool NavAIManned",
         "TIsHumanAwake"
       ],
-      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+      "sha256": "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
+    },
+    "environment_lifecycle": {
+      "origin": "game",
+      "path": "SolarSystem/EnvironmentEntities.cs",
+      "symbol": "Native deferred environment materialization and region conversion",
+      "anchors": [
+        "public static void UnloadEnvironmentForRegion",
+        "private static IStellarObject ConvertShipToStellarObject"
+      ],
+      "sha256": "5a0e87e1ef4a97325671439c741801daa0fbb8e145ce0988d14867e8a3054f48"
+    },
+    "unexpanded_native_entrypoints": {
+      "origin": "repo",
+      "path": "Navigation/BehaviorGraph/native-entrypoints.json",
+      "symbol": "Native roles and command entrypoints outside expanded transitions",
+      "anchors": [
+        "\"transitionCoverage\": \"not_expanded\""
+      ],
+      "sha256": "a87eb122007bf29db861dbecb2e2b4ee3e9f8072039a075cfbdec482cb363e30"
+    },
+    "attachment_ship": {
+      "origin": "game",
+      "path": "Ship.cs",
+      "symbol": "Dock / UnMoorFrom / Undock / UpdateDockedShips attachment transitions",
+      "anchors": [
+        "public void Dock(Ship dockingTarget, bool bSyncOnly",
+        "public void UnMoorFrom",
+        "public void Undock(Ship"
+      ],
+      "sha256": "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
+    },
+    "attachment_group": {
+      "origin": "game",
+      "path": "SolarSystem/DockGroup.cs",
+      "symbol": "Shared attachment selection, group reconstruction and applied control",
+      "anchors": [
+        "public void UpdateAnchor()",
+        "public void SyncShipInput",
+        "public void TimeAdvance"
+      ],
+      "sha256": "af36efe3945211b2eb7a63b0022ecf843e4c54fcad94a15f3c715af8d699f7ba"
+    },
+    "attachment_situ": {
+      "origin": "game",
+      "path": "ShipSitu.cs",
+      "symbol": "Locked following precedes free numerical gravity; native relock gate",
+      "anchors": [
+        "public void TimeAdvance",
+        "public bool TryRelockToBO"
+      ],
+      "sha256": "d4eed3718395cf088896a7219ab220186216b56455c704d549872f93dfa049f5"
+    },
+    "attachment_spawn": {
+      "origin": "game",
+      "path": "SolarSystem/EnvironmentEntities.cs",
+      "symbol": "Authored body attachment at wreck spawning",
+      "anchors": [
+        "private static void SetupDerelictOrbit",
+        "if (jsd.bIsBodyLocked)"
+      ],
+      "sha256": "5a0e87e1ef4a97325671439c741801daa0fbb8e145ce0988d14867e8a3054f48"
+    },
+    "attachment_haul": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/HaulShip.cs",
+      "symbol": "Retrieving hauler clears member locks before checking pause",
+      "anchors": [
+        "public override CommandStatus RunCommand"
+      ],
+      "sha256": "ef2aac30d8d1e674c83a4040d4b978eebd1d529378c571734f4c9ff417abad53"
+    },
+    "patch_attachment": {
+      "origin": "repo",
+      "path": "Navigation/Attachments/PassiveAttachmentPatch.cs",
+      "symbol": "Preserve authored attachment during passive visits; release on applied movement; defer premature haul member unlock",
+      "anchors": [
+        "internal static class PassiveAttachment",
+        "class HaulAttachmentReleasePatch"
+      ],
+      "sha256": "c9730b615478003369eb924ecc2491d0112e49949fdfdb8a01ef83ed32bf0ed4"
+    },
+    "attachment_towing": {
+      "origin": "repo",
+      "path": "Navigation/Towing/DockedCoursePlayback.cs",
+      "symbol": "Release soft group attachment before authorized native course ownership/playback",
+      "anchors": [
+        "static void ReleaseAttachmentForCourse",
+        "internal static void PrepareStep"
+      ],
+      "sha256": "73e498a10014e7a1b91ab22028435c6c7bbfa23814440b87a6d1786a30ae1dc4"
     }
   },
   "evidence": {
@@ -860,6 +973,21 @@
       "level": "native_offline",
       "artifact": "Tests/OrbitalCheck/CargoDeliveryRepairs.cs",
       "supports": "521 native baseline/production checks include multi-actor stock, sizing, normal/SFF/refund handoffs, overflow disposal, save restoration, failure isolation and escape ownership. Crew materialization, physical placement and planner failure inputs are fixtures."
+    },
+    "environment_conversion": {
+      "level": "native_offline",
+      "artifact": "Tests/AiPlannerDiagnosis/TrafficConversionChecks.cs",
+      "supports": "Native region conversion retains orphaned physical references; the legacy observer cancels a surviving identity; adapted conversion handling preserves direct/copied routes and respects authored removal. Asset creation, cleanup bookkeeping and presentation are explicit fixture boundaries."
+    },
+    "attachment_checks": {
+      "level": "native_offline",
+      "artifact": "Tools/DockingOrbitStudy/LifecycleChecks.cs",
+      "supports": "Production DLL hooks execute with native Hold/Undock, retrieving-pilot HaulShip, saved-situation reconstruction and both SffAdvance adapters. Real ephemerides and group-following controls live in AttachmentPhysics.cs; full scene/economy, threat observations, angular steering and help-request state remain fixture boundaries. Conditional graph outcomes are not numerical forecasts."
+    },
+    "attachment_collateral": {
+      "level": "native_offline",
+      "artifact": "Tools/DockingOrbitStudy/CollateralChecks.cs",
+      "supports": "Independent production-DLL A/B tests execute actual SetThrust, current group-mass repair, native unbraced/braced wear, shutdown and saved-state release. Constructed native permanent identities reproduce the previous incomplete guard. They are not claims of a live station incident."
     }
   },
   "variables": {
@@ -1411,6 +1539,101 @@
       ],
       "description": "Base nearest-station versus the existing civilian faction-home implementation when one resolves.",
       "kind": "state"
+    },
+    "attachment_lock": {
+      "values": [
+        "body",
+        "free",
+        "station"
+      ],
+      "description": "Shared group anchor's attachment; body means a pre-existing non-station attachment.",
+      "kind": "state"
+    },
+    "attachment_member": {
+      "values": [
+        "body",
+        "free"
+      ],
+      "description": "Wreck member's saved body-lock flag, distinct from the transient group anchor.",
+      "kind": "state"
+    },
+    "attachment_ignore": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "description": "Shared anchor's gravity exemption; body following precedes this free-motion flag.",
+      "kind": "state"
+    },
+    "attachment_path": {
+      "values": [
+        "pending",
+        "native_follow",
+        "free_coast",
+        "blocked",
+        "course"
+      ],
+      "description": "Motion ownership, not a calculated trajectory.",
+      "kind": "state"
+    },
+    "attachment_input": {
+      "values": [
+        "retained",
+        "lost"
+      ],
+      "description": "Whether group locking permits actual control/course execution.",
+      "kind": "state"
+    },
+    "attachment_link": {
+      "values": [
+        "docked",
+        "tethered",
+        "rebuilt",
+        "departed"
+      ],
+      "description": "Physical links around the visiting pair.",
+      "kind": "state"
+    },
+    "attachment_mismatch": {
+      "values": [
+        "small",
+        "large"
+      ],
+      "description": "External free-coast sample relative to native relock tolerance; not inferred from the flag alone.",
+      "kind": "state"
+    },
+    "attachment_relock": {
+      "values": [
+        "pending",
+        "retained",
+        "rejected"
+      ],
+      "description": "Native wreck attachment at visit completion.",
+      "kind": "state"
+    },
+    "attachment_braces": {
+      "values": [
+        "secured",
+        "unsecured"
+      ],
+      "description": "Existing native brace validation for an engaged torch tow.",
+      "kind": "state"
+    },
+    "attachment_visit": {
+      "values": [
+        "passive",
+        "hauling"
+      ],
+      "description": "Native visit wait versus paused retrieving-pilot haul command.",
+      "kind": "state"
+    },
+    "attachment_permanent_identity": {
+      "values": [
+        "true",
+        "false"
+      ],
+      "kind": "native_result",
+      "description": "Native station/substation/ground identity protects a member independently of transient body/ground flags."
     }
   },
   "predicates": {
@@ -1677,6 +1900,13 @@
           "missing"
         ]
       }
+    },
+    "attachment_releasable_identity": {
+      "facts": {
+        "attachment_permanent_identity": [
+          "false"
+        ]
+      }
     }
   },
   "nodes": {
@@ -1867,15 +2097,17 @@
       "detail": ""
     },
     "t_sff": {
-      "label": "World SFF AI catch-up",
+      "label": "World SFF/PASS AI catch-up",
       "layer": "control",
       "sources": [
         "manager",
         "controller",
         "sff_destination_refresh",
-        "patch_sff"
+        "patch_sff",
+        "shared_jump_adapter",
+        "jump_discontinuity"
       ],
-      "detail": "Completed-course destination coordinates must be current before instant mooring; waiting for a pilot cannot become invented guidance or instant arrival. Separate native/offline tests cover these physical handoffs, outside this lifecycle projection."
+      "detail": "Completed-course coordinates must be current before instant mooring; waiting for a pilot cannot become invented guidance or arrival. World physics runs before the native AI decision. Shared SFF/PASS windows split at native course completion and projected-impact decision opportunities, retain the original hourly role threshold once per eligible controller identity, and exclude unearned newborn time. Tests/OrbitalCheck/PassAdapterChecks.cs, PassHandoffStudy.cs and PassReuseChecks.cs execute those boundaries. Native scheduler worker draining, Unity scene transfer and elapsed-time geometry remain outside this role-lifecycle projection; see Orbital/PASS-TIME-SKIPS.md."
     },
     "t_sff_role": {
       "label": "Role-specific FFWD",
@@ -1936,6 +2168,46 @@
         "cmd_TargetNewIfNone"
       ],
       "detail": ""
+    },
+    "p_group": {
+      "label": "Physical docking-group attachment",
+      "layer": "physical",
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "detail": "Conditional physical boundary alongside the role lifecycle; no independent navigation controller or numerical orbit prediction."
+    },
+    "p_wait": {
+      "label": "Passive Hold / tether / paused haul",
+      "layer": "physical",
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "detail": "Conditional physical boundary alongside the role lifecycle; no independent navigation controller or numerical orbit prediction."
+    },
+    "p_motion": {
+      "label": "Native body following or free motion",
+      "layer": "physical",
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "detail": "Conditional physical boundary alongside the role lifecycle; no independent navigation controller or numerical orbit prediction."
+    },
+    "p_end": {
+      "label": "Visitor departed; wreck disposition",
+      "layer": "physical",
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "detail": "Conditional physical boundary alongside the role lifecycle; no independent navigation controller or numerical orbit prediction."
     }
   },
   "edges": [
@@ -2755,12 +3027,13 @@
       "set": {},
       "sources": [
         "cmd_Undock",
-        "world"
+        "world",
+        "environment_lifecycle"
       ],
       "evidence": [
         "conversion_native"
       ],
-      "note": ""
+      "note": "1.1 moves materialization to EnvironmentEntities. Region unload also converts unvisited environment hulls; its cross-actor reference lifetime is modeled in target-lifecycle, not inferred from this asteroid-unmoor leaf."
     },
     {
       "id": "conversion.complete",
@@ -4903,6 +5176,599 @@
         "role_native"
       ],
       "note": "Civilian's new virtual method does not override the interface mapping."
+    },
+    {
+      "id": "attachment.dock",
+      "from": "t_dock",
+      "to": "p_group",
+      "event": "passive_dock",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "body"
+          ]
+        }
+      },
+      "set": {
+        "attachment_lock": "free",
+        "attachment_member": "free"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.hold",
+      "from": "p_group",
+      "to": "p_wait",
+      "event": "hold",
+      "when": {
+        "facts": {}
+      },
+      "set": {
+        "attachment_visit": "passive"
+      },
+      "sources": [
+        "cmd_Hold",
+        "attachment_group"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.tether",
+      "from": "p_wait",
+      "to": "p_wait",
+      "event": "tether",
+      "when": {
+        "facts": {}
+      },
+      "set": {
+        "attachment_link": "tethered"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.rebuild",
+      "from": "p_wait",
+      "to": "p_wait",
+      "event": "unmoor",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "free"
+          ]
+        }
+      },
+      "set": {
+        "attachment_link": "rebuilt",
+        "attachment_ignore": "true"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.advance.body",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "advance",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "body",
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "attachment_path": "native_follow",
+        "attachment_relock": "retained"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.advance.large",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "advance",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "free"
+          ],
+          "attachment_ignore": [
+            "true"
+          ],
+          "attachment_mismatch": [
+            "large"
+          ]
+        }
+      },
+      "set": {
+        "attachment_path": "free_coast",
+        "attachment_relock": "rejected"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.advance.small",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "advance",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "free"
+          ],
+          "attachment_ignore": [
+            "true"
+          ],
+          "attachment_mismatch": [
+            "small"
+          ]
+        }
+      },
+      "set": {
+        "attachment_path": "free_coast",
+        "attachment_relock": "pending"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.time_skip.body",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "time_skip",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "body",
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "attachment_path": "native_follow",
+        "attachment_relock": "retained"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.time_skip.large",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "time_skip",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "free"
+          ],
+          "attachment_ignore": [
+            "true"
+          ],
+          "attachment_mismatch": [
+            "large"
+          ]
+        }
+      },
+      "set": {
+        "attachment_path": "free_coast",
+        "attachment_relock": "rejected"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.time_skip.small",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "time_skip",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "free"
+          ],
+          "attachment_ignore": [
+            "true"
+          ],
+          "attachment_mismatch": [
+            "small"
+          ]
+        }
+      },
+      "set": {
+        "attachment_path": "free_coast",
+        "attachment_relock": "pending"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.depart.body",
+      "from": "p_motion",
+      "to": "p_end",
+      "event": "depart",
+      "when": {
+        "facts": {
+          "attachment_relock": [
+            "retained"
+          ]
+        }
+      },
+      "set": {
+        "attachment_link": "departed"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.depart.rejected",
+      "from": "p_motion",
+      "to": "p_end",
+      "event": "depart",
+      "when": {
+        "facts": {
+          "attachment_relock": [
+            "rejected"
+          ]
+        }
+      },
+      "set": {
+        "attachment_link": "departed",
+        "attachment_lock": "free",
+        "attachment_member": "free"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.rcs.body",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "rcs",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "body"
+          ]
+        }
+      },
+      "set": {
+        "attachment_input": "lost",
+        "attachment_path": "native_follow"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.rcs.free",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "rcs",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "free"
+          ]
+        }
+      },
+      "set": {
+        "attachment_input": "retained",
+        "attachment_path": "free_coast"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.rcs.station",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "rcs",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "attachment_path": "native_follow"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.course.secured",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "course",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "body"
+          ],
+          "attachment_braces": [
+            "secured"
+          ]
+        }
+      },
+      "set": {
+        "attachment_input": "lost",
+        "attachment_path": "blocked"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.course.unsecured",
+      "from": "p_wait",
+      "to": "p_motion",
+      "event": "course",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "body"
+          ],
+          "attachment_braces": [
+            "unsecured"
+          ]
+        }
+      },
+      "set": {
+        "attachment_path": "blocked"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.haul.pause",
+      "from": "p_wait",
+      "to": "p_wait",
+      "event": "haul_pause",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "body"
+          ]
+        }
+      },
+      "set": {
+        "attachment_member": "free",
+        "attachment_visit": "hauling"
+      },
+      "sources": [
+        "attachment_haul",
+        "attachment_group"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.restore.body",
+      "from": "p_wait",
+      "to": "p_wait",
+      "event": "restore",
+      "when": {
+        "facts": {
+          "attachment_member": [
+            "body"
+          ]
+        }
+      },
+      "set": {
+        "attachment_lock": "body"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.restore.free",
+      "from": "p_wait",
+      "to": "p_wait",
+      "event": "restore",
+      "when": {
+        "facts": {
+          "attachment_member": [
+            "free"
+          ]
+        }
+      },
+      "set": {
+        "attachment_lock": "free"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.rebuild.attached",
+      "from": "p_wait",
+      "to": "p_wait",
+      "event": "unmoor",
+      "when": {
+        "facts": {
+          "attachment_lock": [
+            "body",
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "attachment_link": "rebuilt"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "attachment.depart.eligible",
+      "from": "p_motion",
+      "to": "p_end",
+      "event": "depart",
+      "when": {
+        "facts": {
+          "attachment_relock": [
+            "pending"
+          ],
+          "attachment_mismatch": [
+            "small"
+          ]
+        }
+      },
+      "set": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_link": "departed",
+        "attachment_relock": "retained"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
     }
   ],
   "findings": [
@@ -5165,6 +6031,30 @@
         "controller_identity_native"
       ],
       "note": "Confirmed O-LVKJ pattern: a duplicate local scavenger retires an interregional carrier and leaves its consignment inaccessible. Not proof that all orphaned markets have this cause."
+    },
+    {
+      "id": "attachment.lost_wreck",
+      "kind": "physical_state",
+      "severity": "high",
+      "when": {
+        "facts": {
+          "attachment_link": [
+            "departed"
+          ],
+          "attachment_relock": [
+            "rejected"
+          ]
+        }
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_checks"
+      ],
+      "note": "Conditional on externally established excessive free-coast mismatch. Does not claim every unlocked visit loses its wreck."
     }
   ],
   "scenarios": [
@@ -5239,7 +6129,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -5328,7 +6219,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -5418,7 +6310,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -5503,7 +6396,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -5591,7 +6485,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -5680,7 +6575,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -5765,7 +6661,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -5850,7 +6747,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -5935,7 +6833,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6020,7 +6919,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6108,7 +7008,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6196,7 +7097,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6280,7 +7182,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6364,7 +7267,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6448,7 +7352,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6532,7 +7437,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6616,7 +7522,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6700,7 +7607,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6784,7 +7692,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6872,7 +7781,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -6960,7 +7870,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7043,7 +7954,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7130,7 +8042,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7218,7 +8131,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7303,7 +8217,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7392,7 +8307,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7481,7 +8397,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7570,7 +8487,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7656,7 +8574,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7742,7 +8661,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7825,7 +8745,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7913,7 +8834,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -7997,7 +8919,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8081,7 +9004,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8167,7 +9091,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8254,7 +9179,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8340,7 +9266,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8427,7 +9354,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8514,7 +9442,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8601,7 +9530,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8688,7 +9618,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8776,7 +9707,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8866,7 +9798,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -8955,7 +9888,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9046,7 +9980,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9135,7 +10070,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9222,7 +10158,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9309,7 +10246,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9398,7 +10336,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9487,7 +10426,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9576,7 +10516,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9667,7 +10608,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9756,7 +10698,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9841,7 +10784,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -9928,7 +10872,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10015,7 +10960,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10102,7 +11048,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10189,7 +11136,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10276,7 +11224,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10363,7 +11312,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10450,7 +11400,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10537,7 +11488,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10624,7 +11576,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10711,7 +11664,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10798,7 +11752,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10885,7 +11840,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -10972,7 +11928,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11059,7 +12016,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11146,7 +12104,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11235,7 +12194,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11322,7 +12282,8 @@
         "visit_home_safe": "true",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11409,7 +12370,8 @@
         "visit_home_safe": "false",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11492,7 +12454,8 @@
         "visit_home_safe": "true",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11575,7 +12538,8 @@
         "visit_home_safe": "true",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11658,7 +12622,8 @@
         "visit_home_safe": "true",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11745,7 +12710,8 @@
         "visit_home_safe": "true",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11832,7 +12798,8 @@
         "visit_home_safe": "true",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -11919,7 +12886,8 @@
         "visit_home_safe": "true",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -12006,7 +12974,8 @@
         "visit_home_safe": "true",
         "visit_duration": "native",
         "visit_clock": "intact",
-        "home_filter": "native"
+        "home_filter": "native",
+        "attachment_permanent_identity": "false"
       },
       "expect": {
         "vanilla": {
@@ -12023,6 +12992,409 @@
         }
       },
       "note": "Native harness covers the continuation; this reference does not invent successful travel or refueling."
+    },
+    {
+      "id": "passive-attachment-advance",
+      "start": "t_dock",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false"
+      },
+      "events": [
+        "passive_dock",
+        "hold",
+        "tether",
+        "unmoor",
+        "advance",
+        "depart"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_end",
+          "finding": "attachment.lost_wreck",
+          "fact": "attachment_lock",
+          "value": "free",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_end",
+          "without": "attachment.lost_wreck",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        }
+      },
+      "note": "Captured Phobos excessive free-coast mismatch is an external input. Effective native body following does not evaluate that counterfactual sample. Time-skip adapters/ordinary continuation have separate native regression evidence."
+    },
+    {
+      "id": "passive-attachment-time_skip",
+      "start": "t_dock",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false"
+      },
+      "events": [
+        "passive_dock",
+        "hold",
+        "tether",
+        "unmoor",
+        "time_skip",
+        "depart"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_end",
+          "finding": "attachment.lost_wreck",
+          "fact": "attachment_lock",
+          "value": "free",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_end",
+          "without": "attachment.lost_wreck",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        }
+      },
+      "note": "Captured Phobos excessive free-coast mismatch is an external input. Effective native body following does not evaluate that counterfactual sample. Time-skip adapters/ordinary continuation have separate native regression evidence."
+    },
+    {
+      "id": "passive-attachment-rcs-release",
+      "start": "p_wait",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false"
+      },
+      "events": [
+        "rcs"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_motion",
+          "fact": "attachment_input",
+          "value": "lost",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "free",
+          "stop": ""
+        }
+      },
+      "note": "Constructed retained-lock control: preserving the attachment alone traps real input."
+    },
+    {
+      "id": "passive-attachment-course-release",
+      "start": "p_wait",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false"
+      },
+      "events": [
+        "course"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_motion",
+          "fact": "attachment_path",
+          "value": "blocked",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_motion",
+          "fact": "attachment_path",
+          "value": "course",
+          "stop": ""
+        }
+      },
+      "note": "Existing towing callbacks release the attachment before course selection; completion beyond arrival is tested natively."
+    },
+    {
+      "id": "passive-attachment-unsecured-course",
+      "start": "p_wait",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "unsecured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false"
+      },
+      "events": [
+        "course"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        }
+      },
+      "note": "No attachment release grants an unsecured torch course permission to run."
+    },
+    {
+      "id": "passive-attachment-station-control",
+      "start": "p_wait",
+      "facts": {
+        "attachment_lock": "station",
+        "attachment_member": "body",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false"
+      },
+      "events": [
+        "rcs"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "station",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "station",
+          "stop": ""
+        }
+      },
+      "note": "Actual stations retain fixed constraints."
+    },
+    {
+      "id": "passive-attachment-free-control",
+      "start": "p_wait",
+      "facts": {
+        "attachment_lock": "free",
+        "attachment_member": "free",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false"
+      },
+      "events": [
+        "rcs"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "free",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "free",
+          "stop": ""
+        }
+      },
+      "note": "No new body attachment or gravity policy for previously free hulls."
+    },
+    {
+      "id": "passive-attachment-paused-haul-save",
+      "start": "p_wait",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false"
+      },
+      "events": [
+        "haul_pause",
+        "restore"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_wait",
+          "fact": "attachment_lock",
+          "value": "free",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_wait",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        }
+      },
+      "note": "Retained-anchor integration control: native HaulShip writes the member flag before its pause gate. It must be deferred as part of attachment preservation, not claimed as an unrelated vanilla loss proof."
+    },
+    {
+      "id": "passive-attachment-native-small-relock",
+      "start": "p_wait",
+      "facts": {
+        "attachment_lock": "free",
+        "attachment_member": "free",
+        "attachment_ignore": "true",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "small",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false"
+      },
+      "events": [
+        "advance",
+        "depart"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_end",
+          "without": "attachment.lost_wreck",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_end",
+          "without": "attachment.lost_wreck",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        }
+      },
+      "note": "A free unpiloted derelict with externally established small mismatch remains eligible for native undock relocking. No expanded relock threshold or forced recovery."
+    },
+    {
+      "id": "passive-attachment-permanent-identity-rcs",
+      "start": "p_wait",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "true"
+      },
+      "events": [
+        "rcs"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        }
+      },
+      "note": "Station identity is permanent even when bIsBO/bGrounded are false. This tests the release boundary, not whole-world reachability or native playback of a blocked course."
+    },
+    {
+      "id": "passive-attachment-permanent-identity-course",
+      "start": "p_wait",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "false",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "true"
+      },
+      "events": [
+        "course"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_motion",
+          "fact": "attachment_lock",
+          "value": "body",
+          "stop": ""
+        }
+      },
+      "note": "Station identity is permanent even when bIsBO/bGrounded are false. This tests the release boundary, not whole-world reachability or native playback of a blocked course."
     }
   ]
 }

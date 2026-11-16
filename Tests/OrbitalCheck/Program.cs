@@ -27,6 +27,9 @@ static class Program {
         } finally { completion.UnpatchSelf(); }
     }
     static int Run(string[] args) {
+        if (args.Length != 0 && args[0] == "pass-handoff-study") { Enable(true); SffDecisionChecks.Run(Check, true); Console.WriteLine(checks + " PASS handoff study checks passed."); return 0; }
+        if (args.Length != 0 && args[0] == "decisions") { Enable(true); SffDecisionChecks.Run(Check); Console.WriteLine(checks + " SFF decision checks passed."); return 0; }
+        if (args.Length > 1 && args[0] == "compat-impact-study") { CeresSffStudy.CompatibilityImpacts(args[1]); return 0; }
         if (args.Length > 1 && args[0] == "ceres-study") { CeresSffStudy.Run(args[1]); return 0; }
         if (args.Length != 0 && args[0] == "delivery-study") { EconomyChecks.DeliveryStudy(Check); Console.WriteLine(checks + " delivery investigation assertions passed."); return 0; }
         if (args.Length != 0 && args[0] == "cargo-study") { EconomyChecks.CargoStudy(Check); Console.WriteLine(checks + " cargo investigation assertions passed."); return 0; }
@@ -137,6 +140,7 @@ static class Program {
             Console.WriteLine("Native six-hour jump reproduced escape energy: "+energy+" km²/s², even with parent correction enabled.");
             CoastChecks.Run(Check);
             SffChecks.Run(Check);
+            SffDecisionChecks.Run(Check);
             HaulerRunawayChecks.Run(Check);
             HaulerRecoveryChecks.Run(Check);
             OrbitalSimulation.Reset();stats=(Dictionary<string,object>)OrbitalSimulation.Snapshot();

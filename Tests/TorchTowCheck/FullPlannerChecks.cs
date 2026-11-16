@@ -17,8 +17,8 @@ static partial class Program {
         Set(vessel, "fRCSCount", 1f);
         var origin = new ShipSitu(false) { vPosx = 1, vPosy = 2 };
         var target = new ShipSitu(false) { vPosx = 1.001, vPosy = 2 };
-        var course = planner.PlanTrip4(new NavDataPoint(1000, origin, 100, 0, 100000),
-            new NavDataPoint(1000, target, 100, 0, 100000), .2f, coast);
+        var course = planner.PlanTrip4(new NavDataPoint(1000, origin, 100, 0, 100000,rcsCount:0F),
+            new NavDataPoint(1000, target, 100, 0, 100000,rcsCount:0F), .2f, coast);
         vessel.objSS.NavData = course;
         return course;
     }

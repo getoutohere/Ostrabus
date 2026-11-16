@@ -16,9 +16,9 @@ static partial class Program {
     static bool ScopeCollision(ref float __result) { __result = 0; return false; }
     static NavData ScopeRoute(Ship ship) {
         var route = new NavData(ship);
-        route.AddNavDataPoint(new NavDataPoint(1000, Empty<ShipSitu>(), 100, 0, 0));
+        route.AddNavDataPoint(new NavDataPoint(1000, Empty<ShipSitu>(), 100, 0, 0,rcsCount:0F));
         var end = Empty<ShipSitu>(); end.vPosx = 1;
-        route.AddNavDataPoint(new NavDataPoint(1100, end, 50, 0, 0));
+        route.AddNavDataPoint(new NavDataPoint(1100, end, 50, 0, 0,rcsCount:0F));
         ship.objSS.NavData = route;
         return route;
     }

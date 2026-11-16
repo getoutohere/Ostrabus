@@ -18,10 +18,19 @@ These are conditional reference traces, not live-game measurements or new native
 | custody-or-native-ineligibility | parked; no modeled finding | parked; no modeled finding |
 | another-candidate-or-not-due | parked; no modeled finding | parked; no modeled finding |
 | transfer-exception-no-service | failure; no modeled finding | failure; no modeled finding |
+| rejected-active-bounty-is-retained | target_missing; bounty.administrative_target_loss | parked; no modeled finding |
+| accepted-bounty-keeps-existing-hull-claim | parked; no modeled finding | parked; no modeled finding |
+| ordinary-rejected-arrival-is-unchanged | target_missing; no modeled finding | target_missing; no modeled finding |
+| parked-active-bounty-hull-survives-stale-sweep | hull_missing; bounty.original_hull_loss | parked; no modeled finding |
+| expired-bounty-hull-can-prune | hull_missing; no modeled finding | hull_missing; no modeled finding |
+| region-retirement-keeps-original-hull | replacement_pending; bounty.original_hull_loss | parked; no modeled finding |
+| ordinary-region-retirement-unchanged | replacement_pending; no modeled finding | replacement_pending; no modeled finding |
+| physical-hull-destruction-remains-possible | hull_missing; no modeled finding | hull_missing; no modeled finding |
 
 ## Behavioral tradeoffs
 
 - **bounty_departure_service / native_control_flow_repair**: Restore the ordinary station AIRefuel step after successful bounty embarkation, before activating its existing hull. Removes: Repeated depleted-hull station departure and immediate home selection.. Preserves: Native schedule, eligibility, same NPC/hull, placement, role and behavior tree.; No free fuel on airborne or already-aboard restore, station-only moves or physical ships.; Native exceptions and custody rules..
+- **bounty_administrative_preservation / simulation_policy**: Explicit simulation policy preserving current bounty actors, existing claims and original hulls across administrative retirement. Removes: Administrative station deletion of targets and disposal of their original parked hulls.. Preserves: Native station movement, claims already held, custody and due-pass reboarding of the same hull.; Expiry, hand-ins, physical destruction, ordinary NPC cleanup and native population asset exclusions.; No resurrection, forced departure, controller replacement or persistent journal..
 
 ## Dependencies not transition-expanded
 

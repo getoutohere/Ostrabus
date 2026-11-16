@@ -4,7 +4,7 @@ using HarmonyLib;
 
 namespace Ostrabus.ApartmentRefuel;
 
-[BepInPlugin(Id, "Apartment Refuel Terminal", "0.1.0")]
+[BepInPlugin(Id, "Apartment Refuel Terminal", "0.1.1")]
 public sealed class Plugin : BaseUnityPlugin {
     public const string Id = "com.ostrabus.apartmentrefuel";
     Harmony harmony;

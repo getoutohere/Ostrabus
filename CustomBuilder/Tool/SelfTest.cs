@@ -59,6 +59,13 @@ static class SelfTest {
         Check(crewIdentities.Included.Length == 1 && crewIdentities.Patches.Length == 1 &&
             crewIdentities.Patches[0].Type == "Ostrabus.MiscBugFixes.AiCrewIdentityPatch" && crewIdentities.TickCalls == 0,
             "fresh AI crew identity protection is independently selectable without polling");
+        var preservation = Make("bounty-preservation");
+        Check(preservation.Included.Length == 1 && preservation.Patches.Length == 3 && preservation.TickCalls == 0,
+            "bounty preservation is independently selectable without polling");
+        Check(catalog.Features.Single(feature => feature.Id == "bounty-preservation").Category == "simulation" &&
+            !Presets.Create(catalog, "bugfixes").Features.Contains("bounty-preservation") &&
+            Presets.Create(catalog, "recommended").Features.Contains("bounty-preservation"),
+            "bounty preservation is an explicit simulation policy, not a bugfix preset addition");
         var population = Make("population-gender");
         Check(population.Included.Length == 1 && population.Patches.Length == 1 && population.TickCalls == 0,
             "population distribution is independently selectable without polling");
@@ -77,6 +84,15 @@ static class SelfTest {
         Check(momentum.Included.Contains("torch-fuel") && momentum.Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.TorchCourses.TorchTransferKernelPatch"),
             "momentum trajectories include their UI scope and fuel/control integration");
         Check(!Make("torch-towing").Included.Contains("torch-fuel"), "braced towing stays independent of fuel/controller changes");
+        Check(Make("torch-towing").Included.Contains("passive-docking-attachment"),
+            "towing includes the body-lock release handoff it calls");
+        Check(Make("torch-towing").Included.Contains("route-completion") &&
+            Make("torch-towing").Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.RouteCompletionPatch"),
+            "towing includes shared completion/remainder coasting for ordinary and PASS steps");
+        Check(Make("passive-docking-attachment").Patches.Length == 3 &&
+            !Make("passive-docking-attachment").Included.Contains("torch-towing") &&
+            !Make("passive-docking-attachment").Included.Contains("orbital-waiting"),
+            "passive docking has three owned hooks and does not enable towing or free-wait policy");
         Check(catalog.Features.Single(feature => feature.Id == "barter-zones").Category == "qol", "barter presentation is QoL");
         Check(catalog.Features.Single(feature => feature.Id == "async-ship-loading").Category == "bugfix" &&
             catalog.Features.Single(feature => feature.Id == "barter-writeback").Category == "bugfix", "barter lifecycle and persistence are bugfixes");
@@ -202,6 +218,16 @@ static class SelfTest {
             "orbital alone omits SFF launch");
         Check(!Prune("Orbital/OrbitalPatches.cs", "sff").Contains("SffEconomy.Begin("),
             "SFF alone omits economy launch");
+        Check(Prune("Orbital/OrbitalPatches.cs", "sff").Contains("SffAdvance.Active"),
+            "SFF-only composition retains decision-aware sub-minute physics");
+        Check(Prune("Orbital/OrbitalPatches.cs", "sff").Contains("JumpBoundary.Active"),
+            "SFF-only composition retains tagged PASS entry");
+        Check(Make("sff").Included.Contains("route-completion") && Make("sff").Included.Contains("sff-navigation-destination"),
+            "PASS simulation includes completion and instant-moor coordinate repairs");
+        Check(Make("sff", "hull-collisions").Patches.Count(hook => hook.Type == "Ostrabus.Orbital.SffDecisionStepsPatch") == 1,
+            "SFF and hull collisions deduplicate their shared jump boundary hook");
+        Check(!Make("hull-collisions").Included.Contains("sff") && !Make("hull-collisions").Included.Contains("orbital"),
+            "Collision jump tagging does not pull in orbital simulation");
         Check(Prune("Orbital/OrbitalPatches.cs", "economy-sff").Contains("SffEconomy.Begin("),
             "economy launch included");
 

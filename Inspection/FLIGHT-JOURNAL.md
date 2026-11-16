@@ -50,7 +50,10 @@ the preceding complete records.
   after that transition. No forced time advancement or wall-clock polling.
 - `log`: Unity warnings/errors/exceptions/assertions and BepInEx warning/error/
   fatal messages. The Unity Log bridge is excluded from BepInEx capture to
-  avoid duplicating the same Unity event.
+  avoid duplicating the same Unity event. While recording, native `Destroying ship`
+  informational messages also retain a bounded calling stack, to distinguish
+  disposal from collision or other destruction paths. Other informational messages
+  are not recorded. This uses the existing temporary listener, not another hook.
 
 Before/after and region follow-up records share a TransitionId. UTC and game
 epoch are included. Background-thread log callbacks use the last observed game

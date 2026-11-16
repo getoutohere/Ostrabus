@@ -157,9 +157,9 @@ static partial class LifecycleChecks {
                 var target = new TargetData(station); target.ApplyToShip(observer);
                 observer.shipCombatTarget = observer.shipStationKeepingTarget = observer.shipUndock = station;
                 var route = new NavData(observer) { IsTorching = role == "player-torch" };
-                route.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false) { vPosx = 1 }, 1000, 0, 1));
+                route.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false) { vPosx = 1 }, 1000, 0, 1,rcsCount:0F));
                 route.AddNavDataPoint(new NavDataPoint(role == "long-distance" ? 1e12 : 1000 + 3600 * 24 * 30,
-                    new ShipSitu(false) { vPosx = role == "long-distance" ? 1000 : 2 }, 500, 0, 0.5));
+                    new ShipSitu(false) { vPosx = role == "long-distance" ? 1000 : 2 }, 500, 0, 0.5,rcsCount:0F));
                 observer.objSS.NavData = route;
                 string routeBefore = JsonMapper.ToJson(route.GetJSON());
                 var offset = new ShipSitu(live, false) { vBOOffsetx = 1e-7, IsRegionBorderPoint = true };
@@ -206,8 +206,8 @@ static partial class LifecycleChecks {
             data.ApplyToShip(observer);
             var situation = data.Situ;
             var route = new NavData(observer);
-            route.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false), 100, 0, 0));
-            route.AddNavDataPoint(new NavDataPoint(2000, new ShipSitu(false) { vPosx = 2 }, 50, 0, 0));
+            route.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false), 100, 0, 0,rcsCount:0F));
+            route.AddNavDataPoint(new NavDataPoint(2000, new ShipSitu(false) { vPosx = 2 }, 50, 0, 0,rcsCount:0F));
             observer.objSS.NavData = route;
             targetShip.Destroy();
             Check(system.GetShipByRegID(id) == null && targetShip.bDestroyed && targetShip.objSS == null,
@@ -269,8 +269,8 @@ static partial class LifecycleChecks {
         new TargetData(station).ApplyToShip(observer);
         NavData Route() {
             var route = new NavData(observer);
-            route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 100, 0, 0));
-            route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 1000, new ShipSitu(false) { vPosx = .00001 }, 50, 0, 0));
+            route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 100, 0, 0,rcsCount:0F));
+            route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 1000, new ShipSitu(false) { vPosx = .00001 }, 50, 0, 0,rcsCount:0F));
             observer.objSS.NavData = route; return route;
         }
         var original = Route(); string originalJson = JsonMapper.ToJson(original.GetJSON());
@@ -308,9 +308,9 @@ static partial class LifecycleChecks {
             Ostrabus.Venus.VorbNavPlanGuard.TargetChanged(observer);
             var invalid = new NavData(observer);
             double epoch = StarSystem.fEpoch;
-            invalid.AddNavDataPoint(new NavDataPoint(defect == "expired" ? epoch - 20 : epoch, new ShipSitu(false), 100, 0, 0));
+            invalid.AddNavDataPoint(new NavDataPoint(defect == "expired" ? epoch - 20 : epoch, new ShipSitu(false), 100, 0, 0,rcsCount:0F));
             invalid.AddNavDataPoint(new NavDataPoint(defect == "expired" ? epoch - 10 : defect == "reverse-time" ? epoch - 1 : epoch + 100,
-                new ShipSitu(false) { vPosx = defect == "non-finite" ? double.NaN : .00001 }, defect == "negative-fuel" ? -1 : 50, 0, 0));
+                new ShipSitu(false) { vPosx = defect == "non-finite" ? double.NaN : .00001 }, defect == "negative-fuel" ? -1 : 50, 0, 0,rcsCount:0F));
             observer.objSS.NavData = invalid;
             Check(!Ostrabus.Venus.VorbNavPlanGuard.ValidateCurrentPlan(observer) && observer.objSS.NavData == null,
                 "VORB guard no longer rejects independent " + defect + " input");

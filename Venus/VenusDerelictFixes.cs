@@ -62,7 +62,7 @@ internal static class VorbWreckSpawnPatch {
     }
 }
 
-[HarmonyPatch(typeof(StarSystem), nameof(StarSystem.AddDerelict), new[] { typeof(string), typeof(string), typeof(bool) })]
+[HarmonyPatch(typeof(StarSystem), nameof(StarSystem.AddDerelict), new[] { typeof(string), typeof(string), typeof(bool), typeof(string) })]
 internal static class VorbWreckLootPatch {
     static void Prefix(ref string strLoot) {
         if (strLoot == "RandomShip" && VorbWreckSpawnPatch.CurrentLoot != null) strLoot = VorbWreckSpawnPatch.CurrentLoot;

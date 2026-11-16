@@ -64,7 +64,7 @@ does not force its optional setting on. The PDA shows only included controls.
 Inactive shared support code may remain in the DLL, without automatic registration.
 Normal maintainer Deploy-Mod.cmd continues to install the full normal build.
 
-Target: Ostranauts 1.0.1.10 / BepInEx 5. Game binaries are not redistributed.
+Target: Ostranauts 1.1.0.0 / BepInEx 5. Game binaries are not redistributed.
 Selected native mods: $(@($plan.nativeMods | ForEach-Object { $_.name }) -join ', ')
 Their assets are included independently of the Settings app; omitted native
 features are disabled in the game's load order when installing this profile.

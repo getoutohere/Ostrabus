@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/0dbfdf91b8a0543a5809f9489029b21f8f3e719504504d5c0a1d2c1935b74116.json.br",
+  "reason": "Reviewed 1.1.0.0 native method and asset boundaries, adapted collision/conversion/circular predictions, and reran native role/control suites. Unexpanded entrypoints remain dependency references; live scene acceptance and semantic completeness are not implied.",
+  "acceptedUtc": "2026-11-15T21:03:21.7991145Z",
+  "previousSnapshot": "assembly-baselines/6dd199aa04c3658cc4fe0c6dfdb66f18da3f94474ed7822bed34b5267767dc87.json.br"
+}

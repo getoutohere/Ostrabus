@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "scope": "Direct CMD aliases in loot/loot.json plus core/generated-stakes interaction references; conditional reachability and recursive loot closure are not certified.",
   "lootSource": "loot/loot.json",
-  "lootSha256": "a99c68909b9b661c8785efa229cf4f9dc89f877f1a0ca1ed4ede070267df709a",
+  "lootSha256": "b1c8269f44289f9a3bdc9c138a1ad1dfc9481624cd6270af116619776682e39a",
   "dialogueSources": [
     {
       "path": "interactions/interactions.json",
-      "sha256": "d62120c3564c0801da6e769e783dd4185d004486cb27d2ce67126e8dfb454ee1"
+      "sha256": "3d8c8e8b3db6869c2eed8eb236e5d611e9f1d9857f1b01ebb9048db0aa30829f"
     },
     {
       "path": "interactions/interactions_social_core.json",
@@ -14,11 +14,11 @@
     },
     {
       "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
-      "sha256": "e5726d8e1378b1af849ad396214be780cda8c80e8e0dfde341a0b712316f72c8"
+      "sha256": "94f5892d9344678bff6604de8fd745383e79349f157b4e2c3579b6ea0aff530c"
     },
     {
       "path": "condtrigs/condtrigs.json",
-      "sha256": "0e33fbb53f7ddde1655f5d286be160f9107cf53b6e5a18768e917e9346ed4b2e"
+      "sha256": "887675fdf47101f8b705bb21c4d03b8e332735456017b231b11934711b2fd492"
     },
     {
       "path": "condtrigs/condtrigs2.json",
@@ -26,15 +26,15 @@
     },
     {
       "path": "tsv/output/stakes/condtrigs/condTriggers_STKShipSurrender_PlayerDemand.json",
-      "sha256": "4ec669449dc1bad1ff8507aa4c1af88e3317f923e83a82b61784bc45305fb72c"
+      "sha256": "f7ab9867bfc65d4221d077f031e50070066c0dc6a69406f95b34ef84148c66d0"
     },
     {
       "path": "loot/loot.json",
-      "sha256": "a99c68909b9b661c8785efa229cf4f9dc89f877f1a0ca1ed4ede070267df709a"
+      "sha256": "b1c8269f44289f9a3bdc9c138a1ad1dfc9481624cd6270af116619776682e39a"
     },
     {
       "path": "tsv/output/stakes/loot/loot_STKShipSurrender_PlayerDemand.json",
-      "sha256": "9626398d1d7738aa26bb281748889291a5a252c19d7bbbe5d60dadffc0fc0a11"
+      "sha256": "1706cd4c4a56076523feabb8504dd416d2cf96ff9a65bfcbda31f52e65de6c12"
     },
     {
       "path": "shipSpecs/shipspecs.json",
@@ -42,7 +42,7 @@
     },
     {
       "path": "personSpecs/personspecs.json",
-      "sha256": "d313f9ca30c434072806e2bef25263ea018a38df4f8ad5195dd2cd0455127f32"
+      "sha256": "f7a9b203b9d0d797e5d70ee5ee1576c6fe89be1e3e6b4e412c05e92873f129d1"
     }
   ],
   "sources": [
@@ -52,19 +52,19 @@
     },
     {
       "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIDemand.json",
-      "sha256": "2c0c01737c37f6027aeae7f9312d504a1dc803707ac9d8fec462c35305aa42d8"
+      "sha256": "88d3016ecc01b1bc36f3dfa398408b702d034be1d7ff5a6354da34764a118e05"
     },
     {
       "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIOffer.json",
-      "sha256": "3ba70ddec1bfdee9ef9373150befff7d5536279cf7c3e538b35939eab9cd3cb8"
+      "sha256": "c8e72b76d85209a125b09ee647e63eec7da1688145e8e0c2ca404e7847aa4d89"
     },
     {
       "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
-      "sha256": "e5726d8e1378b1af849ad396214be780cda8c80e8e0dfde341a0b712316f72c8"
+      "sha256": "94f5892d9344678bff6604de8fd745383e79349f157b4e2c3579b6ea0aff530c"
     },
     {
       "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerOffer.json",
-      "sha256": "ba17e8da22c00908b6751097de50e0b60661bcb58940fd1a0130b731852ffd97"
+      "sha256": "0d93c398b4d2e0921836de4b7ff089a4a6d0d2e06f77e34f81922680a50f1f1a"
     }
   ],
   "aliases": [

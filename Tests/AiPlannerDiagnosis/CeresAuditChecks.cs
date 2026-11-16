@@ -206,8 +206,8 @@ static class CeresAuditChecks {
             Check(StationReturnFastForwardPatch.Prefix(ai), "Pending return blocked reaction SFF");
             Check(flyCalls == before, "Return overrode active reaction"); Field(ai, "_activeReaction", null);
             // Existing logical home target and route survive idempotent requests.
-            var plan = new NavData(ship); plan.AddNavDataPoint(new NavDataPoint(0, new ShipSitu(false), 300, 0, 0));
-            plan.AddNavDataPoint(new NavDataPoint(100, new ShipSitu(false), 280, 0, 0)); ship.objSS.NavData = plan;
+            var plan = new NavData(ship); plan.AddNavDataPoint(new NavDataPoint(0, new ShipSitu(false), 300, 0, 0,rcsCount:0F));
+            plan.AddNavDataPoint(new NavDataPoint(100, new ShipSitu(false), 280, 0, 0,rcsCount:0F)); ship.objSS.NavData = plan;
             StationReturn.Request(ai, home);
             Check(ReferenceEquals(plan, ship.objSS.NavData), "Duplicate return request discarded healthy route");
             ai.AICharacter.PriorityQueue.EnqueueCommand(new NativeProbe((Program.Pilot)ai.AICharacter));
@@ -323,8 +323,8 @@ static class CeresAuditChecks {
             }
             // Fuel prediction uses only unspent route fuel, plus native return estimate and 20% margin.
             ai = Controller(ship); budget = 1e-8; StarSystem.fEpoch = 0; ship.fShallowRCSRemass = 300;
-            plan = new NavData(ship); plan.AddNavDataPoint(new NavDataPoint(0, new ShipSitu(false), 300, 0, 0));
-            plan.AddNavDataPoint(new NavDataPoint(100, new ShipSitu(false), 100, 0, 0));
+            plan = new NavData(ship); plan.AddNavDataPoint(new NavDataPoint(0, new ShipSitu(false), 300, 0, 0,rcsCount:0F));
+            plan.AddNavDataPoint(new NavDataPoint(100, new ShipSitu(false), 100, 0, 0,rcsCount:0F));
             Check(CeresNavigationGuardrails.PlanHasReserve(ship, home, plan, 1e-9), "Affordable planned route rejected");
             Check(homeBody.dXReal == 123 && homeBody.dVelX == 456 && homeBody.dTimeCalcLast == 789, "Reserve check changed shared orbital caches");
             ship.fShallowRCSRemass = 200;
@@ -458,8 +458,8 @@ static class CeresAuditChecks {
         else if (target.Ship == home) homePlans++;
         if (target.Ship == home && failHome) { __result = null; return false; }
         __result = new NavData(__instance.ShipUs);
-        __result.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 300, 0, 0));
-        __result.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 100, new ShipSitu(false), target.Ship == expensiveVisit ? 50 : 280, 0, 0));
+        __result.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 300, 0, 0,rcsCount:0F));
+        __result.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 100, new ShipSitu(false), target.Ship == expensiveVisit ? 50 : 280, 0, 0,rcsCount:0F));
         return false;
     }
     static bool Capacity(ref double __result) { __result = 400; return false; }

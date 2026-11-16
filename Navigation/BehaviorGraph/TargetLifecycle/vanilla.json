@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "target-lifecycle-1.0.1.10",
-  "gameVersion": "1.0.1.10",
-  "assemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
-  "baselineCommit": "21124d5",
+  "id": "target-lifecycle-1.1.0.0",
+  "gameVersion": "1.1.0.0",
+  "assemblySha256": "a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07",
+  "baselineCommit": "be8e282",
   "scope": {
     "status": "cross_actor_target_lifecycle",
     "roles": [
@@ -37,10 +37,52 @@
     ]
   },
   "sources": {
-"flight_rcs_native":{"origin":"game","path":"Ship.cs","symbol":"Ship.Maneuver: direct combat/undock/tow RCS command boundary","anchors":["public void Maneuver("],"sha256":"659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"},
-
-"flight_handoff_native": {"origin":"game","path":"Ostranauts.Ships.Commands/FlyTo.cs","symbol":"FlyTo.RunCommand: path, pause and manual control ownership","anchors":["public override CommandStatus RunCommand"],"sha256":"bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"},"flight_shutdown_native": {"origin":"game","path":"Ostranauts.Ships.Commands/FlyToPath.cs","symbol":"FlyToPath.TorchOff and explicit shutdown callers","anchors":["private void TorchOff()"],"sha256":"154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"},"flight_control_repair": {"origin":"repo","path":"Navigation/FlightControlHandoffPatch.cs","symbol":"FlightControlHandoff / validated route-exit and shallow shutdown hooks","anchors":["internal static void ResetForRcs","class ShallowTorchShutdownPatch"],"sha256":"7d0f7932dcde09f5ae3749d799597d3c3accc53353ac19f30dedf4b21236a0f1"},"flight_control_stop": {"origin":"repo","path":"Navigation/NavigationRoute.cs","symbol":"NavigationRoute.Stop / StopTorch preserve momentum and fuel","anchors":["internal static void StopTorch"],"sha256":"ec3915ac92cde1e37618a11fc372d219f499a664bc0c5c005669cbc4b2708cf2"},
-
+    "flight_rcs_native": {
+      "origin": "game",
+      "path": "Ship.cs",
+      "symbol": "Ship.Maneuver: direct combat/undock/tow RCS command boundary",
+      "anchors": [
+        "public void Maneuver("
+      ],
+      "sha256": "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
+    },
+    "flight_handoff_native": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyTo.cs",
+      "symbol": "FlyTo.RunCommand: path, pause and manual control ownership",
+      "anchors": [
+        "public override CommandStatus RunCommand"
+      ],
+      "sha256": "bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"
+    },
+    "flight_shutdown_native": {
+      "origin": "game",
+      "path": "Ostranauts.Ships.Commands/FlyToPath.cs",
+      "symbol": "FlyToPath.TorchOff and explicit shutdown callers",
+      "anchors": [
+        "private void TorchOff()"
+      ],
+      "sha256": "677658509cd59ee08d4220b6ae6b993df4546336bf7e5521a7cb93c2f839022b"
+    },
+    "flight_control_repair": {
+      "origin": "repo",
+      "path": "Navigation/FlightControlHandoffPatch.cs",
+      "symbol": "FlightControlHandoff / validated route-exit and shallow shutdown hooks",
+      "anchors": [
+        "internal static void ResetForRcs",
+        "class ShallowTorchShutdownPatch"
+      ],
+      "sha256": "be2eab769cb6bb45de7f6cd50029a99cca0ad33b5aa4f25fd37eeb40591d2eab"
+    },
+    "flight_control_stop": {
+      "origin": "repo",
+      "path": "Navigation/NavigationRoute.cs",
+      "symbol": "NavigationRoute.Stop / StopTorch preserve momentum and fuel",
+      "anchors": [
+        "internal static void StopTorch"
+      ],
+      "sha256": "ec3915ac92cde1e37618a11fc372d219f499a664bc0c5c005669cbc4b2708cf2"
+    },
     "scav": {
       "origin": "game",
       "path": "Ostranauts.Ships.AIPilots/ScavPilot.cs",
@@ -68,7 +110,7 @@
       "anchors": [
         "dockedShip.Destroy(isDespawning: false)"
       ],
-      "sha256": "5b8e2e88cb943202406e89bdc0b44a5132cdf27616a9eff7c4045f98f4adedbf"
+      "sha256": "9717d3d0dd508eb46d1adddb3d13c9848a10834fb3664d8774efdee6b95c438b"
     },
     "ship": {
       "origin": "game",
@@ -79,7 +121,7 @@
         "public void CheckTargets()",
         "public void ClearShipTarget()"
       ],
-      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+      "sha256": "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
     },
     "system": {
       "origin": "game",
@@ -88,7 +130,7 @@
       "anchors": [
         "public void RemoveShip(string shipRegID)"
       ],
-      "sha256": "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+      "sha256": "319cfe060c9ff22a425b3c76952088defc69dd7b5d9c46f165206cf30df0514d"
     },
     "situ": {
       "origin": "game",
@@ -98,7 +140,7 @@
         "public void destroy()",
         "public void UpdateTime("
       ],
-      "sha256": "09eba8d52011e3a63659e3bb7d582bf21ecaccd8de8ff0a67711d5dec5169a79"
+      "sha256": "d4eed3718395cf088896a7219ab220186216b56455c704d549872f93dfa049f5"
     },
     "replacement": {
       "origin": "game",
@@ -107,14 +149,14 @@
       "anchors": [
         "private void DestroyAndReload(Ship ship, JsonShip json)"
       ],
-      "sha256": "3f4396cd567159dd3a132cc148e72c6df331c6fef08ced4423e0f495afeea038"
+      "sha256": "7e82e6e28014bd71be4a9b55f2255ca12f82706c8ed5b4a3a84f5c9e05fc0123"
     },
     "target": {
       "origin": "game",
       "path": "Ostranauts.Ships/TargetData.cs",
       "symbol": "Nominal validity and assignment",
       "anchors": [
-        "public bool HasValidTarget => Situ != null"
+        "public bool HasValidTarget =\u003e Situ != null"
       ],
       "sha256": "49ee14a7a489125bd81bf18a84f23af6f9d7908756684be3eba0c8263ac239f1"
     },
@@ -136,7 +178,7 @@
         "public NavData PlanTrip4(",
         "base.ShipUs.objSS.NavData != null"
       ],
-      "sha256": "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+      "sha256": "677658509cd59ee08d4220b6ae6b993df4546336bf7e5521a7cb93c2f839022b"
     },
     "manual": {
       "origin": "game",
@@ -156,7 +198,7 @@
         "private bool HasValidTargetLock()",
         "shipTarget.HasOpenDockingPorts()"
       ],
-      "sha256": "37515df3429295135b9b3abcecc4341c3026d118199e7513299c49b9e00f8b95"
+      "sha256": "e8da4e7eeaa1c0dc5d531909b17f1a80518d89dc2f4805a6e1dba42913e0f5ff"
     },
     "fix_targets": {
       "origin": "repo",
@@ -167,7 +209,7 @@
         "internal static void Removed(",
         "internal static void Restored("
       ],
-      "sha256": "76eef5c6932b1a87f4de59f7b8c02f8a6df37fe6d67f07b08f8cfe47f96e181c"
+      "sha256": "cf8a11dea22b28ee4775da43c3abff2e03a3680024b57e5fbb0a95dd25c87ae3"
     },
     "clear_saved": {
       "origin": "repo",
@@ -249,7 +291,7 @@
       "anchors": [
         "Pirate("
       ],
-      "sha256": "142978e07bce1a888e38debbaac3c06ea2558568633b1919992148935b983bd6"
+      "sha256": "3f0e11012232530508dea73d8998e06dee83b6f4ead3bd7033e9d278b85d041c"
     },
     "local_frame_manager": {
       "origin": "game",
@@ -258,7 +300,7 @@
       "anchors": [
         "CheckLocalAuthorityScenario("
       ],
-      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+      "sha256": "4e5557c959855e4398b80bc198a526b19aeb65c79073270cbe216738fa71c4ba"
     },
     "local_frame_situ": {
       "origin": "game",
@@ -267,7 +309,7 @@
       "anchors": [
         "LockToBO("
       ],
-      "sha256": "09eba8d52011e3a63659e3bb7d582bf21ecaccd8de8ff0a67711d5dec5169a79"
+      "sha256": "d4eed3718395cf088896a7219ab220186216b56455c704d549872f93dfa049f5"
     },
     "local_frame_world": {
       "origin": "game",
@@ -276,7 +318,7 @@
       "anchors": [
         "GetNearestBO("
       ],
-      "sha256": "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+      "sha256": "319cfe060c9ff22a425b3c76952088defc69dd7b5d9c46f165206cf30df0514d"
     },
     "local_frame_resolver": {
       "origin": "repo",
@@ -304,6 +346,16 @@
         "class DepartureWaypointPatch"
       ],
       "sha256": "c50cc807b6b6132241acd2b743a43620c43f4a15fd4376e7a6b03d7a790eda34"
+    },
+    "environment_lifecycle": {
+      "origin": "game",
+      "path": "SolarSystem/EnvironmentEntities.cs",
+      "symbol": "Native deferred environment materialization and region conversion",
+      "anchors": [
+        "public static void UnloadEnvironmentForRegion",
+        "private static IStellarObject ConvertShipToStellarObject"
+      ],
+      "sha256": "5a0e87e1ef4a97325671439c741801daa0fbb8e145ce0988d14867e8a3054f48"
     }
   },
   "evidence": {
@@ -326,6 +378,11 @@
       "level": "native_offline",
       "artifact": "Tests/AiPlannerDiagnosis/TargetLifetimeChecks.cs",
       "supports": "Production removal/restoration hooks execute native destruction, restoration, command failure, replacement and failed/nested replacement. Captured O-ZY3A route is cleared without changing motion/fuel; weak references release and unchanged restoration allocates zero."
+    },
+    "environment_conversion": {
+      "level": "native_offline",
+      "artifact": "Tests/AiPlannerDiagnosis/TrafficConversionChecks.cs",
+      "supports": "Native region conversion retains orphaned physical references; the legacy observer cancels a surviving identity; adapted conversion handling preserves direct/copied routes and respects authored removal. Asset creation, cleanup bookkeeping and presentation are explicit fixture boundaries."
     }
   },
   "variables": {
@@ -345,7 +402,8 @@
         "live",
         "hidden",
         "replaced",
-        "removed"
+        "removed",
+        "converted"
       ],
       "description": "Hidden is not destroyed; replacement preserves logical identity.",
       "kind": "state"
@@ -353,9 +411,10 @@
     "registry": {
       "values": [
         "present",
-        "absent"
+        "absent",
+        "stellar"
       ],
-      "description": "Whether the logical ship destination resolves in the system.",
+      "description": "Physical ship, deferred stellar identity, or neither; a stellar identity survives retirement of its physical representation.",
       "kind": "state"
     },
     "scan_ref": {
@@ -444,7 +503,8 @@
       "kind": "native_result"
     }
   },
-  "predicates": {},
+  "predicates": {
+  },
   "nodes": {
     "dispatch": {
       "label": "Shared FlyTo dispatch",
@@ -674,9 +734,11 @@
       "to": "dispatch",
       "event": "other_target_retired",
       "when": {
-        "facts": {}
+        "facts": {
+        }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "ship",
         "system"
@@ -898,9 +960,11 @@
       "to": "planned",
       "event": "other_target_retired",
       "when": {
-        "facts": {}
+        "facts": {
+        }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "ship",
         "system"
@@ -1122,9 +1186,11 @@
       "to": "manual",
       "event": "other_target_retired",
       "when": {
-        "facts": {}
+        "facts": {
+        }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "ship",
         "system"
@@ -1346,9 +1412,11 @@
       "to": "dock",
       "event": "other_target_retired",
       "when": {
-        "facts": {}
+        "facts": {
+        }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "ship",
         "system"
@@ -1480,7 +1548,8 @@
           ]
         }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "path"
       ],
@@ -1495,9 +1564,11 @@
       "to": "dock",
       "event": "arrival_reached",
       "when": {
-        "facts": {}
+        "facts": {
+        }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "path",
         "dock"
@@ -1526,7 +1597,8 @@
           ]
         }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "dock"
       ],
@@ -1581,7 +1653,8 @@
           ]
         }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "dock"
       ],
@@ -1691,7 +1764,8 @@
           ]
         }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "manual",
         "ship"
@@ -1745,7 +1819,8 @@
           ]
         }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "ship"
       ],
@@ -1765,7 +1840,9 @@
             "ship",
             "station"
           ],
-          "shared": ["true"]
+          "shared": [
+            "true"
+          ]
         }
       },
       "set": {
@@ -1782,7 +1859,7 @@
       "evidence": [
         "repaired_lifecycle"
       ],
-      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer's next task."
+      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer\u0027s next task."
     },
     {
       "id": "dispatch.destroyed_false",
@@ -1795,7 +1872,9 @@
             "ship",
             "station"
           ],
-          "shared": ["false"]
+          "shared": [
+            "false"
+          ]
         }
       },
       "set": {
@@ -1811,7 +1890,7 @@
       "evidence": [
         "repaired_lifecycle"
       ],
-      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer's next task."
+      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer\u0027s next task."
     },
     {
       "id": "planned.restore_nonship",
@@ -1827,7 +1906,8 @@
           ]
         }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "ship"
       ],
@@ -1847,7 +1927,9 @@
             "ship",
             "station"
           ],
-          "shared": ["true"]
+          "shared": [
+            "true"
+          ]
         }
       },
       "set": {
@@ -1864,7 +1946,7 @@
       "evidence": [
         "repaired_lifecycle"
       ],
-      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer's next task."
+      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer\u0027s next task."
     },
     {
       "id": "planned.destroyed_false",
@@ -1877,7 +1959,9 @@
             "ship",
             "station"
           ],
-          "shared": ["false"]
+          "shared": [
+            "false"
+          ]
         }
       },
       "set": {
@@ -1893,7 +1977,7 @@
       "evidence": [
         "repaired_lifecycle"
       ],
-      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer's next task."
+      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer\u0027s next task."
     },
     {
       "id": "manual.restore_nonship",
@@ -1909,7 +1993,8 @@
           ]
         }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "ship"
       ],
@@ -1929,7 +2014,9 @@
             "ship",
             "station"
           ],
-          "shared": ["true"]
+          "shared": [
+            "true"
+          ]
         }
       },
       "set": {
@@ -1946,7 +2033,7 @@
       "evidence": [
         "repaired_lifecycle"
       ],
-      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer's next task."
+      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer\u0027s next task."
     },
     {
       "id": "manual.destroyed_false",
@@ -1959,7 +2046,9 @@
             "ship",
             "station"
           ],
-          "shared": ["false"]
+          "shared": [
+            "false"
+          ]
         }
       },
       "set": {
@@ -1975,7 +2064,7 @@
       "evidence": [
         "repaired_lifecycle"
       ],
-      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer's next task."
+      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer\u0027s next task."
     },
     {
       "id": "dock.restore_nonship",
@@ -1991,7 +2080,8 @@
           ]
         }
       },
-      "set": {},
+      "set": {
+      },
       "sources": [
         "ship"
       ],
@@ -2011,7 +2101,9 @@
             "ship",
             "station"
           ],
-          "shared": ["true"]
+          "shared": [
+            "true"
+          ]
         }
       },
       "set": {
@@ -2028,7 +2120,7 @@
       "evidence": [
         "repaired_lifecycle"
       ],
-      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer's next task."
+      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer\u0027s next task."
     },
     {
       "id": "dock.destroyed_false",
@@ -2041,7 +2133,9 @@
             "ship",
             "station"
           ],
-          "shared": ["false"]
+          "shared": [
+            "false"
+          ]
         }
       },
       "set": {
@@ -2057,7 +2151,214 @@
       "evidence": [
         "repaired_lifecycle"
       ],
-      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer's next task."
+      "note": "Permanent registered-vessel destruction also occurs outside retrieval; the producer of destruction does not choose the observer\u0027s next task."
+    },
+    {
+      "id": "dispatch.environment_true",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "environment_converted",
+      "when": {
+        "facts": {
+          "shared": [
+            "true"
+          ],
+          "lifetime": [
+            "live"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "lifetime": "converted",
+        "registry": "stellar",
+        "scan_ref": "dead",
+        "situation": "orphan"
+      },
+      "sources": [
+        "environment_lifecycle",
+        "ship",
+        "situ"
+      ],
+      "evidence": [
+        "environment_conversion"
+      ],
+      "note": "Native region eligibility and successful same-ID conversion are preconditions. This is not permanent destruction or permission to unload player-connected hulls."
+    },
+    {
+      "id": "dispatch.environment_false",
+      "from": "dispatch",
+      "to": "dispatch",
+      "event": "environment_converted",
+      "when": {
+        "facts": {
+          "shared": [
+            "false"
+          ],
+          "lifetime": [
+            "live"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "lifetime": "converted",
+        "registry": "stellar",
+        "scan_ref": "dead"
+      },
+      "sources": [
+        "environment_lifecycle",
+        "ship",
+        "situ"
+      ],
+      "evidence": [
+        "environment_conversion"
+      ],
+      "note": "Native region eligibility and successful same-ID conversion are preconditions. This is not permanent destruction or permission to unload player-connected hulls."
+    },
+    {
+      "id": "planned.environment_true",
+      "from": "planned",
+      "to": "planned",
+      "event": "environment_converted",
+      "when": {
+        "facts": {
+          "shared": [
+            "true"
+          ],
+          "lifetime": [
+            "live"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "lifetime": "converted",
+        "registry": "stellar",
+        "scan_ref": "dead",
+        "situation": "orphan"
+      },
+      "sources": [
+        "environment_lifecycle",
+        "ship",
+        "situ"
+      ],
+      "evidence": [
+        "environment_conversion"
+      ],
+      "note": "Native region eligibility and successful same-ID conversion are preconditions. This is not permanent destruction or permission to unload player-connected hulls."
+    },
+    {
+      "id": "planned.environment_false",
+      "from": "planned",
+      "to": "planned",
+      "event": "environment_converted",
+      "when": {
+        "facts": {
+          "shared": [
+            "false"
+          ],
+          "lifetime": [
+            "live"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "lifetime": "converted",
+        "registry": "stellar",
+        "scan_ref": "dead"
+      },
+      "sources": [
+        "environment_lifecycle",
+        "ship",
+        "situ"
+      ],
+      "evidence": [
+        "environment_conversion"
+      ],
+      "note": "Native region eligibility and successful same-ID conversion are preconditions. This is not permanent destruction or permission to unload player-connected hulls."
+    },
+    {
+      "id": "manual.environment_true",
+      "from": "manual",
+      "to": "manual",
+      "event": "environment_converted",
+      "when": {
+        "facts": {
+          "shared": [
+            "true"
+          ],
+          "lifetime": [
+            "live"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "lifetime": "converted",
+        "registry": "stellar",
+        "scan_ref": "dead",
+        "situation": "orphan"
+      },
+      "sources": [
+        "environment_lifecycle",
+        "ship",
+        "situ"
+      ],
+      "evidence": [
+        "environment_conversion"
+      ],
+      "note": "Native region eligibility and successful same-ID conversion are preconditions. This is not permanent destruction or permission to unload player-connected hulls."
+    },
+    {
+      "id": "manual.environment_false",
+      "from": "manual",
+      "to": "manual",
+      "event": "environment_converted",
+      "when": {
+        "facts": {
+          "shared": [
+            "false"
+          ],
+          "lifetime": [
+            "live"
+          ],
+          "target_kind": [
+            "ship",
+            "station"
+          ]
+        }
+      },
+      "set": {
+        "lifetime": "converted",
+        "registry": "stellar",
+        "scan_ref": "dead"
+      },
+      "sources": [
+        "environment_lifecycle",
+        "ship",
+        "situ"
+      ],
+      "evidence": [
+        "environment_conversion"
+      ],
+      "note": "Native region eligibility and successful same-ID conversion are preconditions. This is not permanent destruction or permission to unload player-connected hulls."
     }
   ],
   "findings": [
@@ -2168,6 +2469,32 @@
         "native_lifecycle"
       ],
       "note": "A removed destination remains assigned even before route dispatch."
+    },
+    {
+      "id": "target.retired_representation",
+      "kind": "stale_target_representation",
+      "severity": "bug",
+      "when": {
+        "facts": {
+          "scan_ref": [
+            "dead"
+          ],
+          "lifetime": [
+            "converted"
+          ],
+          "goal": [
+            "assigned"
+          ]
+        }
+      },
+      "sources": [
+        "environment_lifecycle",
+        "ship"
+      ],
+      "evidence": [
+        "environment_conversion"
+      ],
+      "note": "Logical destination exists as a stellar object, but another actor retains its retired physical Ship."
     }
   ],
   "scenarios": [
@@ -2984,6 +3311,80 @@
         }
       },
       "note": "The same shared repair applies when a vessel disappears for a reason other than hauling a derelict."
+    },
+    {
+      "id": "environment-conversion-shared-true",
+      "start": "planned",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "true",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "planned",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "environment_converted"
+      ],
+      "expect": {
+        "vanilla": {
+          "stop": "",
+          "node": "planned",
+          "finding": "target.retired_representation"
+        },
+        "effective": {
+          "fact": "goal",
+          "stop": "",
+          "node": "planned",
+          "without": "target.retired_representation",
+          "value": "assigned"
+        }
+      },
+      "note": "Cross-actor same-ID conversion is neither destruction nor a new mission. Independent offset waypoints and existing courses survive."
+    },
+    {
+      "id": "environment-conversion-shared-false",
+      "start": "planned",
+      "facts": {
+        "target_kind": "ship",
+        "lifetime": "live",
+        "registry": "present",
+        "scan_ref": "current",
+        "situation": "coherent",
+        "shared": "false",
+        "lock": "anchored",
+        "plan": "finite",
+        "branch": "planned",
+        "ports": "available",
+        "collector": "elsewhere",
+        "goal": "assigned",
+        "collision": "false"
+      },
+      "events": [
+        "environment_converted"
+      ],
+      "expect": {
+        "vanilla": {
+          "stop": "",
+          "node": "planned",
+          "finding": "target.retired_representation"
+        },
+        "effective": {
+          "fact": "goal",
+          "stop": "",
+          "node": "planned",
+          "without": "target.retired_representation",
+          "value": "assigned"
+        }
+      },
+      "note": "Cross-actor same-ID conversion is neither destruction nor a new mission. Independent offset waypoints and existing courses survive."
     }
   ]
 }

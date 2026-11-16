@@ -2,10 +2,19 @@
   "schemaVersion": 1,
   "excludedSources": [],
   "sharedPatches": [
+    "Ostrabus.Orbital.SffDecisionStepsPatch",
     "Ostrabus.NavConsole.ProximityCollisionPatch",
     "Ostrabus.Optimizations.ShipFileProfilePatch"
   ],
   "features": [
+    {
+      "id": "co2-scrubber-audio",
+      "title": "Restore CO2 scrubber audio without the extra 1.1 air-pump loops",
+      "category": "bugfix",
+      "nativeMods": [
+        { "name": "OstrabusScrubberAudio", "source": "MiscBugFixes/ScrubberAudio/Assets" }
+      ]
+    },
     {
       "id": "rotation-module",
       "title": "1x1 RCS rotation and original-target bearing hold module",
@@ -87,6 +96,12 @@
       ]
     },
     {
+        "id": "bounty-preservation",
+        "title": "Preserve bounty targets and their ships across administrative cleanup",
+        "category": "simulation",
+        "patchFiles": ["Navigation/BountyPreservationPatch.cs"]
+      },
+      {
       "id": "bounty-departure-fuel",
       "title": "Service bounty ships before native station departures",
       "category": "bugfix",
@@ -104,6 +119,7 @@
       "id": "torch-towing",
       "title": "Keep braced tows on native autopilot courses and include their mass",
       "category": "bugfix",
+        "requires": ["passive-docking-attachment", "route-completion"],
       "patchFiles": [
         "Navigation/Towing/TorchTowPatches.cs"
       ]
@@ -294,6 +310,12 @@
       "patchFiles": [
         "Navigation/ScavengerReturn.cs"
       ]
+    },
+    {
+      "id": "passive-docking-attachment",
+      "title": "Preserve authored body attachments during passive visits; release on actual movement",
+      "category": "simulation",
+      "patchFiles": ["Navigation/Attachments/PassiveAttachmentPatch.cs"]
     },
     {
       "id": "orbital-waiting",
@@ -803,7 +825,7 @@
     },
     {
       "id": "course-controls",
-      "title": "Fine-adjust torch course sliders with the mouse wheel",
+      "title": "Fine-adjust torch course sliders with the mouse wheel alongside native Shift-drag",
       "category": "qol",
       "patchFiles": [
         "QoL/CoursePlot/CourseFineControls.cs"
@@ -912,6 +934,9 @@
         "Navigation/Collisions/PhysicalCollisionPatches.cs",
         "Navigation/Collisions/HullDockingPatches.cs"
       ],
+      "patches": [
+        { "type": "Ostrabus.Orbital.SffDecisionStepsPatch" }
+      ],
       "before": [
         "global::Ostrabus.ShipNavigation.Collisions.PhysicalCollisions.Flag = Config.Bind(\"Navigation\", \"HullCollisions\", true, \"Use cached hull geometry for ordinary physical contacts. Weapons remain native.\");"
       ],
@@ -967,10 +992,12 @@
     },
     {
       "id": "sff",
-      "title": "Preserve orbits and plausible AI travel during SFF",
+      "title": "Preserve orbits and plausible AI travel during SFF and PASS",
       "category": "simulation",
       "requires": [
-        "orbital"
+        "orbital",
+        "route-completion",
+        "sff-navigation-destination"
       ],
       "patches": [
         {
@@ -981,10 +1008,16 @@
         },
         {
           "type": "Ostrabus.Orbital.SffMotionPatch"
+        },
+        {
+          "type": "Ostrabus.Orbital.SffDecisionStepsPatch"
+        },
+        {
+          "type": "Ostrabus.Orbital.PassPendingEndTurnsPatch"
         }
       ],
       "before": [
-        "global::Ostrabus.Orbital.SffSimulation.Enabled = Config.Bind(\"Orbital\", \"SuperFastForward\", true, \"With Orbital enabled, preserve orbits and bounded AI travel during SFF.\").Value;"
+        "global::Ostrabus.Orbital.SffSimulation.Enabled = Config.Bind(\"Orbital\", \"SuperFastForward\", true, \"With Orbital enabled, preserve orbits and bounded AI travel during SFF and PASS time skips.\").Value;"
       ],
       "settings": [
         "sff"
@@ -992,7 +1025,7 @@
     },
     {
       "id": "economy-sff",
-      "title": "Run production and cargo dispatch chronologically during SFF",
+      "title": "Run production and cargo dispatch chronologically during SFF and PASS",
       "category": "simulation",
       "requires": [
         "sff",
@@ -1003,7 +1036,7 @@
         "Orbital/Economy/FreightPlanningScope.cs"
       ],
       "before": [
-        "global::Ostrabus.Orbital.Economy.SffEconomy.Enabled = Config.Bind(\"Orbital\", \"SffEconomy\", true, \"Process background production and freight chronologically during corrected SFF.\").Value;"
+        "global::Ostrabus.Orbital.Economy.SffEconomy.Enabled = Config.Bind(\"Orbital\", \"SffEconomy\", true, \"Process background production and freight chronologically during corrected SFF and PASS.\").Value;"
       ]
     },
     {
@@ -1274,6 +1307,22 @@
       "category": "bugfix",
       "patchFiles": [
         "MiscBugFixes/CivilianSffCoordinatesPatch.cs"
+      ]
+    },
+    {
+      "id": "nav-module-placement",
+      "title": "Place nav modules correctly under non-centered parent pivots",
+      "category": "bugfix",
+      "patchFiles": [
+        "NavConsole/ModulePlacementPatch.cs"
+      ]
+    },
+    {
+      "id": "save-forward-compatibility",
+      "title": "Restore missing legacy RCS propulsion caches when loading in 1.1",
+      "category": "bugfix",
+      "patchFiles": [
+        "SaveCompatibility/LegacyRcsLoadingPatch.cs"
       ]
     }
   ]

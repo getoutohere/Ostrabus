@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using HarmonyLib;
 using Ostrabus.QoL.CoursePlot;
 
-static class Program {
+static partial class Program {
     static int checks;
     static double mass;
     static T Empty<T>() => (T)FormatterServices.GetUninitializedObject(typeof(T));
@@ -20,6 +20,7 @@ static class Program {
         fixture.Patch(AccessTools.PropertyGetter(typeof(Ship), "Mass"), prefix: new HarmonyMethod(typeof(Program), nameof(Mass)));
         var production = new Harmony("offline.course.fine.production");
         try {
+            PrecisionCoexistence(fixture);
             // Actual shipped Ship.GetMaxTorchThrust; only mass and absent scene
             // reactor discovery are fixture adapters. No thrust-law replacement.
             foreach (double kg in new[] { 16000d, 32000, 100000 }) foreach (int pairs in new[] { 1, 2, 3, 4 }) {

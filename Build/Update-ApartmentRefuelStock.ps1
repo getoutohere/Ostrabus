@@ -6,6 +6,8 @@ param(
 
 # Installation-time composition, never a runtime/restock hook. Native loot records
 # replace whole records; compose from enabled sources to preserve other shop mods.
+# Sundries is the Furnishings kiosk, not the general Supply kiosk. Keep the
+# existing output filename so upgrading also replaces the old supply overrides.
 $ErrorActionPreference = 'Stop'
 $modName = 'OstrabusApartmentRefuel'
 $orderPath = Join-Path $GameDirectory 'Ostranauts_Data\Mods\loading_order.json'
@@ -35,7 +37,7 @@ if ($own[0] -match '\|disabled(?:\||$)' -or -not (Test-Path -LiteralPath $plugin
     return
 }
 
-$stockIds = @('ItmSupplyKioskInv') + @('BCER','BCRS','EJDR','HQCH','JATL','JFTS','JPTN','MHNG','MLAB','MTRS','MSUZ','MVOL','SVIR','VCBR','VENC','VNCA' | ForEach-Object { "ItmSupplyKiosk$($_)Inv" })
+$stockIds = @('ItmOKLGFurnishingsKioskInv') + @('BCER','BCRS','EJDR','JATL','JFTS','JPTN','MHNG','MLAB','MSUZ','MTRS','MVOL','SVIR','VNCA' | ForEach-Object { "ItmFurnishingsKiosk$($_)Inv" })
 $effective = @{}
 # PowerShell 5 rejects JSON comments. Match complete quoted strings first, so
 # comment-like text inside strings (including URLs/escaped quotes) is preserved.
@@ -66,7 +68,7 @@ foreach ($entry in $order.aLoadOrder) {
         }
         if ($ignored) { continue }
         $raw = [IO.File]::ReadAllText($file)
-        if (-not $raw.Contains('ItmSupplyKiosk')) { continue }
+        if (-not $raw.Contains('FurnishingsKiosk')) { continue }
         try { $rows = @(Read-LootJson $raw) }
         catch { throw "Cannot safely compose supply stock from $file : $($_.Exception.Message)" }
         foreach ($row in $rows) { if ($stockIds -ccontains $row.strName) { $effective[$row.strName] = $row } }
@@ -94,4 +96,4 @@ foreach ($output in @(@($stockFile,$stockJson), @($orderPath,$orderJson))) {
     [IO.File]::WriteAllText(($output[0]+'.tmp'), $output[1], $utf8)
     Move-Item -LiteralPath ($output[0]+'.tmp') -Destination $output[0] -Force
 }
-Write-Host 'Apartment refuel stock composed with enabled supply mods (17 shops).'
+Write-Host 'Apartment refuel stock composed for Sundries/Furnishings (14 stock tables).'

@@ -35,8 +35,8 @@ namespace Ostrabus {
             global::Ostrabus.ShipNavigation.StationDockedCollisions.Flag = Config.Bind("Navigation", "StationDockedCollisionExemption", true, "Exclude station-docked visiting hulls and their connected groups from ship collisions, AI avoidance and proximity warnings. Change live in the PDA Mod Settings app.");
             global::Ostrabus.ShipNavigation.Collisions.PhysicalCollisions.Flag = Config.Bind("Navigation", "HullCollisions", true, "Use cached exterior hulls for ordinary free ship collisions. Weapons, planets, station regions and AI avoidance stay native. Toggle live in the PDA Mod Settings app.");
             global::Ostrabus.Orbital.OrbitalSimulation.Initialize(Config.Bind("Orbital", "Enabled", false, "Launch default for parent-frame acceleration correction on numerically simulated free ships/docked groups. Console orbital on/off overrides for this session without changing this setting. Experimental; live AI/navigation validation required."));
-            global::Ostrabus.Orbital.SffSimulation.Enabled = Config.Bind("Orbital", "SuperFastForward", true, "With Orbital enabled, replace SFF numerical jumps with orbital coasting and bounded AI travel. Player plotted courses and combat retain vanilla behavior. Console orbital sff on/off overrides for this session.").Value;
-            global::Ostrabus.Orbital.Economy.SffEconomy.Enabled = Config.Bind("Orbital", "SffEconomy", true, "With Orbital and SuperFastForward enabled, process production, cargo dispatch and eligible shallow freight arrivals chronologically during SFF.").Value;
+            global::Ostrabus.Orbital.SffSimulation.Enabled = Config.Bind("Orbital", "SuperFastForward", true, "With Orbital enabled, preserve orbital coasting and bounded AI travel during SFF and PASS time skips. Native plotted playback and combat remain authoritative. Console orbital sff on/off overrides for this session.").Value;
+            global::Ostrabus.Orbital.Economy.SffEconomy.Enabled = Config.Bind("Orbital", "SffEconomy", true, "With Orbital and SuperFastForward enabled, process production, cargo dispatch and eligible shallow freight arrivals chronologically during SFF and PASS.").Value;
             SceneManager.sceneUnloaded += global::Ostrabus.Orbital.OrbitalSimulation.SceneUnloaded;
             global::Ostrabus.AlternativeWork.AlternativeWorkSystem.Flag = Config.Bind("AlternativeWork", "Enabled", false, "Experimental crew work-order selector and cooperative travel planning. Toggle live with altwork on/off; existing work continues.");
             global::Ostrabus.AlternativeWork.WorkSupplyPlan.WindowConfig = Config.Bind("AlternativeWork", "SupplyWindow", 8, new BepInEx.Configuration.ConfigDescription("Rolling nearby supply target window. Console altwork window N changes it live; existing native work continues.", new BepInEx.Configuration.AcceptableValueRange<int>(1, 30)));
@@ -114,7 +114,7 @@ namespace Ostrabus {
         // Harmony ownership. The project, assembly and displayed name are Ostrabus.
         public const string PLUGIN_GUID = "com.ostranauts.template";
         public const string PLUGIN_NAME = "Ostrabus";
-        public const string PLUGIN_VERSION = "0.5.0";
+        public const string PLUGIN_VERSION = "0.6.0";
     }
 }
 

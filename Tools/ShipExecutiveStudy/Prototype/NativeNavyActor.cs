@@ -298,6 +298,9 @@ sealed partial class NativeNavyActor
     internal static NativeNavyActor Restore(Definition model, string snapshot)
     {
         var saved = JsonConvert.DeserializeObject<ReturnCheckpoint>(snapshot);
+        // Refuse stale bindings before reconstructing a native world.
+        ValidateProfile(saved);
+        Machine.Restore(model, saved.Executive, "SUBJECT", "fixture-activation", Executive.RuntimeBinding);
         var world = WorldCheckpoint.Restore(saved.World);
         return RestoreBound(model, saved, world);
     }

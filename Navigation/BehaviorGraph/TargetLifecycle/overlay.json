@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "ostrabus-current-target-lifecycle",
-  "base": "target-lifecycle-1.0.1.10",
+  "base": "target-lifecycle-1.1.0.0",
   "patches": [
     {
       "id": "replacement_references",
@@ -404,11 +404,104 @@
           }
         }
       ]
+    },
+    {
+      "id": "environment_conversion_targets",
+      "summary": "Scope native region-conversion teardown as a same-identity representation change. Rebind shared situations, clear obsolete physical references, preserve owned waypoints and courses; deliberately dropped identities still use ordinary removal handling.",
+      "sources": [
+        "fix_targets",
+        "environment_lifecycle"
+      ],
+      "evidence": [
+        "environment_conversion"
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "dispatch.environment_true",
+          "id": "fix.environment.dispatch.true",
+          "to": "dispatch",
+          "set": {
+            "situation": "coherent",
+            "scan_ref": "none"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "dispatch.environment_false",
+          "id": "fix.environment.dispatch.false",
+          "to": "dispatch",
+          "set": {
+            "situation": "coherent",
+            "scan_ref": "none"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "planned.environment_true",
+          "id": "fix.environment.planned.true",
+          "to": "planned",
+          "set": {
+            "situation": "coherent",
+            "scan_ref": "none"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "planned.environment_false",
+          "id": "fix.environment.planned.false",
+          "to": "planned",
+          "set": {
+            "situation": "coherent",
+            "scan_ref": "none"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "manual.environment_true",
+          "id": "fix.environment.manual.true",
+          "to": "manual",
+          "set": {
+            "situation": "coherent",
+            "scan_ref": "none"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "manual.environment_false",
+          "id": "fix.environment.manual.false",
+          "to": "manual",
+          "set": {
+            "situation": "coherent",
+            "scan_ref": "none"
+          }
+        }
+      ],
+      "classification": "reference_integrity_fix",
+      "removes": [
+        "Orphaned references to a physical hull retired during native environment conversion.",
+        "Legacy cancellation of a surviving same-ID stellar destination."
+      ],
+      "preserves": [
+        "Native environment eligibility, asset-driven deletion and identity changes.",
+        "Existing courses, owned waypoints, momentum and fuel.",
+        "No forced loading or additional AI behavior."
+      ]
     }
   ],
   "documentedDependencies": [
-{"id":"shallow_flight_control_handoff","sources":["flight_handoff_native","flight_shutdown_native","flight_control_repair","flight_control_stop","flight_rcs_native"],"status":"native_tested_boundary_not_transition_expanded","reason":"Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."},
-
+    {
+      "id": "shallow_flight_control_handoff",
+      "sources": [
+        "flight_handoff_native",
+        "flight_shutdown_native",
+        "flight_control_repair",
+        "flight_control_stop",
+        "flight_rcs_native"
+      ],
+      "status": "native_tested_boundary_not_transition_expanded",
+      "reason": "Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."
+    },
     {
       "id": "local_navigation_frames",
       "sources": [
@@ -431,5 +524,6 @@
       "reason": "Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md."
     }
   ],
-  "notApplicable": []
+  "notApplicable": [
+  ]
 }

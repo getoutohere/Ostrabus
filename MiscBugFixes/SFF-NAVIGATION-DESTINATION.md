@@ -43,9 +43,17 @@ two-hour skip. The helper now invokes native `UpdateTime` on the preserved
 target before native instant placement. See the [Ceres reproduction and related
 pilot-refusal defect](../Navigation/CERES-SFF-DISPLACEMENT.md).
 
+The PASS integration audit also demonstrated that no GUI completion need precede
+an instant mooring. The same patch class now refreshes the argument at
+`Dock.ResolveInstantly`'s single `PlaceOrbitPosition` call, mirroring ordinary
+`Dock.RunCommand` without changing eligibility or placement. This covers native
+non-GUI shortcuts and stale targets after a later coast window. Both GUI flag
+values and mooring without preceding playback have native regression controls.
+
 The transpiler checks exactly one target write and four target reads, rejecting
 an unfamiliar assembly layout. It adds no per-frame prefix, recorder, saved key
-or retained object collection. Custom Builder exposes this as the independent
+or retained object collection. Its second native target validates exactly one
+instant-moor placement call. Custom Builder exposes this as the independent
 `sff-navigation-destination` bugfix; it does not require the orbital simulation
 improvements.
 

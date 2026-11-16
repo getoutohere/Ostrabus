@@ -41,6 +41,14 @@ internal static class HullDocking {
     }
     internal static float DistanceAU(Ship a, Ship b) => RadiusSum(a,b,CollisionManager.GetCollisionDistanceAU(a,b));
     internal static float PairDistanceAU(Ship a, Ship b) => PairRadiusSum(a,b,CollisionManager.GetCollisionDistanceAU(a,b));
+    internal static double PermissionRangeKm(Ship a, Ship b, Interaction interaction) {
+        // The authored effect identifies a docking-clearance response. Keep
+        // general radio/plot ranges native and leave every other interaction
+        // eligibility check (including the authored distance limit) in place.
+        if (interaction.LootCTsThem?.strName != "TXTDockingClearance" || !Applies(a,b))
+            return CollisionManager.GetRangeToCollisionKM(a,b);
+        return Math.Max(0.0,a.objSS.GetRangeTo(b.objSS)-PairDistanceAU(a,b))*149597872.0;
+    }
     // Keep the native buffer (including speed scaling and the optional range
     // dial), replacing only its hull allowance. Both warning comparison and
     // intensity must consume this same value. Physical overlap retains its

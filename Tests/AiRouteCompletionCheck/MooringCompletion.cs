@@ -12,7 +12,7 @@ static partial class Program {
     static bool MoorBoundary(Dock __instance, ref CommandStatus __result) {
         __result = new CommandStatus(CommandCode.Finished, __instance); return false;
     }
-    static void MooringCompletion(Harmony boundary) {
+    static void MooringCompletion(Harmony boundary, Harmony production) {
         boundary.Patch(AccessTools.Method(typeof(Dock), "HasValidTargetLock"), prefix: new HarmonyMethod(typeof(Program), nameof(ValidLock)));
         boundary.Patch(AccessTools.Method(typeof(Dock), "AttemptToMoor"), prefix: new HarmonyMethod(typeof(Program), nameof(MoorBoundary)));
         var oldBody = mercury;
@@ -20,7 +20,10 @@ static partial class Program {
             realLockedMotion = true;
             mercury = new BodyOrbit(new JsonBodyOrbitSave { strName = "Mercury", fAxis1 = 5.5, fAxis2 = 5.5, fPerh = 2.75,
                 fAph = 2.75, fPeriod = 145161856, nOrbitDirection = 1 });
-            foreach (double skip in new[] { 60d, 7200d, 21600d }) {
+            var resolve = AccessTools.Method(typeof(Dock), nameof(Dock.ResolveInstantly));
+            var patch = typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.MiscBugFixes.SffNavigationDestinationPatch", true);
+            foreach (bool fast in new[] { false, true }) foreach (double skip in new[] { 30d, 60d, 7200d, 21600d }) {
+                AccessTools.Field(typeof(GUIFFWD), "bFFWDActive").SetValue(null, fast);
                 StarSystem.fEpoch = 1000000;
                 mercury.UpdateTime(StarSystem.fEpoch);
                 var target = new ShipSitu(false) { bBOLocked = true, strBOPORShip = "Mercury", vBOOffsetx = .00001, Size = 1000 };
@@ -34,9 +37,15 @@ static partial class Program {
                 StarSystem.fEpoch += skip;
                 mercury.UpdateTime(StarSystem.fEpoch);
                 double x = mercury.dXReal + target.vBOOffsetx, y = mercury.dYReal + target.vBOOffsety;
+                production.Unpatch(resolve, HarmonyPatchType.Transpiler, production.Id);
                 dock.ResolveInstantly(new Blackboard());
                 double staleError = DistanceKm(ship.objSS.vPosx - x, ship.objSS.vPosy - y);
                 Check(staleError > skip * 10, "Native stale-target mooring did not reproduce skip-sized separation");
+                production.Patch(resolve, transpiler: new HarmonyMethod(patch, "Transpiler"));
+                dock.ResolveInstantly(new Blackboard());
+                double directError = DistanceKm(ship.objSS.vPosx - x, ship.objSS.vPosy - y);
+                double placementRadius = (ship.objSS.GetRadiusAU() + target.GetRadiusAU() + 6.684587e-11f) * 149597870.7;
+                Check(directError <= placementRadius + .001, "Instant mooring without a GUI completion retained stale coordinates");
                 // Native completion, with production target preservation, must refresh
                 // the destination before the actual native instant-moor placement.
                 var route = Route(ship, endpoint, arrival);
@@ -44,7 +53,6 @@ static partial class Program {
                 Check(ReferenceEquals(ship.shipSituTarget, target), "Mooring changed destination identity");
                 dock.ResolveInstantly(new Blackboard());
                 double error = DistanceKm(ship.objSS.vPosx - x, ship.objSS.vPosy - y);
-                double placementRadius = (ship.objSS.GetRadiusAU() + target.GetRadiusAU() + 6.684587e-11f) * 149597870.7;
                 Check(error <= placementRadius + .001, "SFF instant mooring retained a stale target offset: " + error + " km");
                 Check(target.bBOLocked && target.strBOPORShip == "Mercury", "Mooring target lost its authored body lock");
             }

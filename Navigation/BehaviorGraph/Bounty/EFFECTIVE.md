@@ -17,6 +17,9 @@ flowchart TD
   n_choose["Native TargetNewIfNone"]
   n_home["Low fuel: choose station"]
   n_ordinary["Ordinary target search"]
+  n_target_missing["Administrative target deletion"]
+  n_hull_missing["Original hull disposed"]
+  n_replacement_pending["Target ashore; original hull destroyed"]
   n_parked -->|"scheduling"| n_parked
   n_parked -->|"scheduling"| n_parked
   n_parked -->|"scheduling"| n_boarding
@@ -28,7 +31,15 @@ flowchart TD
   n_activate -->|"activate"| n_choose
   n_choose -->|"select"| n_home
   n_choose -->|"select"| n_ordinary
-  n_home -->|"dock"| n_parked
+  n_home -->|"dock [conditional]"| n_parked
+  n_home -->|"dock [conditional]"| n_target_missing
+  n_parked -->|"stale_cleanup [conditional]"| n_hull_missing
+  n_ordinary -->|"region_cleanup [conditional]"| n_replacement_pending
+  n_ordinary -->|"physical_destruction"| n_hull_missing
   n_boarding -->|"embark / bounty_departure_service [conditional]"| n_activate
   n_boarding -->|"embark / bounty_departure_service [conditional]"| n_activate
+  n_home -->|"dock / bounty_administrative_preservation [conditional]"| n_parked
+  n_home -->|"dock / bounty_administrative_preservation [conditional]"| n_parked
+  n_parked -->|"stale_cleanup / bounty_administrative_preservation [conditional]"| n_parked
+  n_ordinary -->|"region_cleanup / bounty_administrative_preservation [conditional]"| n_parked
 ```

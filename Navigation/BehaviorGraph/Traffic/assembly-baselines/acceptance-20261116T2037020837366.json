@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/592904f2b41e6319e5f435b93b68c1b57102aa24c16c42ff857e472e248e8932.json.br",
+  "reason": "Reviewed production passive-attachment behavior, native hauling release/pause/save boundary, applied/course ownership and native SFF/PASS continuation. Added small-mismatch relock control and bound the actual reviewed GUI/PASS MoveNext methods for the two previously unbound jump sources. Offline tests and physical-model limits are documented.",
+  "acceptedUtc": "2026-11-16T20:37:02.0815036Z",
+  "previousSnapshot": "assembly-baselines/54a9fed22841871b0dc5e9fea3ac3a3236e1b6b4cee832f5bca67d50fa47dd72.json.br"
+}

@@ -56,4 +56,4 @@ try {
     throw $failure
 }
 if ($Uninstall) { Write-Host 'Removed apartment refuel plugin and future stock. Item definitions and uninstall work remain for saved items.' }
-else { Write-Host 'Installed Apartment Refuel Terminal. Restart Ostranauts; supply kiosks gain stock at their next native restock.' }
+else { Write-Host 'Installed Apartment Refuel Terminal. Restart Ostranauts; Sundries/Furnishings kiosks gain stock at their next native restock.' }

@@ -12,6 +12,8 @@ use the individual hull pair; AI avoidance and formation placement retain
 complete-group bounds. This repairs zero range beside an asteroid-moored ship
 and alarms firing late relative to displayed hull clearance. See the
 [reproduction and range repair](MOORED-TARGET-RANGE.md).
+Docking-clearance response ranges also use that selected pair allowance,
+preserving their authored limits; see the [forced-docking range repair](FORCED-DOCK-RANGE.md).
 
 Optional simulation enhancement, enabled by default. **MOD SETTINGS → Hull-shaped
 collisions** changes saved BepInEx `[Navigation] HullCollisions` live. Off restores
@@ -124,8 +126,10 @@ uses native handling, not a fabricated miss. This is not a new rigid-body
 integrator. Swept-only contacts feed incoming-side correction and contact normal
 through native group separation/momentum handling. Native damage severity stays.
 
-SFF retains native collision handling. Histories reset across observed SFF
-boundaries, save/scene replacement, toggles, non-forward clocks, intervals over
+SFF and tagged PASS retain native collision handling. Begin/end jump generations
+invalidate weak histories even for hulls first observed after a short shuttle
+trip. Histories also reset across observed GUI SFF boundaries,
+save/scene replacement, toggles, non-forward clocks, intervals over
 120 game seconds, changed grid/radius/docking state, and displacement inconsistent
 with recorded speed (instant docking/teleport). Interplanetary relocation does
 not become a swept collision path through everything between planets.

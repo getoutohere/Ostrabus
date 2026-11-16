@@ -11,7 +11,7 @@ dotnet run --project Tools/AIBehaviorGraph -c Release -- scenario repeat-reboard
 Compare [vanilla](VANILLA.md), [effective](EFFECTIVE.md), and the
 [conditional audit](AUDIT.md). The actual native test is separate:
 [BountyDepartureCheck](../../../Tests/BountyDepartureCheck/README.md).
-The slice passes 76 conditional scenario expectations and model safety checks.
+The slice passes 126 conditional scenario expectations and model safety checks.
 
 The model distinguishes:
 
@@ -28,6 +28,11 @@ The model distinguishes:
   materialized hulls, station-person moves and transfer exceptions.
 - Adequate refilled propulsion from a full tank whose delta-v still fails native
   `LowFuel`. The patch does not force patrol or repair failed equipment.
+- Rejected station arrivals that destroy a target, accepted arrivals that release
+  its original hull claim, regional disposal of that hull, and stale removal while
+  its captain is ashore. The separate [preservation policy](../../BOUNTY-PRESERVATION.md)
+  preserves native transfer and reboarding; it does not override physical death,
+  expiry, custody or successful hand-ins.
 
 The graph previously stopped at selected ordinary traffic/role boundaries and
 omitted this independent activation caller. See the

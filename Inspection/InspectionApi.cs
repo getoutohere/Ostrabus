@@ -283,7 +283,11 @@ internal sealed class InspectionApi : IDisposable {
             try {
                 bool ready = CrewSim.objInstance != null && CrewSim.objInstance.FinishedLoading && system?.dictShips != null;
                 if (request.Path == "/health") {
-                    request.Completion.TrySetResult(new Reply(200, SnapshotJson.Map("ready", ready, "generation", generation)));
+                    // Identify the images actually loaded, even when a candidate
+                    // and its preserved baseline share the same version number.
+                    request.Completion.TrySetResult(new Reply(200, SnapshotJson.Map("ready", ready, "generation", generation,
+                        "pluginMvid", typeof(OstrabusPlugin).Module.ModuleVersionId.ToString("D"),
+                        "gameMvid", typeof(Ship).Module.ModuleVersionId.ToString("D"))));
                 } else if (request.Path == "/console") {
                     request.Completion.TrySetResult(ConsoleInspection.Read(request.Offset));
                 } else if (request.Path == "/memory/stop" && request.Method == "POST") {

@@ -1,0 +1,25 @@
+[
+  {
+    "strName": "AtmoScrubber01",
+    "strPtA": "GasInput",
+    "strPtB": "GasOutput01",
+    "strCTA": "TIsAirtightNoHuman",
+    "strCTB": "TIsAirtightNoHuman",
+    "fVol": 1.4,
+    "fSignalCheckRate": 1.0,
+    "strAudioEmitterAir": null,
+    "strAudioEmitterPump": null,
+    "bAllowExternA": true,
+    "bAllowExternB": true,
+    "aGases": [
+      {
+        "strName": "AtmoScrubber01Data",
+        "strGasIn": "CO2",
+        "strGasOut": "CO2",
+        "fConvRate": 1.0,
+        "fGasPressTotalRef": 101.3,
+        "fStatRate": 1.0
+      }
+    ]
+  }
+]

@@ -105,6 +105,17 @@ static partial class Program {
             Check(definition.strLoot == null && !definition.aStartingConds.Any(c => c.StartsWith("IsRefuelKiosk=") || c.StartsWith("IsTraderNPC=") || c.StartsWith("IsIndestructable=") || c.StartsWith("IsCategoryIndustrialProducts=")), "Unsafe inherited kiosk behavior");
             Check(definition.aUpdateCommands.Any(c => c.StartsWith("Destructable,StatDamage,")), "No native damage transition");
             Check(!definition.aInteractions.Contains("ACTKioskUseNPC"), "Private home attracts idle NPCs");
+            Check(definition.aStartingConds.Contains("IsOversized=1.0x1"), "Terminal can be packed as a small item");
+            var terminal = Defined("handling-" + suffix, Runtime.Item + suffix);
+            terminal.mapSlotEffects = new Dictionary<string, JsonSlotEffects>();
+            for (int i = 0; i < definition.mapSlotEffects.Length; i += 2)
+                terminal.mapSlotEffects[definition.mapSlotEffects[i]] = new JsonSlotEffects { strSlotPrimary = definition.mapSlotEffects[i] };
+            foreach (string slotName in new[] { "heldL", "heldR", "back", "drag" }) {
+                var slot = Empty<Slot>(); slot.strName = slotName; slot.bHoldSlot = true; slot.aCOs = new CondOwner[1];
+                Check(slot.CanFit(terminal, bAuto: false) == (slotName == "drag"), "Native slot fit mishandles terminal in " + slotName);
+            }
+            foreach (string vendor in new[] { "TIsBarterOKLGFurnishingsKioskSell", "TIsBarterFurnishingsKioskSell" })
+                Check(DataHandler.GetCondTrigger(vendor).Triggered(terminal) == suffix.EndsWith("Loose", StringComparison.Ordinal), "Native Furnishings sale filter mishandles terminal state " + suffix);
         }
         foreach (string damage in new[] { "", "Dmg" }) {
             var install = jobs.Single(j => j.strName == "OstrabusApartmentRefuel" + damage + "Install");
@@ -126,6 +137,16 @@ static partial class Program {
         var home = MakeShip("OKLG|RES_1", true, "ResOKLG01"); Owners[home.strRegID] = "player";
         var vessel = MakeShip("O-TEST"); Link(home, vessel);
         Check(Eligibility.Apartment(home, out var actual) && actual == host, "Owned residence rejected");
+        home.json.strName = home.strRegID; home.json.strTemplateName = null; home.strTemplateName = null;
+        Check(Eligibility.Apartment(home, out actual) && actual == host, "Existing saved residence without template metadata rejected (live BCER reproduction)");
+        home.strTemplateName = "ResOKLG01";
+        Check(Eligibility.Apartment(home, out _), "Saved residence with runtime template metadata rejected");
+        home.strTemplateName = "PirateShip";
+        Check(!Eligibility.Apartment(home, out _), "Explicit nonresidential template treated as a residence"); home.strTemplateName = null;
+        home.json.strTemplateName = "ResOKLG01";
+        Check(Eligibility.Apartment(home, out _), "Saved residence template metadata rejected"); home.json.strTemplateName = null;
+        home.objSS.bIsBO = false;
+        Check(!Eligibility.Apartment(home, out _), "Saved-name identity bypasses mobile hull exclusion"); home.objSS.bIsBO = true;
         Check(Eligibility.Vessel(home, vessel), "Directly docked vessel rejected");
         var other = MakeShip("O-TOWED"); Link(vessel, other, "tow-A", "tow-B");
         Check(!Eligibility.Vessel(home, other), "Tow-chain ship admitted");

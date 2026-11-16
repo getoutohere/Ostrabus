@@ -4,6 +4,7 @@
     <Compile Remove="Core/**/*.cs" />
     <Compile Include="../../NavConsole/Outlines/*.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../Navigation/Collisions/*.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="../../Orbital/JumpBoundary.cs" Link="JumpBoundary.cs" />
     <Compile Include="../../Navigation/StationDockedCollisions.cs" Link="StationDockedCollisions.cs" />
     <Compile Include="../../NavConsole/ProximityRange.cs" Link="ProximityRange.cs" />
     <Compile Include="../../NavConsole/ProximityCollisionPatch.cs" Link="ProximityCollisionPatch.cs" />

@@ -70,8 +70,8 @@ static partial class Program {
             boundary.Patch(AccessTools.Method(typeof(Ship), nameof(Ship.RefuelRCS)), prefix: new HarmonyMethod(typeof(Program), nameof(LoadedFill)));
             boundary.Patch(AccessTools.Method(typeof(Ship), nameof(Ship.RemoveGasMass)), prefix: new HarmonyMethod(typeof(Program), nameof(LoadedRemoval)));
             var loaded = RefillShip(40); Set(loaded, "nLoadState", Ship.Loaded.Full); physicalFuel = 50;
-            var loadedPlan = new NavData(loaded); loadedPlan.AddNavDataPoint(new NavDataPoint(1000, Empty<ShipSitu>(), 50, 0, 0));
-            loadedPlan.AddNavDataPoint(new NavDataPoint(1100, Empty<ShipSitu>(), 30, 0, 0)); loaded.objSS.NavData = loadedPlan;
+            var loadedPlan = new NavData(loaded); loadedPlan.AddNavDataPoint(new NavDataPoint(1000, Empty<ShipSitu>(), 50, 0, 0,rcsCount:0F));
+            loadedPlan.AddNavDataPoint(new NavDataPoint(1100, Empty<ShipSitu>(), 30, 0, 0,rcsCount:0F)); loaded.objSS.NavData = loadedPlan;
             StarSystem.fEpoch = 1000; loaded.RefuelRCS(100);
             Check(physicalFuel == 100 && loaded.fShallowRCSRemass == 90, "Physical refill erased pending shallow debit or omitted addition");
             Check(loadedPlan.Origin.FuelLevel == 100 && loadedPlan.Destination.FuelLevel == 80, "Physical plan rebase used request rather than accepted gas");

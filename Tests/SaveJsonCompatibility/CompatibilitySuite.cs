@@ -123,4 +123,35 @@ internal static partial class Benchmark {
         }
         System.Console.WriteLine("Cases=" + cases.Length + ", failures=" + failures); return failures == 0 ? 0 : 1;
     }
+
+    internal static void Version110Cases() {
+        var cases = new[] {
+            (typeof(JsonShip[]), "[{\"strName\":\"new-rcs\",\"nRCSCountRaw\":8,\"nRCSExhaustV\":10.0,\"objSS\":{\"bBOLocked\":true,\"boPORShip\":\"Venus\",\"fOrbitW\":-0.0002,\"fOrbitTimeLast\":65633097166.234634}}]"),
+            (typeof(JsonGameSave[]), "[{\"strName\":\"legacy-world\",\"objSystem\":{\"strName\":\"legacy\"}}]"),
+            (typeof(JsonGameSave[]), "[{\"strName\":\"empty-world\",\"objSystem\":{\"aStellarShips\":[],\"aStellarDerelicts\":null}}]"),
+            (typeof(JsonGameSave[]), "[{\"strName\":\"new-world\",\"objSystem\":{\"aBOs\":[{\"strName\":\"Venus\",\"nEnvironmentMapID\":802}],\"aStellarShips\":[{\"strID\":\"environment-station\",\"strLoot\":\"fixture-hull\",\"nMapID\":802,\"fOrbitW\":0.0002,\"fOrbitTimeLast\":65633097166.234634}],\"aStellarDerelicts\":[{\"strID\":\"environment-wreck\",\"strParent\":\"Venus\",\"nMapID\":802,\"vBOOffsetx\":0.00006,\"fOrbitW\":-0.0002}]}}]")
+        };
+        foreach (var test in cases) {
+            object native = TypedParse(test.Item1, test.Item2, false);
+            object replacement = TypedParse(test.Item1, test.Item2, true);
+            string difference = Difference(native, replacement, "$");
+            if (difference != null) throw new System.Exception("1.1 save DTO mismatch: " + difference);
+        }
+        // The native reader's fractional-number behavior varies with culture.
+        // Equivalence above preserves that behavior; only invariant input gets
+        // independent literal-value assertions, while integer/identity checks
+        // remain valid in both cultures.
+        bool invariant = System.Threading.Thread.CurrentThread.CurrentCulture.Equals(System.Globalization.CultureInfo.InvariantCulture);
+        var ship = ((JsonShip[])TypedParse(cases[0].Item1, cases[0].Item2, true))[0];
+        if (ship.nRCSCountRaw != 8 || invariant && (ship.nRCSExhaustV != 10 || ship.objSS.fOrbitW != -.0002))
+            throw new System.Exception("New thruster/orbit payload was silently ignored");
+        var world = ((JsonGameSave[])TypedParse(cases[3].Item1, cases[3].Item2, true))[0].objSystem;
+        if (world.aStellarShips.Length != 1 || world.aStellarDerelicts.Length != 1 || world.aBOs[0].nEnvironmentMapID != 802 ||
+            invariant && world.aStellarShips[0].fOrbitW != .0002 || world.aStellarDerelicts[0].strID != "environment-wreck")
+            throw new System.Exception("New environment payload was silently ignored");
+        var empty = ((JsonGameSave[])TypedParse(cases[2].Item1, cases[2].Item2, true))[0].objSystem;
+        if (empty.aStellarShips == null || empty.aStellarShips.Length != 0 || empty.aStellarDerelicts != null)
+            throw new System.Exception("Empty/absent environment arrays changed native fallback semantics");
+        System.Console.WriteLine(cases.Length + " native 1.1 ship/orbit/deferred-world DTO equivalence cases passed.");
+    }
 }

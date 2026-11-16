@@ -28,7 +28,22 @@ sealed class NativeArchiveImage
             if (entry.Key.StartsWith("ships/", StringComparison.Ordinal))
                 restored.AddShip(JsonMapper.ToObject<JsonShip[]>(entry.Value).Single(), entry.Key);
             else
-                restored.AddGameSave(JsonMapper.ToObject<JsonGameSave[]>(entry.Value).Single(), entry.Key);
+            {
+                var game = JsonMapper.ToObject<JsonGameSave[]>(entry.Value).Single();
+                var raw = JArray.Parse(entry.Value).Single()["objSystem"];
+                // LitJson collapses empty arrays to null. For these new world
+                // fields that changes whether native Init generates populations.
+                // Restore only explicit empty-array shape, never absent/null.
+                if (raw?["aStellarShips"] is JArray ships && ships.Count == 0)
+                    game.objSystem.aStellarShips = Array.Empty<JsonStellarShipSave>();
+                if (raw?["aStellarDerelicts"] is JArray derelicts && derelicts.Count == 0)
+                    game.objSystem.aStellarDerelicts = Array.Empty<JsonStellarDerelictSave>();
+                // The native writer also omits empty properties. Recover that
+                // shape only from this same archive's digest-bound executive
+                // record. No record means no invented initialization metadata.
+                NativeSavePort.RestoreArrayShape(game);
+                restored.AddGameSave(game, entry.Key);
+            }
         return restored;
     }
     internal JObject Content()

@@ -26,7 +26,7 @@ static class FlightHandoffChecks {
     static bool Plan(ref NavData __result) { __result = proposed; return false; }
     static bool Sliders(ref FlyToPath.SliderData __result) { __result = new FlyToPath.SliderData(null); return false; }
     static bool Point(FlyToPath __instance, ShipSitu __0, double __1, ref NavDataPoint __result) {
-        __result = new NavDataPoint(__1, new ShipSitu(__0, false), __instance.ShipUs.fShallowRCSRemass, 0, 5000); return false;
+        __result = new NavDataPoint(__1, new ShipSitu(__0, false), __instance.ShipUs.fShallowRCSRemass, 0, 5000,rcsCount:0F); return false;
     }
     static bool Zero(UnityEngine.Vector2 value) => value.x == 0 && value.y == 0;
     static bool Same(UnityEngine.Vector2 left, UnityEngine.Vector2 right) => left.x == right.x && left.y == right.y;
@@ -101,8 +101,8 @@ static class FlightHandoffChecks {
             var ongoing = Hull(); collision = false; reactorGui = false;
             ongoing.shipSituTarget = new ShipSitu(false) { bBOLocked = true, vPosx = .001 };
             var course = new NavData(ongoing); ongoing.objSS.NavData = course;
-            course.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 500, 1, 5000));
-            course.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 200, new ShipSitu(false) { vPosx = .001 }, 500, 1, 4800));
+            course.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 500, 1, 5000,rcsCount:0F));
+            course.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 200, new ShipSitu(false) { vPosx = .001 }, 500, 1, 4800,rcsCount:0F));
             var p = new Program.Pilot { ShipUs = ongoing, Blackboard = new Blackboard() };
             var before = ongoing.objSS.vAccIn;
             Check(new FlyTo(p).RunCommand(p.Blackboard).Status == CommandCode.Running &&
@@ -201,8 +201,8 @@ static class FlightHandoffChecks {
                 var ship = Hull(load); ship.IsAIShip = ai; collision = false;
                 ship.shipSituTarget = new ShipSitu(false) { bBOLocked = true, vPosx = .001 };
                 var liveCourse = new NavData(ship) { IsTorching = true }; ship.objSS.NavData = liveCourse;
-                liveCourse.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 500, 1, 5000));
-                liveCourse.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 200, new ShipSitu(false) { vPosx = .001 }, 500, 1, 4800));
+                liveCourse.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 500, 1, 5000,rcsCount:0F));
+                liveCourse.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 200, new ShipSitu(false) { vPosx = .001 }, 500, 1, 4800,rcsCount:0F));
                 var force = ship.objSS.vAccIn;
                 var pilot = new Program.Pilot { ShipUs = ship, Blackboard = new Blackboard() };
                 Check(new FlyTo(pilot).RunCommand(pilot.Blackboard).Status == CommandCode.Running &&
@@ -225,8 +225,8 @@ static class FlightHandoffChecks {
                 ship.shipSituTarget = new ShipSitu(false) { bBOLocked = true, vPosx = .001 };
                 var pilot = new Program.Pilot { ShipUs = ship, Blackboard = new Blackboard() };
                 proposed = new NavData(ship);
-                proposed.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 100, 0, 5000));
-                proposed.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 200, new ShipSitu(false) { vPosx = .001 }, arrivalFuel, 0, 5000));
+                proposed.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 100, 0, 5000,rcsCount:0F));
+                proposed.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 200, new ShipSitu(false) { vPosx = .001 }, arrivalFuel, 0, 5000,rcsCount:0F));
                 var selection = new TargetNewIfNone(pilot);
                 var accepted = AccessTools.Method(typeof(TargetNewIfNone), "GenerateNavData").Invoke(selection, new object[] { new Ostranauts.Ships.TargetData(ship.shipSituTarget) });
                 Check((accepted != null) == (arrivalFuel > 0), "Native selection fuel gate differs from source");
@@ -236,8 +236,8 @@ static class FlightHandoffChecks {
             var emptyFuel = Hull(); emptyFuel.fShallowRCSRemass = 0;
             emptyFuel.shipSituTarget = new ShipSitu(false) { bBOLocked = true, vPosx = .001 };
             proposed = new NavData(emptyFuel);
-            proposed.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 0, 0, 0));
-            proposed.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 200, new ShipSitu(false) { vPosx = .001 }, -25, 0, 0));
+            proposed.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 0, 0, 0,rcsCount:0F));
+            proposed.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 200, new ShipSitu(false) { vPosx = .001 }, -25, 0, 0,rcsCount:0F));
             var emptyPilot = new Program.Pilot { ShipUs = emptyFuel, Blackboard = new Blackboard() };
             Check(new FlyToPath(emptyPilot).RunCommand(emptyPilot.Blackboard).Status == CommandCode.Running &&
                 ReferenceEquals(emptyFuel.objSS.NavData, proposed) && emptyFuel.fShallowRCSRemass == 0,

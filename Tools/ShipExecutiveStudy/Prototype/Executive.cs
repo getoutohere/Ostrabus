@@ -80,7 +80,7 @@ sealed class Executive
     readonly Queue<DirectiveState> directives = new Queue<DirectiveState>();
     internal string LastReason;
     internal int NativeCalls;
-    internal const string BindingVersion = "native-navy-1.0.1.10-prototype-v1";
+    internal const string BindingVersion = "native-navy-1.1.0.0-prototype-v2";
     internal static readonly string RuntimeBinding = BindingVersion + "/" + typeof(NavyPilot).Module.ModuleVersionId + "/" + typeof(Ostrabus.OstrabusPlugin).Module.ModuleVersionId;
 
     static readonly HashSet<string> Guards = new HashSet<string> {

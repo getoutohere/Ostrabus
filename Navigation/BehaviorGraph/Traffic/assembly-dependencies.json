@@ -185,16 +185,27 @@
     ],
     "world": [
       {
+        "type": "Ship",
+        "methods": [
+          "CheckTargets"
+        ]
+      },
+      {
         "type": "StarSystem",
         "methods": [
           "GetNearestStationRegional",
           "GetNearestStation",
           "GetShipsForOwner",
-          "PostShipLoad",
           "CleanupStaleShips",
+          "RemoveShip",
+          "UpdateShip"
+        ]
+      },
+      {
+        "type": "SolarSystem.EnvironmentEntities",
+        "methods": [
           "CreateStellarObject",
-          "SpawnShipFromStellarObject",
-          "RemoveShip"
+          "SpawnShipFromStellarObject"
         ]
       }
     ],
@@ -600,7 +611,14 @@
         ]
       }
     ],
-    "patch_lifetime": [],
+    "patch_lifetime": [
+      {
+        "type": "SolarSystem.EnvironmentEntities",
+        "methods": [
+          "UnloadEnvironmentForRegion"
+        ]
+      }
+    ],
     "patch_fuel": [],
     "patch_crew": [],
     "patch_identity": [],
@@ -930,6 +948,402 @@
           "get_NavAIManned"
         ]
       }
+    ],
+    "environment_lifecycle": [
+      {
+        "type": "SolarSystem.EnvironmentEntities",
+        "methods": [
+          "UnloadEnvironmentForRegion",
+          "ConvertShipToStellarObject",
+          "IsDroppedByEnvironmentChange",
+          "CreateStellarObject",
+          "SpawnShipFromStellarObject"
+        ]
+      }
+    ],
+    "unexpanded_native_entrypoints": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.ArenaModePilot",
+        "methods": [
+          ".ctor",
+          "FFWD",
+          "GetTarget",
+          "GetTargetHome"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.AutoPilot",
+        "methods": [
+          ".ctor",
+          "FFWD",
+          "GetTarget"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.BlockadePilot",
+        "methods": [
+          "FFWD",
+          "GetTargetHome"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.MissilePilot",
+        "methods": [
+          ".ctor",
+          "FFWD",
+          "GetTarget"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.PiratePilot",
+        "methods": [
+          "FFWD"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.PolicePilot",
+        "methods": [
+          "GetTarget"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.StationPilot",
+        "methods": [
+          ".ctor",
+          "FFWD",
+          "GetTarget"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Blank",
+        "methods": [
+          "ResolveInstantly",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.ComeHere",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.DeployLeo",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Dodge",
+        "methods": [
+          "ResolveInstantly",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToAutoPilot",
+        "methods": [
+          "ResolveInstantly",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToMissile",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToPatrol",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.GetTarget",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Guard",
+        "methods": [
+          "ResolveInstantly"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.HoldStationAutoPilot",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.HoldThrustAutoPilot",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.InitiateAgainstBiggestThreat",
+        "methods": [
+          "ResolveInstantly"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.IsFriendlyUnderAttack",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.LowFuelRetreat",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Lurk",
+        "methods": [
+          "ResolveInstantly"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.PirateShakeDown",
+        "methods": [
+          "ResolveInstantly",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.RaceComms",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.RemoveAI",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Scuttle",
+        "methods": [
+          "ResolveInstantly",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.ShakeDown",
+        "methods": [
+          "ResolveInstantly",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.Shoot",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SurrenderArrestAndDespawn",
+        "methods": [
+          "ResolveInstantly",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SurrenderConsiderOffer",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SurrenderConsiderPlayerDemand",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.SurrenderDemand",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TakeFuel",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TargetATC",
+        "methods": [
+          "ResolveInstantly",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TargetEmergencySignal",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TargetNearestStation",
+        "methods": [
+          "ResolveInstantly"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TargetPlayer",
+        "methods": [
+          "ResolveInstantly",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TurnOffAllActiveSensors",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.TurnOnAllSensors",
+        "methods": [
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.Commands.UnlockPirate",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "attachment_ship": [
+      {
+        "type": "Ship",
+        "methods": [
+          "Dock",
+          "UnMoorFrom",
+          "Undock",
+          "UpdateDockedShips",
+          "IsSubStation",
+          "IsGroundStation",
+          "IsStation"
+        ]
+      }
+    ],
+    "attachment_group": [
+      {
+        "type": "SolarSystem.DockGroup",
+        "methods": [
+          "UpdateAnchor",
+          "SyncShipInput",
+          "TimeAdvance",
+          "UndockShip"
+        ]
+      }
+    ],
+    "attachment_situ": [
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "TimeAdvance",
+          "TryRelockToBO",
+          "LockToBO",
+          "LockToBOOrbit",
+          "UnlockFromBO"
+        ]
+      }
+    ],
+    "attachment_spawn": [
+      {
+        "type": "SolarSystem.EnvironmentEntities",
+        "methods": [
+          "SpawnDerelicts",
+          "SetupDerelictOrbit"
+        ]
+      }
+    ],
+    "attachment_haul": [
+      {
+        "type": "Ostranauts.Ships.Commands.HaulShip",
+        "methods": [
+          "RunCommand"
+        ]
+      }
+    ],
+    "patch_attachment": [
+      {
+        "type": "Ship",
+        "methods": [
+          "Dock",
+          "UpdateDockedShips"
+        ]
+      }
+    ],
+    "attachment_towing": [
+      {
+        "type": "SolarSystem.DockGroup",
+        "methods": [
+          "TimeAdvance"
+        ]
+      }
+    ],
+    "jump_discontinuity": [
+      {
+        "type": "GUIFFWD/<FFWD>d__31",
+        "methods": [
+          "MoveNext"
+        ]
+      },
+      {
+        "type": "CrewSim/<_TeleportCO>d__356",
+        "methods": [
+          "MoveNext"
+        ]
+      }
+    ],
+    "shared_jump_adapter": [
+      {
+        "type": "GUIFFWD/<FFWD>d__31",
+        "methods": [
+          "MoveNext"
+        ]
+      },
+      {
+        "type": "CrewSim/<_TeleportCO>d__356",
+        "methods": [
+          "MoveNext"
+        ]
+      },
+      {
+        "type": "CrewSim",
+        "methods": [
+          "_TeleportCO"
+        ]
+      },
+      {
+        "type": "StarSystem",
+        "methods": [
+          "Update"
+        ]
+      },
+      {
+        "type": "AIShipManager",
+        "methods": [
+          "FFWD"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.AIShip",
+        "methods": [
+          "FFWD"
+        ]
+      }
     ]
   },
   "predicateSources": {
@@ -1025,6 +1439,11 @@
     "freight_receiver_missing": [
       "market",
       "patch_cargo_transfer"
+    ],
+    "attachment_releasable_identity": [
+      "attachment_ship",
+      "patch_attachment",
+      "attachment_towing"
     ]
   },
   "assets": [
@@ -1179,6 +1598,28 @@
       "entry": "Stunned",
       "sources": [
         "pilot_availability"
+      ]
+    },
+    {
+      "id": "attachment_phobos_1002",
+      "path": "blueprints/environments/environments.json",
+      "entry": "1002",
+      "sources": [
+        "attachment_spawn",
+        "attachment_ship",
+        "attachment_group",
+        "patch_attachment"
+      ]
+    },
+    {
+      "id": "attachment_phobos_10020",
+      "path": "blueprints/environments/environments.json",
+      "entry": "10020",
+      "sources": [
+        "attachment_spawn",
+        "attachment_ship",
+        "attachment_group",
+        "patch_attachment"
       ]
     }
   ]

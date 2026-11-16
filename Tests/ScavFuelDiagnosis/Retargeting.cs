@@ -36,8 +36,8 @@ static partial class Program {
     }
     static NavData RetargetRoute(Ship ship) {
         var route = new NavData(ship); var end = Empty<ShipSitu>(); end.vPosx = RetreatStepAU;
-        route.AddNavDataPoint(new NavDataPoint(1000, Empty<ShipSitu>(), 100, 0, 0));
-        route.AddNavDataPoint(new NavDataPoint(2000, end, 50, 0, 0)); ship.objSS.NavData = route; return route;
+        route.AddNavDataPoint(new NavDataPoint(1000, Empty<ShipSitu>(), 100, 0, 0,rcsCount:0F));
+        route.AddNavDataPoint(new NavDataPoint(2000, end, 50, 0, 0,rcsCount:0F)); ship.objSS.NavData = route; return route;
     }
     static AIShip PilotAI(BaseCharacter pilot) {
         var ai = Empty<AIShip>(); Set(ai, "_shipUs", pilot.ShipUs); Set(ai, "_aiCharacter", pilot);

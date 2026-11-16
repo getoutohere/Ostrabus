@@ -3,7 +3,7 @@ param([ValidateSet('Debug', 'Release')][string]$Configuration = 'Debug')
 
 $ErrorActionPreference = 'Stop'
 $packageBuild = Join-Path $PSScriptRoot "bin\$Configuration\netstandard2.1"
-foreach ($packageFile in @('Ostrabus.dll', 'Ostrabus.pdb', 'PdaSettings\Assets\mod_info.json', 'QoL\PdaHacking\Assets\mod_info.json', 'NavConsole\Rotation\Assets\mod_info.json')) {
+foreach ($packageFile in @('Ostrabus.dll', 'Ostrabus.pdb', 'PdaSettings\Assets\mod_info.json', 'QoL\PdaHacking\Assets\mod_info.json', 'NavConsole\Rotation\Assets\mod_info.json', 'MiscBugFixes\ScrubberAudio\Assets\mod_info.json')) {
     if (-not (Test-Path -LiteralPath (Join-Path $packageBuild $packageFile) -PathType Leaf)) { throw "Build $Configuration before packaging: missing $packageFile" }
 }
 # Use a fresh directory for every package; never recursively delete a computed path.
@@ -18,6 +18,8 @@ foreach ($packageFile in @('Ostrabus.dll', 'Ostrabus.pdb')) { Copy-Item -Literal
 Copy-Item -LiteralPath (Join-Path $packageBuild 'PdaSettings\Assets') -Destination (Join-Path $packageRoot 'Plugin\PdaSettings') -Recurse
 New-Item -ItemType Directory -Path (Join-Path $packageRoot 'Plugin\QoL\PdaHacking') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $packageBuild 'QoL\PdaHacking\Assets') -Destination (Join-Path $packageRoot 'Plugin\QoL\PdaHacking') -Recurse
+New-Item -ItemType Directory -Path (Join-Path $packageRoot 'Plugin\MiscBugFixes\ScrubberAudio') -Force | Out-Null
+Copy-Item -LiteralPath (Join-Path $packageBuild 'MiscBugFixes\ScrubberAudio\Assets') -Destination (Join-Path $packageRoot 'Plugin\MiscBugFixes\ScrubberAudio') -Recurse
 New-Item -ItemType Directory -Path (Join-Path $packageRoot 'Plugin\NavConsole\Rotation') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $packageBuild 'NavConsole\Rotation\Assets') -Destination (Join-Path $packageRoot 'Plugin\NavConsole\Rotation') -Recurse
 foreach ($packageFile in @('Deploy-Mod.ps1', 'Deploy-Mod.cmd')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $packageFile) -Destination $packageRoot }
@@ -27,14 +29,17 @@ foreach ($packageDoc in @('README.md', 'DESIGN.md', 'IMPLEMENTATION.md')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('PdaSettings\' + $packageDoc)) -Destination (Join-Path $packageRoot 'PdaSettings')
 }
 @'
-Ostrabus experimental snapshot
-Target: Ostranauts 1.0.1.10 (public_test). Other game versions are not supported by
+Ostrabus 0.6.0 experimental snapshot
+Target: Ostranauts 1.1.0.0 (public_test). Other game versions are not supported by
 this build. Requires an existing BepInEx 5 installation; BepInEx is not bundled.
+Partially playtested: the compatibility port has in-game acceptance; later
+SFF/PASS, bounty-preservation and passive-attachment refinements have offline
+validation and remain pending live acceptance. See Build/RELEASE-0.6.0.md in source.
 Source, feature inventory and module documentation:
 https://github.com/getoutohere/Ostrabus
 
 Close Ostranauts, then double-click Deploy-Mod.cmd to install the plugin, Settings
-app, assets-only Quick PDA Hacking and the physical RCS Rotation Module. The installer retains other native mods
+app, assets-only Quick PDA Hacking, the CO2 scrubber audio repair and the physical RCS Rotation Module. The installer retains other native mods
 and their enabled/disabled states.
 Existing TemplateExample plugin copies are disabled with backups retained.
 Restart the game and open MOD SETTINGS from the PDA home screen.

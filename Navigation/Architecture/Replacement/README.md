@@ -5,6 +5,11 @@ This directory is normative: it defines how the proposed replacement executes
 missions. `Navigation/BehaviorGraph/` remains the separate description of native
 behavior and deployed patches. No experimental overlay was added to that graph.
 
+The current receipts bind **1.1.0.0**. See the
+[1.1 rework and qualification](UPGRADE-1.1.0.0.md) for native changes, the shared
+time coordinator and remaining engine boundaries. The earlier 1.0.1.10 receipts
+are preserved under [Baselines/1.0.1.10](Baselines/1.0.1.10/test-results.json).
+
 The first prototype showed that ownership and persistence could be centralized,
 but still scheduled native command trees and reflected opaque nested controllers.
 The current pass adds native Navy policy/ability fixtures around the explicit
@@ -25,11 +30,11 @@ not claim complete replacement of Navy decisions or every ship role.
 - [Conformance results](conformance-results.json) and [combined test results](test-results.json).
 - [Generated phase diagram](mission-model.mmd), rendered from the executable JSON.
 - [Navy lifecycle qualification and remaining runtime gates](NAVY-LIFECYCLE.md).
-- [Retained Orbital/SFF/Economy integration and playback blocker](WORLD-SERVICES.md).
+- [Retained Orbital/SFF/Economy integration](WORLD-SERVICES.md).
 - [Command receipt, transfer and dialogue/reload qualification](COMMAND-EFFECTS.md).
 - [Native save pipeline, participant arrival readback and patrol handback](SAVE-ARRIVAL.md).
 
-The combined suite passes **475 assertions across 90 scenarios**, including the
+The combined suite passes **529 assertions across 101 scenarios**, including the
 original reference prototype and subsequent contract/native ability cases. It
 exercises all 27 declared phase transitions. That is coverage of this bounded model, not proof
 of every native behavior or every interleaving. The 64 deterministic adversarial

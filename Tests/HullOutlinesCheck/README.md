@@ -42,6 +42,15 @@ boundary, both dial/collision installation orders, feature-off and station
 fallbacks, preserved AI group handoff/clearance, native speed buffers and no
 warmed per-candidate allocation. The default integration total is 1,194 checks.
 
+The docking-permission audit adds 37 checks for the
+[forced-docking/displayed-range disagreement](../../Navigation/Collisions/FORCED-DOCK-RANGE.md),
+bringing the default integration total to 1,231. It executes native
+`Interaction.IsWithinShipRange` before/after the production patch, reproduces
+the reported 4.21 km rejection, and tests 1 m inside/outside all 11 shipped
+positive-range docking-clearance grants. Other interaction effects, stations,
+station-connected groups, feature-off, asteroid mooring, missing participants
+and native zero/negative/already-docked range semantics are checked separately.
+
 Rotation regressions execute the shipped Q/E input command bodies and
 `Ship.RotateCW`. The unpatched control reproduces a stale outline despite an
 in-place floor-layout turn: both the floor-list identity and final grid rotation
@@ -115,8 +124,9 @@ additional warmed-allocation check on CoreCLR. Random filled-exterior covers and
 1,000 rotated rectangle pairs use independent oracles. Native CheckCollisions
 runs with the real physical branch hook; clear hulls retain proximity warnings,
 real and swept hits reach the response hook, and toggles, coincident centers,
-station-docked exemption, class/SFF/teleport exclusions and reference release are
-checked, including exception cleanup, disabling a partial capture, and avoiding
+station-docked exemption, class/SFF/PASS/teleport exclusions and reference release are
+checked, including exception cleanup, disabling a partial capture, invalidating
+short-PASS history even for unobserved hulls, preserving following ordinary sweeps, and avoiding
 sweep replay of the native separating displacement. The response test boundary preserves native normal inputs and bounce
 scaling, while downstream damage/crew/Unity side effects are not emulated.
 All six shipped assets must produce valid covers. Optional saved-hull replay

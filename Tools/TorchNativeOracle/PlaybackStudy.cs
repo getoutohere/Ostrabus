@@ -100,8 +100,8 @@ static partial class Program {
         var path = Empty<FlyToPath>(); Field(path, "_shipUs", ship);
         var nav = new NavData(ship);
         var origin = new ShipSitu(false);
-        nav.AddNavDataPoint(new NavDataPoint(fixtureEpoch, origin, 0, 0, ship.fShallowFusionRemain));
-        var destination = new NavDataPoint(fixtureEpoch, new ShipSitu(false), 0, 0, 0);
+        nav.AddNavDataPoint(new NavDataPoint(fixtureEpoch, origin, 0, 0, ship.fShallowFusionRemain,rcsCount:0F));
+        var destination = new NavDataPoint(fixtureEpoch, new ShipSitu(false), 0, 0, 0,rcsCount:0F);
         var plot = AccessTools.Method(typeof(FlyToPath), "PlotBurnLoop");
         double acceleration = ship.GetMaxTorchThrust((float)cycle);
         // Native waypoint generator, including easing and coast transitions.

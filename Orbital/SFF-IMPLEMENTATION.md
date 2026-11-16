@@ -11,14 +11,23 @@ excluded from the general trajectory correction to avoid double advancement.
 
 ## Integration
 
-`StarSystem.Update` prefix prepares corrected trajectories only while `GUIFFWD.Active`
-and the interval is at least 60 seconds. Start positions, velocities and controls are
+The [decision-gap repair](../Navigation/SFF-DECISION-GAP.md) previews projected
+celestial impacts and gives working native pilots shorter world updates before
+committing an hours-long trajectory. `lastSffAdvance` reports those steps
+separately from the last physical segment.
+
+`StarSystem.Update` prefix prepares corrected trajectories during GUI SFF or a
+tagged synchronous PASS jump. Short positive windows are accepted while the shared
+`SffAdvance` adapter owns them. The native GUI flag is not forged.
+Start positions, velocities and controls are
 captured before the native epoch increment. Preparation does not advance the live
 ephemeris, mutate NavData or execute AI commands. Target waypoint values are copied.
 
 The start-state exclusions are: any NavData on the object/group, body/orbit locks,
 explicit gravity-ignore flags, projectiles, active combat targets or combat commands.
-Combat and plotted-course behavior remains native. Active plans also get a dispatch
+Combat and plotted-course playback remain native. The shared adapter cuts at
+course completion, then captures the newly unplotted coast on the next window.
+Active plans also get a dispatch
 recheck in case another mod installed a route during the update.
 
 Unplotted manual travel now honors native `Ship.NavAIManned`. If the autonomous
@@ -71,8 +80,8 @@ require deployment and restart before further SFF testing.
 Only captured physical `ShipSitu` instances are registered. The `TimeAdvance` prefix
 replaces their one large numerical translation at the matching final world epoch.
 It does not intercept UI copies, hypothetical positions or route-overflow temporaries.
-An object entering with NavData remains excluded even if native playback clears it.
-No second call to NavData playback is made.
+An object entering a window with NavData remains excluded during that window even
+if native playback clears it. No second call to NavData playback is made.
 
 The private numerical gravity selector is supplied with reference/atmosphere data
 for the predicted end position, avoiding the native old-position/new-planet mismatch.
@@ -85,8 +94,11 @@ Before native AI catch-up, swept body impacts are passed to `CollisionManager` a
 surviving groups resynchronize their anchors. Target arrivals are checked against
 the actual end-of-jump target. Only feasible completed travel keeps its native
 catch-up; partial travel suppresses that pilot's FFWD call for this jump. Other
-pilot/work/combat catch-up continues normally. There is one world update and one
-normal AI catch-up phase, not thousands of replayed ledger/encounter/AI updates.
+pilot/work/combat catch-up retains its native guards. World windows are bounded
+to six hours and split only at relevant route/decision boundaries. Hourly role
+callbacks use the original jump interval, once per eligible controller, instead
+of being multiplied or lost across windows. See [PASS integration](PASS-TIME-SKIPS.md)
+for scheduler ordering, collision history and deterministic boundary tests.
 
 A Harmony finalizer clears all per-jump object references whether the update succeeds
 or throws, and preserves the original exception. Inspection retains only primitive

@@ -41,6 +41,7 @@ static partial class Program {
         Set(ship, "fShallowMass", 10000d);
         ship.fShallowRCSRemass = 10000;
         Set(ship, "fRCSCount", 8f); Set(ship, "nRCSDistroCount", 4);
+        Set(ship, "nRCSCountRaw", 8); Set(ship, "fRCSExhaustV", 8f);
         Set(ship, "fFuelEfficiencyMod", 1d);
         Set(ship, "aDocked", new Dictionary<string, Ship>());
         var waypoints = AccessTools.Field(typeof(Ship), "aWPs");

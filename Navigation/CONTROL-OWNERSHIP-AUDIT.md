@@ -1,5 +1,12 @@
 # Navigation ownership and collateral audit
 
+The [1.1.0.0 revalidation](../Build/COMPATIBILITY-1.1.0.0.md) finds 32 direct
+withdrawal calls in 27 methods. The additional site is the native RCS-loss abort
+in `NavData.TimeAdvance`; actual registered-Auto playback is covered by
+`Tests/AiPlannerDiagnosis/NativeRcsCompatibility.cs`. The prior caller,
+continuation and production suites also pass. The tracked caller review now pins
+the new assembly; this does not replace the remaining Unity scene acceptance.
+
 Status: audited repair implemented in FlightControllerLifetimePatch.cs. The shipped 1.0.1.10 assembly
 reproduces withdrawn-controller execution and abandoned-course force. The
 native harness includes 209 mechanism checks, 410 caller/handoff checks and 84

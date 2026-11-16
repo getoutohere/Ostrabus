@@ -64,10 +64,14 @@ bool checkReview = args.Length == 1 && args[0] == "--check-review";
 string output = Path.GetFullPath(checkReview ? "obj/NavigationOwnershipAudit" : args.FirstOrDefault() ?? "obj/NavigationOwnershipAudit");
 Directory.CreateDirectory(output);
 var options = new JsonSerializerOptions { WriteIndented = true };
+using var catalog = JsonDocument.Parse(File.ReadAllText("Tools/NavigationOwnershipAudit/withdrawal-review.json"));
+string binaryHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(binary))).ToLowerInvariant();
 var report = new {
     schemaVersion = 1,
-    gameVersion = "1.0.1.10",
-    assemblySha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(binary))).ToLowerInvariant(),
+    // A version label is justified only for the exact reviewed binary.
+    gameVersion = catalog.RootElement.GetProperty("assemblySha256").GetString() == binaryHash
+        ? catalog.RootElement.GetProperty("gameVersion").GetString() : null,
+    assemblySha256 = binaryHash,
     counts = new { calls, directStores = stores, addressAccesses = addresses, unregistrationSites, unregistrationCallerMethods = unregistrationCallers.Count },
     caveat = "Direct IL inventory. Address accesses include reads; aliases, reflection and transitive calls need review. Counts are not defects, hooks or completeness proof.",
     records
@@ -76,7 +80,6 @@ File.WriteAllText(Path.Combine(output, "native-control-sites.json"), JsonSeriali
 File.WriteAllText(Path.Combine(output, "route-reset-callers.txt"), string.Join("\n", resetters) + "\n");
 File.WriteAllText(Path.Combine(output, "control-field-writers.txt"), string.Join("\n", writers) + "\n");
 File.WriteAllText(Path.Combine(output, "unregistration-callers.txt"), string.Join("\n", unregistrationCallers) + "\n");
-using var catalog = JsonDocument.Parse(File.ReadAllText("Tools/NavigationOwnershipAudit/withdrawal-review.json"));
 var reviewed = catalog.RootElement.GetProperty("callers").EnumerateArray().ToDictionary(
     item => item.GetProperty("caller").GetString()!, item => item.GetProperty("sites").GetInt32());
 var missing = withdrawalSites.Keys.Except(reviewed.Keys).ToArray();

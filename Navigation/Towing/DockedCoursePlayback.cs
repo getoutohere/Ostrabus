@@ -30,6 +30,7 @@ internal static partial class DockedCoursePlayback {
     internal static void LeaveStep(StepScope scope) { integrated = scope.Previous; }
 
     internal static void PrepareStep(DockGroup group, double seconds) {
+        if (seconds > 0) ReleaseAttachmentForCourse(group);
         if (seconds <= 0 || FindSource(group) == null) return;
         AverageLiftDrag(group);
         AdvanceAnchor(group.Anchor, seconds, false, group);
@@ -61,9 +62,38 @@ internal static partial class DockedCoursePlayback {
         return source;
     }
 
-    internal static bool DeferMember(ShipSitu situation, double seconds) => seconds > 0 && situation.NavData != null &&
-        situation._dockGroup != null && !ReferenceEquals(executing, situation) &&
-        ReferenceEquals(FindSource(situation._dockGroup), situation);
+    internal static bool DeferMember(ShipSitu situation, double seconds) {
+        if (seconds > 0 && situation.NavData != null) ReleaseAttachmentForCourse(situation._dockGroup);
+        return seconds > 0 && situation.NavData != null &&
+            situation._dockGroup != null && !ReferenceEquals(executing, situation) &&
+            ReferenceEquals(FindSource(situation._dockGroup), situation);
+    }
+
+    static void ReleaseAttachmentForCourse(DockGroup group) {
+        // Use the same permanent-station/ground/mooring boundary as manual
+        // release, before aborting or changing any pending member course.
+        if (!PassiveAttachment.CanRelease(group) || group.Anchor.NavData != null) return;
+        ShipSitu source = null;
+        foreach (var member in group.DockedShips) {
+            var ship = member?.Ship;
+            var situation = ship?.objSS;
+            var course = situation.NavData;
+            if (course == null) continue;
+            // Keep the existing refusal to arbitrate competing member courses.
+            if (source != null || !ReferenceEquals(CourseOwner(course), ship)) return;
+            source = situation;
+        }
+        var nav = source?.NavData;
+        if (nav?.Origin == null || nav.Destination == null ||
+            nav.Destination.ArrivalTime <= nav.Origin.ArrivalTime || StarSystem.fEpoch < nav.Origin.ArrivalTime) return;
+        // Admit the first step even if it passes arrival: the existing route
+        // completion repair owns the completed portion and remainder coasting.
+        if (TorchCourse(nav) && !BracesSecured(group)) {
+            AbortUnsecured(source);
+            return;
+        }
+        PassiveAttachment.Release(group);
+    }
 
     internal static bool BracesSecured(DockGroup group) {
         foreach (var member in group.DockedShips) {

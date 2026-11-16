@@ -41,6 +41,7 @@ static class SffChecks {
         JToken motion=null;
         foreach (var item in snapshot["ships"]) if ((string)item["id"]=="M-5N4") motion=item["motion"];
         double epoch=D(motion,"captureEpoch"),duration=21600;
+        CircularTargetChecks.Run(check, venus, epoch);
         var initial=new MotionState(new DVector(D(motion,"xAU"),D(motion,"yAU"))*OrbitalMotion.KmPerAU,
             new DVector(D(motion,"vxAUPerSecond"),D(motion,"vyAUPerSecond"))*OrbitalMotion.KmPerAU);
         var outcome=SffDynamics.Propagate(environment,initial,epoch,duration,default,null,0,null);
@@ -83,6 +84,11 @@ static class SffChecks {
         var collisionEnv=new SffEnvironment();collisionEnv.Bodies.Add(obstacle);
         var impact=SffDynamics.Propagate(collisionEnv,new MotionState(new DVector(1001,0),new DVector(-1,0)),0,100,default,null,0,null);
         check(impact.Impact==obstacle && impact.State.Position.Length<1000,"Swept planetary impact lost");
+        avoidBody.fMass=320000/OrbitalMotion.GravityConstant;
+        var deadlineEnv=new SffEnvironment(); deadlineEnv.Bodies.Add(new SffBody(avoidBody));
+        var deadline=SffDynamics.Propagate(deadlineEnv,new MotionState(new DVector(1001,0),new DVector(-100,0)),0,10,default,null,0,null);
+        check(deadline.Impact!=null && deadline.ImpactAfter>=0 && deadline.ImpactAfter<.02,
+            "Safety deadline used later closest approach instead of first surface crossing");
         avoidBody.fMass=320000/OrbitalMotion.GravityConstant;
         var grazingEnv=new SffEnvironment();grazingEnv.Bodies.Add(new SffBody(avoidBody));
         var grazing=SffDynamics.Propagate(grazingEnv,new MotionState(new DVector(1000.01,0),new DVector(0,Math.Sqrt(320000/1000.01))),0,400,default,null,0,null);

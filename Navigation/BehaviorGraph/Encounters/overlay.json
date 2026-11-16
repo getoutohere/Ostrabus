@@ -1,31 +1,36 @@
 {
     "id":  "ostrabus-encounters-current",
-    "base":  "encounters-1.0.1.10",
+    "base":  "encounters-1.1.0.0",
     "documentedDependencies":  [
-{
-    "id":  "combat_cleanup_admission",
-    "sources":  [
-                    "navy",
-                    "native_selector",
-                    "combat_handoff_blockade",
-                    "combat_handoff_admission",
-                    "combat_handoff_scan",
-                    "combat_handoff_blockade_scan",
-                    "combat_handoff_cleanup",
-                    "combat_handoff_station",
-                    "combat_handoff_sequence",
-                    "combat_handoff_adapter",
-                    "combat_handoff_patch"
-                ],
-    "status":  "native_tested_boundary_not_transition_expanded",
-    "reason":  "Native Navy/Blockade detection failure writes InCombat=false before neutralization; sticky Main resumes against the old enemy. Constructor-local stateless ConditionCommand adapters execute each original gate and admit pending Combatants to native cleanup and station selection. No invented enemies, forced home or saved fields. Dedicated shipped-assembly tests establish baseline and production contrast. Full combat remains outside this staging projection. Separate acquisition repair now also covers Blockade; see COMBAT-NEUTRALIZATION.md and Navigation/PATROL-TARGET-HANDOFF.md."
-},
-{
-    "id": "disabled_target_acquisition",
-    "sources": ["combat_handoff_scan", "combat_handoff_blockade_scan", "combat_handoff_cleanup", "combat_acquisition_patch"],
-    "status": "native_tested_boundary_not_transition_expanded",
-    "reason": "Both detectors exclude new AI-marked below-Full targets without a controller, matching native IsTargetNeutralized. Existing Combatants retain native cleanup; Full/manual and non-AI targets stay eligible. Blockade warnings, faction rules, range and reentry remain native; registration restoration is immediately observable. Tests execute baseline and production detector/cleanup paths, including mixed fights and IL drift. No replacement behavior controller or signature-cache mutation. See Navigation/COMBAT-NEUTRALIZATION.md."
-},
+                                   {
+                                       "id":  "combat_cleanup_admission",
+                                       "sources":  [
+                                                       "navy",
+                                                       "native_selector",
+                                                       "combat_handoff_blockade",
+                                                       "combat_handoff_admission",
+                                                       "combat_handoff_scan",
+                                                       "combat_handoff_blockade_scan",
+                                                       "combat_handoff_cleanup",
+                                                       "combat_handoff_station",
+                                                       "combat_handoff_sequence",
+                                                       "combat_handoff_adapter",
+                                                       "combat_handoff_patch"
+                                                   ],
+                                       "status":  "native_tested_boundary_not_transition_expanded",
+                                       "reason":  "Native Navy/Blockade detection failure writes InCombat=false before neutralization; sticky Main resumes against the old enemy. Constructor-local stateless ConditionCommand adapters execute each original gate and admit pending Combatants to native cleanup and station selection. No invented enemies, forced home or saved fields. Dedicated shipped-assembly tests establish baseline and production contrast. Full combat remains outside this staging projection. Separate acquisition repair now also covers Blockade; see COMBAT-NEUTRALIZATION.md and Navigation/PATROL-TARGET-HANDOFF.md."
+                                   },
+                                   {
+                                       "id":  "disabled_target_acquisition",
+                                       "sources":  [
+                                                       "combat_handoff_scan",
+                                                       "combat_handoff_blockade_scan",
+                                                       "combat_handoff_cleanup",
+                                                       "combat_acquisition_patch"
+                                                   ],
+                                       "status":  "native_tested_boundary_not_transition_expanded",
+                                       "reason":  "Both detectors exclude new AI-marked below-Full targets without a controller, matching native IsTargetNeutralized. Existing Combatants retain native cleanup; Full/manual and non-AI targets stay eligible. Blockade warnings, faction rules, range and reentry remain native; registration restoration is immediately observable. Tests execute baseline and production detector/cleanup paths, including mixed fights and IL drift. No replacement behavior controller or signature-cache mutation. See Navigation/COMBAT-NEUTRALIZATION.md."
+                                   },
                                    {
                                        "id":  "shallow_flight_control_handoff",
                                        "sources":  [

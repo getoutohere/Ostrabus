@@ -42,8 +42,8 @@ static partial class Program {
         finish.vAccRCS = new Vector2(-1e-12f,3e-13f);
         if (torch) finish.vAccIn = new Vector2(4e-13f,-2e-13f);
         var route = new NavData(ship);
-        route.AddNavDataPoint(new NavDataPoint(start,first,0,torch ? .3 : 0,torch ? 1000 : 0));
-        route.AddNavDataPoint(new NavDataPoint(end,finish,0,torch ? .3 : 0,torch ? 900 : 0));
+        route.AddNavDataPoint(new NavDataPoint(start,first,0,torch ? .3 : 0,torch ? 1000 : 0,rcsCount:0F));
+        route.AddNavDataPoint(new NavDataPoint(end,finish,0,torch ? .3 : 0,torch ? 900 : 0,rcsCount:0F));
         ship.objSS.NavData = route;
         return route;
     }

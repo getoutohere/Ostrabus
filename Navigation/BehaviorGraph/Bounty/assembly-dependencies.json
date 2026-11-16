@@ -1,11 +1,63 @@
 {
     "schemaVersion":  1,
-    "description":  "Bounty scheduler/activation entrypoint, station service and native low-fuel return; not a complete military behavior model.",
+    "description":  "Bounty reactivation, service and administrative actor/original-hull preservation; numerical flight and complete combat remain external.",
     "bindings":  {
-"flight_rcs_native":[{"methods":["Maneuver"],"type":"Ship"}],
-
-"flight_handoff_native":[{"methods":["RunCommand","CanExecute","ResolveInstantly"],"type":"Ostranauts.Ships.Commands.FlyTo"}],"flight_shutdown_native":[{"methods":["RunCommand","TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_repair":[{"methods":["RunCommand"],"type":"Ostranauts.Ships.Commands.FlyTo"},{"methods":["TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_stop":[{"methods":["SetThrust","StopManeuver"],"type":"Ship"},{"methods":["ResetNavData"],"type":"ShipSitu"}],
-
+                     "flight_rcs_native":  [
+                                               {
+                                                   "methods":  [
+                                                                   "Maneuver"
+                                                               ],
+                                                   "type":  "Ship"
+                                               }
+                                           ],
+                     "flight_handoff_native":  [
+                                                   {
+                                                       "methods":  [
+                                                                       "RunCommand",
+                                                                       "CanExecute",
+                                                                       "ResolveInstantly"
+                                                                   ],
+                                                       "type":  "Ostranauts.Ships.Commands.FlyTo"
+                                                   }
+                                               ],
+                     "flight_shutdown_native":  [
+                                                    {
+                                                        "methods":  [
+                                                                        "RunCommand",
+                                                                        "TorchOff"
+                                                                    ],
+                                                        "type":  "Ostranauts.Ships.Commands.FlyToPath"
+                                                    }
+                                                ],
+                     "flight_control_repair":  [
+                                                   {
+                                                       "methods":  [
+                                                                       "RunCommand"
+                                                                   ],
+                                                       "type":  "Ostranauts.Ships.Commands.FlyTo"
+                                                   },
+                                                   {
+                                                       "methods":  [
+                                                                       "TorchOff"
+                                                                   ],
+                                                       "type":  "Ostranauts.Ships.Commands.FlyToPath"
+                                                   }
+                                               ],
+                     "flight_control_stop":  [
+                                                 {
+                                                     "methods":  [
+                                                                     "SetThrust",
+                                                                     "StopManeuver"
+                                                                 ],
+                                                     "type":  "Ship"
+                                                 },
+                                                 {
+                                                     "methods":  [
+                                                                     "ResetNavData"
+                                                                 ],
+                                                     "type":  "ShipSitu"
+                                                 }
+                                             ],
                      "bounty":  [
                                     {
                                         "methods":  [
@@ -14,7 +66,11 @@
                                                         "MoveTargets",
                                                         "PlaceTargetsWithinRegion",
                                                         "AllowedToLeaveShip",
-                                                        "SpawnBountyTarget"
+                                                        "SpawnBountyTarget",
+                                                        "AddBountyConditions",
+                                                        "EvaluateAllBounties",
+                                                        "RemoveBounty",
+                                                        "TryToArrest"
                                                     ],
                                         "type":  "Ostranauts.Systems.BountyManager"
                                     }
@@ -36,7 +92,8 @@
                                                             ".ctor",
                                                             "SetupAI",
                                                             "AddCrew",
-                                                            "ResetShipState"
+                                                            "ResetShipState",
+                                                            "FindShipForFaction"
                                                         ],
                                             "type":  "Ostranauts.Ships.AIPilots.AIShip"
                                         }
@@ -46,7 +103,12 @@
                                          "methods":  [
                                                          "Update",
                                                          "AddAIToShip",
-                                                         "LowFuel"
+                                                         "LowFuel",
+                                                         "AIShipCleanup",
+                                                         "CrewCleanup",
+                                                         "DerelictCleanup",
+                                                         "SpawnPassShip",
+                                                         "UnregisterShip"
                                                      ],
                                          "type":  "AIShipManager"
                                      }
@@ -74,7 +136,8 @@
                                                       "AIRefuel",
                                                       "GetRCSRemain",
                                                       "GetRCSMax",
-                                                      "IsStation"
+                                                      "IsStation",
+                                                      "Destroy"
                                                   ],
                                       "type":  "Ship"
                                   }
@@ -86,7 +149,88 @@
                                                    ],
                                        "type":  "Ostranauts.Systems.BountyManager"
                                    }
-                               ]
+                               ],
+                     "preservation":  [
+                                          {
+                                              "methods":  [
+                                                              "DockAndDespawn"
+                                                          ],
+                                              "type":  "CrewSim"
+                                          },
+                                          {
+                                              "methods":  [
+                                                              "AIShipCleanup",
+                                                              "CrewCleanup",
+                                                              "DerelictCleanup",
+                                                              "SpawnPassShip",
+                                                              "UnregisterShip"
+                                                          ],
+                                              "type":  "AIShipManager"
+                                          },
+                                          {
+                                              "methods":  [
+                                                              "CleanupStaleShips",
+                                                              "TryRecycleCrew"
+                                                          ],
+                                              "type":  "StarSystem"
+                                          },
+                                          {
+                                              "methods":  [
+                                                              "MoveTargets",
+                                                              "SpawnBountyTarget",
+                                                              "AddBountyConditions",
+                                                              "EvaluateAllBounties",
+                                                              "RemoveBounty",
+                                                              "TryToArrest"
+                                                          ],
+                                              "type":  "Ostranauts.Systems.BountyManager"
+                                          }
+                                      ],
+                     "preservation_test":  [
+                                               {
+                                                   "methods":  [
+                                                                   "DockAndDespawn"
+                                                               ],
+                                                   "type":  "CrewSim"
+                                               },
+                                               {
+                                                   "methods":  [
+                                                                   "AIShipCleanup",
+                                                                   "CrewCleanup",
+                                                                   "DerelictCleanup",
+                                                                   "SpawnPassShip",
+                                                                   "UnregisterShip"
+                                                               ],
+                                                   "type":  "AIShipManager"
+                                               },
+                                               {
+                                                   "methods":  [
+                                                                   "CleanupStaleShips",
+                                                                   "TryRecycleCrew"
+                                                               ],
+                                                   "type":  "StarSystem"
+                                               },
+                                               {
+                                                   "methods":  [
+                                                                   "MoveTargets",
+                                                                   "SpawnBountyTarget",
+                                                                   "AddBountyConditions",
+                                                                   "EvaluateAllBounties",
+                                                                   "RemoveBounty",
+                                                                   "TryToArrest"
+                                                               ],
+                                                   "type":  "Ostranauts.Systems.BountyManager"
+                                               }
+                                           ],
+                     "stale_cleanup":  [
+                                           {
+                                               "methods":  [
+                                                               "CleanupStaleShips",
+                                                               "TryRecycleCrew"
+                                                           ],
+                                               "type":  "StarSystem"
+                                           }
+                                       ]
                  },
     "assets":  [
                    {
@@ -104,6 +248,15 @@
                        "path":  "condtrigs/condtrigs.json",
                        "entry":  "TIsValidStationDropOff",
                        "id":  "station_dropoff"
+                   },
+                   {
+                       "sources":  [
+                                       "manager",
+                                       "preservation"
+                                   ],
+                       "path":  "condtrigs/condtrigs.json",
+                       "entry":  "TIsNPCPrunable",
+                       "id":  "population_prunable"
                    }
                ],
     "predicateSources":  {
@@ -120,6 +273,10 @@
                              "service_limited":  [
                                                      "ship",
                                                      "manager"
-                                                 ]
+                                                 ],
+                             "preserve_active_contract":  [
+                                                              "bounty",
+                                                              "preservation"
+                                                          ]
                          }
 }

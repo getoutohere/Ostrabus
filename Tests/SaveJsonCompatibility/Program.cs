@@ -47,6 +47,7 @@ Console.WriteLine($"Passed {checks} loader integration checks");
 foreach (string culture in new[] { "", "fr-FR" }) {
     System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo(culture);
     if (Benchmark.CompatibilityCases() != 0) throw new Exception("Compatibility cases failed for " + culture);
+    Benchmark.Version110Cases();
 }
 
 namespace Ostrabus.Optimizations {

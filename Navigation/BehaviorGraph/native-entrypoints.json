@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "1.1.0.0",
+  "assemblySha256": "a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07",
+  "scope": "Assembly-derived entrypoint references only. No transition, decision, native-outcome or compatibility proof is implied.",
+  "entries": [
+    {
+      "type": "Ostranauts.Ships.AIPilots.ArenaModePilot",
+      "path": "Ostranauts.Ships.AIPilots/ArenaModePilot.cs",
+      "methods": [
+        ".ctor",
+        "FFWD",
+        "GetTarget",
+        "GetTargetHome"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.AIPilots.AutoPilot",
+      "path": "Ostranauts.Ships.AIPilots/AutoPilot.cs",
+      "methods": [
+        ".ctor",
+        "FFWD",
+        "GetTarget"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.AIPilots.BlockadePilot",
+      "path": "Ostranauts.Ships.AIPilots/BlockadePilot.cs",
+      "methods": [
+        "FFWD",
+        "GetTargetHome"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.AIPilots.MissilePilot",
+      "path": "Ostranauts.Ships.AIPilots/MissilePilot.cs",
+      "methods": [
+        ".ctor",
+        "FFWD",
+        "GetTarget"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.AIPilots.PiratePilot",
+      "path": "Ostranauts.Ships.AIPilots/PiratePilot.cs",
+      "methods": [
+        "FFWD"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.AIPilots.PolicePilot",
+      "path": "Ostranauts.Ships.AIPilots/PolicePilot.cs",
+      "methods": [
+        "GetTarget"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.AIPilots.StationPilot",
+      "path": "Ostranauts.Ships.AIPilots/StationPilot.cs",
+      "methods": [
+        ".ctor",
+        "FFWD",
+        "GetTarget"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.Blank",
+      "path": "Ostranauts.Ships.Commands/Blank.cs",
+      "methods": [
+        "ResolveInstantly",
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.ComeHere",
+      "path": "Ostranauts.Ships.Commands/ComeHere.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.DeployLeo",
+      "path": "Ostranauts.Ships.Commands/DeployLeo.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.Dodge",
+      "path": "Ostranauts.Ships.Commands/Dodge.cs",
+      "methods": [
+        "ResolveInstantly",
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.FlyToAutoPilot",
+      "path": "Ostranauts.Ships.Commands/FlyToAutoPilot.cs",
+      "methods": [
+        "ResolveInstantly",
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.FlyToMissile",
+      "path": "Ostranauts.Ships.Commands/FlyToMissile.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.FlyToPatrol",
+      "path": "Ostranauts.Ships.Commands/FlyToPatrol.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.GetTarget",
+      "path": "Ostranauts.Ships.Commands/GetTarget.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.Guard",
+      "path": "Ostranauts.Ships.Commands/Guard.cs",
+      "methods": [
+        "ResolveInstantly"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.HoldStationAutoPilot",
+      "path": "Ostranauts.Ships.Commands/HoldStationAutoPilot.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.HoldThrustAutoPilot",
+      "path": "Ostranauts.Ships.Commands/HoldThrustAutoPilot.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.InitiateAgainstBiggestThreat",
+      "path": "Ostranauts.Ships.Commands/InitiateAgainstBiggestThreat.cs",
+      "methods": [
+        "ResolveInstantly"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.IsFriendlyUnderAttack",
+      "path": "Ostranauts.Ships.Commands/IsFriendlyUnderAttack.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.LowFuelRetreat",
+      "path": "Ostranauts.Ships.Commands/LowFuelRetreat.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.Lurk",
+      "path": "Ostranauts.Ships.Commands/Lurk.cs",
+      "methods": [
+        "ResolveInstantly"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.PirateShakeDown",
+      "path": "Ostranauts.Ships.Commands/PirateShakeDown.cs",
+      "methods": [
+        "ResolveInstantly",
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.RaceComms",
+      "path": "Ostranauts.Ships.Commands/RaceComms.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.RemoveAI",
+      "path": "Ostranauts.Ships.Commands/RemoveAI.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.Scuttle",
+      "path": "Ostranauts.Ships.Commands/Scuttle.cs",
+      "methods": [
+        "ResolveInstantly",
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.ShakeDown",
+      "path": "Ostranauts.Ships.Commands/ShakeDown.cs",
+      "methods": [
+        "ResolveInstantly",
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.Shoot",
+      "path": "Ostranauts.Ships.Commands/Shoot.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.SurrenderArrestAndDespawn",
+      "path": "Ostranauts.Ships.Commands/SurrenderArrestAndDespawn.cs",
+      "methods": [
+        "ResolveInstantly",
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.SurrenderConsiderOffer",
+      "path": "Ostranauts.Ships.Commands/SurrenderConsiderOffer.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.SurrenderConsiderPlayerDemand",
+      "path": "Ostranauts.Ships.Commands/SurrenderConsiderPlayerDemand.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.SurrenderDemand",
+      "path": "Ostranauts.Ships.Commands/SurrenderDemand.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.TakeFuel",
+      "path": "Ostranauts.Ships.Commands/TakeFuel.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.TargetATC",
+      "path": "Ostranauts.Ships.Commands/TargetATC.cs",
+      "methods": [
+        "ResolveInstantly",
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.TargetEmergencySignal",
+      "path": "Ostranauts.Ships.Commands/TargetEmergencySignal.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.TargetNearestStation",
+      "path": "Ostranauts.Ships.Commands/TargetNearestStation.cs",
+      "methods": [
+        "ResolveInstantly"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.TargetPlayer",
+      "path": "Ostranauts.Ships.Commands/TargetPlayer.cs",
+      "methods": [
+        "ResolveInstantly",
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.TurnOffAllActiveSensors",
+      "path": "Ostranauts.Ships.Commands/TurnOffAllActiveSensors.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.TurnOnAllSensors",
+      "path": "Ostranauts.Ships.Commands/TurnOnAllSensors.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    },
+    {
+      "type": "Ostranauts.Ships.Commands.UnlockPirate",
+      "path": "Ostranauts.Ships.Commands/UnlockPirate.cs",
+      "methods": [
+        "RunCommand"
+      ],
+      "transitionCoverage": "not_expanded"
+    }
+  ]
+}

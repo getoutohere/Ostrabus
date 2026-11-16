@@ -5,7 +5,7 @@
     <Game>$(GameDir)</Game>
     <Managed>$(GameDir)/Ostranauts_Data/Managed</Managed>
   </PropertyGroup>
-  <ItemGroup Condition="'$(MSBuildProjectName)' != 'Ostrabus' and '$(MSBuildProjectName)' != 'ApartmentRefuel'">
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'Ostrabus' and '$(MSBuildProjectName)' != 'ApartmentRefuel' and '$(MSBuildProjectName)' != 'SaveMigration110'">
     <Compile Include="$(MSBuildThisFileDirectory)Build/InstallationPaths.cs" Link="InstallationPaths.cs" />
   </ItemGroup>
 </Project>

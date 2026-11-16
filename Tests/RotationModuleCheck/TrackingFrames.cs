@@ -13,6 +13,7 @@ static partial class Program {
         return false;
     }
     sealed class Rock : IStellarObject {
+        public int MapID { get; set; }
         public string strID { get; set; }
         public string strLoot { get; set; }
         public ShipSitu objSS { get; } = new ShipSitu(false);

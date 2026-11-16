@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "ostrabus-traffic-current",
-  "base": "traffic-1.0.1.10",
+  "base": "traffic-1.1.0.0",
   "patches": [
     {
       "id": "cargo_loading",
@@ -647,6 +647,77 @@
           "removeSet": []
         }
       ]
+    },
+    {
+      "id": "passive_docking_attachment",
+      "classification": "simulation_attachment_lifetime",
+      "sources": [
+        "patch_attachment",
+        "attachment_towing"
+      ],
+      "evidence": [
+        "attachment_checks",
+        "attachment_collateral"
+      ],
+      "summary": "Retain an authored body attachment for passive visits; release group and members for applied movement or authorized braced course. Defer HaulShip's member unlock while still waiting.",
+      "removes": [
+        "Passive link changes dropping an existing body attachment.",
+        "Retained locks trapping applied movement or disappearing from paused-haul saved members."
+      ],
+      "preserves": [
+        "Native AI targets, Hold gravity policy and visit timing.",
+        "Station/ground/mooring constraints, brace abort and native relock thresholds.",
+        "Previously free hull motion; no automatic recovery."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "attachment.dock",
+          "id": "fix.attachment.dock",
+          "to": "p_group",
+          "set": {
+            "attachment_lock": "body",
+            "attachment_member": "body"
+          }
+        },
+        {
+          "kind": "intercept",
+          "edge": "attachment.rcs.body",
+          "id": "fix.attachment.rcs",
+          "to": "p_motion",
+          "set": {
+            "attachment_lock": "free",
+            "attachment_member": "free",
+            "attachment_input": "retained",
+            "attachment_path": "free_coast"
+          },
+          "phase": "before",
+          "predicate": "attachment_releasable_identity"
+        },
+        {
+          "kind": "intercept",
+          "edge": "attachment.course.secured",
+          "id": "fix.attachment.course",
+          "to": "p_motion",
+          "set": {
+            "attachment_lock": "free",
+            "attachment_member": "free",
+            "attachment_input": "retained",
+            "attachment_path": "course"
+          },
+          "phase": "before",
+          "predicate": "attachment_releasable_identity"
+        },
+        {
+          "kind": "replace",
+          "edge": "attachment.haul.pause",
+          "id": "fix.attachment.haul.pause",
+          "to": "p_wait",
+          "set": {
+            "attachment_member": "body"
+          }
+        }
+      ]
     }
   ],
   "documentedDependencies": [
@@ -738,6 +809,14 @@
       ],
       "status": "native_tested_numeric_boundary",
       "reason": "Multi-actor quantities, concrete item acceptance, hull pool sizing, price/cache identity, refund staging and Main/Flee/priority/save-load eligibility are native-tested outside the finite graph. The delivery label denotes handled cargo including deliberately discarded overflow; it does not assert all units fit. No new route or economic destination is invented."
+    },
+    {
+      "id": "native_entrypoints_not_expanded",
+      "sources": [
+        "unexpanded_native_entrypoints"
+      ],
+      "status": "not_transition_expanded",
+      "reason": "Assembly-derived role/command references close the selector inventory gap, not the behavioral-model gap. Guards, branch ordering, physical outcomes and cross-actor transitions for these entries remain unexpanded; separate native patch tests must provide compatibility evidence."
     }
   ],
   "notApplicable": []

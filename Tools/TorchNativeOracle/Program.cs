@@ -194,8 +194,8 @@ static partial class Program {
                     Check(tankSeconds >= target / 2, "Physical tanks pass the same native guard");
                     StarSystem.fEpoch = 100;
                     var nav = new NavData(ship);
-                    nav.AddNavDataPoint(new NavDataPoint(99, new ShipSitu(false), 0, .3, 25000));
-                    nav.AddNavDataPoint(new NavDataPoint(101, new ShipSitu(false), 0, .3, target));
+                    nav.AddNavDataPoint(new NavDataPoint(99, new ShipSitu(false), 0, .3, 25000,rcsCount:0F));
+                    nav.AddNavDataPoint(new NavDataPoint(101, new ShipSitu(false), 0, .3, target,rcsCount:0F));
                     ship.objSS.NavData = nav;
                     var autopilot = Empty<FlyToAutoPilot>();
                     Field(autopilot, "_shipUs", ship);
@@ -230,8 +230,8 @@ static partial class Program {
                 Near(fusion.ReactantHe3, actualHe, "Patched He-3 cache", 1e-10);
                 StarSystem.fEpoch = 100;
                 var nav = new NavData(ship);
-                nav.AddNavDataPoint(new NavDataPoint(99, new ShipSitu(false), 0, .3, target + 1000));
-                nav.AddNavDataPoint(new NavDataPoint(101, new ShipSitu(false), 0, .3, target));
+                nav.AddNavDataPoint(new NavDataPoint(99, new ShipSitu(false), 0, .3, target + 1000,rcsCount:0F));
+                nav.AddNavDataPoint(new NavDataPoint(101, new ShipSitu(false), 0, .3, target,rcsCount:0F));
                 ship.objSS.NavData = nav;
                 ship.bFusionReactorRunning = true;
                 var autopilot = Empty<FlyToAutoPilot>(); Field(autopilot, "_shipUs", ship);

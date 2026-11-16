@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "binding": "native-navy-1.0.1.10-prototype-v1/c6b794d3-c948-412a-ab78-aeb855ec3826/5687d6f5-a475-4109-b334-13ff828ce8b7",
-  "assertions": 475,
+  "binding": "native-navy-1.1.0.0-prototype-v2/8130eff7-382e-4fff-97c5-67c9ade3a42a/a0c26e1e-3a14-4203-81b3-8afebe69c974",
+  "assertions": 529,
   "allocationSample": {
     "iterations": 2000,
     "allocationCounterReliable": false,
     "counterCalibrationBytes": 0,
     "totalAllocatedBytes": null,
     "bytesPerDispatch": null,
-    "elapsedMilliseconds": 74.1696,
+    "elapsedMilliseconds": 63.0172,
     "nativeCalls": 22000
   },
-  "gameAssemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
-  "pluginSha256": "fc9bdbdb211c11482c3a875c13d6077233719573a5ea33f58a9612be56e6723b",
+  "gameAssemblySha256": "a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07",
+  "pluginSha256": "7632ac35a6d0733dddbc4f15ecebc76e8967626f32890f812edcec967bd47b0e",
   "replacementModelSha256": "f3734a653011957c1565c84bd3de3cec406b3901dfc9c78b78e43270af909cce",
   "abilityContractsSha256": "eb0daf337d6bbbc26cec34f4385cbdfe8c113a554bc800b27c1bf10413b02af6",
-  "replacementCoreModuleId": "9fe30b75-3b78-4a98-a723-23011c496700",
+  "replacementCoreModuleId": "ecf2388f-f993-4819-ad64-4d9ab8f0b559",
   "navyWorldEvidence": [
     {
       "scenario": "mixed-native-world-entrypoints",
@@ -40,8 +40,8 @@
   ],
   "retainedWorldEvidence": [
     {
-      "scenario": "production-PASS-negative-control",
-      "openedScopes": 0,
+      "scenario": "production-PASS-shared-coordinator",
+      "openedScopes": 2,
       "nativeWorldEpoch": 8200.0
     },
     {
@@ -111,7 +111,7 @@
       "scenario": "freight-and-Navy-arrival",
       "source": "SFF",
       "navyFuel": 295.0,
-      "cargoFuel": 290.0,
+      "cargoFuel": 290.00000038743019,
       "product": 1,
       "metal": 3,
       "arrivals": [
@@ -127,13 +127,33 @@
       "windows": [
         {
           "service": "SffEconomy",
-          "start": 1040.0,
-          "seconds": 10760.0
+          "start": 1000.0,
+          "seconds": 40.000000000000227
         },
         {
           "service": "SffSimulation",
-          "start": 1040.0,
-          "seconds": 10760.0
+          "start": 1000.0,
+          "seconds": 40.000000000000227
+        },
+        {
+          "service": "SffEconomy",
+          "start": 1040.0000000000002,
+          "seconds": 3960.0000000000009
+        },
+        {
+          "service": "SffSimulation",
+          "start": 1040.0000000000002,
+          "seconds": 3960.0000000000009
+        },
+        {
+          "service": "SffEconomy",
+          "start": 5000.0000000000009,
+          "seconds": 6799.9999999999991
+        },
+        {
+          "service": "SffSimulation",
+          "start": 5000.0000000000009,
+          "seconds": 6799.9999999999991
         }
       ]
     },
@@ -141,7 +161,7 @@
       "scenario": "freight-and-Navy-arrival",
       "source": "PASS",
       "navyFuel": 295.0,
-      "cargoFuel": 290.0,
+      "cargoFuel": 290.00000038743019,
       "product": 1,
       "metal": 3,
       "arrivals": [
@@ -157,23 +177,43 @@
       "windows": [
         {
           "service": "SffEconomy",
-          "start": 1040.0,
-          "seconds": 10760.0
+          "start": 1000.0,
+          "seconds": 40.000000000000227
         },
         {
           "service": "SffSimulation",
-          "start": 1040.0,
-          "seconds": 10760.0
+          "start": 1000.0,
+          "seconds": 40.000000000000227
+        },
+        {
+          "service": "SffEconomy",
+          "start": 1040.0000000000002,
+          "seconds": 3960.0000000000009
+        },
+        {
+          "service": "SffSimulation",
+          "start": 1040.0000000000002,
+          "seconds": 3960.0000000000009
+        },
+        {
+          "service": "SffEconomy",
+          "start": 5000.0000000000009,
+          "seconds": 6799.9999999999991
+        },
+        {
+          "service": "SffSimulation",
+          "start": 5000.0000000000009,
+          "seconds": 6799.9999999999991
         }
       ]
     },
     {
       "scenario": "partial-freight-native-controller",
       "epoch": 15400.0,
-      "rcs": 292.79998779296875,
+      "rcs": 292.79998777247965,
       "fusion": 92.800003051757813,
       "cargo": 4,
-      "nativePlaybackCalls": 2,
+      "nativePlaybackCalls": 1,
       "mixedOwners": 0
     },
     {
@@ -183,22 +223,82 @@
         {
           "service": "SffEconomy",
           "start": 1000.0,
-          "seconds": 86400.0
+          "seconds": 21600.0
         },
         {
           "service": "SffSimulation",
           "start": 1000.0,
-          "seconds": 86400.0
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffEconomy",
+          "start": 22600.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 22600.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffEconomy",
+          "start": 44200.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 44200.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffEconomy",
+          "start": 65800.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 65800.0,
+          "seconds": 21600.0
         },
         {
           "service": "SffEconomy",
           "start": 87400.0,
-          "seconds": 86400.0
+          "seconds": 21600.0
         },
         {
           "service": "SffSimulation",
           "start": 87400.0,
-          "seconds": 86400.0
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffEconomy",
+          "start": 109000.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 109000.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffEconomy",
+          "start": 130600.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 130600.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffEconomy",
+          "start": 152200.0,
+          "seconds": 21600.0
+        },
+        {
+          "service": "SffSimulation",
+          "start": 152200.0,
+          "seconds": 21600.0
         }
       ],
       "metal": 48,
@@ -206,25 +306,36 @@
       "fuel": 297.1199951171875
     },
     {
-      "scenario": "unresolved-unmanaged-PASS-completion",
-      "expectedNativeDefect": true,
+      "scenario": "unmanaged-AI-native-completion-control",
+      "repaired": false,
       "productionReady": false,
       "extraVelocityMps": 89.758722841341836,
+      "intervalSeconds": 600,
+      "arrivalAfterSeconds": 300,
+      "nativePlaybackCalls": 1
+    },
+    {
+      "scenario": "unmanaged-AI-native-completion-control",
+      "repaired": true,
+      "productionReady": false,
+      "extraVelocityMps": 0.0,
       "intervalSeconds": 600,
       "arrivalAfterSeconds": 300,
       "nativePlaybackCalls": 1
     }
   ],
   "nativeSaveEvidence": {
-    "collectorCalls": 13,
-    "threadedArchiveWrites": 3,
-    "synchronousArchiveWrites": 4,
+    "collectorCalls": 20,
+    "threadedArchiveWrites": 6,
+    "synchronousArchiveWrites": 5,
     "excludedSceneCalls": 0,
     "excludedSteeringCalls": 0,
     "scope": "One actor; native collector/writer/parser, arrival policy and unregister; physical ship/crew/scene and unrelated subsystem snapshots retain providers.",
     "performanceQualified": false
   },
   "retainedWorldServicePatches": [
+    "SffDecisionStepsPatch",
+    "PassPendingEndTurnsPatch",
     "OrbitalStepObservationPatch",
     "OrbitalGravityPatch",
     "CoastScopePatch",
@@ -242,6 +353,9 @@
     "Economy.MarketWithdrawalPatch",
     "Economy.MarketBatchDepositPatch"
   ],
+  "nativeGameVersion": "1.1.0.0",
+  "executiveSaveRecordSchema": 2,
+  "sharedJumpCoordinator": "Ostrabus.Orbital.SffAdvance",
   "reviewedSources": [
     {
       "path": "Navigation/FlightControlHandoffPatch.cs",
@@ -253,7 +367,7 @@
     },
     {
       "path": "MiscBugFixes/SffNavigationDestinationPatch.cs",
-      "sha256": "07e8d4a4da042b3b1bdade6317f6ea8b6a661e13ec62d4328db11d0ccb3a79bf"
+      "sha256": "b81355181d9a040213165e7235d5692ab55cb0288531f582b3de12324ba05632"
     },
     {
       "path": "MiscBugFixes/CivilianVisitWaiting.cs",
@@ -261,7 +375,7 @@
     },
     {
       "path": "Orbital/SffSimulation.cs",
-      "sha256": "eadc6fc44b6a678376e6a31dd0a9402574b9f7b1c68a62f7b87810adf1403f5e"
+      "sha256": "023653853e26f4429d4608fa4d229f610415b06729adfc4a8d305eb41959463d"
     },
     {
       "path": "Orbital/Economy/CargoArrivalPatches.cs",
@@ -277,7 +391,7 @@
     },
     {
       "path": "Orbital/OrbitalPatches.cs",
-      "sha256": "e7f27fb97a07fd9f3836cb15591aff17c70ca44b2b05d15455372d3fcdb022ea"
+      "sha256": "98192c8980905c1b7a8d6a51307d7682d81d7bef86492a057fd6d31fc8f325d8"
     },
     {
       "path": "Orbital/CoastIntegration.cs",
@@ -289,7 +403,7 @@
     },
     {
       "path": "Orbital/SffDynamics.cs",
-      "sha256": "e3d058f7e24317763ee5e06215f295a0207187fc8958b7adaee2418a43d97edd"
+      "sha256": "701558fcc9157b5dab226e15de8382dbab53dcaf5ebb6cc9f8505ac795a3574b"
     },
     {
       "path": "Orbital/Economy/EconomyPatches.cs",
@@ -297,11 +411,35 @@
     },
     {
       "path": "Orbital/Economy/SffEconomy.cs",
-      "sha256": "11fd3f11208b9d0a20485d81c8621b49086074a933fe3317b1e6721a04dea001"
+      "sha256": "7416fde24763752a812043fc6c84f2e95231d101ac25c288beacba1bef5d0686"
     },
     {
       "path": "Orbital/Economy/FreightRoute.cs",
-      "sha256": "7370334d7d429ce890467a3ddde28b8ff85496cf688bc10b4d915d705a21b29f"
+      "sha256": "dcf9a7dcd84f5a01cb5b1bfdb14f917c2df6fc43c5b4b1b7248f1c8b0dca3963"
+    },
+    {
+      "path": "Orbital/SffAdvance.cs",
+      "sha256": "b61fb1392bd9298922858140b4c48932eb34e23ac21b9509d9439073b6717a18"
+    },
+    {
+      "path": "Orbital/JumpBoundary.cs",
+      "sha256": "5c2d30c79eff9baa719bd3a8190977135867d3d726792d573ff172ea95ecf4e4"
+    },
+    {
+      "path": "Navigation/RouteCompletionPatch.cs",
+      "sha256": "59b06aac6a8beb1b8e765a97c5c5908409d23810ce6d6d55c27becf3ee187ef7"
+    },
+    {
+      "path": "SaveCompatibility/LegacyRcsCaches.cs",
+      "sha256": "3a165aa36de39744d352716e0f3f486e3ce10b25b98aac3e372546d229265e2f"
+    },
+    {
+      "path": "SaveCompatibility/LegacyRcsLoadingPatch.cs",
+      "sha256": "24afb655e67cb2578dd138ddf74c77cc4f774e1ad0e47373ea7114928b5d92b7"
+    },
+    {
+      "path": "MiscBugFixes/ShipReplacementTargetsPatch.cs",
+      "sha256": "cf8a11dea22b28ee4775da43c3abff2e03a3680024b57e5fbb0a95dd25c87ae3"
     }
   ],
   "results": [
@@ -661,6 +799,61 @@
       "assertions": 2
     },
     {
+      "name": "1.1 deferred destination preserves mission through conversion, reload and physical re-entry",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "1.1 deferred actor cannot be implicitly adopted or mistaken for arrival",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "1.1 native archive preserves absent environment arrays and propulsion state",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "1.1 native archive preserves empty environment arrays and propulsion state",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "1.1 native archive preserves populated environment arrays and propulsion state",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "1.1 native save rejects mixed physical/deferred identities and old bindings before adoption",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "1.1 snapshot rejects a changed deferred generation and tampered empty-array evidence",
+      "passed": true,
+      "assertions": 3
+    },
+    {
+      "name": "1.1 standalone checkpoints reject historical bindings before world reconstruction",
+      "passed": true,
+      "assertions": 2
+    },
+    {
+      "name": "1.1 shared SFF grants decision opportunities only to a capable actor before predicted impact",
+      "passed": true,
+      "assertions": 6
+    },
+    {
+      "name": "1.1 native orbit prediction, docking inheritance and DTO reload preserve circular motion",
+      "passed": true,
+      "assertions": 5
+    },
+    {
+      "name": "1.1 nonzero route capability preserves native damage abort and unrelated AI",
+      "passed": true,
+      "assertions": 8
+    },
+    {
       "name": "Navy real SFF suppresses a live legacy flight callback without swallowing player playback",
       "passed": true,
       "assertions": 6
@@ -681,9 +874,9 @@
       "assertions": 4
     },
     {
-      "name": "world services baseline: production scopes do not cover PASS",
+      "name": "world services shared production coordinator covers PASS without an experimental scope",
       "passed": true,
-      "assertions": 1
+      "assertions": 2
     },
     {
       "name": "world services shared binding preserves normal, SFF and PASS production and route fuel",
@@ -736,9 +929,9 @@
       "assertions": 2
     },
     {
-      "name": "world services negative control: scopes alone do not repair unmanaged PASS route completion",
+      "name": "world services native completion negative control and retained repair preserve unmanaged AI motion",
       "passed": true,
-      "assertions": 2
+      "assertions": 4
     },
     {
       "name": "world services rebind a saved Navy route without reconstructing economic scopes",
@@ -793,7 +986,6 @@
     "Ship.get_NavAIManned",
     "Ship.get_NavPlayerManned",
     "Ship.get_RCSAccelMax",
-    "Ship.get_RCSCount",
     "Ship.GetPeople",
     "Ship.HasOpenDockingPorts",
     "Ship.IsDocked",

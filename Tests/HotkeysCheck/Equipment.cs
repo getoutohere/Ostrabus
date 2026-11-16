@@ -78,7 +78,9 @@ static partial class Program {
     }
     static void Put(Container box, CondOwner item) { box.AddCOSimple(item, box.gridLayout.FindFirstUnoccupiedTile(1, 1, item.strID)); }
     static void EquipmentChecks() {
-        var definitions = JsonMapper.ToObject<JsonCondOwner[]>(File.ReadAllText(Ostrabus.Development.InstallationPaths.Data + "condowners/condowners.json"));
+        var definitions = Directory.EnumerateFiles(Ostrabus.Development.InstallationPaths.Data + "condowners", "*.json")
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .SelectMany(path => JsonMapper.ToObject<JsonCondOwner[]>(File.ReadAllText(path))).ToArray();
         foreach (string name in new[] { "OutfitHelmet02", "OutfitHelmet02Dmg", "OutfitHelmet03", "OutfitHelmet03Dmg" }) {
             var definition = definitions.Single(co => co.strName == name);
             Check(definition.aStartingConds.Any(cond => cond.StartsWith(name.StartsWith("OutfitHelmet02") ? "IsPSHelmet=" : "IsEVAHelmet=")), "Installed helmet classification changed: " + name);

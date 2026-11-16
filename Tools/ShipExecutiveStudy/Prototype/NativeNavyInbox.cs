@@ -203,8 +203,8 @@ sealed partial class NativeNavyActor
         return Travel.Signal(held.Status == CommandCode.Finished ? "DirectiveComplete" : "DirectiveFailed");
     }
 
-    GoalReference CaptureRawGoal() => World.Subject.shipScanTarget != null
-        ? new GoalReference { TargetId = World.Subject.shipScanTarget.strRegID, Arrival = "Dock" }
+    GoalReference CaptureRawGoal() => World.NavigationTargetId != null
+        ? new GoalReference { TargetId = World.NavigationTargetId, Arrival = "Dock" }
         : new GoalReference { FrameId = World.Subject.shipSituTarget.strBOPORShip ?? World.Home.strRegID, X = World.Subject.shipSituTarget.vPosx, Y = World.Subject.shipSituTarget.vPosy, Arrival = "None" };
     GoalReference CaptureGoal() => CaptureRawGoal();
 }

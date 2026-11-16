@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using HarmonyLib;
 using Ostranauts.Core;
+using Ostranauts.Core.Models;
+using SolarSystem;
 using Ostranauts.Ships;
 using Ostranauts.Ships.AIPilots;
 using Ostranauts.Ships.Commands;
@@ -23,6 +25,9 @@ sealed class NativeWorld
 {
     internal static NativeWorld Current;
     internal readonly Dictionary<string, Ship> Ships = new Dictionary<string, Ship>();
+    // Native physical and deferred registries describe one logical world.
+    // Presence flags retain native null-versus-empty initialization semantics.
+    internal bool StellarShipsPresent = true, StellarDerelictsPresent = true;
     internal Ship Subject, Home, Enemy;
     internal NavyPilot Pilot;
     internal AIShip AI;
@@ -51,6 +56,7 @@ sealed class NativeWorld
         StarSystem.fEpoch = epoch;
         CrewSim.system = Empty<StarSystem>();
         CrewSim.system.dictShips = Ships;
+        CrewSim.system.dictStellarObjects = new DictionaryArray<string, IStellarObject>();
         CrewSim.system.aBOs = new Dictionary<string, BodyOrbit>();
         CrewSim.coPlayer = Empty<CondOwner>();
         CrewSim.coPlayer.ship = Vessel("PLAYER", .1);
@@ -89,6 +95,9 @@ sealed class NativeWorld
         ship.strRegID = id;
         ship.IsAIShip = id != "PLAYER";
         ship.fShallowRCSRemass = ship.fShallowRCSRemassMax = 300;
+        ship.RCSCount = 10;
+        Set(ship, "nRCSCountRaw", 10);
+        Set(ship, "fRCSExhaustV", 10f);
         Back(ship, "objSS", new ShipSitu(false) { vPosx = x });
         Set(ship, "nLoadState", Ship.Loaded.Shallow);
         Set(ship, "aDocked", new Dictionary<string, Ship>());
@@ -114,6 +123,36 @@ sealed class NativeWorld
     }
     internal readonly List<string> SensorEvents = new List<string>();
     internal Ship Resolve(string id) => id != null && Ships.TryGetValue(id, out var ship) ? ship : null;
+    internal string NavigationTargetId => Subject.shipScanTarget?.strRegID ??
+        (Subject.targetRegID != null && CrewSim.system.dictStellarObjects.TryGetValue(Subject.targetRegID, out var entry) &&
+            ReferenceEquals(Subject.shipSituTarget, entry.objSS) ? entry.strID : null);
+    internal TargetData ResolveTarget(string id)
+    {
+        var physical = Resolve(id);
+        if (physical != null && !physical.bDestroyed && !physical.bRemove && !physical.HideFromSystem)
+            return new TargetData(physical);
+        return id != null && CrewSim.system.dictStellarObjects.TryGetValue(id, out var deferred) ? new TargetData(deferred) : null;
+    }
+    internal JsonStellarShipSave[] SaveStellarShips()
+    {
+        var entries = CrewSim.system.dictStellarObjects.OfType<StellarShip>().Select(s => new JsonStellarShipSave(s)).ToArray();
+        return StellarShipsPresent || entries.Length > 0 ? entries : null;
+    }
+    internal JsonStellarDerelictSave[] SaveStellarDerelicts()
+    {
+        var entries = CrewSim.system.dictStellarObjects.OfType<StellarDerelict>().Select(s => new JsonStellarDerelictSave(s)).ToArray();
+        return StellarDerelictsPresent || entries.Length > 0 ? entries : null;
+    }
+    internal void LoadStellar(JsonStellarShipSave[] ships, JsonStellarDerelictSave[] derelicts)
+    {
+        StellarShipsPresent = ships != null;
+        StellarDerelictsPresent = derelicts != null;
+        CrewSim.system.dictStellarObjects.Clear();
+        foreach (var entry in ships ?? Array.Empty<JsonStellarShipSave>())
+            CrewSim.system.dictStellarObjects[entry.strID] = new StellarShip(entry);
+        foreach (var entry in derelicts ?? Array.Empty<JsonStellarDerelictSave>())
+            CrewSim.system.dictStellarObjects[entry.strID] = new StellarDerelict(entry);
+    }
     internal bool IsCanonical(Ship ship, AIShip ai) => ReferenceEquals(Resolve(ship.strRegID), ship) && ReferenceEquals(ai, AI)
         && ReferenceEquals(ai.Ship, ship) && ReferenceEquals(ai.AICharacter, Pilot)
         && ReferenceEquals(AIShipManager.GetAIShipByRegID(ship.strRegID), ai);
@@ -138,8 +177,8 @@ sealed class NativeWorld
         var route = new NavData(Subject);
         var a = new ShipSitu(false) { vPosx = Subject.objSS.vPosx, vPosy = Subject.objSS.vPosy, vVelX = Subject.objSS.vVelX, vVelY = Subject.objSS.vVelY };
         var b = new ShipSitu(false) { vPosx = goal.vPosx, vPosy = goal.vPosy, vVelX = goal.vVelX, vVelY = goal.vVelY };
-        route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, a, Subject.fShallowRCSRemass, 0, 0));
-        route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + RouteDuration, b, Math.Max(0, Subject.fShallowRCSRemass - 5), 0, 0));
+        route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, a, Subject.fShallowRCSRemass, 0, 0, Subject.RCSCount));
+        route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + RouteDuration, b, Math.Max(0, Subject.fShallowRCSRemass - 5), 0, 0, Subject.RCSCount));
         return route;
     }
 
@@ -164,7 +203,6 @@ sealed class NativeWorld
         Getter(typeof(Ship), nameof(Ship.NavAIManned), nameof(Available));
         Getter(typeof(Ship), nameof(Ship.NavPlayerManned), nameof(No));
         Getter(typeof(Ship), nameof(Ship.RCSAccelMax), nameof(Accel));
-        Getter(typeof(Ship), nameof(Ship.RCSCount), nameof(RcsCount));
         Getter(typeof(Ship), nameof(Ship.HasDockingPorts), nameof(HasPorts));
         Patch(typeof(Ship), nameof(Ship.HasOpenDockingPorts), nameof(Yes));
         Patch(typeof(Ship), nameof(Ship.IsDocked), nameof(No));
@@ -260,7 +298,9 @@ sealed class NativeWorld
     static bool UpdateTime(ShipSitu __instance, double __0)
     {
         Current.TargetRefreshEpoch = __0;
-        return false;
+        // Circular targets must execute native phase/velocity refresh. Body
+        // ephemerides still have the explicit fixture provider in NavyFixtures.
+        return __instance.fOrbitW != 0;
     }
     static bool Available(ref bool __result)
     {
@@ -270,11 +310,6 @@ sealed class NativeWorld
     static bool Accel(ref double __result)
     {
         __result = 1.9016982118751132e-10;
-        return false;
-    }
-    static bool RcsCount(ref float __result)
-    {
-        __result = 10;
         return false;
     }
     static bool HasPorts(Ship __instance, ref bool __result)

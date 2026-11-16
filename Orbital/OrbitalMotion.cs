@@ -19,6 +19,28 @@ internal readonly struct MotionState {
     internal bool Finite => Position.Finite && Velocity.Finite;
 }
 
+// Scalar snapshot of 1.1's ShipSitu.GetBOOffsetPrediction/AdvanceBOOrbit.
+// Detached sampling must not advance a live target or mutate BodyOrbit caches.
+internal readonly struct BodyLockedOffset {
+    readonly DVector offset;
+    readonly double rate, measuredAt;
+    internal BodyLockedOffset(ShipSitu situation) {
+        offset = new DVector(situation.vBOOffsetx, situation.vBOOffsety) * OrbitalMotion.KmPerAU;
+        rate = situation.fOrbitW;
+        measuredAt = situation.fOrbitTimeLast;
+    }
+    internal DVector Position(double epoch) {
+        if (rate == 0 || epoch == measuredAt) return offset;
+        double angle = rate * (epoch - measuredAt), cos = Math.Cos(angle), sin = Math.Sin(angle);
+        return new DVector(offset.X * cos - offset.Y * sin, offset.X * sin + offset.Y * cos);
+    }
+    internal MotionState At(MotionState body, double epoch) {
+        var position = Position(epoch);
+        return new MotionState(body.Position + position, body.Velocity + new DVector(-rate * position.Y, rate * position.X));
+    }
+    internal DVector Acceleration(double epoch) => Position(epoch) * (-rate * rate);
+}
+
 internal static class OrbitalMotion {
     internal const double KmPerAU = 149597870.7;
     internal static readonly double GravityConstant = (double)(float)2e-44 * KmPerAU * KmPerAU * KmPerAU;

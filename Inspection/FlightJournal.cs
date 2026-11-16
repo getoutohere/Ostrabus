@@ -130,6 +130,8 @@ internal static class FlightJournal {
     }
     static void UnityLog(string message, string stack, LogType type) {
         if (type == LogType.Warning || type == LogType.Error || type == LogType.Exception || type == LogType.Assert) Log("Unity", type.ToString(), message, stack);
+        else if (type == LogType.Log && message != null && message.StartsWith("Destroying ship ", StringComparison.Ordinal))
+            Log("Unity", "Info", message, new StackTrace(1, false).ToString());
     }
     sealed class LogListener : ILogListener {
         public void LogEvent(object sender, LogEventArgs args) {

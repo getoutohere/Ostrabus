@@ -45,7 +45,7 @@ static class Program {
         var situ = new ShipSitu(false) { vPosx = Number(pos["x"]), vPosy = Number(pos["y"]),
             vVelX = Number(vel["x"]), vVelY = Number(vel["y"]), bIsBO = target,
             strBOPORShip = repaired ? "linear-station" : null };
-        return new NavDataPoint(time, situ, 1000, 0, 0);
+        return new NavDataPoint(time, situ, 1000, 0, 0,rcsCount:0F);
     }
     static NavData Replay(JObject data, bool repaired) {
         var originRecord = data["navigation"]["currentNavPlan"]["points"][0];
@@ -66,8 +66,8 @@ static class Program {
         targetX = target.vPosx; targetY = target.vPosy; targetVx = target.vVelX; targetVy = target.vVelY;
         reference.dXReal = targetX; reference.dYReal = targetY; reference.dVelX = targetVx; reference.dVelY = targetVy;
         var planner = new FlyToPath(new Pilot { ShipUs = ship, Speed = speed });
-        return planner.PlanTrip4(new NavDataPoint(epoch, new ShipSitu(ship.objSS, false), ship.fShallowRCSRemass, 0, 0),
-            new NavDataPoint(epoch, new ShipSitu(target, false), 0, 0, 0), 1, 1);
+        return planner.PlanTrip4(new NavDataPoint(epoch, new ShipSitu(ship.objSS, false), ship.fShallowRCSRemass, 0, 0,rcsCount:0F),
+            new NavDataPoint(epoch, new ShipSitu(target, false), 0, 0, 0,rcsCount:0F), 1, 1);
     }
     static int AuditSaves() {
         string root = Environment.GetEnvironmentVariable("USERPROFILE") + "/AppData/LocalLow/Blue Bottle Games/Ostranauts/Saves";
@@ -127,6 +127,7 @@ static class Program {
         var h = new Harmony("offline.ai-planner.diagnosis");
         h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Equality"), prefix: new HarmonyMethod(typeof(Program), nameof(Equal)));
         h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"), prefix: new HarmonyMethod(typeof(Program), nameof(Unequal)));
+        if (args.Length != 0 && args[0] == "rcs-1.1") { NativeRcsCompatibility.Run(); return 0; }
         if (args.Length != 0 && args[0] == "ceres") { CeresAuditChecks.Run(); return 0; }
         if (args.Length != 0 && args[0] == "patrol-queue") { PatrolQueueChecks.Run(args); return 0; }
         if (args.Length != 0 && args[0] == "patrol-interactions") { PatrolQueueChecks.Interactions(); return 0; }

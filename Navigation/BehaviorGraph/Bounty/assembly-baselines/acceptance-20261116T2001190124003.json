@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/52ccefa9e6955246f6e54a9ebd965c532b7f0aa675a350ae039fc4d7483a1417.json.br",
+  "reason": "Expanded reviewed bounty lifecycle boundaries to native retirement rejection, ownership release, regional and stale hull disposal, population exclusions, expiry and hand-ins. Production policy passes 174 native assertions and full/custom binding; native 1.1.0.0 assembly unchanged.",
+  "acceptedUtc": "2026-11-16T20:01:19.0038196Z",
+  "previousSnapshot": "assembly-baselines/7de09db3e3d537241c378c676e18d0d5dd32e91081603671ec031bee2ac7a7ce.json.br"
+}

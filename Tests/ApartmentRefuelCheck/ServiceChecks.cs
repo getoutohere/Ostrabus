@@ -166,7 +166,9 @@ static partial class Program {
         components[battery] = new Dictionary<Type, Component> { [typeof(Powered)] = power };
         var publicPanel = Panel(home, CrewSim.coPlayer, false);
         Setup(publicPanel, target);
-        Check(Row(publicPanel, "rowFuelRCS").fMax > RefuelAdapter.GasCapacity(rcs, .028013398870825768) * 2.5, "Native cross-hull/alias RCS preview not reproduced");
+        Check(Math.Abs(Row(publicPanel, "rowFuelRCS").fMax - RefuelAdapter.GasCapacity(rcs, .028013398870825768) -
+            RefuelAdapter.GasCapacity(badRcs, .028013398870825768)) < .001,
+            "Native RCS tank deduplication or cross-hull capacity changed");
         Check(Row(publicPanel, "rowLifeN2").fMax > RefuelAdapter.GasCapacity(life, .028013398870825768) * 3.5, "Native shared-pump N2 capacity duplication not reproduced");
         var panel = Panel(home, CrewSim.coPlayer);
         Setup(panel, target);

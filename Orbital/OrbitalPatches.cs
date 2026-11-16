@@ -16,7 +16,7 @@ internal static class OrbitalStepObservationPatch {
     internal static void Prefix(StarSystem __instance, double fTimeDelta, out Step __state) {
         OrbitalSimulation.ObserveUpdate(__instance, fTimeDelta);
         __state = null;
-        if (!GUIFFWD.Active || fTimeDelta < 60) return;
+        if (!(GUIFFWD.Active || JumpBoundary.Active) || fTimeDelta <= 0 || fTimeDelta < 60 && !SffAdvance.Active) return;
         var economy = Economy.SffEconomy.Begin(__instance, fTimeDelta, true);
         var motion = SffSimulation.Begin(__instance, fTimeDelta, true);
         if (economy != null || motion != null) __state = new Step { Motion = motion, Economy = economy };
@@ -87,13 +87,19 @@ internal static class CoastMotionPatch {
 [HarmonyPatch(typeof(AIShipManager), nameof(AIShipManager.FFWD))]
 internal static class SffBeforeCatchupPatch {
     [HarmonyPrefix]
-    internal static void Prefix() { SffSimulation.Current?.BeforeAi(); }
+    internal static void Prefix(ref double timeDelta, out bool __state) {
+        SffSimulation.Current?.BeforeAi();
+        __state = SffAdvance.EnterCatchup(ref timeDelta);
+    }
+    [HarmonyFinalizer]
+    internal static Exception Finalizer(Exception __exception, bool __state) { SffAdvance.LeaveCatchup(__state); return __exception; }
 }
 
 [HarmonyPatch(typeof(AIShip), nameof(AIShip.FFWD))]
 internal static class SffCatchupPatch {
     [HarmonyPrefix]
-    internal static bool Prefix(AIShip __instance) { return SffSimulation.Current == null || SffSimulation.Current.AllowCatchup(__instance); }
+    internal static bool Prefix(AIShip __instance) =>
+        (SffSimulation.Current == null || SffSimulation.Current.AllowCatchup(__instance)) && SffAdvance.AllowCatchup(__instance);
 }
 
 [HarmonyPatch(typeof(ConsoleResolver), nameof(ConsoleResolver.ResolveString))]

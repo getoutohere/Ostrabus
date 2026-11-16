@@ -15,6 +15,8 @@ internal static class NavigationInspection {
     static readonly AccessTools.FieldRef<Ship, List<CondOwner>> RcsThrusters = AccessTools.FieldRefAccess<Ship, List<CondOwner>>("aRCSThrusters");
     static readonly AccessTools.FieldRef<Ship, int> RcsDistributionCount = AccessTools.FieldRefAccess<Ship, int>("nRCSDistroCount");
     static readonly AccessTools.FieldRef<Ship, float> RcsCount = AccessTools.FieldRefAccess<Ship, float>("fRCSCount");
+    static readonly AccessTools.FieldRef<Ship, int> RcsCountRaw = AccessTools.FieldRefAccess<Ship, int>("nRCSCountRaw");
+    static readonly AccessTools.FieldRef<Ship, float> RcsExhaust = AccessTools.FieldRefAccess<Ship, float>("fRCSExhaustV");
     static readonly AccessTools.FieldRef<Ship, double> FuelEfficiency = AccessTools.FieldRefAccess<Ship, double>("fFuelEfficiencyMod");
     static readonly AccessTools.FieldRef<Ship, bool> TorchDriveThrusting = AccessTools.FieldRefAccess<Ship, bool>("bTorchDriveThrusting");
     static readonly AccessTools.FieldRef<NavData, List<NavDataPoint>> NavPoints = AccessTools.FieldRefAccess<NavData, List<NavDataPoint>>("_navPoints");
@@ -151,7 +153,8 @@ internal static class NavigationInspection {
             "rcsFuelKg", ship.fShallowRCSRemass, "rcsCapacityKg", capacity,
             "rcsFuelPercent", shallowCurrent && capacity > 0 ? (object)(100d * ship.fShallowRCSRemass / capacity) : null,
             "materializedRcsThrusterObjects", RcsThrusters(ship)?.Count, "rcsDistributionCount", RcsDistributionCount(ship),
-            "rcsCount", RcsCount(ship), "fuelEfficiencyMod", FuelEfficiency(ship),
+            "rcsCount", RcsCount(ship), "rawRcsThrusterCount", RcsCountRaw(ship), "rcsExhaustSum", RcsExhaust(ship),
+            "fuelEfficiencyMod", FuelEfficiency(ship),
             "shallowFusionFuelRaw", ship.fShallowFusionRemain, "fusionFuelIsCurrent", shallowCurrent,
             "fusionThrustMaxRaw", ship.fFusionThrustMax,
             "fusionPelletMaxRaw", ship.fFusionPelletMax, "fusionReactorRunning", ship.bFusionReactorRunning,

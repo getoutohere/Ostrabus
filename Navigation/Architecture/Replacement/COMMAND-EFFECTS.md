@@ -1,6 +1,6 @@
 # Command receipt, fuel transfer and dialogue qualification
 
-This is an offline replacement-executive milestone for game 1.0.1.10. It changes
+This is an offline replacement-executive milestone, requalified for game 1.1.0.0. It changes
 the research adapter and its fixtures, not installed patches or game assets.
 The descriptive behavior graph is separate. These results do not authorize
 runtime adoption or removal of existing fixes.

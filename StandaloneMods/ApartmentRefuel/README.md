@@ -1,14 +1,17 @@
-# Apartment Refuel Terminal 0.1.0
+# Apartment Refuel Terminal 0.1.1
 
-Optional standalone QoL mod for Ostranauts 1.0.1.10 / BepInEx 5. Includes its own
+Optional standalone QoL mod for Ostranauts 1.1.0.0 / BepInEx 5. Includes its own
 plugin and native item assets. It works independently of `Ostrabus.dll` and the
 Ostrabus Settings app. No per-frame callbacks or new saved simulation state.
 
-Buy a **Residential Dockside Refuel Terminal** from a station Supply/Sundries
+Buy a **Residential Dockside Refuel Terminal** from a station Sundries/Furnishings
 kiosk after its next normal restock. The loose unit has a $250,000 base value
-(typically $300,000-$325,000 retail before other native modifiers), weighs 31 kg
+(typically $500,000-$750,000 at native Furnishings markups before other modifiers), weighs 31 kg
 and uses a 2x2 fixture footprint. Bring it to a player-owned station apartment
 and install it with the normal work/tools system. Uninstall to transport it.
+It is oversized, drag/dolly-only equipment; it cannot be held in either hand or
+worn on the back. Before updating from 0.1.0, drop any terminal already in hand,
+save, close the game, run this installer again and reload.
 
 The terminal opens the native paid refuel screen: He-3, D2O, RCS nitrogen,
 life-support oxygen/nitrogen, ablator and batteries as supported by the vessel.
@@ -32,7 +35,7 @@ The installer honors the native custom Mods location, verifies file copies and
 keeps reversible backups. Windows may require write permission to the game
 directory. It installs only `BepInEx/plugins/OstrabusApartmentRefuel/` and the
 native `OstrabusApartmentRefuel` mod. Full/custom Ostrabus installers preserve
-these components and refresh the composed supply stock when their own selection
+these components and refresh the composed shop stock when their own selection
 changes. The main `Deploy-Mod.cmd` does not automatically install this companion.
 
 Run `Uninstall.cmd` to remove the plugin and future shop stock while retaining
@@ -42,7 +45,8 @@ asset mod while a save still contains the item. Existing items in shop inventori
 are not retroactively erased.
 
 Shop entries are composed at installation time from the enabled native loot
-definitions, preserving other supply additions, including the Rotation Module.
+definitions, preserving other Furnishings additions. General Supply and its
+Rotation Module stock are left to their existing native mods.
 If you later change other shop mods or load order in-game, rerun this installer
 before playing. The mod must stay after other shop contributors in load order.
 

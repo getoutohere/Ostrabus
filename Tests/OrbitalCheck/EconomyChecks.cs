@@ -43,12 +43,20 @@ static partial class EconomyChecks {
         new CodeInstruction(System.Reflection.Emit.OpCodes.Ret)
     };
     static bool World(StarSystem __instance, double fTimeDelta) {
+        if (requirePassEconomy && (SffEconomy.Current == null || GUIFFWD.Active || !JumpBoundary.Active))
+            throw new Exception("Tagged PASS world window did not enter its economic scope");
+        string phase = "motion";
+        try {
         StarSystem.fEpoch += fTimeDelta;
         foreach (var ship in hulls.Values.ToArray()) AccessTools.Method(typeof(StarSystem), "UpdateShip").Invoke(__instance, new object[] { fTimeDelta, ship });
+        phase = "AI manager";
         AIShipManager.FFWD(fTimeDelta);
+        phase = "dispatch";
         AIShipManager.CheckTradeRoutes();
+        phase = "market";
         MarketManager.Run();
         return false;
+        } catch (Exception error) { throw new Exception("Economic world boundary failed in " + phase, error); }
     }
     static bool Constructor(AIShip __instance, string stationID) {
         var ship = Hull("CARGO" + ++serial); ship.MarketConfigs = new Dictionary<string, string> { { "pod", "fixture" } };
@@ -76,7 +84,7 @@ static partial class EconomyChecks {
             // Fixture flight takes four hours; finish meets the real native docking distance/speed.
             point.vPosx = navOrigin.ObjSS.vPosx + (navDestination.ObjSS.vPosx - navOrigin.ObjSS.vPosx) * t;
             point.vPosy = navOrigin.ObjSS.vPosy + (navDestination.ObjSS.vPosy - navOrigin.ObjSS.vPosy) * t;
-            __result.AddNavDataPoint(new NavDataPoint(navOrigin.ArrivalTime + 14400 * t, point, 100, 0, 100));
+            __result.AddNavDataPoint(new NavDataPoint(navOrigin.ArrivalTime + 14400 * t, point, 100, 0, 100,rcsCount:0F));
         }
         return false;
     }
@@ -184,6 +192,18 @@ static partial class EconomyChecks {
         check(markets.Count == 2 && hulls["CARGO1"].HideFromSystem && markets["DEST"].GetStockCountForCategory("Product") == 1,
             "Real FFWD hooks deliver once and suppress overlapping native production");
         check(SffEconomy.Current == null && SffSimulation.Current == null && StarSystem.fEpoch == start + 21600, "Finalizer cleanup and global clock after split world updates");
+        string EconomicState() => string.Join(";", markets.OrderBy(p => p.Key).Select(p => p.Key + ":" +
+            p.Value.GetStockCountForCategory("Metal") + ":" + p.Value.GetStockCountForCategory("Product"))) + "|plans=" + planCalls;
+        Setup();
+        CrewSim.system.Update(21600);
+        string whole = EconomicState();
+        Setup();
+        CrewSim.system.Update(60); CrewSim.system.Update(60); CrewSim.system.Update(21480);
+        check(EconomicState() == whole && StarSystem.fEpoch == start + 21600,
+            "Two short decision steps changed chronological production, freight dispatch, delivery or payload accounting");
+        check(SffEconomy.Current == null && SffSimulation.Current == null && FreightPlanningScope.Current == null,
+            "Decision-step economic comparison leaked a context");
+        PassReuseChecks(check, fixture);
     }
     static void PlanningChecks(Action<bool, string> check) {
         Setup();

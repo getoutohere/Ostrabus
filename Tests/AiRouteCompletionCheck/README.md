@@ -1,7 +1,9 @@
 # Native SFF destination and velocity-recovery checks
 
 The shared [playback completion repair](../../Navigation/ROUTE-COMPLETION.md)
-adds 295 checks for actual native route playback and physics, for 661 total.
+adds 295 checks for actual native route playback and physics. The PASS instant-
+mooring closure brings the total to 689: both GUI flag values, 30-second through
+six-hour gaps, and native placement without any preceding route completion.
 Its dedicated phase enables real physical integration and body ephemerides;
 the earlier destination/velocity-recovery fixtures below keep their original
 boundaries. It reproduces the 89.7587 m/s defect before installing the patch and

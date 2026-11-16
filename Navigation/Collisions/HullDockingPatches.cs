@@ -24,9 +24,24 @@ internal static class HullDockingGeometryPatch {
         yield return AccessTools.Method(typeof(NavModTargetData),"SetStringsVRelShip");
         yield return AccessTools.Method(typeof(NavModTargetData),"SetPointOfReferenceUI");
         yield return AccessTools.Method(typeof(ShakeDown),"HandlePlayer");
+        yield return AccessTools.Method(typeof(Interaction),"IsWithinShipRange");
     }
     static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod) {
         var code = instructions.ToList();
+        if (__originalMethod.DeclaringType == typeof(Interaction)) {
+            var range = AccessTools.Method(typeof(CollisionManager),nameof(CollisionManager.GetRangeToCollisionKM));
+            int count = 0;
+            for (int i=code.Count-1;i>=0;i--) if (code[i].Calls(range)) {
+                var interaction = new CodeInstruction(OpCodes.Ldarg_0);
+                code[i].MoveLabelsTo(interaction);
+                code.Insert(i,interaction);
+                code[i+1].opcode=OpCodes.Call;
+                code[i+1].operand=AccessTools.Method(typeof(HullDocking),nameof(HullDocking.PermissionRangeKm));
+                count++;
+            }
+            if (count != 1) throw new InvalidOperationException("Native interaction range expression changed; review docking permission geometry.");
+            return code;
+        }
         if (__originalMethod.DeclaringType == typeof(Ship) || __originalMethod.DeclaringType == typeof(ShipSitu)) {
             bool orbit=__originalMethod.DeclaringType == typeof(ShipSitu);
             var radius = AccessTools.Method(typeof(ShipSitu),nameof(ShipSitu.GetRadiusAU));

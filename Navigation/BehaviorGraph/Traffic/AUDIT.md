@@ -85,6 +85,17 @@ These are conditional reference traces, not live-game measurements or new native
 | hull-visit-keeps-native-duration | t_hold; traffic.empty_civilian_hold | t_hold; traffic.empty_civilian_hold |
 | civilian-home-dispatch-faction-filter | t_pick; traffic.empty_civilian_hold | t_pick; traffic.empty_civilian_hold |
 | civilian-low-fuel-home-uses-faction | t_fly; traffic.empty_civilian_hold, traffic.home_dispatch | t_fly; traffic.empty_civilian_hold |
+| passive-attachment-advance | p_end; attachment.lost_wreck | p_end; no modeled finding |
+| passive-attachment-time_skip | p_end; attachment.lost_wreck | p_end; no modeled finding |
+| passive-attachment-rcs-release | p_motion; no modeled finding | p_motion; no modeled finding |
+| passive-attachment-course-release | p_motion; no modeled finding | p_motion; no modeled finding |
+| passive-attachment-unsecured-course | p_motion; no modeled finding | p_motion; no modeled finding |
+| passive-attachment-station-control | p_motion; no modeled finding | p_motion; no modeled finding |
+| passive-attachment-free-control | p_motion; no modeled finding | p_motion; no modeled finding |
+| passive-attachment-paused-haul-save | p_wait; no modeled finding | p_wait; no modeled finding |
+| passive-attachment-native-small-relock | p_end; no modeled finding | p_end; no modeled finding |
+| passive-attachment-permanent-identity-rcs | p_motion; no modeled finding | p_motion; no modeled finding |
+| passive-attachment-permanent-identity-course | p_motion; no modeled finding | p_motion; no modeled finding |
 
 ## Behavioral tradeoffs
 
@@ -101,6 +112,7 @@ These are conditional reference traces, not live-game measurements or new native
 - **controller_identity / native_control_flow_repair**: Unsaved registration reuses an existing controller across regions rather than enrolling the same hull under a second role. Removes: Cross-region collision fallback creating an additional local controller for an active interregional freighter.. Preserves: Original role, region, home, behavior/blackboard state, route, fuel and manifest.; Native fallback creation when no controller exists and explicit saved/player-autopilot setup..
 - **civilian_wait_continuation / native_control_flow_repair**: Release eligible ordinary shallow civilian waits under the existing fuel abstraction, preserve SFF clocks and use the native faction home method. Removes: Permanent below-1kg visit lock when a safe faction home exists.; SFF restarting a routine mining clock.; Interface dispatch bypassing civilian home filtering.. Preserves: Actual tanks, native planning/selection and physical docking.; Materialized/combat fuel, explicit help and scripted/priority holds.; No resolved home retains native fallback and cannot release an empty waiter..
 - **asteroid_visit_duration / simulation_policy**: Draw a 5-120 game minute prospecting duration once on actual asteroid attachment. Removes: Uniformly brief mining visits after the deadlock is removed.. Preserves: Other visit durations and native next-job selection.; An existing saved remaining duration..
+- **passive_docking_attachment / simulation_attachment_lifetime**: Retain an authored body attachment for passive visits; release group and members for applied movement or authorized braced course. Defer HaulShip's member unlock while still waiting. Removes: Passive link changes dropping an existing body attachment.; Retained locks trapping applied movement or disappearing from paused-haul saved members.. Preserves: Native AI targets, Hold gravity policy and visit timing.; Station/ground/mooring constraints, brace abort and native relock thresholds.; Previously free hull motion; no automatic recovery..
 
 ## Dependencies not transition-expanded
 
@@ -112,5 +124,6 @@ These are conditional reference traces, not live-game measurements or new native
 - **collision_duplicate_save_repair**: ApplySaveData removes only the unique original INTERREGIONAL cargo plus local Scav/Police fallback pattern with matching native cargo ownership/origin. Native restore and unchanged captured payloads are tested; ambiguous histories/missing hulls and historical orphan refunds are excluded.
 - **local_navigation_frames**: Native-tested local patrol/ambush/guard/encounter coordinate binding and police SFF placement preserve actual planetary gravity wells/parent references; otherwise use the regional station frame. Departure validation shared. No global gravity/nearest query, free-target prediction, combat or interplanetary course changes. Full military behavior and flight geometry remain unexpanded; see Navigation/LOCAL-NAVIGATION-FRAMES.md.
 - **cargo_stock_and_flight_ownership**: Multi-actor quantities, concrete item acceptance, hull pool sizing, price/cache identity, refund staging and Main/Flee/priority/save-load eligibility are native-tested outside the finite graph. The delivery label denotes handled cargo including deliberately discarded overflow; it does not assert all units fit. No new route or economic destination is invented.
+- **native_entrypoints_not_expanded**: Assembly-derived role/command references close the selector inventory gap, not the behavioral-model gap. Guards, branch ordering, physical outcomes and cross-actor transitions for these entries remain unexpanded; separate native patch tests must provide compatibility evidence.
 
 These unresolved boundaries prevent calling this an all-patches effective simulation. Native inner/outer Harmony phases and side effects must be expanded before drawing conclusions across them.

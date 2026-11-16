@@ -49,7 +49,7 @@
     },
     {
       "scenario": "midpoint-reload",
-      "executiveBytes": 800,
+      "executiveBytes": 799,
       "fuel": 295.0
     }
   ],

@@ -20,8 +20,8 @@ static partial class TrafficChecks {
     static bool VisitCost(ref double __result) { __result = 12; return false; }
     static bool VisitPlan(TargetData target, ref NavData __result) {
         __result = new NavData(visitPlannerShip);
-        __result.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false), 100, 0, 0));
-        __result.AddNavDataPoint(new NavDataPoint(2000, target.Situ, 88, 0, 0));
+        __result.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false), 100, 0, 0,rcsCount:0F));
+        __result.AddNavDataPoint(new NavDataPoint(2000, target.Situ, 88, 0, 0,rcsCount:0F));
         return false;
     }
     static void NoVisitAudio(ref bool bPlayerNotice) { bPlayerNotice = false; }

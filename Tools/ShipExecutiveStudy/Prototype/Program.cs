@@ -16,7 +16,9 @@ static class Program
     static int checks;
     static object AllocationSample;
     static readonly List<object> Results = new List<object>();
-    const string ExpectedGameAssemblySha256 = "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7";
+    // Candidate 1.1 adapter suite. Reviewed 1.0 results remain versioned evidence;
+    // accepting this assembly enables qualification, not production adoption.
+    const string ExpectedGameAssemblySha256 = "a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07";
     static void Check(bool ok, string message)
     {
         checks++;
@@ -439,13 +441,18 @@ static class Program
                     performanceQualified = false
                 },
                 retainedWorldServicePatches = RetainedWorldServices.PatchNames,
+                nativeGameVersion = "1.1.0.0",
+                executiveSaveRecordSchema = 2,
+                sharedJumpCoordinator = "Ostrabus.Orbital.SffAdvance",
                 reviewedSources = new[] {
                     "Navigation/FlightControlHandoffPatch.cs", "Navigation/CivilianAsteroidVisits.cs",
                     "MiscBugFixes/SffNavigationDestinationPatch.cs", "MiscBugFixes/CivilianVisitWaiting.cs",
                     "Orbital/SffSimulation.cs", "Orbital/Economy/CargoArrivalPatches.cs",
                     "Orbital/Economy/CargoDelivery.cs", "Orbital/Economy/MarketStockPatches.cs",
                     "Orbital/OrbitalPatches.cs", "Orbital/CoastIntegration.cs", "Orbital/NativeEphemeris.cs",
-                    "Orbital/SffDynamics.cs", "Orbital/Economy/EconomyPatches.cs", "Orbital/Economy/SffEconomy.cs", "Orbital/Economy/FreightRoute.cs"
+                    "Orbital/SffDynamics.cs", "Orbital/Economy/EconomyPatches.cs", "Orbital/Economy/SffEconomy.cs", "Orbital/Economy/FreightRoute.cs",
+                    "Orbital/SffAdvance.cs", "Orbital/JumpBoundary.cs", "Navigation/RouteCompletionPatch.cs",
+                    "SaveCompatibility/LegacyRcsCaches.cs", "SaveCompatibility/LegacyRcsLoadingPatch.cs", "MiscBugFixes/ShipReplacementTargetsPatch.cs"
                 }.Select(path => new { path, sha256 = Hash(path) }).ToArray(),
                 results = Results,
                 fixtureMethods = boundary.GetPatchedMethods().Select(m => m.DeclaringType.FullName + "." + m.Name).OrderBy(x => x).ToArray(),

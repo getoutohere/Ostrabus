@@ -2,6 +2,17 @@
 
 Run these commands from the repository root.
 
+The [0.6.0 snapshot](RELEASE-0.6.0.md) targets Ostranauts 1.1.0.0 with partial
+in-game acceptance and separately documented offline-only additions. Read the
+[compatibility audit](COMPATIBILITY-1.1.0.0.md) and
+[feature ledger](FEATURE-COMPATIBILITY-1.1.0.0.md) for validation evidence and boundaries.
+The separate [content-availability audit](CONTENT-AVAILABILITY-1.1.0.0.md) covers
+new equipment, ship-design sources, stations, residents and narrative access in
+the player's continuing save; it does not infer availability from hook compatibility.
+Use the preserved `Ostrabus-5.1.0` source tag and a 1.0.1.10 installation to build
+the previous game-version baseline; changing the reference path does not make the
+current native integration compatible with older assemblies.
+
 ## Build and install
 
 Requires the .NET 8 SDK and a local Ostranauts installation with BepInEx.
@@ -38,11 +49,19 @@ installer under `StandaloneMods/ApartmentRefuel/` without activating it. Full an
 custom installers preserve an installed companion and refresh its composed supply
 stock after their own native-mod selection changes. They do not replace its DLL.
 
+The independent [1.1 migration prototype](../StandaloneMods/SaveMigration110/README.md)
+is unnecessary for an already-upgraded save and is not recommended. Its two
+body-map assignments do not enable content after native initialization. The
+standard full/custom deployments do not install or activate it. Read its findings
+for the corrected distinction between initial generation and saved world state.
+
 ## Project layout
 
 Full deployment registers the assets-only `OstrabusPdaHack` native mod alongside
 Settings, honoring custom Mods locations and preserving native disabled states.
 Full deployment also installs the physical [RCS Rotation Module](../NavConsole/Rotation/README.md).
+It also installs the assets-only [CO2 scrubber audio repair](../MiscBugFixes/ScrubberAudio/README.md)
+as `OstrabusScrubberAudio`; no additional Harmony hook is needed.
 Custom installers enable selected native features and disable omitted ones;
 previously installed rotation item definitions are retained without new shop stock
 to preserve items in existing saves.
@@ -88,6 +107,8 @@ checked-in fixtures. Build the named project in Release, then pass its
 | `AutonomousDisembarkCheck` | none | Native needs/leisure selection, early disembark filtering, local alternatives and permission overrides. |
 | `DepartureWaypointCheck` | none | Native departure binding, station hierarchies and player-course controls. |
 | `OrbitalCheck` | `economy` | Production, freight, loading, SFF stage continuation and economic inspection. |
+| `OrbitalCheck` | `decisions` | Captured Ceres coast/impact, native patrol-phase handoff, decision-aware SFF scheduling, control exclusions and iterator binding. |
+| `OrbitalCheck` | `pass-handoff-study` | Non-GUI coast-handoff negative controls, completion-boundary prototype and actual deployed PASS adapter comparison. |
 | `SensorRuntimeCheck` | none | Sensor/EM hooks, offset consumers, paused outer-system contacts and fallback caching. |
 | `VenusDollyCheck` | none | Dolly burden, unchanged physical mass and location transitions. |
 | `DollyMassCheck` | none or `--graph <export.json>` | Native mass accounting and repair of nested containers, anatomy and characters; exclusions, rollback and idempotence. Optional detached save graph. |
@@ -96,8 +117,9 @@ checked-in fixtures. Build the named project in Release, then pass its
 | `PdaSettingsCheck` | none | Settings registry, native assets and toggles. |
 | `PortraitCompositionCheck` | none | Native portrait cold/warm paths, pixel equivalence, raw channel layouts, fallback handling, buffer allocation and guarded transpiler binding. |
 | `SocialsProfilingCheck` | none | Temporary profiling registration, nested timing, deferred UI capture, native exceptions, timeout and removal of all diagnostic hooks. |
-| `CoursePlotCheck` | none | Native thrust inversion, fine-control increments, limits and course-control patch bindings. |
 | `RotationModuleCheck` | none | RCS PID, native fuel/translation, dock-group anchor rotation, command save/load, SFF queue, hardware and cancellation boundaries. Native asset install fixtures: `Tests/RotationModuleCheck/InstallCheck.ps1`. |
+| `NavModulePlacementCheck` | none | Native offscreen-placement reproduction, parent pivots, centered-layout preservation, repeated conversion, scales, bounds and IL drift. |
+| `CoursePlotCheck` | none | Native thrust inversion, wheel increments/limits, native Shift-drag accumulator coexistence and hook binding. |
 | `ApartmentRefuelCheck` | none | Standalone native refuel setup/payment/delivery, apartment fit, quote validation and conversion metadata. Installer/stock fixtures: `Tests/ApartmentRefuelCheck/Test-Installer.ps1`; full Unity work/save lifecycle remains a live check. |
 | `MultiShipBarterAudit` | none | Native failure reproductions plus corrected multi-ship zone rows, loader ownership/cancellation and buy/sell/rebuy writeback, with optimization and exception controls. |
 | `TorchTowCheck` | none | Native planner, grouped course playback, combined mass, brace-release aborts, save reconstruction and manual/anchored controls. |

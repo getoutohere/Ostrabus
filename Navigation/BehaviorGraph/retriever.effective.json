@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "ostrabus-0.2.2-retriever",
-  "gameVersion": "1.0.1.10",
-  "assemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
-  "baselineCommit": "117e658",
+  "gameVersion": "1.1.0.0",
+  "assemblySha256": "a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07",
+  "baselineCommit": "be8e282",
   "scope": {
     "status": "partial_explicit_slice",
     "roles": [
@@ -51,7 +51,7 @@
       "anchors": [
         "public void Maneuver("
       ],
-      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+      "sha256": "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
     },
     "flight_handoff_native": {
       "origin": "game",
@@ -69,7 +69,7 @@
       "anchors": [
         "private void TorchOff()"
       ],
-      "sha256": "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+      "sha256": "677658509cd59ee08d4220b6ae6b993df4546336bf7e5521a7cb93c2f839022b"
     },
     "flight_control_repair": {
       "origin": "repo",
@@ -79,7 +79,7 @@
         "internal static void ResetForRcs",
         "class ShallowTorchShutdownPatch"
       ],
-      "sha256": "7d0f7932dcde09f5ae3749d799597d3c3accc53353ac19f30dedf4b21236a0f1"
+      "sha256": "be2eab769cb6bb45de7f6cd50029a99cca0ad33b5aa4f25fd37eeb40591d2eab"
     },
     "flight_control_stop": {
       "origin": "repo",
@@ -121,7 +121,7 @@
         "_activeReaction",
         "FindShipForFaction"
       ],
-      "sha256": "713ed29317fc3512c8923c78e4cbf746d177a0057571d177c76035b2016a3103"
+      "sha256": "64c02064a2bb7df7a1106e02c34f17ffc2d03116b44a761d81bffa17eae969ae"
     },
     "queue": {
       "origin": "game",
@@ -173,7 +173,7 @@
         "base.ShipUs.objSS.NavData != null",
         "return base.Running"
       ],
-      "sha256": "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+      "sha256": "677658509cd59ee08d4220b6ae6b993df4546336bf7e5521a7cb93c2f839022b"
     },
     "haul": {
       "origin": "game",
@@ -184,7 +184,7 @@
         "ToggleTowBracesShallow",
         "AIShipManager.AIIntercept2"
       ],
-      "sha256": "71706999e6360b21cf0dec093db1e143bd1aed5ef5e44431279eba8b3154df3d"
+      "sha256": "ef2aac30d8d1e674c83a4040d4b978eebd1d529378c571734f4c9ff417abad53"
     },
     "dock": {
       "origin": "game",
@@ -195,7 +195,7 @@
         "CrewSim.DockAndDespawn",
         "requestClearance: false"
       ],
-      "sha256": "37515df3429295135b9b3abcecc4341c3026d118199e7513299c49b9e00f8b95"
+      "sha256": "e8da4e7eeaa1c0dc5d531909b17f1a80518d89dc2f4805a6e1dba42913e0f5ff"
     },
     "undock": {
       "origin": "game",
@@ -206,7 +206,7 @@
         "PushbackFrom",
         "private void Cleanup"
       ],
-      "sha256": "aa01b4c2829c0231a7e19251e119c14362173bac574780e9bf15fc8e51b0171c"
+      "sha256": "e09bf024a61385c6cbb3edc69f88639a798b54fbc742d6e58c512098b47f98dc"
     },
     "delivery": {
       "origin": "game",
@@ -217,7 +217,7 @@
         "base.ShipUs.Undock(dockedShip)",
         "dockedShip.Destroy"
       ],
-      "sha256": "5b8e2e88cb943202406e89bdc0b44a5132cdf27616a9eff7c4045f98f4adedbf"
+      "sha256": "9717d3d0dd508eb46d1adddb3d13c9848a10834fb3664d8774efdee6b95c438b"
     },
     "population": {
       "origin": "game",
@@ -229,7 +229,7 @@
         "MoveCO(condOwner, shipStation",
         "DestroyAndReload"
       ],
-      "sha256": "3f4396cd567159dd3a132cc148e72c6df331c6fef08ced4423e0f495afeea038"
+      "sha256": "7e82e6e28014bd71be4a9b55f2255ca12f82706c8ed5b4a3a84f5c9e05fc0123"
     },
     "manager": {
       "origin": "game",
@@ -240,7 +240,7 @@
         "IsStale",
         "RegionCleanup"
       ],
-      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+      "sha256": "4e5557c959855e4398b80bc198a526b19aeb65c79073270cbe216738fa71c4ba"
     },
     "group": {
       "origin": "game",
@@ -262,7 +262,7 @@
         "public void CopyFrom",
         "fW \u002B="
       ],
-      "sha256": "09eba8d52011e3a63659e3bb7d582bf21ecaccd8de8ff0a67711d5dec5169a79"
+      "sha256": "d4eed3718395cf088896a7219ab220186216b56455c704d549872f93dfa049f5"
     },
     "playback": {
       "origin": "game",
@@ -273,7 +273,7 @@
         "situUs.ResetAccelerations()",
         "situUs.vVelX = point.X"
       ],
-      "sha256": "bbd69f4666ba775d0998f9b310afe633b407ebe848978c9217c2a7c2d786731a"
+      "sha256": "e0d796e927125233f10db718c715302a882caf1daf9c31ac058fd28997ab7225"
     },
     "world": {
       "origin": "game",
@@ -284,7 +284,7 @@
         "private static void CleanupStaleShips",
         "item.bRemove = true"
       ],
-      "sha256": "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+      "sha256": "319cfe060c9ff22a425b3c76952088defc69dd7b5d9c46f165206cf30df0514d"
     },
     "physical": {
       "origin": "game",
@@ -295,7 +295,7 @@
         "public void Undock(Ship objShip)",
         "OnDock.Invoke"
       ],
-      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+      "sha256": "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
     },
     "fix_handoff": {
       "origin": "repo",
@@ -328,7 +328,7 @@
         "ReferenceEquals(observer.shipSituTarget",
         "target.Situ = replacement.objSS"
       ],
-      "sha256": "76eef5c6932b1a87f4de59f7b8c02f8a6df37fe6d67f07b08f8cfe47f96e181c"
+      "sha256": "cf8a11dea22b28ee4775da43c3abff2e03a3680024b57e5fbb0a95dd25c87ae3"
     },
     "fix_depot": {
       "origin": "repo",
@@ -349,7 +349,7 @@
         "internal bool AllowCatchup",
         "suppressedCatchup\u002B\u002B"
       ],
-      "sha256": "e7565a26e8412120444bff374476de35f91490e951252128cf8e719f119eb926"
+      "sha256": "023653853e26f4429d4608fa4d229f610415b06729adfc4a8d305eb41959463d"
     },
     "rescue": {
       "origin": "repo",
@@ -439,7 +439,7 @@
         "public static bool IsOnCollisionCourse(",
         "private static Point GetEscapePoint("
       ],
-      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+      "sha256": "4e5557c959855e4398b80bc198a526b19aeb65c79073270cbe216738fa71c4ba"
     },
     "avoidance_repair": {
       "origin": "repo",
@@ -485,7 +485,7 @@
       "anchors": [
         "internal readonly struct DVector"
       ],
-      "sha256": "ef098a02e24b6c59b473579c00ba0f6b279043cb8a07b99fe705dd75d8c553dd"
+      "sha256": "289c1565176d6bdbcf93922a5f76d1af690b872b19c5971f8c9f440133d21d1b"
     },
     "station_collision_native": {
       "origin": "game",
@@ -495,7 +495,7 @@
         "public static void CheckCollisions(",
         "private static void ProcessCollision(Ship a, Ship b"
       ],
-      "sha256": "f49512841470ef28b14deec8a1dceb803278d527e5aa6184ec309220a61e865b"
+      "sha256": "bf6c03c908b599225d98a0d84548b4454843184bc45df42e7e4a971932285295"
     },
     "station_collision_policy": {
       "origin": "repo",
@@ -513,9 +513,9 @@
       "symbol": "Existing collision/proximity scan with station-attached candidate filtering",
       "anchors": [
         "StationDockedCollisions.IgnoreAsObstacle",
-        "hiddenChecks != 1"
+        "hiddenChecks != 2 || obstacleChecks != 1"
       ],
-      "sha256": "0734bb745bd265599ec5ea5d1bde253c66aef8ee5a97577a186ec72d4abebd4e"
+      "sha256": "12af350c44e50d2ba8f619df7121dbf722b87d6613ef9734766cfc50e7e72bda"
     },
     "local_frame_navy": {
       "origin": "game",
@@ -587,7 +587,7 @@
       "anchors": [
         "Pirate("
       ],
-      "sha256": "142978e07bce1a888e38debbaac3c06ea2558568633b1919992148935b983bd6"
+      "sha256": "3f0e11012232530508dea73d8998e06dee83b6f4ead3bd7033e9d278b85d041c"
     },
     "local_frame_manager": {
       "origin": "game",
@@ -596,7 +596,7 @@
       "anchors": [
         "CheckLocalAuthorityScenario("
       ],
-      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+      "sha256": "4e5557c959855e4398b80bc198a526b19aeb65c79073270cbe216738fa71c4ba"
     },
     "local_frame_situ": {
       "origin": "game",
@@ -605,7 +605,7 @@
       "anchors": [
         "LockToBO("
       ],
-      "sha256": "09eba8d52011e3a63659e3bb7d582bf21ecaccd8de8ff0a67711d5dec5169a79"
+      "sha256": "d4eed3718395cf088896a7219ab220186216b56455c704d549872f93dfa049f5"
     },
     "local_frame_world": {
       "origin": "game",
@@ -614,7 +614,7 @@
       "anchors": [
         "GetNearestBO("
       ],
-      "sha256": "4ba24c730689da73c5a4e9b0c5ddcdc5c0ca1227d0f9e9b7408d352c814328b3"
+      "sha256": "319cfe060c9ff22a425b3c76952088defc69dd7b5d9c46f165206cf30df0514d"
     },
     "local_frame_resolver": {
       "origin": "repo",

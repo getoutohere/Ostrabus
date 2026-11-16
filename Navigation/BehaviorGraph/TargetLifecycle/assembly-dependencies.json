@@ -2,10 +2,62 @@
   "schemaVersion": 1,
   "description": "Shared target lifecycle and cross-actor retirement; native method bindings.",
   "bindings": {
-"flight_rcs_native":[{"methods":["Maneuver"],"type":"Ship"}],
-
-"flight_handoff_native":[{"methods":["RunCommand","CanExecute","ResolveInstantly"],"type":"Ostranauts.Ships.Commands.FlyTo"}],"flight_shutdown_native":[{"methods":["RunCommand","TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_repair":[{"methods":["RunCommand"],"type":"Ostranauts.Ships.Commands.FlyTo"},{"methods":["TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_stop":[{"methods":["SetThrust","StopManeuver"],"type":"Ship"},{"methods":["ResetNavData"],"type":"ShipSitu"}],
-
+    "flight_rcs_native": [
+      {
+        "methods": [
+          "Maneuver"
+        ],
+        "type": "Ship"
+      }
+    ],
+    "flight_handoff_native": [
+      {
+        "methods": [
+          "RunCommand",
+          "CanExecute",
+          "ResolveInstantly"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyTo"
+      }
+    ],
+    "flight_shutdown_native": [
+      {
+        "methods": [
+          "RunCommand",
+          "TorchOff"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyToPath"
+      }
+    ],
+    "flight_control_repair": [
+      {
+        "methods": [
+          "RunCommand"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyTo"
+      },
+      {
+        "methods": [
+          "TorchOff"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyToPath"
+      }
+    ],
+    "flight_control_stop": [
+      {
+        "methods": [
+          "SetThrust",
+          "StopManeuver"
+        ],
+        "type": "Ship"
+      },
+      {
+        "methods": [
+          "ResetNavData"
+        ],
+        "type": "ShipSitu"
+      }
+    ],
     "scav": [
       {
         "type": "Ostranauts.Ships.AIPilots.ScavPilot",
@@ -145,9 +197,15 @@
         ]
       },
       {
-        "type": "StarSystem",
+        "type": "SolarSystem.EnvironmentEntities",
         "methods": [
           "CreateStellarObject"
+        ]
+      },
+      {
+        "type": "SolarSystem.EnvironmentEntities",
+        "methods": [
+          "UnloadEnvironmentForRegion"
         ]
       }
     ],
@@ -355,9 +413,22 @@
           "PlanTrip4"
         ]
       }
+    ],
+    "environment_lifecycle": [
+      {
+        "type": "SolarSystem.EnvironmentEntities",
+        "methods": [
+          "UnloadEnvironmentForRegion",
+          "ConvertShipToStellarObject",
+          "IsDroppedByEnvironmentChange",
+          "CreateStellarObject",
+          "SpawnShipFromStellarObject"
+        ]
+      }
     ]
   },
-  "predicateSources": {},
+  "predicateSources": {
+  },
   "assets": [
     {
       "id": "collector_role",

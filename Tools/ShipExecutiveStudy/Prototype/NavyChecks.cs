@@ -100,6 +100,7 @@ static class NavyChecks
                 NavyDialogueChecks.Run(scenario, check, model);
                 NativeArrivalChecks.Run(scenario, check, model);
                 NativeSaveChecks.Run(scenario, check, model);
+                Native110Checks.Run(scenario, check, model);
                 NavyTimeChecks.Run(scenario, check, model);
                 WorldServiceChecks.Run(scenario, check, model);
                 scenario("Navy native long-range geometry becomes an explicit tactical waypoint", () =>

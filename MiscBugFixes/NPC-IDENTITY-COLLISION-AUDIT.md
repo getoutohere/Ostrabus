@@ -166,6 +166,36 @@ with one bound patch and no frame calls. Debug/Release builds and binding audits
 report no errors or warnings. This prevents future collisions; it does not restore
 Tomiwa's historical attributes or return him to O-6F7.
 
+## Heloisa appearance report, November 16
+
+A report of Heloisa Ramirez greeting the player at MVOL with a different
+appearance was checked against the original `start` save and the later `flot`,
+`kleg`, `apartment`, `patch` and `docked` saves, plus the live actor lookup.
+Archive reads preserve SHA-256; no live actor or save was modified.
+
+The original `start` save is only 45.164 seconds into this continuation, at
+epoch 65627498899.1924. It already contains three distinct actors:
+
+| Actor | Original location | Age | Saved head / skin group |
+| --- | --- | ---: | --- |
+| Heloisa Ramirez (accented first name in native data) | MVOL | 38 | `pbaseHeadA01` / A |
+| Heloisa Beck (accented first name in native data) | OKLG_BIZ | 47 | `pbaseHeadC01` / C |
+| Heloisa Ryan (accented first name in native data) | VNCA | 22 | `pbaseHeadC01` / C |
+
+Ramirez has the same eleven face-part identifiers, body type and age in every
+inspected save; her subsequent saved locations are MVOL, MVOL_Lab or MVOL_Med.
+The live actor is again 38 and aboard MVOL. This case supplies no evidence of a
+new identity replacement or 1.1 appearance regression. Beck is a plausible match
+for the remembered OKLG resident, rather than an established identification of
+the player's recollection. The relevant detached records and read-only scanner
+are retained under ignored `obj/HeloisaIdentityAudit/`.
+
+The scope distinction remains explicit: this production repair protects the
+fresh `AIShip.AddCrew` fallback. Station population, loot spawners and authored
+plot creation still use their own native `PersonSpec` paths; this follow-up does
+not claim those paths are globally collision-proof or expand the patch into
+them without separate implementation and validation.
+
 ## Authorized live recovery
 
 After explicit user authorization, O-6F7 was pruned with zero crew removed. Its

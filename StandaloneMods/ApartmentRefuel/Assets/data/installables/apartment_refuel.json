@@ -22,7 +22,7 @@
         "strBuildType":  "APPS",
         "strJobType":  "install",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDInstallProgressx5",
+        "strAllowLootCTsThem":  "CONDInstallProgressx25",
         "strProgressStat":  "StatInstallProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS",
@@ -50,7 +50,7 @@
                      ],
         "strJobType":  "uninstall",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDUninstallProgressx5",
+        "strAllowLootCTsThem":  "CONDUninstallProgressx25",
         "strProgressStat":  "StatUninstallProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"
@@ -78,7 +78,7 @@
         "strBuildType":  "APPS",
         "strJobType":  "install",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDInstallProgressx5",
+        "strAllowLootCTsThem":  "CONDInstallProgressx25",
         "strProgressStat":  "StatInstallProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS",
@@ -106,7 +106,7 @@
                      ],
         "strJobType":  "uninstall",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDUninstallProgressx5",
+        "strAllowLootCTsThem":  "CONDUninstallProgressx25",
         "strProgressStat":  "StatUninstallProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"
@@ -136,7 +136,7 @@
                      ],
         "strJobType":  "repair",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDRepairProgressx5",
+        "strAllowLootCTsThem":  "CONDRepairProgressx25",
         "strProgressStat":  "StatRepairProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"
@@ -163,7 +163,7 @@
                      ],
         "strJobType":  "repair",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDUndamageProgress",
+        "strAllowLootCTsThem":  "CONDUndamageProgressx5",
         "strProgressStat":  "StatDamage",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"
@@ -193,7 +193,7 @@
                      ],
         "strJobType":  "repair",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDRepairProgressx5",
+        "strAllowLootCTsThem":  "CONDRepairProgressx25",
         "strProgressStat":  "StatRepairProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"
@@ -220,7 +220,7 @@
                      ],
         "strJobType":  "repair",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDUndamageProgress",
+        "strAllowLootCTsThem":  "CONDUndamageProgressx5",
         "strProgressStat":  "StatDamage",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"
@@ -245,7 +245,7 @@
         "strLootOut":  "ItmTVDismantle",
         "strJobType":  "dismantle",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDDismantleProgress",
+        "strAllowLootCTsThem":  "CONDDismantleProgressx5",
         "strProgressStat":  "StatDismantleProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"
@@ -270,7 +270,7 @@
         "strLootOut":  "ItmTVDismantle",
         "strJobType":  "dismantle",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDDismantleProgress",
+        "strAllowLootCTsThem":  "CONDDismantleProgressx5",
         "strProgressStat":  "StatDismantleProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"
@@ -295,7 +295,7 @@
         "strLootOut":  "ItmTVDismantle",
         "strJobType":  "dismantle",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDDismantleProgress",
+        "strAllowLootCTsThem":  "CONDDismantleProgressx5",
         "strProgressStat":  "StatDismantleProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"
@@ -320,7 +320,7 @@
         "strLootOut":  "ItmTVDismantle",
         "strJobType":  "dismantle",
         "strAllowLootCTsUs":  "CTWorkProgressAPPS",
-        "strAllowLootCTsThem":  "CONDDismantleProgress",
+        "strAllowLootCTsThem":  "CONDDismantleProgressx5",
         "strProgressStat":  "StatDismantleProgress",
         "strCTThemMultCondTools":  "IsToolMortorq",
         "strCTThemMultCondUs":  "StatInstallRateAPPS"

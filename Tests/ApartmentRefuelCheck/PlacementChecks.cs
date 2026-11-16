@@ -11,6 +11,7 @@ static partial class Program {
         Ostranauts.Inventory.GUIInventory.instance = Empty<Ostranauts.Inventory.GUIInventory>();
         var host = MakeShip("OKLG", true);
         var home = MakeShip("OKLG|RES_1", true, "ResOKLG01"); Owners[home.strRegID] = "player";
+        home.json.strName = home.strRegID; // Native saved residence, no retained template metadata.
         var neighbor = MakeShip("O-NEIGHBOR"); Link(home, neighbor);
         Field(neighbor, "aDocksys", new List<CondOwner>());
         var co = Owner("fit-kiosk", Runtime.Item);
@@ -27,9 +28,11 @@ static partial class Program {
         var center = new Vector3(.5f,.5f,0);
         Check(item.CheckFit(center, neighbor), "Native fit rejects residence when reference hull is its docked ship");
         foreach (string template in Eligibility.Templates) {
-            home.json.strName = template;
+            home.strTemplateName = template;
             Check(item.CheckFit(center, neighbor), "Native fit rejects residential template " + template);
         }
+        home.strTemplateName = null;
+        Check(item.CheckFit(center, neighbor), "Native fit rejects existing residence with no template metadata");
         Owners[home.strRegID] = "npc";
         Check(!item.CheckFit(center, neighbor), "Native fit allows unowned apartment"); Owners[home.strRegID] = "player";
         foreach (var tile in floorTiles.Values) tile.coProps.ship = neighbor;

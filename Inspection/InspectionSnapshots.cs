@@ -23,6 +23,7 @@ internal static class InspectionSnapshots {
         if (path == "/player") { return Reply(200, PlayerInspection.Player()); }
         if (path == "/ui/scrollbacks") { return Reply(200, global::Ostrabus.NavConsole.Scrollbacks.Snapshot()); }
         if (path == "/ui/hulls") { return Reply(200, global::Ostrabus.NavConsole.Outlines.HullDisplay.Inspect()); }
+        if (path == "/ui/nav-layout") { return Reply(200, NavLayoutInspection.Snapshot()); }
         if (path == "/player/nearby") { return PlayerInspection.Nearby(offset, limit, radiusKm, start); }
         if (path == "/shipboard") { return Reply(200, global::Ostrabus.ShipboardAction.ShipboardActionSimulation.InspectionSnapshot()); }
         if (path == "/world") {

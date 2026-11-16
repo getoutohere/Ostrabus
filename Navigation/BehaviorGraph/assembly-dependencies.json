@@ -2,10 +2,62 @@
   "schemaVersion": 1,
   "description": "Method-name selectors intentionally bind all overloads; additions/removals require review. Transitive in-module dependencies are conservatively followed. This is not a whole-program semantic proof.",
   "bindings": {
-"flight_rcs_native":[{"methods":["Maneuver"],"type":"Ship"}],
-
-"flight_handoff_native":[{"methods":["RunCommand","CanExecute","ResolveInstantly"],"type":"Ostranauts.Ships.Commands.FlyTo"}],"flight_shutdown_native":[{"methods":["RunCommand","TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_repair":[{"methods":["RunCommand"],"type":"Ostranauts.Ships.Commands.FlyTo"},{"methods":["TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_stop":[{"methods":["SetThrust","StopManeuver"],"type":"Ship"},{"methods":["ResetNavData"],"type":"ShipSitu"}],
-
+    "flight_rcs_native": [
+      {
+        "methods": [
+          "Maneuver"
+        ],
+        "type": "Ship"
+      }
+    ],
+    "flight_handoff_native": [
+      {
+        "methods": [
+          "RunCommand",
+          "CanExecute",
+          "ResolveInstantly"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyTo"
+      }
+    ],
+    "flight_shutdown_native": [
+      {
+        "methods": [
+          "RunCommand",
+          "TorchOff"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyToPath"
+      }
+    ],
+    "flight_control_repair": [
+      {
+        "methods": [
+          "RunCommand"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyTo"
+      },
+      {
+        "methods": [
+          "TorchOff"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyToPath"
+      }
+    ],
+    "flight_control_stop": [
+      {
+        "methods": [
+          "SetThrust",
+          "StopManeuver"
+        ],
+        "type": "Ship"
+      },
+      {
+        "methods": [
+          "ResetNavData"
+        ],
+        "type": "ShipSitu"
+      }
+    ],
     "retriever": [
       {
         "type": "Ostranauts.Ships.AIPilots.HaulerRetrievingPilot",
@@ -265,9 +317,15 @@
         ]
       },
       {
-        "type": "StarSystem",
+        "type": "SolarSystem.EnvironmentEntities",
         "methods": [
           "CreateStellarObject"
+        ]
+      },
+      {
+        "type": "SolarSystem.EnvironmentEntities",
+        "methods": [
+          "UnloadEnvironmentForRegion"
         ]
       }
     ],
@@ -525,11 +583,16 @@
         ]
       }
     ],
-    "avoidance_repair": [],
-    "avoidance_geometry": [],
-    "avoidance_ephemeris": [],
-    "avoidance_frame": [],
-    "avoidance_motion": [],
+    "avoidance_repair": [
+    ],
+    "avoidance_geometry": [
+    ],
+    "avoidance_ephemeris": [
+    ],
+    "avoidance_frame": [
+    ],
+    "avoidance_motion": [
+    ],
     "station_collision_native": [
       {
         "type": "CollisionManager",
@@ -549,8 +612,10 @@
         ]
       }
     ],
-    "station_collision_policy": [],
-    "station_collision_scan": [],
+    "station_collision_policy": [
+    ],
+    "station_collision_scan": [
+    ],
     "local_frame_navy": [
       {
         "type": "Ostranauts.Ships.AIPilots.NavyPilot",

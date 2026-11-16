@@ -6,8 +6,12 @@ I'm making it public as inspiration, reference material, or a source of code to 
 
 There is no guarantee it will be maintained for new game patches. Issues and pull requests are welcome, but will most likely be ignored. Your best bet is to hit me up on Discord.
 
-The current build targets **Ostranauts 1.0.1.10 (`public_test`) with BepInEx 5**.
-This is the [preserved 1.0.1.10 baseline](Build/BASELINE-1.0.1.10.md) before adaptation for 1.1.
+**Ostrabus 0.6.0** targets **Ostranauts 1.1.0.0 (`public_test`) with BepInEx 5**.
+This snapshot has partial in-game playtesting and extensive offline/native checks.
+The latest bounty-preservation, passive-attachment and PASS refinements still need
+live acceptance; see the [0.6.0 release notes](Build/RELEASE-0.6.0.md) for the exact scope and evidence.
+The [compatibility audit](Build/COMPATIBILITY-1.1.0.0.md) and [per-feature decisions](Build/FEATURE-COMPATIBILITY-1.1.0.0.md) record native/offline evidence and its limits. The [save-content investigation](StandaloneMods/SaveMigration110/FINDINGS.md) confirms native 1.1 already supplies the verified new world content. Its metadata-only migration prototype is unnecessary and is not recommended.
+The [preserved 1.0.1.10 baseline](Build/BASELINE-1.0.1.10.md) is commit `be8e282`, tagged `Ostrabus-5.1.0`.
 It is an experimental snapshot; compatibility with other game versions is not implied.
 See [build/install instructions](Build/README.md) and the [release preparation notes](Build/RELEASE-PREP.md).
 For a custom selection of fixes and features, use the [custom plugin builder](CustomBuilder/README.md).
@@ -15,6 +19,8 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 ## Inventory of changes
 
 ### Bug fixes
+
+- [CO2 scrubber audio](MiscBugFixes/ScrubberAudio/README.md): remove the extra generic pump loops introduced in 1.1 while preserving the scrubber's own hum and native controls; assets only.
 
 - [Radio surrender](MiscBugFixes/SHIP-SURRENDER-WORK-STALL.md): keep ship negotiations from blocking crew work or overwriting face-to-face conversation state.
 - [AI surrender accounting](Navigation/SURRENDER-COMBAT-LOOP.md): preserve engagements when an offer cannot be sent, preventing repeated combat lock/release cycles.
@@ -31,6 +37,8 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 - [AI crew identities](MiscBugFixes/NPC-IDENTITY-COLLISION-AUDIT.md): prevent newly generated crew from regenerating and relocating an existing NPC whose name collides, preserving legitimate station recruitment.
 - [AI patrol priority](Navigation/PATROL-PRIORITY.md): keep Navy patrols interruptible by combat and threats, and preserve SFF one-shot callbacks and queued command order across save/load.
 - [AI RCS replenishment](Navigation/RCS-REPLENISHMENT.md): preserve actual refills in stored route budgets across AI roles and stations without changing planned consumption.
+- [Save forward compatibility](SaveCompatibility/README.md): reconstruct missing 1.1 RCS caches from legacy hull data while retaining native combat losses and existing fuel.
+- [Nav module placement](NavConsole/MODULE-PLACEMENT.md): use the actual parent pivot when dragging modules, fixing the course panel moving above the console in 1.1.
 - [Scav emergency recovery](MiscBugFixes/SCAV-EMERGENCY-RECOVERY.md): release empty visits, reject unaffordable returns and keep failed selection in a throttled retry instead of a destinationless Hold, preserving native assistance.
 - [AI wait clocks](Navigation/SCAVENGER-WAITING.md): keep pause deadlines absolute and expire shallow SOS cooldowns using their native saved timers.
 - [Bounty escorts](MiscBugFixes/BOUNTY-ESCORT.md): let temporarily arrested targets follow manual airlock orders without changing their faction roster or autonomous permissions.
@@ -79,6 +87,9 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 
 ### Simulation improvements
 
+- [Passive docking attachments](Navigation/DOCKED-ORBIT-LOCK.md): preserve a wreck's existing body lock during visits and tether changes; release it for applied movement or an authorized towing course, including paused-haul save/load and SFF/PASS continuation.
+
+- [Bounty persistence](Navigation/BOUNTY-PRESERVATION.md): preserve active bounty targets and their original ships across administrative retirement and cleanup, retaining native station stays and later reboarding.
 - [Asteroid prospecting visits](MiscBugFixes/CIVILIAN-VISIT-WAITS.md): give civilian asteroid visits one 5-minute-to-2-hour duration while retaining ordinary timing for visits to other ships.
 - [Faction encounters](Navigation/Encounters/README.md): stage faction ships only near regional infrastructure at plausible relative speeds, preserving busy actors and existing patrol motion.
 - [Scavenger returns](Navigation/SCAVENGER-WAITING.md): try a feasible native station return after random job selection fails, preserving successful jobs and normal navigation/docking.
@@ -94,7 +105,7 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 - [Station docking traffic](Navigation/STATION-DOCKED-COLLISIONS.md): ships attached to a station through docking/tether chains do not cause ship collisions, AI evasions or proximity warnings; free-space tows remain physical obstacles.
 - [Hull-shaped collisions](Navigation/Collisions/README.md): optionally use cached hull geometry for free-ship impacts, AI clearance, consistent docking/range/proximity alarms and safe group placement, preserving native weapon hits and impact damage rules.
 - [Free coasting](Orbital/README.md): reduce timestep-dependent orbital drift with velocity-Verlet integration and consistent native orbital coordinates.
-- [Super Fast Forward](Orbital/SFF-IMPLEMENTATION.md): replace hours-long constant-acceleration jumps with orbital coasting and partial AI travel while retaining native plotted courses and combat handling.
+- [Super Fast Forward and PASS](Orbital/SFF-IMPLEMENTATION.md): preserve orbital coasting, AI decision turns, freight progression and collision history across time skips; hand completed courses to corrected coasting without changing native passenger transfers.
 - [VORB wreck variety](Venus/README.md): default to 50% Venus-specific wrecks, adjustable from 0–100% in the PDA settings app.
 
 ### Performance enhancements
@@ -128,7 +139,7 @@ For a custom selection of fixes and features, use the [custom plugin builder](Cu
 - [Station-docked hull exemption](Navigation/STATION-DOCKED-COLLISIONS.md): toggle visiting hulls and station-connected tows as traffic/proximity obstacles in the PDA settings app.
 - [Proximity alarm dial](NavConsole/README.md): choose a ship's warning range from 5, 10, 15, or 20 km using a dial on the nav console.
 - [Nav/comms scrollbacks](NavConsole/README.md#comms-and-diagnostic-scrollbacks): drag scrollbars, scroll long transcripts consistently, and suspend comms auto-follow while reading older messages.
-- [Course-plot fine controls](QoL/CoursePlot/README.md): hover and scroll ACCEL LIMIT in 0.01 G steps or DRIFT PHASE in 0.01 steps, preserving native plotting and limits.
+- [Course-plot fine controls](QoL/CoursePlot/README.md): hover and scroll ACCEL LIMIT in 0.01 G steps or DRIFT PHASE in 0.01 steps, alongside native Shift-drag adjustment.
 - [Hide nav tutorial note](NavConsole/README.md): use a saved PDA setting to hide the clickable "Don't crash!" paper that obscures nav-console controls.
 - [Kang auto-vents](QoL/AutoVents/README.md): tolerate brief airlock-induced oxygen-pressure dips while retaining rapid closure for dangerous depressurization.
 - [Stabilizer sound cues](MiscBugFixes/StabilizerCreakPatch.cs): scale the maneuver creaking threshold with active stabilizers' native damage reduction.

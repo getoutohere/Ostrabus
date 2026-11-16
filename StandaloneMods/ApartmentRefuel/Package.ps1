@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 & dotnet build (Join-Path $PSScriptRoot 'ApartmentRefuel.csproj') -c Release --nologo -v quiet
 if ($LASTEXITCODE -ne 0) { throw 'Standalone build failed.' }
-if (-not $Destination) { $Destination = Join-Path $repo ('dist\ApartmentRefuel-0.1.0-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff')) }
+if (-not $Destination) { $Destination = Join-Path $repo ('dist\ApartmentRefuel-0.1.1-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff')) }
 if (Test-Path -LiteralPath $Destination) { throw 'Package destination already exists.' }
 New-Item -ItemType Directory -Path (Join-Path $Destination 'Plugin') -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $Destination 'Support') -Force | Out-Null

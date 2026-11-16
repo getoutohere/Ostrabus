@@ -2,10 +2,62 @@
   "schemaVersion": 1,
   "description": "Deploying-hauler cross-home mechanism scope and current regional observers.",
   "bindings": {
-"flight_rcs_native":[{"methods":["Maneuver"],"type":"Ship"}],
-
-"flight_handoff_native":[{"methods":["RunCommand","CanExecute","ResolveInstantly"],"type":"Ostranauts.Ships.Commands.FlyTo"}],"flight_shutdown_native":[{"methods":["RunCommand","TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_repair":[{"methods":["RunCommand"],"type":"Ostranauts.Ships.Commands.FlyTo"},{"methods":["TorchOff"],"type":"Ostranauts.Ships.Commands.FlyToPath"}],"flight_control_stop":[{"methods":["SetThrust","StopManeuver"],"type":"Ship"},{"methods":["ResetNavData"],"type":"ShipSitu"}],
-
+    "flight_rcs_native": [
+      {
+        "methods": [
+          "Maneuver"
+        ],
+        "type": "Ship"
+      }
+    ],
+    "flight_handoff_native": [
+      {
+        "methods": [
+          "RunCommand",
+          "CanExecute",
+          "ResolveInstantly"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyTo"
+      }
+    ],
+    "flight_shutdown_native": [
+      {
+        "methods": [
+          "RunCommand",
+          "TorchOff"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyToPath"
+      }
+    ],
+    "flight_control_repair": [
+      {
+        "methods": [
+          "RunCommand"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyTo"
+      },
+      {
+        "methods": [
+          "TorchOff"
+        ],
+        "type": "Ostranauts.Ships.Commands.FlyToPath"
+      }
+    ],
+    "flight_control_stop": [
+      {
+        "methods": [
+          "SetThrust",
+          "StopManeuver"
+        ],
+        "type": "Ship"
+      },
+      {
+        "methods": [
+          "ResetNavData"
+        ],
+        "type": "ShipSitu"
+      }
+    ],
     "ship": [
       {
         "methods": [
@@ -285,11 +337,16 @@
         ]
       }
     ],
-    "avoidance_repair": [],
-    "avoidance_geometry": [],
-    "avoidance_ephemeris": [],
-    "avoidance_frame": [],
-    "avoidance_motion": [],
+    "avoidance_repair": [
+    ],
+    "avoidance_geometry": [
+    ],
+    "avoidance_ephemeris": [
+    ],
+    "avoidance_frame": [
+    ],
+    "avoidance_motion": [
+    ],
     "station_collision_native": [
       {
         "type": "CollisionManager",
@@ -309,8 +366,10 @@
         ]
       }
     ],
-    "station_collision_policy": [],
-    "station_collision_scan": [],
+    "station_collision_policy": [
+    ],
+    "station_collision_scan": [
+    ],
     "shared_target_lifetime": [
       {
         "type": "CrewSim",
@@ -334,9 +393,15 @@
         ]
       },
       {
-        "type": "StarSystem",
+        "type": "SolarSystem.EnvironmentEntities",
         "methods": [
           "CreateStellarObject"
+        ]
+      },
+      {
+        "type": "SolarSystem.EnvironmentEntities",
+        "methods": [
+          "UnloadEnvironmentForRegion"
         ]
       }
     ],

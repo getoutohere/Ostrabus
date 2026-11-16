@@ -1,6 +1,8 @@
 # Economic activity during Super Fast Forward
 
 Part of `Ostrabus.Orbital`. Requires Orbital and its SFF correction to be enabled.
+The [shared PASS adapter](../PASS-TIME-SKIPS.md) now enters the same timeline for
+shuttle time skips, including short windows and six-hour partitions of long trips.
 `[Orbital] SffEconomy = true` is the launch default for this subfeature. Disabling
 it retains native economic scheduling while leaving the other orbital fixes intact.
 

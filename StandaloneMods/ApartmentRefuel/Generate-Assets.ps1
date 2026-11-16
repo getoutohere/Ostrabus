@@ -35,7 +35,7 @@ foreach ($state in @('','Loose','Dmg','DmgLoose')) {
     $owner.strDesc='A private dockside connection to station fuel, life-support and electrical utilities. Install only in your owned station residence. Services directly docked vessels at normal station prices. The terminal contains no fuel. Uninstall before selling the residence to retain this expensive equipment.'
     $owner.aInteractions=@($(if ($loose) {'DropItem';'PickupItem'} elseif (-not $damaged) {'GUIOstrabusApartmentRefuel'}))
     $price=if ($loose) {if ($damaged) {50000} else {250000}} else {if ($damaged) {500} else {2500}}
-    $conds=@('IsOstrabusApartmentRefuel=1.0x1','IsSalvageValueHigh=1.0x1','IsSolid=1.0x1','IsMechanical=1.0x1','IsCumbersome=1.0x1',
+    $conds=@('IsOstrabusApartmentRefuel=1.0x1','IsSalvageValueHigh=1.0x1','IsSolid=1.0x1','IsMechanical=1.0x1','IsCumbersome=1.0x1','IsOversized=1.0x1',
         'StatMass=1.0x31','StatDamageMax=1.0x70','StatInstallProgressMax=1.0x150','StatUninstallProgressMax=1.0x150',
         'StatRepairProgressMax=1.0x120','StatDismantleProgressMax=1.0x240',"StatBasePrice=1.0x$price")
     if (-not $loose) {$conds+=@('IsInstalled=1.0x1')}
@@ -43,7 +43,7 @@ foreach ($state in @('','Loose','Dmg','DmgLoose')) {
     $owner.aStartingConds=$conds
     $owner.mapGUIPropMaps=@($(if (-not $loose -and -not $damaged) {'Panel A';'OstrabusApartmentRefuel'}))
     $owner.mapPoints=@($(if (-not $loose) {'use,0,-24'}))
-    $owner | Add-Member -Force NoteProperty mapSlotEffects @('heldL','HeldItmDefaultL','heldR','HeldItmDefaultR','drag','Blank')
+    $owner | Add-Member -Force NoteProperty mapSlotEffects @('drag','Blank')
     $destroy='MS'+$prefix+$state+'Destroy'
     $owner.aUpdateCommands=@("Destructable,StatDamage,$destroy,StatDamageMax,1.0")
     $owners+=@($owner)
@@ -104,7 +104,7 @@ $allow=Clone ((Read-Rows 'interactions\interactions.json') | Where-Object strNam
 $allow.strName='GUI'+$prefix+'Allow'; $allow.CTTestUs="T${prefix}Working"
 $interactions+=@($allow)
 $loots+=@([ordered]@{strName=$id+'Stock';strType='item';aCOs=@("${id}Loose=1.0x1");aLoots=@()})
-Save-Rows 'mod_info.json' @([ordered]@{strName='Apartment Refuel Terminal';strAuthor='Jon';strGameVersion='1.0.1.10';strModVersion='0.1.0';strNotes='Requires the standalone ApartmentRefuel BepInEx plugin. Item definitions should remain installed for saves containing terminals.'})
+Save-Rows 'mod_info.json' @([ordered]@{strName='Apartment Refuel Terminal';strAuthor='Jon';strGameVersion='1.1.0.0';strModVersion='0.1.1';strNotes='Requires the standalone ApartmentRefuel BepInEx plugin. Item definitions should remain installed for saves containing terminals.'})
 Save-Rows 'data/condowners/apartment_refuel.json' $owners
 Save-Rows 'data/items/apartment_refuel.json' $items
 Save-Rows 'data/conditions_simple/apartment_refuel.json' @([ordered]@{strName='Apartment Refuel Conditions';aValues=@('IsOstrabusApartmentRefuel','Private Refuel Terminal','Residential station service terminal.','0','0','Neutral','false')})

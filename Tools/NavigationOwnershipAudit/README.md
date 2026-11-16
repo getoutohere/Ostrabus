@@ -1,6 +1,10 @@
 # Native navigation ownership inventory
 
 Read-only development scanner using Mono.Cecil on the installed game assembly.
+The current reviewed 1.1.0.0 image has 32 direct withdrawal calls in 27 methods.
+Its added RCS-loss abort has a native registered-Auto regression. The 1.0.1.10
+counts below describe the original audit; `--check-review` now requires the exact
+new reviewed assembly. Unknown binaries receive no inferred game-version label.
 Run from the repository root:
 
 ~~~powershell

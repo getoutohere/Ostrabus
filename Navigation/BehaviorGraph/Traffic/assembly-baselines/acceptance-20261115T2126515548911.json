@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/3e1622856f9160f5fec3d9062481d0e951ac425ed59b332e4a3350ae68243fec.json.br",
+  "reason": "Whitespace-only normalization of the new unexpanded-entrypoint catalogue, verified parsed-content identical. Updated its textual anchor/hash; no native bindings, transitions, policy or test expectations changed. Retains the preceding native 1.1 review acceptance.",
+  "acceptedUtc": "2026-11-15T21:26:51.5526795Z",
+  "previousSnapshot": "assembly-baselines/3da308e333cdb389e2d5109e7a0eaf93f68f3ee6222850c869116ef3f2485b1f.json.br"
+}

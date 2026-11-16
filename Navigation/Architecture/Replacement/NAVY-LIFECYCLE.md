@@ -1,6 +1,6 @@
 # Navy lifecycle prototype qualification
 
-This is an offline replacement experiment for game 1.0.1.10. Nothing here is
+This is an offline replacement experiment, requalified for game 1.1.0.0. Nothing here is
 installed, enabled by a module flag, or connected to a running save. The native
 behavior graph remains descriptive and unchanged by this experiment.
 

@@ -1,6 +1,6 @@
 # Native save, arrival and handback integration
 
-Status: offline integration prototype for 1.0.1.10. No installed patch, game
+Status: offline integration prototype, requalified for 1.1.0.0. No installed patch, game
 asset or descriptive behavior graph is changed. This milestone executes more
 of the native boundary; it does not certify a production replacement executive.
 
@@ -141,8 +141,8 @@ every executive mission. Native-only saves are not silently adopted on restore.
 
 ## Remaining gates
 
-- Integrate the separately implemented route-completion repair into the retained
-  world-service experiment; preserve its unpatched negative control.
+- Route-completion integration is now qualified with the shared GUI/PASS
+  coordinator; its native AI negative control remains in the suite.
 - Qualify materialized navigation/tow groups, actual gas containers and
   weapon/decoy eligibility; active Ceres policy remains unqualified.
 - Exercise actual Unity crew/scene lifetimes and the final native load-to-dispatch
@@ -152,3 +152,27 @@ every executive mission. Native-only saves are not silently adopted on restore.
 No production hook is removable based on these tests. The combined evidence is
 [test-results.json](test-results.json); reproduce it with the existing
 `Tools/ShipExecutiveStudy/Prototype/Run.ps1` runner.
+
+## 1.1 world schema and checkpoint version
+
+The current binding is `native-navy-1.1.0.0-prototype-v2`; the embedded executive
+record uses schema 2. Standalone and native-archive restore reject older bindings
+before reconstructing the world. The 1.0 receipts are historical evidence, not
+checkpoint migration promises.
+
+The fixture collector/restorer now includes physical and deferred hull identity,
+raw/weighted RCS counts, exhaust metadata, nonzero route capability snapshots and
+circular-orbit phase. Duplicate physical/deferred IDs or a deferred population
+changed during capture are refused. Representation loss alone is not arrival
+evidence, and a deferred actor is not silently adopted.
+
+Native `LitJson.JsonMapper.WriteValue` omits empty collection properties. That
+loses a distinction used by 1.1 `StarSystem.Init`: two absent stellar arrays can
+generate environments, while explicit empty arrays do not. The prototype's
+existing bounded record carries two empty-array bits, included in its snapshot
+digest. Its archive reader reconstructs shape only from explicit native wire
+arrays or the same archive's record. Unknown native-only archives get no invented
+shape metadata. Tampering with those bits fails validation before world mutation.
+This qualifies the executive codec, not a general repair to native serialization
+or proof of safe mod removal. Full native load/scene initialization is still a
+production gate.

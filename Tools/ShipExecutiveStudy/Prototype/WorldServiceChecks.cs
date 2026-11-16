@@ -46,7 +46,7 @@ static class WorldServiceChecks
                     "Outer prefix prepared a second interval after the native world advanced");
             }
         });
-        scenario("world services baseline: production scopes do not cover PASS", () =>
+        scenario("world services shared production coordinator covers PASS without an experimental scope", () =>
         {
             var w = new NativeWorld { LowFuel = true, RouteDuration = 20000 };
             using (var data = new WorldServiceFixtures(w))
@@ -54,11 +54,17 @@ static class WorldServiceChecks
             using (var services = new RetainedWorldServices())
             {
                 bridge.Actor.Travel.BeginNativeLowFuelReturn();
+                long jumpGeneration = (long)AccessTools.Property(RetainedWorldServices.Type("JumpBoundary"), "Generation").GetValue(null);
                 bridge.Pass(7200);
-                check(services.Windows.Count == 0, "Baseline no longer matches GUI-only production scope boundary; revalidate PASS binding");
+                check(services.Windows.Count == 2 && bridge.PendingTurnDrains == 1 && StarSystem.fEpoch == 8200,
+                    "Shared PASS scopes, real scheduler drain or exact elapsed interval missing");
+                check((long)AccessTools.Property(RetainedWorldServices.Type("JumpBoundary"), "Generation").GetValue(null) == jumpGeneration + 2 &&
+                    !(bool)AccessTools.Property(RetainedWorldServices.Type("JumpBoundary"), "Active").GetValue(null) &&
+                    !(bool)AccessTools.Property(RetainedWorldServices.Type("SffAdvance"), "Active").GetValue(null),
+                    "Shared jump did not invalidate collision history once or leaked its coordinator scope");
                 Evidence.Add(new
                 {
-                    scenario = "production-PASS-negative-control",
+                    scenario = "production-PASS-shared-coordinator",
                     openedScopes = services.Windows.Count,
                     nativeWorldEpoch = StarSystem.fEpoch
                 });
@@ -140,8 +146,8 @@ static class WorldServiceChecks
                     bridge.Actor.Travel.BeginNativeLowFuelReturn();
                     var player = CrewSim.coPlayer.ship;
                     var route = new NavData(player);
-                    route.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false) { vPosx = .1 }, 300, .8, 100));
-                    route.AddNavDataPoint(new NavDataPoint(21000, new ShipSitu(false) { vPosx = .2 }, 300, .8, 80));
+                    route.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false) { vPosx = .1 }, 300, .8, 100, rcsCount: player.RCSCount));
+                    route.AddNavDataPoint(new NavDataPoint(21000, new ShipSitu(false) { vPosx = .2 }, 300, .8, 80, rcsCount: player.RCSCount));
                     player.objSS.NavData = route;
                     var other = w.Vessel("UNADOPTED", .01);
                     var pilot = new NavyPilot("HOME", other);
@@ -219,7 +225,8 @@ static class WorldServiceChecks
                         bridge.Pass(10800);
                     check(w.Retired && w.ArrivalCalls == 1 && Math.Abs(w.Subject.fShallowRCSRemass - 295) < 1e-6, "Navy arrival interfered with economic timeline: " + source);
                     check(cargo.HideFromSystem && !data.Markets.ContainsKey("CARGO") && data.Arrivals["CARGO"] == 1, "Cargo was lost, repeated or left alive: " + source);
-                    check(data.Playbacks.TryGetValue("CARGO", out int playback) && playback == 1, "Managed freight repeated native playback after first unscoped 40-second interval");
+                    data.Playbacks.TryGetValue("CARGO", out int playback);
+                    check(playback == 0, "Short shared window was not owned exclusively by economy: native playbacks=" + playback);
                     check(market.GetStockCountForCategory("Product") == 1 && market.GetStockCountForCategory("Metal") == 3, "Delivery/production ordering or stock conservation failed: " + source);
                     check(data.Errors.Count == 0 && RetainedWorldServices.Scope("SffSimulation") == null && RetainedWorldServices.Scope("Economy.SffEconomy") == null, "Economic/physical scope failed cleanup: " + string.Join(";", data.Errors));
                     Evidence.Add(new
@@ -261,7 +268,8 @@ static class WorldServiceChecks
                     check(entered && failed && bridge.Actor.Machine.State.PendingArrival != null, "Native arrival fault was hidden or treated as successful retirement: entered=" + entered + " failed=" + failed + " phase=" + bridge.Actor.Machine.State.Active.Phase + " pending=" + (bridge.Actor.Machine.State.PendingArrival != null) + " epoch=" + StarSystem.fEpoch);
                     check(RetainedWorldServices.Scope("SffSimulation") == null && RetainedWorldServices.Scope("Economy.SffEconomy") == null,
                         "Exception left a physical/economic writer active: " + source);
-                    check(!GUIFFWD.Active && StarSystem.fEpoch == 1600 && !w.Retired && w.ArrivalCalls == 0, "Failed arrival consumed residual time or repeated side effects");
+                    check(!GUIFFWD.Active && BitConverter.DoubleToInt64Bits(StarSystem.fEpoch) == BitConverter.DoubleToInt64Bits(1600d) + 1 && !w.Retired && w.ArrivalCalls == 0,
+                        "Failed arrival advanced past the strict completion boundary or repeated side effects: epoch=" + StarSystem.fEpoch.ToString("R"));
                     w.BeforeArrival = null;
                     bridge.Actor.Tick();
                     check(w.ArrivalCalls == 0, "Uncertain native arrival was replayed after exception");
@@ -289,8 +297,8 @@ static class WorldServiceChecks
                 // After the first skip it reports TargetNewIfNone; production
                 // economy deliberately declines that next window. Native route
                 // playback resumes, with the existing paid-clock watermark.
-                check(cargo.objSS.NavData != null && data.Playbacks["CARGO"] == 2 && data.MixedPlaybackOwners == 0 && destination.GetStockCountForCategory("Metal") == 0,
-                    "Partial freight had overlapping owners or unloaded before arrival");
+                check(cargo.objSS.NavData != null && data.Playbacks["CARGO"] == 1 && data.MixedPlaybackOwners == 0 && destination.GetStockCountForCategory("Metal") == 0,
+                        "Partial freight had overlapping owners or unloaded before arrival: calls=" + data.Playbacks.GetValueOrDefault("CARGO") + " route=" + (cargo.objSS.NavData != null) + " mixed=" + data.MixedPlaybackOwners);
                 check((int)RetainedWorldServices.Snapshot("Economy.SffEconomy")["managedFlights"] == 0,
                     "Native setup-command boundary no longer matches the conservative production economy gate; revalidate handoff");
                 check(data.Markets["CARGO"].GetStockCountForCategory("Metal") == 4 && data.Errors.Count == 0, "Partial freight manifest changed or native service faulted");
@@ -316,7 +324,8 @@ static class WorldServiceChecks
                 var market = data.Market("HOME", data.Production("fixture-slow-mine", "Metal", 1));
                 bridge.Actor.Travel.BeginNativeLowFuelReturn();
                 bridge.Pass(172800);
-                check(bridge.Segments == 2 && services.Windows.Count == 4 && StarSystem.fEpoch == 173800, "Multi-day PASS escaped bounded service windows");
+                check(bridge.Segments == 8 && services.Windows.Count == 16 && StarSystem.fEpoch == 173800,
+                    "Multi-day PASS escaped six-hour production windows: segments=" + bridge.Segments + " scopes=" + services.Windows.Count);
                 check(market.GetStockCountForCategory("Metal") == 48 && data.TradeRequests == 24, "Multi-day production or dispatch checks duplicated/skipped");
                 check(w.ArrivalCalls == 0 && data.Errors.Count == 0, "Multi-day interval fabricated arrival or encountered service error: " + string.Join(";", data.Errors));
                 Evidence.Add(new
@@ -356,7 +365,7 @@ static class WorldServiceChecks
                             bridge.Pass(7200);
                     }
                     catch (Exception) { failed = true; }
-                    check(scopeWasActive && failed && bridge.Segments == 0, "Fault never entered a real service scope or was silently accepted");
+                    check(scopeWasActive && failed && bridge.Segments == 0, "Fault never entered a real service scope or was silently accepted: active=" + scopeWasActive + " failed=" + failed + " segments=" + bridge.Segments);
                     check(RetainedWorldServices.Scope("SffSimulation") == null && RetainedWorldServices.Scope("Economy.SffEconomy") == null && !GUIFFWD.Active,
                         "Native physical failure leaked a scope or GUI flag");
                 }
@@ -378,37 +387,43 @@ static class WorldServiceChecks
                     "Disabled world scopes altered executive native route playback");
             }
         });
-        scenario("world services negative control: scopes alone do not repair unmanaged PASS route completion", () =>
+        scenario("world services native completion negative control and retained repair preserve unmanaged AI motion", () =>
         {
-            var w = new NativeWorld { LowFuel = true, RouteDuration = 20000 };
-            using (var data = new WorldServiceFixtures(w))
-            using (var bridge = new NativeWorldTimeBridge(new NativeNavyActor(w, model), true))
-            using (var services = new RetainedWorldServices(true))
+            foreach (bool repaired in new[] { false, true })
             {
-                bridge.Actor.Travel.BeginNativeLowFuelReturn();
-                var player = CrewSim.coPlayer.ship;
-                var route = new NavData(player);
-                var start = new ShipSitu(false) { vPosx = .1, vVelX = 1e-10 };
-                var finish = new ShipSitu(false) { vPosx = .1001, vVelX = 0 };
-                finish.vAccRCS.x = -1e-12f;
-                route.AddNavDataPoint(new NavDataPoint(1000, start, 300, 0, 0));
-                route.AddNavDataPoint(new NavDataPoint(1300, finish, 299, 0, 0));
-                player.objSS.NavData = route;
-                bridge.Pass(600);
-                double extraMps = Math.Abs(player.objSS.vVelX) * 149597872000;
-                check(player.objSS.NavData == null && extraMps > 80 && extraMps < 100,
-                    "Known non-GUI native completion fallthrough changed; revalidate shared playback boundary");
-                check(data.Playbacks["PLAYER"] == 1 && data.Errors.Count == 0, "Negative control was confounded by repeated playback or service error");
-                Evidence.Add(new
+                var w = new NativeWorld { LowFuel = true, RouteDuration = 20000 };
+                using (var data = new WorldServiceFixtures(w))
+                using (var bridge = new NativeWorldTimeBridge(new NativeNavyActor(w, model), true))
+                using (var services = new RetainedWorldServices(true, routeCompletion: repaired))
                 {
-                    scenario = "unresolved-unmanaged-PASS-completion",
-                    expectedNativeDefect = true,
-                    productionReady = false,
-                    extraVelocityMps = extraMps,
-                    intervalSeconds = 600,
-                    arrivalAfterSeconds = 300,
-                    nativePlaybackCalls = data.Playbacks["PLAYER"]
-                });
+                    bridge.Actor.Travel.BeginNativeLowFuelReturn();
+                    // 1.1 explicitly stops player RCS during playback; its old RCS
+                    // negative control is no longer valid. AI playback still has
+                    // the native completion fallthrough that this repair owns.
+                    var player = w.Vessel("UNMANAGED", .1);
+                    var route = new NavData(player);
+                    var start = new ShipSitu(false) { vPosx = .1, vVelX = 1e-10 };
+                    var finish = new ShipSitu(false) { vPosx = .1001, vVelX = 0 };
+                    finish.vAccRCS.x = -1e-12f;
+                    route.AddNavDataPoint(new NavDataPoint(1000, start, 300, 0, 0, rcsCount: player.RCSCount));
+                    route.AddNavDataPoint(new NavDataPoint(1300, finish, 299, 0, 0, rcsCount: player.RCSCount));
+                    player.objSS.NavData = route;
+                    bridge.Normal(600);
+                    double extraMps = Math.Abs(player.objSS.vVelX) * 149597872000;
+                    check(player.objSS.NavData == null && (repaired ? extraMps < 1e-5 : extraMps > 80 && extraMps < 100),
+                        "Native completion A/B mismatch: repaired=" + repaired + " extra m/s=" + extraMps);
+                    check(data.Playbacks["UNMANAGED"] == 1 && data.Errors.Count == 0, "Completion control was confounded by repeated playback or service error");
+                    Evidence.Add(new
+                    {
+                        scenario = "unmanaged-AI-native-completion-control",
+                        repaired,
+                        productionReady = false,
+                        extraVelocityMps = extraMps,
+                        intervalSeconds = 600,
+                        arrivalAfterSeconds = 300,
+                        nativePlaybackCalls = data.Playbacks["UNMANAGED"]
+                    });
+                }
             }
         });
         scenario("world services rebind a saved Navy route without reconstructing economic scopes", () =>

@@ -20,8 +20,8 @@ static class NavyTimeChecks
             NativeWorld.Set(w.AI, "_activeCommand", new FlyTo(w.Pilot));
             var player = CrewSim.coPlayer.ship;
             var playerRoute = new NavData(player);
-            playerRoute.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false) { vPosx = .1 }, 300, 0, 100));
-            playerRoute.AddNavDataPoint(new NavDataPoint(41000, new ShipSitu(false) { vPosx = .2 }, 300, 0, 80));
+            playerRoute.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false) { vPosx = .1 }, 300, 0, 100, rcsCount: player.RCSCount));
+            playerRoute.AddNavDataPoint(new NavDataPoint(41000, new ShipSitu(false) { vPosx = .2 }, 300, 0, 80, rcsCount: player.RCSCount));
             player.objSS.NavData = playerRoute;
             using (var bridge = new NativeWorldTimeBridge(actor))
             {

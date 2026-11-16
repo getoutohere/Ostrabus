@@ -60,6 +60,7 @@ sealed class NativeSaveFixtures : IDisposable
         objectives.subscribedShips = new List<string>();
         Static(typeof(MonoSingleton<ObjectiveTracker>), "_instance", objectives);
         Static(typeof(MonoSingleton<RacingLeagueManager>), "_instance", racing);
+        Static(typeof(MonoSingleton<MarketManager>), "_instance", NativeWorld.Empty<MarketManager>());
         void Patch(Type type, string name, string prefix, Type[] args = null) => hooks.Patch(AccessTools.Method(type, name, args)
             ?? throw new MissingMethodException(type.FullName, name), prefix: new HarmonyMethod(typeof(NativeSaveFixtures), prefix),
             transpiler: new HarmonyMethod(typeof(NativeArrivalFixtures), nameof(NativeArrivalFixtures.ExcludedBody)));
@@ -96,6 +97,11 @@ sealed class NativeSaveFixtures : IDisposable
         var game = dto.jGameSave.Item2;
         var world = new NativeWorld(game.objSystem.dfEpoch);
         var ships = dto.dictShips.Values.ToArray();
+        // The fixture constructor seeds standard hulls; absence in an archive
+        // must not recreate one or turn a deferred destination physical again.
+        foreach (string id in world.Ships.Keys.Except(ships.Select(s => s.strRegID)).ToArray())
+            world.Ships.Remove(id);
+        world.LoadStellar(game.objSystem.aStellarShips, game.objSystem.aStellarDerelicts);
         foreach (var saved in ships)
         {
             var ship = world.Resolve(saved.strRegID) ?? world.Vessel(saved.strRegID, 0);
@@ -105,6 +111,9 @@ sealed class NativeSaveFixtures : IDisposable
             ship.strAIDespawnedAt = saved.strAIDespawnedAt;
             ship.fShallowRCSRemass = saved.fShallowRCSRemass;
             ship.fShallowRCSRemassMax = saved.fShallowRCSRemassMax;
+            ship.RCSCount = saved.nRCSCount;
+            NativeWorld.Set(ship, "nRCSCountRaw", saved.nRCSCountRaw);
+            NativeWorld.Set(ship, "fRCSExhaustV", saved.nRCSExhaustV);
             ship.fAIPauseTimer = saved.fAIPauseTimer;
             ship.fAIDockingExpire = saved.fAIDockingExpire;
         }
@@ -113,6 +122,10 @@ sealed class NativeSaveFixtures : IDisposable
             var ship = world.Resolve(saved.strRegID);
             ship.shipScanTarget = world.Resolve(saved.strScanTargetID);
             ship.shipSituTarget = saved.objSituScanTarget == null ? null : new ShipSitu(saved.objSituScanTarget);
+            ship.targetRegID = saved.strScanTargetID;
+            var canonical = world.ResolveTarget(saved.strScanTargetID);
+            if (canonical != null)
+                canonical.ApplyToShip(ship);
             ship.shipCombatTarget = world.Resolve(saved.strCombatTargetID);
         }
         World = world;
@@ -162,7 +175,10 @@ sealed class NativeSaveFixtures : IDisposable
             fAIDockingExpire = __instance.fAIDockingExpire,
             fShallowRCSRemass = __instance.fShallowRCSRemass,
             fShallowRCSRemassMax = __instance.fShallowRCSRemassMax,
-            strScanTargetID = __instance.shipScanTarget?.strRegID,
+            nRCSCount = __instance.RCSCount,
+            nRCSCountRaw = (int)AccessTools.Field(typeof(Ship), "nRCSCountRaw").GetValue(__instance),
+            nRCSExhaustV = (float)AccessTools.Field(typeof(Ship), "fRCSExhaustV").GetValue(__instance),
+            strScanTargetID = __instance.shipScanTarget?.strRegID ?? __instance.targetRegID,
             objSituScanTarget = __instance.shipSituTarget?.GetJSON(),
             strCombatTargetID = __instance.shipCombatTarget?.strRegID,
             aDocked = Current.Population.Tow == null ? null : __instance == Current.World.Subject ? new Dictionary<string, string> { ["tow"] = Current.Population.Tow.strRegID }
@@ -218,7 +234,14 @@ sealed class NativeSaveFixtures : IDisposable
     }
     static bool SystemJson(ref JsonStarSystemSave __result)
     {
-        __result = new JsonStarSystemSave { strName = "fixture-system", dfEpoch = StarSystem.fEpoch, dictShips = Current.World.Ships.Keys.ToArray() };
+        __result = new JsonStarSystemSave
+        {
+            strName = "fixture-system",
+            dfEpoch = StarSystem.fEpoch,
+            dictShips = Current.World.Ships.Keys.ToArray(),
+            aStellarShips = Current.World.SaveStellarShips(),
+            aStellarDerelicts = Current.World.SaveStellarDerelicts()
+        };
         return false;
     }
     static bool Markets(ref JsonMarketSave __result)

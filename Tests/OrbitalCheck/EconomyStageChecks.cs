@@ -12,8 +12,8 @@ static partial class EconomyChecks {
         var result=new NavData(ship);
         var a=new ShipSitu(false){vPosx=fromKm/OrbitalMotion.KmPerAU};
         var b=new ShipSitu(false){vPosx=toKm/OrbitalMotion.KmPerAU};
-        result.AddNavDataPoint(new NavDataPoint(epoch,a,rcs,0,fusion));
-        result.AddNavDataPoint(new NavDataPoint(epoch+duration,b,rcs-10,0,fusion-5));
+        result.AddNavDataPoint(new NavDataPoint(epoch,a,rcs,0,fusion,rcsCount:0F));
+        result.AddNavDataPoint(new NavDataPoint(epoch+duration,b,rcs-10,0,fusion-5,rcsCount:0F));
         return result;
     }
     static AIShip StagePilot() {

@@ -1,10 +1,19 @@
 {
     "id":  "ostrabus-bounty-current",
-    "base":  "bounty-1.0.1.10",
+    "base":  "bounty-1.1.0.0",
     "documentedDependencies":  [
-{"id":"shallow_flight_control_handoff","sources":["flight_handoff_native","flight_shutdown_native","flight_control_repair","flight_control_stop","flight_rcs_native"],"status":"native_tested_boundary_not_transition_expanded","reason":"Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."}
-
-
+                                   {
+                                       "id":  "shallow_flight_control_handoff",
+                                       "sources":  [
+                                                       "flight_handoff_native",
+                                                       "flight_shutdown_native",
+                                                       "flight_control_repair",
+                                                       "flight_control_stop",
+                                                       "flight_rcs_native"
+                                                   ],
+                                       "status":  "native_tested_boundary_not_transition_expanded",
+                                       "reason":  "Native-tested autonomous FlyTo RCS/pause, explicit TorchOff and direct RCS commands release unowned shallow AI torch input. Active NavData excludes direct-actuator cleanup. Changed escape/retreat destinations stop obsolete controls. Momentum, fuel, new RCS input, active courses and physical/player control paths are preserved. No affordability gate or new rescue policy. Numerical flight remains external; see Navigation/FLIGHT-CONTROL-HANDOFF.md."
+                                   }
                                ],
     "schemaVersion":  1,
     "patches":  [
@@ -53,6 +62,83 @@
                                          "review"
                                      ],
                         "classification":  "native_control_flow_repair"
+                    },
+                    {
+                        "id":  "bounty_administrative_preservation",
+                        "operations":  [
+                                           {
+                                               "id":  "fix.return.accepted_claim",
+                                               "predicate":  "preserve_active_contract",
+                                               "to":  "parked",
+                                               "edge":  "return.park",
+                                               "set":  {
+                                                           "actor":  "retained",
+                                                           "claim":  "retained",
+                                                           "reserved_hull":  "present",
+                                                           "origin":  "station",
+                                                           "decision":  "none"
+                                                       },
+                                               "kind":  "intercept",
+                                               "phase":  "before"
+                                           },
+                                           {
+                                               "id":  "fix.return.rejected_target",
+                                               "predicate":  "preserve_active_contract",
+                                               "to":  "parked",
+                                               "edge":  "return.rejected",
+                                               "set":  {
+                                                           "actor":  "retained",
+                                                           "claim":  "retained",
+                                                           "reserved_hull":  "present",
+                                                           "origin":  "station",
+                                                           "decision":  "none"
+                                                       },
+                                               "kind":  "intercept",
+                                               "phase":  "before"
+                                           },
+                                           {
+                                               "id":  "fix.park.stale",
+                                               "predicate":  "preserve_active_contract",
+                                               "to":  "parked",
+                                               "edge":  "park.stale",
+                                               "set":  {
+                                                           "reserved_hull":  "present"
+                                                       },
+                                               "kind":  "intercept",
+                                               "phase":  "before"
+                                           },
+                                           {
+                                               "id":  "fix.region.retire",
+                                               "predicate":  "preserve_active_contract",
+                                               "to":  "parked",
+                                               "edge":  "region.retire",
+                                               "set":  {
+                                                           "actor":  "retained",
+                                                           "claim":  "retained",
+                                                           "reserved_hull":  "present",
+                                                           "origin":  "station"
+                                                       },
+                                               "kind":  "intercept",
+                                               "phase":  "before"
+                                           }
+                                       ],
+                        "removes":  [
+                                        "Administrative station deletion of targets and disposal of their original parked hulls."
+                                    ],
+                        "summary":  "Explicit simulation policy preserving current bounty actors, existing claims and original hulls across administrative retirement.",
+                        "preserves":  [
+                                          "Native station movement, claims already held, custody and due-pass reboarding of the same hull.",
+                                          "Expiry, hand-ins, physical destruction, ordinary NPC cleanup and native population asset exclusions.",
+                                          "No resurrection, forced departure, controller replacement or persistent journal."
+                                      ],
+                        "sources":  [
+                                        "preservation"
+                                    ],
+                        "evidence":  [
+                                         "preservation_review",
+                                         "preservation_native"
+                                     ],
+                        "classification":  "simulation_policy"
                     }
                 ],
     "notApplicable":  [

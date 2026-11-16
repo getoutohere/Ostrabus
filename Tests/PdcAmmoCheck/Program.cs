@@ -24,6 +24,7 @@ static class Program {
     static void Check(bool ok, string message) { checks++; if (!ok) throw new Exception(message); }
     static void Field(object obj, string name, object value) => AccessTools.Field(obj.GetType(), name).SetValue(obj, value);
     static bool Equal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = ReferenceEquals(__0, __1); return false; }
+    static bool Unequal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = !ReferenceEquals(__0, __1); return false; }
     static bool Quiet() => false;
     static bool Shader(ref int __result) { __result = 1; return false; }
     static bool ID(ref string __result) { __result = "fixture-" + ++nextId; return false; }
@@ -64,6 +65,7 @@ static class Program {
         try {
             Prefix(fixture, typeof(Shader), "PropertyToID", nameof(Shader), new[] { typeof(string) });
             Prefix(fixture, typeof(UnityEngine.Object), "op_Equality", nameof(Equal));
+            Prefix(fixture, typeof(UnityEngine.Object), "op_Inequality", nameof(Unequal));
             Prefix(fixture, typeof(DataHandler), "GetNextID", nameof(ID)); Prefix(fixture, typeof(DataHandler), "GetMesh", nameof(Mesh));
             Prefix(fixture, typeof(GameObject), "AddComponent", nameof(AddComponent), new[] { typeof(Type) });
             Prefix(fixture, typeof(Component), "get_gameObject", nameof(ObjectOf)); Prefix(fixture, typeof(GameObject), "set_name", nameof(Quiet));

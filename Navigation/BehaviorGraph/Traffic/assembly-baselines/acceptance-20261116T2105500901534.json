@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/6ef415e218e39f184199947e952c5f60e89175fe9cce322ab78adc5a39976699.json.br",
+  "reason": "Independent attachment audit reproduces permanent-station identity guard gap; unified manual/course release checks now preserve native substation and ground identities. Reviewed added Ship identity methods. 444 production-DLL checks and towing/hull/orbital/economy/route/gravity regressions pass against unchanged native assembly.",
+  "acceptedUtc": "2026-11-16T21:05:50.0885497Z",
+  "previousSnapshot": "assembly-baselines/592904f2b41e6319e5f435b93b68c1b57102aa24c16c42ff857e472e248e8932.json.br"
+}

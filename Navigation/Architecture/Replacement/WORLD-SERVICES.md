@@ -1,6 +1,6 @@
 # Retained world-service integration
 
-Status: offline integration experiment. No production patches, native assets,
+Status: offline integration experiment, requalified for 1.1.0.0. No production patches, native assets,
 persisted configuration or deployed behavior were changed. The separate descriptive AI
 behavior graph was not edited. Results are part of [test-results.json](test-results.json).
 
@@ -31,12 +31,14 @@ prepared a new interval starting at the already-advanced epoch, then disposed it
 without executing its timeline. The baseline economic report showed an interval
 8,200 -> 15,400 instead of the requested 1,000 -> 8,200.
 
-The coordinator now runs **outside** `StarSystem.Update`'s prefix chain. Offline
-call-site bindings route the SFF/PASS iterators' world call through that port;
-each segment then invokes actual `StarSystem.Update` once with its existing
-prefixes/body/finalizers in order. The ordinary fixture driver uses the same
-port. Native iterator preamble and the real GUI SFF flag still run. No claim is
-made that the call-site binding is already installed in production.
+The current experiment uses production **`SffAdvance`**, outside
+`StarSystem.Update`'s prefix chain, as the sole GUI/PASS jump coordinator. The
+offline iterator transpiler now preserves that call and cuts only the scene tail.
+Per-segment hooks admit/observe executive work without recursively advancing the
+world. Native update, existing prefixes/body/finalizers, the real GUI SFF flag
+and real pending-end-turn scheduler drain run. There is no second experimental
+PASS scope opener or jump splitter. The normal fixture driver still partitions
+ordinary updates at the adopted actor's route boundary.
 
 **A stale native status could reacquire navigation after route loss.** Existing
 `SffSimulation.Prepare` infers travel intent from the native active command and
@@ -69,16 +71,19 @@ therefore suppress this physical body when the economy already owns the carrier.
 | Unrelated player course | Existing player/autopilot controls | Native NavData playback; executive ownership binding does not intercept it. |
 | Combat bulk travel | No replacement outcome selected | Offline admission refuses before integration. Combat behavior is not redesigned here. |
 
-GUI SFF uses the existing production world prefix to open its scopes. Production
-PASS still opens none, as a negative control verifies. The experimental PASS port
-opens the same service scopes explicitly after observing the world and disposes
-them in the same economic/physical order. It does **not** fake `GUIFFWD.Active`.
-Existing module enable flags still gate the service factories.
+GUI SFF and PASS use the same production coordinator and world prefix to open
+their scopes. PASS uses the actual production pending-turn wrapper. A passing
+check verifies one scheduler drain, two service scopes for a single window, one
+jump-boundary generation enter/exit and no remaining jump/coordinator scope.
+The harness does not fake `GUIFFWD.Active` for PASS. Existing module enable flags
+still gate the service factories.
 
-Discontinuous intervals are bounded to at most one day per service window, within
-the existing economy duration limit. Native AI dispatch runs between windows;
-this is not repeated world advancement without command handoff. Route arrival
-can split a window earlier. Only the remaining interval advances afterward.
+Discontinuous intervals use production's maximum six-hour window. Predicted
+impact decisions and native course completion can split it earlier. Completion
+is offered at the next representable epoch after arrival, preserving native
+strict comparison semantics. Native dispatch runs between windows. Only the
+remaining requested interval advances, with whole-jump role-callback eligibility
+retained by the production coordinator.
 
 Native AI dispatch can leave a freighter reporting `TargetNewIfNone` after one
 successful main-sequence child. Existing economy eligibility deliberately declines
@@ -103,7 +108,7 @@ freight eligibility was introduced to make the test pass.
   cargo units arrive before the next factory cycle; one is consumed into product
   and three remain. A short initial segment and later economic/native ownership
   handoff do not double-charge the freighter.
-- Two-day PASS is split into two daily service windows, produces 48 test units
+- Two-day PASS is split into eight six-hour service windows, produces 48 test units
   and executes 24 due dispatch checks. Rebinding a saved Navy route preserves
   remaining fuel and residual world time without restoring stale scopes.
 - Injected physical-body failure exercises real service finalizers. Injected
@@ -111,31 +116,31 @@ freight eligibility was introduced to make the test pass.
   residual advancement and cannot silently replay crew transfer. Partially
   applied world jumps are not rolled back or automatically retried.
 - Disabling the underlying production module prevents scope creation through
-  the experimental PASS port too.
+  the shared PASS path too.
+- A predicted-impact preview changes no live clock, fuel, route or policy. A
+  capable registered actor gets an intervening decision; an unavailable pilot
+  does not. The ordinary outward fixture target then runs through actual shared
+  SFF/native dispatch. This does not certify every random patrol destination or
+  resolve an uncontrolled impact into an invented outcome.
 
-This qualifies the stated fixture profile, not every world skip. Remaining work
-includes materialized reactors/tow groups, real scene/crew effects, shared playback
-completion semantics outside GUI SFF, collision-history discontinuities, and full
-role/region coverage. The earlier PASS investigation in
-`Orbital/PASS-TIME-SKIPS.md` remains relevant; opening service scopes alone is not
-a complete repair for native route-completion fallthrough. This experiment does
-not install that repair or alter player torch drive execution.
+This qualifies the stated fixture profile, not every world skip. Materialized
+reactors/tow groups, real scene/crew effects and full role/region coverage remain
+open. Native human end-turn queues are empty in these fixtures; their scheduler
+drain executes, but populated human-work completion is not qualified here. Story
+encounters, achievements, physical collisions and the iterator scene tail have
+explicit excluded bodies. The jump-boundary invalidation signal executes; actual
+Unity collision history is not reproduced.
 
-An explicit negative control gives an unrelated route a braking acceleration of
-`-1e-12 AU/s^2`, a 300-second remaining route, and a 600-second PASS interval.
-The native successful-completion branch clears its route and returns false;
-`ShipSitu.TimeAdvance` then applies the leftover acceleration for the full 600
-seconds. It gains about **89.76 m/s** despite one playback invocation. This is a
-known native defect, not an executive/SFF-scope duplicate writer. The test is
-expected to reproduce it and is explicitly marked as an unresolved blocker.
+The route-completion repair is now installed in this experiment. Its A/B control
+gives an unrelated AI route `-1e-12 AU/s^2` braking, a 300-second remaining route
+and one 600-second normal world update. Without the repair it gains about
+**89.76 m/s** despite one playback invocation; with the repair excess speed is
+below `1e-5 m/s`. The old player-RCS control is historical: 1.1 now explicitly
+stops player RCS during that playback branch, invalidating that particular
+reproduction. Changing the control to AI follows the native source difference;
+it does not weaken the excess-motion assertion.
 
-Production follow-up: [RouteCompletionPatch](../../ROUTE-COMPLETION.md) now repairs
-this native completion handoff, with its own native physics and interoperation
-regressions. This retained-service experiment does not bind that separate patch;
-its 89.76 m/s negative control remains evidence of the unpatched native path.
-Integrating the repair into this experiment is still an adoption gate.
-
-The separate playback repair still needs integration into this experiment.
+Production mechanism: [RouteCompletionPatch](../../ROUTE-COMPLETION.md).
 [Command receipt and selected dialogue effects](COMMAND-EFFECTS.md) are now
 qualified under explicit providers. The [native save/arrival port](SAVE-ARRIVAL.md)
 now exercises the real collector/writer and mixed crew-disposition branches;

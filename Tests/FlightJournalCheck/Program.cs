@@ -49,7 +49,7 @@ static class Program {
         var player = Hull("PLAYER"); Hull("OLD"); CrewSim.coPlayer = Empty<CondOwner>(); Field(CrewSim.coPlayer, "_objShip", player);
         var target = Hull("TARGET"); player.TargetData = new TargetData(target); player.shipSituTarget = target.objSS;
         var course = Empty<NavData>(); Field(course, "_navPoints", new List<NavDataPoint>());
-        course.AddNavDataPoint(new NavDataPoint(100, target.objSS, 50, 1, 100)); player.objSS.NavData = course;
+        course.AddNavDataPoint(new NavDataPoint(100, target.objSS, 50, 1, 100,rcsCount:0F)); player.objSS.NavData = course;
         var ai = Empty<AIShip>(); Field(ai, "_shipUs", target); Field(ai, "<HomeStation>k__BackingField", "OKLG");
         AIShipManager.dictAIs["OKLG"] = new List<AIShip> { ai };
         var body = Empty<BodyOrbit>(); body.strName = "VENUS"; body.fMass = 1; body.dTimeCalcLast = 123;
@@ -84,6 +84,8 @@ static class Program {
             FlightJournalData.Release(detached); Check(detached.Buffer == null && detached.Count == 0, "Buffer was not released");
             Check(((System.Collections.IDictionary)AccessTools.Field(typeof(FlightJournalData), "pilots").GetValue(null)).Count == 0, "Capture retained AI references");
             FlightJournal.Start(file); Check(Owned() == 3 && FlightJournal.Active, "Start did not install exactly three hooks");
+            AccessTools.Method(typeof(FlightJournal), "UnityLog").Invoke(null, new object[] { "Destroying ship fixture-retired.", "", UnityEngine.LogType.Log });
+            AccessTools.Method(typeof(FlightJournal), "UnityLog").Invoke(null, new object[] { "Unrelated informational log", "", UnityEngine.LogType.Log });
             Check(LogListeners() == 1 && UnityListeners() == 1, "Temporary log observers not installed exactly once");
             FlightJournal.Start(file); Check(Owned() == 3, "Repeated start duplicated hooks");
             sff = false; CrewSim.system.Update(1);
@@ -115,6 +117,9 @@ static class Program {
             Check((long)before["TransitionId"] == (long)populated["TransitionId"], "Transition correlation changed");
             Check(events.Count(r => (string)r["Kind"] == "atc-follow-up") == 1, "One-shot region follow-up was not recorded");
             Check(events.Any(r => (string)r["Kind"] == "log" && (string)r["Message"] == "journal-warning"), "Relevant warning was not captured");
+            var removal = events.Single(r => (string)r["Kind"] == "log" && (string)r["Message"] == "Destroying ship fixture-retired.");
+            Check(((string)removal["Error"]).Contains("Program.Main"), "Native destruction log did not retain its calling stack");
+            Check(!events.Any(r => (string)r["Message"] == "Unrelated informational log"), "Journal recorded unrelated informational spam");
             FlightJournal.Stop(); Check(Owned() == 0, "Repeated stop changed hooks");
             var snapshot = FlightJournalData.Capture("limit");
             FlightJournalData.Release(snapshot);

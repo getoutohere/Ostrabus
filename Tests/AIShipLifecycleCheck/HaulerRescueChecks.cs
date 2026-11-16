@@ -16,6 +16,7 @@ static partial class Program {
     static bool FactionScore(ref float __result) { __result = rescueFactionScore; return false; }
     static bool NoPlots(ref List<string> __result) { __result = new List<string>(); return false; }
     static bool PhysicalBody(ref BodyOrbit __result) { __result = Empty<BodyOrbit>(); __result.strName = "BODY"; return false; }
+    static bool RescueFlight(ref CommandStatus __result) { __result = new CommandStatus(CommandCode.Running, null); return false; }
     static bool RescueUndock(Ship __instance, Ship __0) {
         rescueUndocks++;
         __instance.ResetDockedCache(); __0.ResetDockedCache();
@@ -79,7 +80,13 @@ static partial class Program {
             Check(person.bAlive && ReferenceEquals(person.ship, ship) && AIShipManager.GetAIShipByRegID(ship.strRegID) == ai, "Same NPC and controller remain aboard; neither is recreated or deleted");
             Check(!ship.IsDocked() && !wreck.bDestroyed && wreck.objSS.vPosx == wreckX, "Wreck is detached and preserved for separate pruning");
             Check(Math.Abs((ship.objSS.vPosx-home.objSS.vPosx)*149597870.7-100) < 1E-6 && ship.objSS.vVelX == home.objSS.vVelX && ship.objSS.vVelY == home.objSS.vVelY && ship.objSS.fW == 0 && ship.objSS.fA == 0, "Explicit repair stages hauler 100 km outward at home velocity without spin");
-            Check(ship.fShallowRCSRemass == ship.GetRCSMax() && ship.shipScanTarget == home && ship.objSS.strBOPORShip == "BODY" && ai.Blackboard.Get<string>("TemplateExample.StationReturn.Destination") == "OKLG", "Native refueling, repaired reference body and persistent return intent are established");
+            Check(ship.fShallowRCSRemass == ship.GetRCSMax() && ship.objSS.strBOPORShip == "BODY" && ai.Blackboard.Get<string>("TemplateExample.StationReturn.Destination") == "OKLG", "Native refueling, repaired reference body and persistent return intent are established");
+            // Request persists the intent; normal mission execution binds the
+            // target after native higher-priority reactions have had their turn.
+            boundary.Patch(AccessTools.Method(typeof(FlyTo), nameof(FlyTo.RunCommand)), prefix:new HarmonyMethod(typeof(Program), nameof(RescueFlight)));
+            var stationReturn = typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.ShipNavigation.StationReturn", true);
+            Check((bool)AccessTools.Method(stationReturn, "Run").Invoke(null, new object[] { ai, null }) && ship.shipScanTarget == home,
+                "Requested return binds home when its ordinary mission executes");
             Check(Rescue(ship.strRegID, true).status == 409 && rescueUndocks == 1, "Repeated rescue does not relocate an already-returning hauler");
             Console.WriteLine(checks + " hauler rescue API checks passed; docking/scene/eligibility data boundaries substituted.");
         } finally { boundary.UnpatchSelf(); }

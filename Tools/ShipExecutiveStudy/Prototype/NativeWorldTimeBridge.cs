@@ -4,33 +4,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using HarmonyLib;
 using Ostranauts.Ships;
 using Ostranauts.Ships.AIPilots;
 using Ostranauts.Ships.Commands;
-using Ostranauts.Ships.Comms;
 using Ostranauts.ShipGUIs.Utilities;
 using Ostranauts.Trading;
 
 namespace ShipExecutivePrototype;
 
-// Offline world coordinator outside the native Update prefix chain. Rendering
-// and physical scene bodies have fixtures; integrated mode runs real retained
-// orbital/economic scopes, stock algorithms and unrelated native AI dispatch.
+// Production SffAdvance is the sole jump coordinator. The fixture preserves
+// the native/production world call and cuts only its unavailable Unity tail.
 sealed class NativeWorldTimeBridge : IDisposable
 {
     readonly Harmony hooks = new Harmony("offline.navy.world-time");
     internal static NativeWorldTimeBridge Current;
     internal readonly NativeNavyActor Actor;
-    bool advancing;
+    readonly WorldServiceFixtures ownedData;
+    readonly RetainedWorldServices ownedServices;
+    readonly CrewSim previousCrew;
+    bool updating;
     double segment;
-    internal int Segments, NativeDispatches, SuppressedCatchups;
-    internal bool InSffCaller, InPassCaller;
-    internal bool RejectedCombatSkip;
     Exception failure;
+    internal int Segments, NativeDispatches, SuppressedCatchups, PendingTurnDrains;
+    internal bool InSffCaller, InPassCaller, RejectedCombatSkip;
     internal readonly List<string> EntryCalls = new List<string>();
-    internal readonly bool IntegratedServices;
     internal Action BeforeSegment;
     internal Action<Ship> BeforePhysicalShip;
 
@@ -38,151 +36,146 @@ sealed class NativeWorldTimeBridge : IDisposable
     {
         Current = this;
         Actor = actor;
-        IntegratedServices = integratedServices;
-        var world = actor.World;
-        NativeWorld.Set(CrewSim.system, "_dockingGroups", new List<Ship>());
-        NativeWorld.Set(CrewSim.system, "_updatedGroups", new HashSet<string>());
-        NativeWorld.Set(CrewSim.system, "temp_aDestroyed", new List<Ship>());
-        NativeWorld.Set(CrewSim.system, "_asteroidClaimCheck", true);
-        NativeWorld.Set(CrewSim.system, "dictShipOwners", new Dictionary<string, string>());
-        var stellar = AccessTools.Field(typeof(StarSystem), "dictStellarObjects");
-        stellar.SetValue(CrewSim.system, Activator.CreateInstance(stellar.FieldType));
-        AIShipManager.IsTestCase = true;
-        CollisionManager.strATCClosest = AIShipManager.strATCLast;
-        // Never replace this readonly static after native callers were JITed:
-        // Mono may retain the original reference in compiled code. Reset the
-        // actual native queue through its supported API instead.
-        ((AIShipQueue)AccessTools.Field(typeof(AIShipManager), "_aIQueue").GetValue(null)).Clear();
-        hooks.Patch(AccessTools.Method(typeof(StarSystem), "UpdateShip"), transpiler: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(PhysicalSceneBody)));
-        Add(typeof(StarSystem), "DeliverMessages", nameof(Quiet));
-        Add(typeof(StarSystem), "LedgerAlert", nameof(Quiet));
-        foreach (string name in new[] { "Skip", "ProcessRepeating" })
-            Add(typeof(Ledger), name, nameof(Quiet));
-        Add(typeof(AIShip), "RunAI", nameof(Dispatch));
-        Add(typeof(AIShip), "FFWD", nameof(Catchup), priority: Priority.First);
-        Add(typeof(AIShipManager), "CheckTracking", nameof(Quiet));
-        foreach (var method in AccessTools.GetDeclaredMethods(typeof(AIShipManager)).Where(m => m.Name == "GetShipsOfTypeForRegion"))
-            hooks.Patch(method, prefix: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(Actors)));
-        foreach (string name in new[] { "CheckProjectileCollisions", "CheckCollisions", "RunQueue" })
-            foreach (var method in AccessTools.GetDeclaredMethods(typeof(CollisionManager)).Where(m => m.Name == name))
+        previousCrew = CrewSim.objInstance;
+        try
+        {
+            if (!integratedServices)
+            {
+                // Ability tests use the same coordinator/providers while retaining
+                // their original geometry and explicitly zero fixture-body mass.
+                ownedData = new WorldServiceFixtures(actor.World, false, true);
+                ownedServices = new RetainedWorldServices(true);
+            }
+            CrewSim.objInstance = NativeWorld.Empty<CrewSim>();
+            CrewSim.objInstance.workManager = NativeWorld.Empty<WorkManager>();
+            Add(typeof(WorkManager), nameof(WorkManager.CancelAllClaims), nameof(Quiet));
+            Add(typeof(Condowner.Utils.Scheduler), nameof(Condowner.Utils.Scheduler.CompletePendingEndTurns), nameof(Draining));
+            NativeWorld.Set(CrewSim.system, "_dockingGroups", new List<Ship>());
+            NativeWorld.Set(CrewSim.system, "_updatedGroups", new HashSet<string>());
+            NativeWorld.Set(CrewSim.system, "temp_aDestroyed", new List<Ship>());
+            NativeWorld.Set(CrewSim.system, "_asteroidClaimCheck", true);
+            NativeWorld.Set(CrewSim.system, "dictShipOwners", new Dictionary<string, string>());
+            AIShipManager.IsTestCase = true;
+            CollisionManager.strATCClosest = AIShipManager.strATCLast;
+            ((AIShipQueue)AccessTools.Field(typeof(AIShipManager), "_aIQueue").GetValue(null)).Clear();
+            hooks.Patch(AccessTools.Method(typeof(StarSystem), "Update"),
+                prefix: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(BeforeUpdate)) { priority = Priority.First },
+                finalizer: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(AfterUpdate)) { priority = Priority.Last });
+            hooks.Patch(AccessTools.Method(typeof(StarSystem), "UpdateShip"), transpiler: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(PhysicalSceneBody)));
+            foreach (string name in new[] { "DeliverMessages", "LedgerAlert" })
+                Add(typeof(StarSystem), name, nameof(Quiet));
+            foreach (string name in new[] { "Skip", "ProcessRepeating" })
+                Add(typeof(Ledger), name, nameof(Quiet));
+            foreach (var method in AccessTools.GetDeclaredMethods(typeof(BeatManager)).Where(m => m.Name == "RunEncounter"))
                 hooks.Patch(method, prefix: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(Quiet)));
-        Add(typeof(WeaponsSystem), "ActivateDefenseSystems", nameof(Quiet));
-        if (!integratedServices)
-            Add(typeof(MarketManager), "Run", nameof(Quiet));
-        Add(typeof(CrewSim), "GetSelectedCrew", nameof(Selected));
-        CutAfterWorldUpdate(typeof(GUIFFWD), "FFWD");
-        CutAfterWorldUpdate(typeof(CrewSim), "_TeleportCO");
+            foreach (var method in AccessTools.GetDeclaredMethods(typeof(CrewSim)).Where(m => m.Name == "UnlockAchievement"))
+                hooks.Patch(method, prefix: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(Quiet)));
+            Add(typeof(AIShip), "RunAI", nameof(Dispatch));
+            Add(typeof(AIShip), "FFWD", nameof(Catchup), Priority.First);
+            Add(typeof(AIShipManager), "CheckTracking", nameof(Quiet));
+            foreach (var method in AccessTools.GetDeclaredMethods(typeof(AIShipManager)).Where(m => m.Name == "GetShipsOfTypeForRegion"))
+                hooks.Patch(method, prefix: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(Actors)));
+            foreach (string name in new[] { "CheckProjectileCollisions", "CheckCollisions", "RunQueue" })
+                foreach (var method in AccessTools.GetDeclaredMethods(typeof(CollisionManager)).Where(m => m.Name == name))
+                    hooks.Patch(method, prefix: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(Quiet)));
+            Add(typeof(WeaponsSystem), "ActivateDefenseSystems", nameof(Quiet));
+            Add(typeof(CrewSim), "GetSelectedCrew", nameof(Selected));
+            CutAfterWorldUpdate(typeof(GUIFFWD), "FFWD");
+            CutAfterWorldUpdate(typeof(CrewSim), "_TeleportCO");
+        }
+        catch { Dispose(); throw; }
     }
 
     void Add(Type type, string method, string prefix, int priority = Priority.Normal)
-    {
-        var target = AccessTools.Method(type, method) ?? throw new InvalidOperationException("Missing fixture boundary " + type.Name + "." + method);
-        hooks.Patch(target, prefix: new HarmonyMethod(typeof(NativeWorldTimeBridge), prefix) { priority = priority });
-    }
+        => hooks.Patch(AccessTools.Method(type, method) ?? throw new MissingMethodException(type.FullName, method),
+            prefix: new HarmonyMethod(typeof(NativeWorldTimeBridge), prefix) { priority = priority });
 
     void CutAfterWorldUpdate(Type owner, string name)
-    {
-        var method = AccessTools.Method(owner, name);
-        var iterator = method.GetCustomAttribute<IteratorStateMachineAttribute>()?.StateMachineType
-            ?? owner.GetNestedTypes(BindingFlags.NonPublic).Single(t => t.Name.StartsWith("<" + name + ">d__", StringComparison.Ordinal));
-        hooks.Patch(AccessTools.Method(iterator, "MoveNext"), transpiler: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(AfterUpdateCut)));
-    }
+        => hooks.Patch(AccessTools.EnumeratorMoveNext(AccessTools.Method(owner, name)),
+            transpiler: new HarmonyMethod(typeof(NativeWorldTimeBridge), nameof(AfterUpdateCut))
+            {
+                priority = Priority.Last,
+                after = new[] { "offline.executive-world.retained" }
+            });
 
     static IEnumerable<CodeInstruction> AfterUpdateCut(IEnumerable<CodeInstruction> input)
     {
         int count = 0;
-        var update = AccessTools.Method(typeof(StarSystem), "Update");
         foreach (var instruction in input)
         {
-            if (!instruction.Calls(update))
-            {
-                yield return instruction;
-                continue;
-            }
-            count++;
-            // Coordinate outside StarSystem.Update's prefix chain. Running
-            // nested world calls inside a prefix lets later void prefixes
-            // prepare another scope at the already-advanced epoch.
-            instruction.opcode = OpCodes.Call;
-            instruction.operand = AccessTools.Method(typeof(NativeWorldTimeBridge), nameof(Advance));
             yield return instruction;
-            // Native caller and pre-update logic execute. The following GUI,
-            // loading, crew/scene and report work is outside this fixture.
+            var call = instruction.operand as MethodInfo;
+            if (call != AccessTools.Method(typeof(StarSystem), "Update") &&
+                !(call?.DeclaringType?.FullName == "Ostrabus.Orbital.SffAdvance" && (call.Name == "Update" || call.Name == "Pass")))
+                continue;
+            count++;
             yield return new CodeInstruction(OpCodes.Ldc_I4_0);
             yield return new CodeInstruction(OpCodes.Ret);
         }
         if (count != 1)
-            throw new InvalidOperationException("Expected one native world call in time-skip caller");
+            throw new InvalidOperationException("Expected one shared GUI/PASS world call before excluded scene tail");
     }
 
-    static void Advance(StarSystem system, double fTimeDelta)
+    void CheckBulk(double seconds)
+    {
+        if (seconds >= 60 && Actor.Machine.State.Active?.Kind == "Combat")
+        {
+            RejectedCombatSkip = true;
+            throw new NotSupportedException("Bulk combat remains unqualified; no replacement outcome invented");
+        }
+    }
+
+    static void BeforeUpdate(double fTimeDelta)
     {
         var context = Current;
+        if (context.failure != null)
+            throw new InvalidOperationException("Previous native segment failed", context.failure);
+        if (context.updating)
+            throw new InvalidOperationException("Nested executive world update");
         if (double.IsNaN(fTimeDelta) || double.IsInfinity(fTimeDelta) || fTimeDelta < 0)
             throw new ArgumentOutOfRangeException(nameof(fTimeDelta));
-        if (context.advancing)
-            throw new InvalidOperationException("Nested executive world advance");
-        context.advancing = true;
+        context.CheckBulk(fTimeDelta);
+        context.Actor.Tick(0);
+        context.CheckBulk(fTimeDelta);
+        if (context.Actor.Machine.State.PendingArrival != null)
+            throw new InvalidOperationException("Resolve pending world effect before advancement");
+        context.BeforeSegment?.Invoke();
+        context.segment = fTimeDelta;
+        context.updating = true;
+        context.EntryCalls.Add(GUIFFWD.Active ? "GUIFFWD" : context.InPassCaller ? "PASS" : "normal");
+    }
+
+    static Exception AfterUpdate(Exception __exception)
+    {
+        var context = Current;
+        context.updating = false;
+        if (__exception != null)
+            context.failure = __exception;
+        if (context.failure != null)
+            return context.failure;
+        context.Segments++;
+        context.Actor.Machine.SettleWorldTime(StarSystem.fEpoch);
         try
         {
-            context.EntryCalls.Add(GUIFFWD.Active ? "GUIFFWD" : context.InPassCaller ? "PASS" : "normal");
-            if (fTimeDelta >= 60 && context.Actor.Machine.State.Active?.Kind == "Combat")
-            {
-                context.RejectedCombatSkip = true;
-                throw new NotSupportedException("Bulk combat remains with the native world; no invented replacement outcome");
-            }
-            double end = StarSystem.fEpoch + fTimeDelta;
-            int budget = 0;
-            do
-            {
-                if (++budget > 128)
-                    throw new InvalidOperationException("World interval split budget exhausted");
+            if (context.Actor.Machine.State.Active?.Phase == "ArrivalReady")
                 context.Actor.Tick(0);
-                context.BeforeSegment?.Invoke();
-                if (fTimeDelta >= 60 && context.Actor.Machine.State.Active?.Kind == "Combat")
-                {
-                    context.RejectedCombatSkip = true;
-                    throw new NotSupportedException("Combat began at the interval boundary; bulk integration is not qualified");
-                }
-                var route = context.Actor.World.Subject.objSS.NavData;
-                double boundary = route == null ? end : Math.Min(end, route.GetArrivalEpoch());
-                if (context.IntegratedServices && (GUIFFWD.Active || context.InPassCaller))
-                    boundary = Math.Min(boundary, StarSystem.fEpoch + 86400);
-                if (context.Actor.Machine.State.PendingArrival != null)
-                    throw new InvalidOperationException("Resolve pending world effect before bulk advancement");
-                if (boundary <= StarSystem.fEpoch && end > StarSystem.fEpoch)
-                    throw new InvalidOperationException("No actor progress at route boundary");
-                context.segment = boundary - StarSystem.fEpoch;
-                try
-                {
-                    using (var scopes = RetainedWorldServices.Current?.EnterSharedWindow(system, context.segment, context.InPassCaller))
-                        system.Update(context.segment);
-                    context.Segments++;
-                }
-                catch (Exception e) { context.failure = e; throw; }
-                context.Actor.Machine.SettleWorldTime(StarSystem.fEpoch);
-                // The native queue dispatched the actor. Drive only immediate
-                // completion edges so a finished flight cannot leak residual time.
-                if (context.Actor.Machine.State.Active?.Phase == "ArrivalReady")
-                    context.Actor.Tick(0);
-            } while (StarSystem.fEpoch < end);
         }
-        catch (Exception e) { context.failure = e; throw; }
-        finally { context.advancing = false; }
+        catch (Exception error) { context.failure = error; return error; }
+        return null;
     }
+
     static IEnumerable<CodeInstruction> PhysicalSceneBody(IEnumerable<CodeInstruction> _)
-    {
-        // Replace the unavailable Unity scene body, not its prefix chain. Real
-        // freight ownership prefixes must be able to suppress this body.
-        return new[] { new CodeInstruction(OpCodes.Ldarg_1), new CodeInstruction(OpCodes.Ldarg_2),
+        => new[] { new CodeInstruction(OpCodes.Ldarg_1), new CodeInstruction(OpCodes.Ldarg_2),
             new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(NativeWorldTimeBridge), nameof(ShipStep))), new CodeInstruction(OpCodes.Ret) };
-    }
+
     static void ShipStep(double fTimeDelta, Ship ship)
     {
-        if (!ship.HideFromSystem)
+        try
         {
+            if (ship.HideFromSystem)
+                return;
             Current.BeforePhysicalShip?.Invoke(ship);
-            if (Current.IntegratedServices && ship.objSS.NavData == null && !ship.objSS.bIgnoreGrav && !ship.objSS.bIsBO && !ship.objSS.bBOLocked)
+            if (ship.objSS.NavData == null && !ship.objSS.bIgnoreGrav && !ship.objSS.bIsBO && !ship.objSS.bBOLocked)
             {
                 var args = new object[] { ship.objSS, default(UnityEngine.Vector2), null };
                 AccessTools.Method(typeof(StarSystem), "GetGreatestGravBOFast").Invoke(CrewSim.system, args);
@@ -190,31 +183,31 @@ sealed class NativeWorldTimeBridge : IDisposable
             }
             ship.objSS.TimeAdvance(fTimeDelta);
         }
+        catch (Exception error) { Current.failure = error; throw; }
     }
+
     static bool Dispatch(AIShip __instance)
     {
-        if (!ReferenceEquals(__instance, Current.Actor.World.AI))
-            return Current.IntegratedServices;
-        if (Current.Actor.Machine.State.Authority == "Native")
+        if (!ReferenceEquals(__instance, Current.Actor.World.AI) || Current.Actor.Machine.State.Authority == "Native")
             return true;
         Current.NativeDispatches++;
-        Current.Actor.Tick((float)Current.segment);
+        try
+        {
+            Current.Actor.Tick((float)Current.segment);
+        }
+        catch (Exception error) { Current.failure = error; throw; }
         return false;
     }
     static bool Catchup(AIShip __instance)
     {
-        if (!ReferenceEquals(__instance, Current.Actor.World.AI))
-            return true;
-        if (Current.Actor.Machine.State.Authority == "Native")
+        if (!ReferenceEquals(__instance, Current.Actor.World.AI) || Current.Actor.Machine.State.Authority == "Native")
             return true;
         Current.SuppressedCatchups++;
         return false;
     }
     static bool Actors(ref List<AIShip> __result)
     {
-        __result = Current.IntegratedServices
-            ? AIShipManager.dictAIs.Values.SelectMany(a => a).Where(a => a.AICharacter != null && !a.Ship.HideFromSystem && !a.Ship.bDestroyed).ToList()
-            : Current.Actor.World.Retired ? new List<AIShip>() : new List<AIShip> { Current.Actor.World.AI };
+        __result = AIShipManager.dictAIs.Values.SelectMany(a => a).Where(a => a.AICharacter != null && !a.Ship.HideFromSystem && !a.Ship.bDestroyed).ToList();
         return false;
     }
     static bool Selected(ref CondOwner __result)
@@ -223,50 +216,92 @@ sealed class NativeWorldTimeBridge : IDisposable
         return false;
     }
     static bool Quiet() => false;
+    static void Draining() => Current.PendingTurnDrains++;
 
     internal void Normal(double seconds)
     {
         failure = null;
-        Advance(CrewSim.system, seconds);
-        if (failure != null)
-            throw new InvalidOperationException("Native normal world step failed", failure);
+        CheckBulk(seconds);
+        double end = StarSystem.fEpoch + seconds;
+        if (double.IsNaN(end) || double.IsInfinity(end) || seconds < 0)
+            throw new ArgumentOutOfRangeException(nameof(seconds));
+        int budget = 0;
+        while (StarSystem.fEpoch < end)
+        {
+            if (++budget > 512)
+                throw new InvalidOperationException("Normal fixture step budget exhausted");
+            Actor.Tick(0);
+            double arrival = Actor.World.Subject.objSS.NavData?.GetArrivalEpoch() ?? end;
+            double after = BitConverter.Int64BitsToDouble(BitConverter.DoubleToInt64Bits(arrival) + (arrival >= 0 ? 1 : -1));
+            double boundary = arrival >= StarSystem.fEpoch && after < end ? after : end;
+            CrewSim.system.Update(boundary - StarSystem.fEpoch);
+            ThrowFailure();
+        }
     }
+
     internal void Sff(float seconds)
     {
         failure = null;
+        CheckBulk(seconds);
         var gui = NativeWorld.Empty<GUIFFWD>();
         NativeWorld.Set(gui, "fTimeDelta", seconds);
         var iterator = (IEnumerator)AccessTools.Method(typeof(GUIFFWD), "FFWD").Invoke(gui, null);
         InSffCaller = true;
         try
         {
-            if (!iterator.MoveNext())
-                throw new InvalidOperationException("SFF missed scheduler boundary");
-            iterator.MoveNext();
-            if (failure != null)
-                throw new InvalidOperationException("Native SFF world step failed", failure);
+            Drain(iterator);
+            ThrowFailure();
         }
         finally { InSffCaller = false; AccessTools.Field(typeof(GUIFFWD), "bFFWDActive").SetValue(null, false); }
     }
     internal void Pass(double seconds)
     {
         failure = null;
+        CheckBulk(seconds);
         var passenger = NativeWorld.Empty<CondOwner>();
         passenger.ship = CrewSim.coPlayer.ship;
-        var crew = NativeWorld.Empty<CrewSim>();
-        var iterator = (IEnumerator)AccessTools.Method(typeof(CrewSim), "_TeleportCO").Invoke(crew, new object[] { passenger, Actor.World.Home, seconds });
+        var iterator = (IEnumerator)AccessTools.Method(typeof(CrewSim), "_TeleportCO").Invoke(CrewSim.objInstance, new object[] { passenger, Actor.World.Home, seconds });
         InPassCaller = true;
         try
         {
-            iterator.MoveNext();
-            if (failure != null)
-                throw new InvalidOperationException("Native passenger world step failed", failure);
+            Drain(iterator);
+            ThrowFailure();
         }
         finally { InPassCaller = false; }
     }
+    static void Drain(IEnumerator iterator)
+    {
+        int budget = 10000;
+        void Run(IEnumerator current)
+        {
+            try
+            {
+                while (current.MoveNext())
+                {
+                    if (--budget == 0)
+                        throw new InvalidOperationException("Offline coroutine drain budget exhausted");
+                    if (current.Current is IEnumerator nested)
+                        Run(nested);
+                }
+            }
+            finally { (current as IDisposable)?.Dispose(); }
+        }
+        Run(iterator);
+    }
+
+    void ThrowFailure()
+    {
+        if (failure != null)
+            throw new InvalidOperationException("Native world segment failed", failure);
+    }
+
     public void Dispose()
     {
         hooks.UnpatchSelf();
+        ownedServices?.Dispose();
+        ownedData?.Dispose();
+        CrewSim.objInstance = previousCrew;
         AIShipManager.IsTestCase = false;
+        Current = null;
     }
 }

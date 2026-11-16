@@ -161,7 +161,7 @@ static class Program {
             // Real SetReactants executes native tank debits; only scene/condition
             // boundaries are prescribed. The flight integrator is a fixture here.
             var nav = Empty<NavData>(); Field(nav,"_shipUs",ship);
-            Field(nav,"_navPoints",new List<NavDataPoint> { new NavDataPoint(1000,new ShipSitu(false),100,0.3f,2000), new NavDataPoint(2000,new ShipSitu(false),100,0.3f,1000) });
+            Field(nav,"_navPoints",new List<NavDataPoint> { new NavDataPoint(1000,new ShipSitu(false),100,0.3f,2000,rcsCount:0F), new NavDataPoint(2000,new ShipSitu(false),100,0.3f,1000,rcsCount:0F) });
             ship.objSS.NavData = nav; sff = true; StarSystem.fEpoch += 3600;
             Check(nav.TimeAdvance(ship.objSS),"Trace changed native return value");
             sff = false;

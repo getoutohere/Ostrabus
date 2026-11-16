@@ -19,6 +19,7 @@ static partial class LifecycleChecks {
     }
     static void FailMaterialization() => throw new InvalidOperationException("offline: replacement initialization failed");
     sealed class StellarFixture : IStellarObject {
+        public int MapID { get; set; }
         public string strID { get; set; }
         public ShipSitu objSS { get; } = new ShipSitu(false);
         public string strLoot { get; set; }
@@ -33,8 +34,8 @@ static partial class LifecycleChecks {
     }
     static NavData LifetimeRoute(Ship ship, bool huge = false) {
         var route = new NavData(ship);
-        route.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false), 100, 0, 200));
-        route.AddNavDataPoint(new NavDataPoint(huge ? 1e20 : 2000, new ShipSitu(false) { vPosx = 2 }, 50, 0, 150));
+        route.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false), 100, 0, 200,rcsCount:0F));
+        route.AddNavDataPoint(new NavDataPoint(huge ? 1e20 : 2000, new ShipSitu(false) { vPosx = 2 }, 50, 0, 150,rcsCount:0F));
         ship.objSS.NavData = route;
         return route;
     }

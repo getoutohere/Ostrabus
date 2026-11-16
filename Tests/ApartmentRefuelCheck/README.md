@@ -1,6 +1,6 @@
 # Standalone apartment refuel checks
 
-Target: shipped Ostranauts 1.0.1.10 assembly, hosted in the game's bundled Mono.
+Current target: shipped Ostranauts 1.1.0.0 assembly, hosted in the game's bundled Mono.
 Developer commands below run from the source checkout, not the release directory.
 
 ```powershell
@@ -44,7 +44,19 @@ build `Tests/PatchBindingCheck` and run it in the Mono host with
 Live acceptance is still required for purchasing, full install/uninstall work,
 UI selection, save/reload and operation beside the omnibus DLL.
 
-Validated 2026-11-15: 239 native fixture checks; 56 standalone installer/stock
+Version 0.1.1 repairs two defects exposed by live testing: oversized terminal
+definitions erroneously offered hand slots, and apartment eligibility compared
+`json.strName` with template names even though saved residences use registry IDs.
+The BCER save inspected live contains `strName=BCER|RES_1` and no retained
+`strTemplateName`. Fixtures now cover that saved state, optional runtime/saved
+template metadata, unchanged mobile/unowned exclusions, native placement on a
+saved residence and native `Slot.CanFit` rejection for hands/back with drag allowed.
+Sundries is the Furnishings vendor (14 stock tables), not Supply (17 tables).
+Current validation: 273 native checks and 51 standalone installer checks pass
+against 1.1.0.0, including real empty/Rotation custom installer transitions and
+native Furnishings sale filters. Remaining live acceptance checks above still apply.
+
+Initial 0.1.0 validation against 1.0.1.10: 239 native fixture checks; 56 standalone installer/stock
 checks including actual empty/Rotation custom-profile transitions; existing custom
 installer suite 88 checks; custom builder 559 checks; simultaneous binding of
 286 omnibus and 5 companion patch classes, zero failures/warnings. Debug and

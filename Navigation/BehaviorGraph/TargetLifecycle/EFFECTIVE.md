@@ -70,4 +70,10 @@ flowchart TD
   n_manual -->|"target_destroyed / target_lifetime"| n_dispatch
   n_dock -->|"target_destroyed / target_lifetime"| n_dock
   n_dock -->|"target_destroyed / target_lifetime"| n_dock
+  n_dispatch -->|"environment_converted / environment_conversion_targets"| n_dispatch
+  n_dispatch -->|"environment_converted / environment_conversion_targets"| n_dispatch
+  n_planned -->|"environment_converted / environment_conversion_targets"| n_planned
+  n_planned -->|"environment_converted / environment_conversion_targets"| n_planned
+  n_manual -->|"environment_converted / environment_conversion_targets"| n_manual
+  n_manual -->|"environment_converted / environment_conversion_targets"| n_manual
 ```

@@ -7,7 +7,7 @@ Mono runtime. See [the recorded results](prototype-results.json) and
 
 The subsequent [replacement model](Replacement/README.md) defines explicit
 mission/ability contracts and replaces the opaque return lifecycle. The current
-combined runner passes 475 assertions across 90 scenarios; the original 16 remain
+combined runner now passes 529 assertions across 101 scenarios on 1.1.0.0; the original 16 remain
 as reference tests, including a negative control for its missing pre-invocation
 arrival barrier. Details below describe the first-stage implementation.
 

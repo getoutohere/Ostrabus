@@ -12,6 +12,11 @@ sealed class WorldCheckpoint
     public double RouteDuration = NativeWorld.RouteSeconds;
     public double PauseUntil, DockingRemaining;
     public JsonShipSitu Motion;
+    public JsonShipSitu HomeMotion;
+    public float RcsThrust, RcsExhaust;
+    public int RcsRaw;
+    public JsonStellarShipSave[] StellarShips;
+    public JsonStellarDerelictSave[] StellarDerelicts;
     public string CombatTarget;
     public bool Threat, LowFuel, Damaged, PilotAvailable, RefuseArrival, PlanFails;
     public bool Retired, HullHidden;
@@ -32,6 +37,12 @@ sealed class WorldCheckpoint
         PauseUntil = world.Subject.fAIPauseTimer,
         DockingRemaining = world.Subject.fAIDockingExpire,
         Motion = world.Subject.objSS.GetJSON(),
+        HomeMotion = world.Home.objSS.GetJSON(),
+        RcsThrust = world.Subject.RCSCount,
+        RcsRaw = (int)HarmonyLib.AccessTools.Field(typeof(Ship), "nRCSCountRaw").GetValue(world.Subject),
+        RcsExhaust = (float)HarmonyLib.AccessTools.Field(typeof(Ship), "fRCSExhaustV").GetValue(world.Subject),
+        StellarShips = world.SaveStellarShips(),
+        StellarDerelicts = world.SaveStellarDerelicts(),
         CombatTarget = world.Subject.shipCombatTarget?.strRegID,
         Threat = world.Threat,
         LowFuel = world.LowFuel,
@@ -57,6 +68,13 @@ sealed class WorldCheckpoint
         var saved = JsonConvert.DeserializeObject<WorldCheckpoint>(json, CheckpointJson.Settings);
         var world = new NativeWorld(saved.Epoch);
         NativeWorld.Back(world.Subject, "objSS", new ShipSitu(saved.Motion));
+        NativeWorld.Back(world.Home, "objSS", new ShipSitu(saved.HomeMotion));
+        world.Subject.RCSCount = saved.RcsThrust;
+        NativeWorld.Set(world.Subject, "nRCSCountRaw", saved.RcsRaw);
+        NativeWorld.Set(world.Subject, "fRCSExhaustV", saved.RcsExhaust);
+        world.LoadStellar(saved.StellarShips, saved.StellarDerelicts);
+        foreach (string id in CrewSim.system.dictStellarObjects.Select(s => s.strID))
+            world.Ships.Remove(id);
         world.Subject.fShallowRCSRemass = saved.Fuel;
         world.RouteDuration = saved.RouteDuration;
         world.Subject.fAIPauseTimer = saved.PauseUntil;

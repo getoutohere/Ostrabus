@@ -9,6 +9,11 @@ features, then press **b** to build. Dependencies are added automatically and
 shown with `+` and a reason. Remove their dependents first to exclude them.
 Profiles can be saved and loaded from the menu.
 
+`course-controls` adds mouse-wheel adjustment alongside the game's native
+Shift-drag precision controls. Existing profiles retain that feature ID.
+The separate `nav-module-placement` bugfix corrects native dragging under
+non-centered parent pivots; it remains independently selectable.
+
 The result is a folder and ZIP under `dist/`, including an installer, DLL/PDB,
 selection manifest and the selected profile. Nothing is installed automatically.
 Close the game, extract the ZIP, then run its **Install-Custom.cmd**. The installer
@@ -39,6 +44,9 @@ All presets exclude experiments; `save-json` can be selected explicitly.
 `civilian-visits` includes ordinary visit completion and home-dispatch repairs.
 The separate simulation feature `civilian-asteroid-visits` sets attached asteroid
 visits to 5-120 game minutes; bugfix-only selections retain native visit timing.
+`bounty-preservation` separately protects active bounty targets and their original
+hulls from administrative retirement and cleanup, keeping native reboarding and
+physical death. It adds no polling and is included in Recommended and Full.
 Hidden support features are included through dependencies. These groupings are
 packaging choices, not a promise of compatibility with future game patches.
 Recommended includes `massfix` through `legacy-commands` and `navfix` through
@@ -58,7 +66,12 @@ Torch features are individually selectable: `torch-fuel-cache` repairs fuel chec
 `torch-fuel` adds course consumption/reactor control and requires that cache fix;
 `torch-momentum` adds momentum-aware player trajectories and requires `torch-fuel`
 for its shared nav-console planning scope/integration. `torch-towing` remains
-independent. Bugfix presets include the fuel and towing repairs; Recommended and
+independent of those fuel/trajectory changes, but requires
+`passive-docking-attachment` for the body-lock release handoff and
+`route-completion` for correct end-of-course coasting outside GUI SFF. The attachment
+feature preserves existing wreck locks during passive visits and is separately
+classified as simulation; selecting towing also selects this dependency.
+Bugfix presets include the fuel and towing repairs; Recommended and
 Full also include the momentum-aware simulation improvement.
 
 `cargo-loading` includes bundle loading, shared multi-actor market accounting,
@@ -75,6 +88,12 @@ their console if the native UI warns about a missing prefab. Reselecting the fea
 or full deployment restores stock. See the [module guide](../NavConsole/Rotation/README.md).
 
 Run commands from the repository root:
+
+SFF-only and SFF/economy compositions retain tagged PASS entry and sub-minute
+decision-step physics, and require native completion/destination-integrity
+repairs. Hull collisions share the jump tag without enabling orbital simulation.
+The offline custom harness executes those generated paths; successful Harmony
+binding alone does not establish their behavior.
 
 ```powershell
 # Build without the menu:

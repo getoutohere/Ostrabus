@@ -26,13 +26,19 @@ internal static class ProximityCollisionPatch {
         // Parked hulls do not produce physical contacts or proximity hazards.
         // Reuse this existing scan hook; station/ATC entries themselves remain.
         var hidden = AccessTools.PropertyGetter(typeof(Ship), nameof(Ship.HideFromSystem));
-        int hiddenChecks = 0;
-        foreach (var instruction in code) if (instruction.Calls(hidden)) {
-            instruction.opcode = OpCodes.Call;
-            instruction.operand = AccessTools.Method(typeof(global::Ostrabus.ShipNavigation.StationDockedCollisions), nameof(global::Ostrabus.ShipNavigation.StationDockedCollisions.IgnoreAsObstacle));
+        var hiddenStation = AccessTools.Method(typeof(Ship), nameof(Ship.IsStationHidden));
+        int hiddenChecks = 0, obstacleChecks = 0;
+        for (int i = 0; i < code.Count; i++) if (code[i].Calls(hidden)) {
             hiddenChecks++;
+            // 1.1 also reads visibility when selecting the regional ATC. Only
+            // the obstacle filter is followed immediately by IsStationHidden.
+            // Preserve the ATC read: parked hull policy must not change regions.
+            if (i + 4 >= code.Count || code[i + 3].opcode != OpCodes.Ldc_I4_0 || !code[i + 4].Calls(hiddenStation)) continue;
+            code[i].opcode = OpCodes.Call;
+            code[i].operand = AccessTools.Method(typeof(global::Ostrabus.ShipNavigation.StationDockedCollisions), nameof(global::Ostrabus.ShipNavigation.StationDockedCollisions.IgnoreAsObstacle));
+            obstacleChecks++;
         }
-        if (hiddenChecks != 1) throw new InvalidOperationException("Expected one collision obstacle visibility check; station docking policy requires review.");
+        if (hiddenChecks != 2 || obstacleChecks != 1) throw new InvalidOperationException("Expected separate ATC and obstacle visibility checks; station docking policy requires review.");
         var starts = new List<int>();
         var bodies = new List<int>();
         for (int i = 0; i + 1 < code.Count; i++) {

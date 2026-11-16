@@ -1,14 +1,21 @@
 [CmdletBinding()]
-param([string]$GameDirectory=$env:OSTRANAUTS_DIR)
+param([string]$GameDirectory=$env:OSTRANAUTS_DIR,[string[]]$Case=@())
 $ErrorActionPreference='Stop'
 $repo=Split-Path -Parent $PSScriptRoot
 . (Join-Path $repo 'Build\Find-Game.ps1')
 function Checked {
     param([string[]]$Arguments,[string]$Log)
-    if ($Log) { & dotnet @Arguments *> $Log } else { & dotnet @Arguments }
-    if ($LASTEXITCODE -ne 0) {
+    # Native stderr is diagnostic output, not the process result. PowerShell 5
+    # otherwise converts harmless offline Unity warnings into terminating errors.
+    $savedPreference=$ErrorActionPreference
+    try {
+        $ErrorActionPreference='Continue'
+        if ($Log) { & dotnet @Arguments *> $Log } else { & dotnet @Arguments }
+        $code=$LASTEXITCODE
+    } finally { $ErrorActionPreference=$savedPreference }
+    if ($code -ne 0) {
         if ($Log) { Get-Content -LiteralPath $Log -Tail 45 | Write-Host }
-        throw "Check failed ($LASTEXITCODE): $($Arguments -join ' '). Log: $Log"
+        throw "Check failed ($code): $($Arguments -join ' '). Log: $Log"
     }
 }
 $previousGame=$env:OSTRANAUTS_DIR
@@ -23,6 +30,9 @@ try {
     $run=Join-Path $repo ('obj\CustomBuilder\tests-'+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $run -Force | Out-Null
     $cases=[ordered]@{
+        'nav-module-placement'=@('nav-module-placement');
+        'course-controls'=@('course-controls');
+        'save-forward-compatibility'=@('save-forward-compatibility');
         'rotation-module'=@('rotation-module');
         'bounty-departure-fuel'=@('bounty-departure-fuel');
         'civilian-visits'=@('civilian-visits');
@@ -35,12 +45,14 @@ try {
         'population-gender'=@('population-gender');
         'ai-patrol-priority'=@('ai-patrol-priority');
         'quick-pda-hack'=@('quick-pda-hack');
+        'co2-scrubber-audio'=@('co2-scrubber-audio');
         'sff-navigation-destination'=@('sff-navigation-destination');
         'nav-budget'=@('navigation-targets'); 'ceres'=@('ceres-navigation');
         'local-frames'=@('local-navigation-frames');
         'local-frames-departure-budget'=@('local-navigation-frames','departure-waypoints','navigation-targets');
         'torch-cache'=@('torch-fuel-cache'); 'torch-fuel'=@('torch-fuel');
         'torch-momentum'=@('torch-momentum'); 'torch-tow'=@('torch-towing');
+        'passive-docking-attachment'=@('passive-docking-attachment');
         door=@('door-autoclose'); range=@('proximity-range'); station=@('station-docked');
         outlines=@('hull-outlines'); collisions=@('hull-collisions');
         pda=@('pda-settings','crew-hotkeys'); orbit=@('orbital'); coast=@('coast');
@@ -53,7 +65,11 @@ try {
         Checked -Arguments @($tool,'preset','--name',$name,'--output',$file)
         $cases[$name]=@((Get-Content -LiteralPath $file -Raw | ConvertFrom-Json).features)
     }
-    foreach ($name in $cases.Keys) {
+    foreach ($name in $Case) {
+        if (-not $cases.Contains($name)) { throw "Unknown custom-builder test case: $name" }
+    }
+    $selectedCases=@($cases.Keys | Where-Object { $Case.Count -eq 0 -or $_ -in $Case })
+    foreach ($name in $selectedCases) {
         $file=Join-Path $run ($name+'.json')
         [IO.File]::WriteAllText($file,(ConvertTo-Json -InputObject ([ordered]@{schemaVersion=1;name=$name;features=@($cases[$name])}) -Depth 10),[Text.UTF8Encoding]::new($false))
         $generated=Join-Path $run $name
@@ -70,5 +86,5 @@ try {
         Checked -Arguments @('run','--project','Tests/SaveJsonCompatibility/Host','-c','Release','--no-build','--','Tests/CustomBuilderCheck/bin/Release/netstandard2.1/CustomBuilderCheck.dll',$dll) -Log $nativeLog
         Write-Host "$name : $((Select-String -LiteralPath $nativeLog -Pattern '^Custom patch binding:').Line)"
     }
-    Write-Host "Custom builder: $($cases.Count) compiled/verified/native-bound profiles passed. Logs: $run" -ForegroundColor Green
+    Write-Host "Custom builder: $($selectedCases.Count) compiled/verified/native-bound profiles passed. Logs: $run" -ForegroundColor Green
 } finally { Pop-Location; $env:OSTRANAUTS_DIR=$previousGame }

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "ostrabus-encounters-current",
-  "gameVersion": "1.0.1.10",
-  "assemblySha256": "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
-  "baselineCommit": "ed83d460873cb27a2b3346861f614d286b56f444",
+  "gameVersion": "1.1.0.0",
+  "assemblySha256": "a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07",
+  "baselineCommit": "be8e282",
   "scope": {
     "status": "beatmanager_staging_entrypoint_and_existing_actor_boundary",
     "notProven": [
@@ -124,7 +124,7 @@
       "anchors": [
         "public void Maneuver("
       ],
-      "sha256": "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+      "sha256": "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
     },
     "flight_handoff_native": {
       "origin": "game",
@@ -142,7 +142,7 @@
       "anchors": [
         "private void TorchOff()"
       ],
-      "sha256": "154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"
+      "sha256": "677658509cd59ee08d4220b6ae6b993df4546336bf7e5521a7cb93c2f839022b"
     },
     "flight_control_repair": {
       "origin": "repo",
@@ -152,7 +152,7 @@
         "internal static void ResetForRcs",
         "class ShallowTorchShutdownPatch"
       ],
-      "sha256": "7d0f7932dcde09f5ae3749d799597d3c3accc53353ac19f30dedf4b21236a0f1"
+      "sha256": "be2eab769cb6bb45de7f6cd50029a99cca0ad33b5aa4f25fd37eeb40591d2eab"
     },
     "flight_control_stop": {
       "origin": "repo",
@@ -170,7 +170,7 @@
       "anchors": [
         "FactionShip"
       ],
-      "sha256": "142978e07bce1a888e38debbaac3c06ea2558568633b1919992148935b983bd6"
+      "sha256": "3f0e11012232530508dea73d8998e06dee83b6f4ead3bd7033e9d278b85d041c"
     },
     "gui": {
       "origin": "game",
@@ -179,7 +179,7 @@
       "anchors": [
         "DebugFactionShip"
       ],
-      "sha256": "49bf885816662fe6168e128b9ec160c2135a65cbad7b1d4f1e9670759d558392"
+      "sha256": "18279df2f74caad8d888021a762a7469f06fb13ec1fed47e9c7bb720b226d926"
     },
     "manager": {
       "origin": "game",
@@ -188,7 +188,7 @@
       "anchors": [
         "GetAllStationsInATCRegion"
       ],
-      "sha256": "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+      "sha256": "4e5557c959855e4398b80bc198a526b19aeb65c79073270cbe216738fa71c4ba"
     },
     "controller": {
       "origin": "game",
@@ -197,7 +197,7 @@
       "anchors": [
         "class AIShip"
       ],
-      "sha256": "713ed29317fc3512c8923c78e4cbf746d177a0057571d177c76035b2016a3103"
+      "sha256": "64c02064a2bb7df7a1106e02c34f17ffc2d03116b44a761d81bffa17eae969ae"
     },
     "navy": {
       "origin": "game",

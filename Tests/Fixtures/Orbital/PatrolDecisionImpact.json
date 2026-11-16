@@ -1,0 +1,70 @@
+{
+    "note":  "Captured Ceres patrol route endpoint, anonymized; root save epoch 65634078966.8615. Reproduction starts after route completion with a pending native decision.",
+    "epoch":  65634079509.2937,
+    "massKg":  55890.8758,
+    "rcsCount":  6.0,
+    "fuelKg":  2894.14184570489,
+    "size":  760,
+    "motion":  {
+                   "vPosx":  -2.0191977812803,
+                   "vPosy":  1.70245421719121,
+                   "vVelX":  -8.68905916107109E-08,
+                   "vVelY":  -9.02072823105726E-08
+               },
+    "bodies":  [
+                   {
+                       "strName":  "Sol",
+                       "fPerh":  0.0,
+                       "fAph":  0.0,
+                       "fAxis1":  0.0,
+                       "fEcc":  0.0,
+                       "fAxis2":  0.0,
+                       "fAngle":  0.0,
+                       "fPeriod":  31556926.0,
+                       "fRadius":  0.00464919714900757,
+                       "fMass":  1.98910005267383E+30,
+                       "fRotationPeriod":  2144994.25855994,
+                       "nDrawFlagsTrack":  1,
+                       "nDrawFlagsBody":  2,
+                       "fParallaxRadius":  6684587064179630.0,
+                       "fGravParallaxRadius":  6.68458706417963E-09,
+                       "fPeriodShift":  0.0,
+                       "nOrbitDirection":  1,
+                       "fVisibilityRangeMod":  1.0,
+                       "fVisibilityRangeModGrav":  1.0,
+                       "strParallax":  "DeepSpace",
+                       "nEnvironmentMapID":  0
+                   },
+                   {
+                       "strName":  "Ceres",
+                       "fPerh":  2.54464015780332,
+                       "fAph":  2.98718626145207,
+                       "fAxis1":  5.53182641925539,
+                       "fEcc":  0.0799999982118607,
+                       "fAxis2":  5.51409616155877,
+                       "fAngle":  80.3199996948242,
+                       "fPeriod":  145161856.590497,
+                       "fRadius":  3.1818634425495E-06,
+                       "fMass":  9.39999969580304E+20,
+                       "fRotationPeriod":  32871.796875,
+                       "nDrawFlagsTrack":  0,
+                       "nDrawFlagsBody":  0,
+                       "fParallaxRadius":  8.68996318343352E-06,
+                       "fGravParallaxRadius":  6.68458706417963E-05,
+                       "fPeriodShift":  0.0,
+                       "nOrbitDirection":  1,
+                       "fVisibilityRangeMod":  0.5,
+                       "fVisibilityRangeModGrav":  1.0,
+                       "strParallax":  "BCERField",
+                       "strGravParallax":  "BCERGrav",
+                       "nEnvironmentMapID":  0
+                   }
+               ],
+    "target":  {
+                   "boPORShip":  "Ceres",
+                   "vBOOffsetx":  -2.6993125943342E-06,
+                   "vBOOffsety":  1.94231763517294E-06,
+                   "fOrbitW":  0.0,
+                   "fOrbitTimeLast":  0.0
+               }
+}

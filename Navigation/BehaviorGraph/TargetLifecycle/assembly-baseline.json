@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "snapshot": "assembly-baselines/47c9417bcf2c3809be4b1d7ff2580345f3f916f638caf91b3acb930838c16efc.json.br",
-  "reason": "Reviewed native FlyTo/pause, direct RCS and explicit shallow TorchOff release. 213 control checks preserve owned courses, physical/player inputs, missing hardware, momentum and fuel tolerance; 60 retarget, 174 Ceres and 23 composed fuel checks pass. Numerical flight remains an explicitly unexpanded boundary.",
-  "acceptedUtc": "2026-11-13T23:52:54.4192550Z",
-  "previousSnapshot": "assembly-baselines/e63127b4a1bb454e075fdbdf5dfbf1c7257beba86e0eb5880675b00eb45272b9.json.br"
+  "snapshot": "assembly-baselines/410f00b36cdc9091c510023afbe60ab4809380530457d0ae88c1082cd7912a2d.json.br",
+  "reason": "Reviewed 1.1.0.0 native method and asset boundaries, adapted collision/conversion/circular predictions, and reran native role/control suites. Unexpanded entrypoints remain dependency references; live scene acceptance and semantic completeness are not implied.",
+  "acceptedUtc": "2026-11-15T21:04:37.4260984Z",
+  "previousSnapshot": "assembly-baselines/47c9417bcf2c3809be4b1d7ff2580345f3f916f638caf91b3acb930838c16efc.json.br"
 }

@@ -39,7 +39,7 @@ static class Program {
     static NavData Plot(Ship ship,ShipSitu origin,ShipSitu destination,double epoch) {
         home?.objSS.UpdateTime(epoch); destination.UpdateTime(epoch);
         var planner=new FlyToPath(new Pilot{ShipUs=ship});
-        return planner.PlanTrip4(new NavDataPoint(epoch,new ShipSitu(origin,false),2000,0,47122),new NavDataPoint(epoch,new ShipSitu(destination,false),2000,0,47122),1,1);
+        return planner.PlanTrip4(new NavDataPoint(epoch,new ShipSitu(origin,false),2000,0,47122,rcsCount:0F),new NavDataPoint(epoch,new ShipSitu(destination,false),2000,0,47122,rcsCount:0F),1,1);
     }
     static void Main() {
         var h=new Harmony("offline.departure.boundaries");var production=new Harmony("offline.departure.production");
@@ -86,7 +86,7 @@ static class Program {
                 var body=world.aBOs[id];double at=epoch+body.fPeriod*phase;StarSystem.fEpoch=at;
                 home=Make(id,id,at);
                 var point=new ShipSitu(home.objSS,false);point.bIsBO=false;point.vPosx+=385/KmAU;
-                var planner=new FlyToPath(ship,false);var origin=new NavDataPoint(at,new ShipSitu(home.objSS,false),100,0,100);
+                var planner=new FlyToPath(ship,false);var origin=new NavDataPoint(at,new ShipSitu(home.objSS,false),100,0,100,rcsCount:0F);
                 var original=point.vPos;
                 DepartureWaypointPatch.Bind(point,at,false,planner,origin);
                 Check(point.strBOPORShip==id && (point.vPos-original).magnitude<1e-15,"Correct station reference without teleport: "+id);
@@ -96,10 +96,10 @@ static class Program {
             }
             Check(world.aBOs["BCRS"].boParent.strName=="BCRS_Anchor","BCRS own hierarchy retained");
             home=null;var fallback=new ShipSitu(false){vPosx=1};
-            DepartureWaypointPatch.Bind(fallback,epoch,false,new FlyToPath(ship,false),new NavDataPoint(epoch,new ShipSitu(false),0,0,0));
+            DepartureWaypointPatch.Bind(fallback,epoch,false,new FlyToPath(ship,false),new NavDataPoint(epoch,new ShipSitu(false),0,0,0,rcsCount:0F));
             Check(fallback.strBOPORShip=="Earth","Missing departure depot preserves native fallback");
             home=Make("BROKEN","missing",epoch);fallback=new ShipSitu(false){vPosx=1};
-            DepartureWaypointPatch.Bind(fallback,epoch,false,new FlyToPath(ship,false),new NavDataPoint(epoch,new ShipSitu(false),0,0,0));
+            DepartureWaypointPatch.Bind(fallback,epoch,false,new FlyToPath(ship,false),new NavDataPoint(epoch,new ShipSitu(false),0,0,0,rcsCount:0F));
             Check(fallback.strBOPORShip=="Earth","Missing station orbit preserves native fallback");
             Console.WriteLine(checks+" departure waypoint checks passed.");
         } finally {production.UnpatchSelf();h.UnpatchSelf();}

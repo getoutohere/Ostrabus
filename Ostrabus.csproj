@@ -5,7 +5,7 @@
     <AssemblyName>Ostrabus</AssemblyName>
     <RootNamespace>Ostrabus</RootNamespace>
     <Product>Ostrabus</Product>
-    <Version>0.5.0</Version>
+    <Version>0.6.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <PathMap>$(MSBuildProjectDirectory)=/_/Ostrabus</PathMap>
@@ -19,6 +19,7 @@
   <ItemGroup>
     <None Update="PdaSettings/Assets/**/*" CopyToOutputDirectory="PreserveNewest" />
     <None Update="QoL/PdaHacking/Assets/**/*" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="MiscBugFixes/ScrubberAudio/Assets/**/*" CopyToOutputDirectory="PreserveNewest" />
     <None Update="NavConsole/Rotation/Assets/**/*" CopyToOutputDirectory="PreserveNewest" />
     <EmbeddedResource Include="NavConsole/Assets/RoundKnob-v3.png" LogicalName="Ostrabus.NavConsole.RoundKnob.png" />
   </ItemGroup>

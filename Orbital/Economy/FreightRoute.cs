@@ -56,7 +56,7 @@ internal sealed class FreightRoute {
     }
     MotionState TargetAt(double epoch) {
         if (targetBody == null || !OrbitalMotion.BodyAt(targetBody, epoch, out var body)) throw new InvalidOperationException("Freight station has no analytical orbit.");
-        return new MotionState(body.Position + new DVector(target.vBOOffsetx, target.vBOOffsety) * OrbitalMotion.KmPerAU, body.Velocity);
+        return new BodyLockedOffset(target).At(body, epoch);
     }
     internal static MotionState StationAt(ShipSitu situation, double epoch) {
         if (!situation.bIsBO && !situation.bBOLocked && !situation.bOrbitLocked) throw new InvalidOperationException("Freight station is not analytically anchored.");
@@ -65,7 +65,7 @@ internal sealed class FreightRoute {
     static MotionState PointAt(ShipSitu point, double epoch) {
         if ((point.bIsBO || point.bBOLocked || point.bOrbitLocked) && point.strBOPORShip != null &&
             CrewSim.system.aBOs.TryGetValue(point.strBOPORShip, out var body) && OrbitalMotion.BodyAt(body, epoch, out var state))
-            return new MotionState(state.Position + new DVector(point.vBOOffsetx, point.vBOOffsety) * OrbitalMotion.KmPerAU, state.Velocity);
+            return new BodyLockedOffset(point).At(state, epoch);
         return OrbitalMotion.Read(point);
     }
     internal static MotionState Sample(NavData course, double epoch, out double rcs, out double fusion) {

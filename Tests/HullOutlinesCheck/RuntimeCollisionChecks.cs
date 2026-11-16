@@ -7,6 +7,7 @@ using HarmonyLib;
 using Ostrabus.NavConsole.Outlines;
 using Ostrabus.ShipNavigation;
 using Ostrabus.ShipNavigation.Collisions;
+using Ostrabus.Orbital;
 using Ostranauts.ShipGUIs.Utilities;
 using UnityEngine;
 
@@ -126,6 +127,26 @@ static partial class Program {
             ClearImpactMemory();CollisionManager.CheckCollisions(a);before=impacts;
             StarSystem.fEpoch++;a.objSS.vPosx=10000*HullZoom.MetresToAU;ClearImpactMemory();CollisionManager.CheckCollisions(a);
             Check(impacts==before,"Instant-dock/teleport discontinuity became a swept collision");
+            // A short PASS is below both the history cutoff and the position
+            // jump heuristic. Even an unobserved hull must forget its old path.
+            foreach (bool scannedDuringJump in new[] { false, true }) {
+                PhysicalCollisions.Reset(); StarSystem.fEpoch=2100;
+                a.objSS.vPosx=-400*HullZoom.MetresToAU;a.objSS.vPosy=0;a.objSS.vVelX=800*HullZoom.MetresToAU;
+                ClearImpactMemory();CollisionManager.CheckCollisions(a);before=impacts;
+                long generation=JumpBoundary.Generation;
+                using (new JumpBoundary("pass")) {
+                    StarSystem.fEpoch+=30;a.objSS.vPosx=400*HullZoom.MetresToAU;
+                    if(scannedDuringJump){ClearImpactMemory();CollisionManager.CheckCollisions(a);}
+                    Check(PhysicalCollisions.Nonzero(0,a,b)==0,"PASS used the ordinary hull path during a world jump");
+                }
+                ClearImpactMemory();CollisionManager.CheckCollisions(a);
+                Check(impacts==before && JumpBoundary.Generation==generation+2,
+                    "Short PASS replayed a pre-jump hull sample as a collision sweep");
+                // Fresh ordinary motion must still be swept immediately.
+                StarSystem.fEpoch++;a.objSS.vPosx=-400*HullZoom.MetresToAU;
+                ClearImpactMemory();CollisionManager.CheckCollisions(a);
+                Check(impacts==before+1,"PASS invalidation disabled subsequent ordinary swept collisions");
+            }
             foreach(var untouched in new[]{AccessTools.Method(typeof(CollisionManager),nameof(CollisionManager.WillCollide)),AccessTools.Method(typeof(CollisionManager),nameof(CollisionManager.CheckProjectileCollisions)),
                 AccessTools.Method(typeof(CollisionManager),nameof(CollisionManager.GetCollisionDistanceAU),new[]{typeof(Ship),typeof(Ship)}),AccessTools.Method(typeof(CollisionManager),"ProcessCollision",new[]{typeof(Ship),typeof(BodyOrbit),typeof(double)})})
                 Check(!(Harmony.GetPatchInfo(untouched)?.Owners.Contains(production.Id)??false),"Weapons/shared radius/planet path was patched");

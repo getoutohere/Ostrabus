@@ -23,11 +23,19 @@ internal static class Eligibility {
         var player = CrewSim.coPlayer;
         if (!Live(ship) || system == null || player == null || ship.objSS.bIsBO != true ||
             system.GetShipOwner(ship.strRegID) != player.strID || ship.json == null ||
-            Array.IndexOf(Templates, ship.json.strName) < 0 || string.IsNullOrEmpty(ship.strRegID)) return false;
+            string.IsNullOrEmpty(ship.strRegID)) return false;
         int separator = ship.strRegID.LastIndexOf("|RES_", StringComparison.Ordinal);
         if (separator <= 0 || separator + 5 >= ship.strRegID.Length) return false;
         for (int i = separator + 5; i < ship.strRegID.Length; i++)
             if (ship.strRegID[i] < '0' || ship.strRegID[i] > '9') return false;
+        // Native saves replace JsonShip.strName with the hull registry ID.
+        // Older broker residences also have no strTemplateName. Use template
+        // metadata when present; otherwise accept the broker's saved identity,
+        // still requiring registry ownership, body state and a real station host.
+        string template = !string.IsNullOrEmpty(ship.strTemplateName) ? ship.strTemplateName : ship.json.strTemplateName;
+        if (!string.IsNullOrEmpty(template)) {
+            if (Array.IndexOf(Templates, template) < 0) return false;
+        } else if (ship.json.strName != ship.strRegID && Array.IndexOf(Templates, ship.json.strName) < 0) return false;
         host = system.GetShipByRegID(ship.strRegID.Substring(0, separator));
         return Live(host) && !ReferenceEquals(host, ship) && host.IsStation(bIgnoreDocks: true);
     }

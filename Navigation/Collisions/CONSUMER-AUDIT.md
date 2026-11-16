@@ -1,5 +1,13 @@
 # Hull radius integration audit
 
+Current [1.1.0.0 revalidation](../../Build/COMPATIBILITY-1.1.0.0.md) inventories
+167 direct references in 112 methods. Differences include deferred stellar
+representations, moved environment materialization, widened collision arithmetic
+and the native ShipSitu range overload. Shared combat sizes remain native;
+the adapted physical/proximity integration and whole-plugin avoidance composition
+pass their offline suites. Scene rendering/docking still needs live acceptance.
+The original 1.0.1.10 measurements below remain historical evidence.
+
 This audit follows the enlarged nav hulls into native movement/placement code.
 The regressions were in our integration: keeping shared game radii intact was
 necessary for combat compatibility, but leaving every non-physical consumer on
@@ -44,7 +52,8 @@ crime, triggers, fees, command selection and emergency behavior remain authorita
 | CheckCollisions ship proximity comparison / intensity | Selected hull pair allowance plus native speed-scaled/configured buffer; independent of group enclosure. Composes with the range dial in either installation order. Physical overlap radius local, AI avoidance, station filters, body warnings, mute and acknowledgement are unchanged. |
 | Projectile scans, missile launch, Shoot, WeaponsSystem, MM defense, weapon target-lock vectors | Untouched. Their radii are part of combat, not the new physical hull contract. |
 | Planet/asteroid impact checks, gravity/atmosphere queries, SFF collision warnings, orbit/body creation | Untouched. New physical hull scale is not written to Size or used to enlarge planets/atmospheres. |
-| Comms delivery time, Interaction.IsWithinShipRange, MFDShipSelect comm range | Untouched. Communication range/time policy does not authorize physical approach or positioning. |
+| Interaction.IsWithinShipRange docking permission | For responses with the authored TXTDockingClearance effect, use selected-hull pair clearance matching target data. Preserve authored thresholds, native eligibility branches, feature-off and station exclusions. The November 16 [forced-docking reproduction and repair](FORCED-DOCK-RANGE.md) adds 37 native-method checks; the earlier exclusion of this consumer as general comms policy was incorrect. |
+| Comms delivery time, other Interaction.IsWithinShipRange effects, MFDShipSelect comm range | Untouched. General radio/plot policy remains outside physical geometry integration. |
 | ShipDraw status markers, symbolic icons, map hit selection, stellar-object grouping | Native symbolic sizes retained; detailed outline selection/scale already uses the outline module. Clickable icon extents and weapon/status brackets are not physical collision authority. |
 | PredictionRectangle | Native source has no construction/use outside its own class; not an active collision-avoidance path in this assembly. No speculative hook. |
 | Size setters, initialization, saved JSON, CopyFrom, native DockGroup.CalculateAnchorSize | Untouched. Corrected bounds remain derived numeric data, not serialized native size mutations. Group integration reads existing member offsets, not obsolete member world positions after anchor relocation. |

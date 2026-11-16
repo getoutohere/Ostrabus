@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "snapshot": "assembly-baselines/7e8feaf67544002703e0bc6843db19a787fa11cfafd3c13920c72856b9ab731b.json.br",
-  "reason": "Reviewed preserved-target coordinate refresh before native instant mooring and native no-pilot false success with residual RCS. Added real-ephemeris/native-placement and refusal controls (366 checks), SFF no-guidance/ballistic/attached-pilot controls (4855 checks), 282-class binding, independent custom features, and civilian/Ceres/flight/patrol regressions. Physical coordinates and crew-condition expiry remain outside this lifecycle projection; live validation and historical momentum recovery remain separate.",
-  "acceptedUtc": "2026-11-15T00:40:02.3303680Z",
-  "previousSnapshot": "assembly-baselines/765a120ebf062164e01953dbfb47c4149c85980095a30db0c6325faea40701c2.json.br"
+  "snapshot": "assembly-baselines/6ef415e218e39f184199947e952c5f60e89175fe9cce322ab78adc5a39976699.json.br",
+  "reason": "Independent attachment audit reproduces permanent-station identity guard gap; unified manual/course release checks now preserve native substation and ground identities. Reviewed added Ship identity methods. 444 production-DLL checks and towing/hull/orbital/economy/route/gravity regressions pass against unchanged native assembly.",
+  "acceptedUtc": "2026-11-16T21:05:50.0885497Z",
+  "previousSnapshot": "assembly-baselines/592904f2b41e6319e5f435b93b68c1b57102aa24c16c42ff857e472e248e8932.json.br"
 }

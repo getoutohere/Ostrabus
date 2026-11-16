@@ -176,7 +176,8 @@ static class Program {
     }
     static void AssetChecks() {
         string root = Ostrabus.Development.InstallationPaths.Data;
-        var owners = JArray.Parse(File.ReadAllText(root + "condowners/condowners.json"));
+        var owners = new JArray(Directory.EnumerateFiles(root + "condowners", "*.json")
+            .OrderBy(path => path, StringComparer.Ordinal).SelectMany(path => JArray.Parse(File.ReadAllText(path))));
         JObject Named(JArray rows, string name) => (JObject)rows.Single(r => (string)r["strName"] == name);
         foreach (string id in new[] { "ItmBackpack01", "OutfitEVA01", "ItmBed01", "ItmBed02", "ItmBedMedical01" }) {
             var values = Named(owners, id)["aStartingConds"].Values<string>().Select(s => s.Split('=')[0]).ToArray();

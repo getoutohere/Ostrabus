@@ -40,7 +40,8 @@ $plugin = Join-Path $game 'BepInEx\plugins\OstrabusApartmentRefuel\Ostrabus.Apar
 Assert (Test-Path -LiteralPath $plugin) 'Standalone DLL not installed'
 Assert ((Get-FileHash -LiteralPath $plugin).Hash -eq (Get-FileHash -LiteralPath $dlls[0].FullName).Hash) 'Wrong standalone DLL installed'
 $stock = Get-Content -LiteralPath $stockFile -Raw | ConvertFrom-Json
-Assert ($stock.Count -eq 17) 'Wrong stock count'
+Assert ($stock.Count -eq 14) 'Wrong Sundries stock count'
+Assert (@($stock | Where-Object strName -like '*SupplyKiosk*').Count -eq 0) 'Terminal stocked by general Supply instead of Sundries'
 foreach ($row in $stock) { Assert (@($row.aLoots | Where-Object { $_ -eq 'ItmOstrabusApartmentRefuelStock=1.0x1' }).Count -eq 1) 'Duplicate/missing terminal stock' }
 $stockHash = (Get-FileHash -LiteralPath $stockFile).Hash
 & $install -GameDirectory $game -SettingsPath $settings
@@ -73,7 +74,7 @@ $stock = Get-Content -LiteralPath $stockFile -Raw | ConvertFrom-Json
 $changed = $stock | Where-Object strName -eq $third.strName
 Assert ($changed.aLoots -contains 'UniqueThirdPartyStock=1.0x1' -and $changed.aLoots -contains 'ItmOstrabusApartmentRefuelStock=1.0x1') 'Third party stock lost'
 $beforeBad = (Get-FileHash -LiteralPath $stockFile).Hash
-[IO.File]::WriteAllText((Join-Path $thirdRoot 'stock.json'),'[ invalid ItmSupplyKiosk JSON ]')
+[IO.File]::WriteAllText((Join-Path $thirdRoot 'stock.json'),'[ invalid FurnishingsKiosk JSON ]')
 $failed = $false
 try { & $compose -GameDirectory $game -SettingsPath $settings } catch { $failed = $true }
 Assert ($failed -and (Get-FileHash -LiteralPath $stockFile).Hash -eq $beforeBad) 'Malformed source mutated composed stock'
@@ -94,8 +95,8 @@ if ($WithCustomInstallers) {
         & (Join-Path $chosen.FullName 'Install-Custom.ps1') -GameDirectory $game -SettingsPath $settings
         Assert ((Get-FileHash -LiteralPath $plugin).Hash -eq (Get-FileHash -LiteralPath $dlls[0].FullName).Hash) 'Actual custom installer replaced standalone DLL'
         $stock = Get-Content -LiteralPath $stockFile -Raw | ConvertFrom-Json
-        Assert ($stock.Count -eq 17 -and @($stock | Where-Object { $_.aLoots -notcontains 'ItmOstrabusApartmentRefuelStock=1.0x1' }).Count -eq 0) 'Actual custom installer lost terminal stock'
-        Assert ((@($stock | Where-Object { $_.aLoots -match 'OstrabusNavRotation' }).Count -gt 0) -eq $withRotation) 'Actual custom installer did not refresh selected rotation stock'
+        Assert ($stock.Count -eq 14 -and @($stock | Where-Object { $_.aLoots -notcontains 'ItmOstrabusApartmentRefuelStock=1.0x1' }).Count -eq 0) 'Actual custom installer lost Sundries terminal stock'
+        Assert ((Test-Path -LiteralPath (Join-Path $mods 'OstrabusRotation\data\loot\rotation_stock.json')) -eq $withRotation) 'Actual custom installer did not refresh selected rotation stock'
     }
     # The custom installer intentionally replaces the omnibus; establish the new
     # control hash before checking our independent uninstaller leaves it alone.

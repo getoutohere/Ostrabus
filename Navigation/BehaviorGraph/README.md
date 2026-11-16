@@ -4,6 +4,19 @@ The aim is to preserve plausible emergent interactions while identifying broken
 execution paths and unnecessary restrictions. This is an offline reference, not
 a replacement AI controller, runtime monitor or automatic recovery policy.
 
+The [SFF decision-gap regression](../SFF-DECISION-GAP.md) adds a physical scheduling
+boundary missing from the command graphs: a pending patrol transition must get
+native decision turns before a long coast can hit a body. This is a tested
+handoff supplement, not an additional complete military behavior graph.
+
+The seven current snapshots target 1.1.0.0; see the
+[compatibility audit](../../Build/COMPATIBILITY-1.1.0.0.md) for native evidence and
+its evidence boundaries. Immutable assembly snapshots and the preserved source tag
+retain the 1.0.1.10 reference. The separate
+[native entrypoint catalogue](native-entrypoints.json) tracks previously unbound
+roles/leaves for update invalidation, explicitly without expanding their decisions
+into graph transitions or claiming semantic completeness.
+
 The [controller-lifetime repair](../UNREGISTERED-COURSES.md) covers shared native
 control bookkeeping outside the expanded diagram leaves: actual withdrawal
 cancels its plan, stale normal/SFF controllers cannot execute, replacement player
@@ -26,7 +39,8 @@ does not establish that all return/combat/queued-command combinations are safe.
 
 Start with the [generated audit](AUDIT.md), [vanilla diagrams](VANILLA.md) or
 [effective diagrams](EFFECTIVE.md). Mermaid diagrams render on GitHub. The first
-slice is the **OKLG/VORB retriever lifecycle on 1.0.1.10**, with relevant shared
+slice is the **OKLG/VORB retriever lifecycle**, originally reviewed on 1.0.1.10
+and revalidated against 1.1.0.0, with relevant shared
 navigation/lifecycle boundaries. It is intentionally not an all-ships/all-patches
 model. [Coverage and next steps](REVIEW.md) are part of the reference's contract.
 

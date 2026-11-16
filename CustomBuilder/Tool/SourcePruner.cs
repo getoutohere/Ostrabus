@@ -108,7 +108,7 @@ sealed class SourcePruner(string file, IEnumerable<string> included) : CSharpSyn
                 """;
             if (Has("sff")) {
                 text += """
-                    if (!GUIFFWD.Active || fTimeDelta < 60) return;
+                    if (!(GUIFFWD.Active || JumpBoundary.Active) || fTimeDelta <= 0 || fTimeDelta < 60 && !SffAdvance.Active) return;
                     """;
                 if (Has("economy-sff")) text += """
                     var economy = Economy.SffEconomy.Begin(__instance, fTimeDelta, true);

@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Ostranauts.Components;
 
 namespace Ostrabus.QoL.CoursePlot;
 
@@ -15,6 +16,8 @@ internal static class CourseFineControls {
     internal static readonly AccessTools.FieldRef<NavModBase, GUIOrbitDraw> Nav = AccessTools.FieldRefAccess<NavModBase, GUIOrbitDraw>("_guiOrbitDraw");
     static readonly AccessTools.FieldRef<NavModCoursePlot, Slider> Drift = AccessTools.FieldRefAccess<NavModCoursePlot, Slider>("slidCrsCoast");
     static readonly AccessTools.FieldRef<NavModCoursePlot, TMP_Text> Acceleration = AccessTools.FieldRefAccess<NavModCoursePlot, TMP_Text>("txtCrsAcc");
+    static readonly AccessTools.FieldRef<PrecisionSlider, bool> PrecisionEngaged = AccessTools.FieldRefAccess<PrecisionSlider, bool>("_precisionEngaged");
+    static readonly AccessTools.FieldRef<PrecisionSlider, float> PrecisionRaw = AccessTools.FieldRefAccess<PrecisionSlider, float>("_rawValue");
     internal static double G(Ship ship, float cycle) => ship.GetMaxTorchThrust(cycle) / AuPerMps2 / 9.81;
     static bool Finite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
     internal static float NextDrift(float value, float min, float max, int direction) {
@@ -42,6 +45,13 @@ internal static class CourseFineControls {
     internal static void Attach(NavModCoursePlot module) {
         Add(module, module.slidCrsLim, true);
         Add(module, Drift(module), false);
+    }
+    internal static void SetValue(Slider slider, float next) {
+        slider.value = next;
+        // Native Shift-drag keeps an unsnapped accumulator. A wheel step during
+        // that drag must advance its baseline too, or the next drag snaps back.
+        // Read back the native clamped value; leave pointer/precision state native.
+        if (slider is PrecisionSlider precision && PrecisionEngaged(precision)) PrecisionRaw(precision) = slider.value;
     }
     static void Add(NavModCoursePlot module, Slider slider, bool acceleration) {
         if (slider == null) return;
@@ -100,7 +110,7 @@ internal sealed class CourseSliderScroll : MonoBehaviour, IScrollHandler, IPoint
         } else next = CourseFineControls.NextDrift(Slider.value, Slider.minValue, Slider.maxValue, direction);
         // Native value assignment preserves persistence and the existing delayed
         // replan callback. No planner or coroutine is duplicated here.
-        Slider.value = next;
+        CourseFineControls.SetValue(Slider, next);
         CourseFineControls.Refresh(Owner);
         data.Use();
     }

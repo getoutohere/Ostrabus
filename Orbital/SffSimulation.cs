@@ -23,9 +23,9 @@ internal sealed class SffSimulation : IDisposable {
         internal Ship TargetShip;
         internal ShipSitu Target;
         internal double Handoff, ArrivalSpeed, Rotation, AngularVelocity, AngularAcceleration;
-        internal bool Travel, Applied, Ready, ImpactResolved, AwaitingPilot;
+        internal bool Travel, Guided, Applied, Ready, ImpactResolved, AwaitingPilot;
         internal bool Detour;
-        internal string Mode;
+        internal string Mode, CommandAtStart;
         internal int AeroModels;
     }
     sealed class Entry {
@@ -40,18 +40,23 @@ internal sealed class SffSimulation : IDisposable {
     readonly List<object> rows = new List<object>();
     readonly SffEnvironment environment = new SffEnvironment();
     readonly SffSimulation previous;
+    readonly bool preview;
     readonly double start, seconds;
     readonly long began;
     int excludedRoutes, excludedCombat, excludedLocks, excludedOther, excludedInvalid, excludedHidden, failures, suppressedCatchup, collisions;
     bool beforeAi, disposed, rowsTruncated;
     double preparationMs;
 
-    SffSimulation(double epoch, double duration) {
-        start = epoch; seconds = duration; began = Stopwatch.GetTimestamp(); previous = Current;
+    SffSimulation(double epoch, double duration) : this(epoch, duration, false) { }
+    SffSimulation(double epoch, double duration, bool preview) {
+        start = epoch; seconds = duration; began = Stopwatch.GetTimestamp(); previous = Current; this.preview = preview;
     }
-    internal static SffSimulation Begin(StarSystem system, double duration, bool isSff) {
-        if (!OrbitalSimulation.Enabled || !Enabled || !isSff || !OrbitAcceleration.Finite(duration) || duration < 60 || system?.dictShips == null) return null;
-        var context = new SffSimulation(StarSystem.fEpoch, duration);
+    internal static SffSimulation Begin(StarSystem system, double duration, bool isSff) => Capture(system, duration, isSff, false);
+    internal static SffSimulation Preview(StarSystem system, double duration) => Capture(system, duration, true, true);
+    static SffSimulation Capture(StarSystem system, double duration, bool isSff, bool preview) {
+        if (!OrbitalSimulation.Enabled || !Enabled || !isSff || !OrbitAcceleration.Finite(duration) ||
+            duration <= 0 || duration < 60 && !SffAdvance.Active || system?.dictShips == null) return null;
+        var context = new SffSimulation(StarSystem.fEpoch, duration, preview);
         try {
             foreach (var body in system.aBOs.Values) {
                 if (body == null || body.IsPlaceholder() || body.IsAsteroidField || body.fMass <= 0 || !OrbitAcceleration.Finite(body.fMass)) continue;
@@ -74,7 +79,7 @@ internal sealed class SffSimulation : IDisposable {
                 context.Prepare(system, anchor, members);
             }
             context.preparationMs = (Stopwatch.GetTimestamp() - context.began) * 1000d / Stopwatch.Frequency;
-            Current = context;
+            if (!preview) Current = context;
             return context;
         } catch (Exception ex) {
             context.Dispose();
@@ -99,6 +104,7 @@ internal sealed class SffSimulation : IDisposable {
         foreach (var ship in members) {
             var ai = AIShipManager.dictAIs != null ? AIShipManager.GetAIShipByRegID(ship.strRegID) : null;
             if (ai == null) continue;
+            if (plan.CommandAtStart == null) plan.CommandAtStart = ai.ActiveCommandName;
             if (IsCombatCommand(ai.ActiveCommandName)) { excludedCombat++; return; }
             if (plan.Pilot == null && IsTravelCommand(ai.ActiveCommandName)) plan.Pilot = ai;
         }
@@ -154,6 +160,7 @@ internal sealed class SffSimulation : IDisposable {
             DVector engines = aiControlled ? default : new DVector(anchor.vAccIn.x + anchor.vAccRCS.x + anchor.vAccEx.x,
                 anchor.vAccIn.y + anchor.vAccRCS.y + anchor.vAccEx.y) * OrbitalMotion.KmPerAU;
             var aero = CaptureAero(members, out plan.AeroModels);
+            plan.Guided = flight != null;
             plan.Outcome = SffDynamics.Propagate(environment, plan.Initial, start, seconds, engines, aero, collisionRadius, flight);
             plan.Mode = plan.Outcome.Impact != null ? "impact" : plan.Outcome.Arrived ? "arrived" : plan.Travel ? "partial" : engines.Length > 0 ? "powered" : "coast";
             plan.Detour = flight?.UsedDetour ?? false;
@@ -213,14 +220,14 @@ internal sealed class SffSimulation : IDisposable {
                 BodyOrbit body = null;
                 if ((point.ObjSS.bIsBO || point.ObjSS.bBOLocked || point.ObjSS.bOrbitLocked) && point.ObjSS.strBOPORShip != null) system.aBOs.TryGetValue(point.ObjSS.strBOPORShip, out body);
                 captured[i] = new SffPathTarget.Point { Epoch = point.ArrivalTime, State = OrbitalMotion.Read(point.ObjSS), Body = body,
-                    Offset = new DVector(point.ObjSS.vBOOffsetx, point.ObjSS.vBOOffsety) * OrbitalMotion.KmPerAU };
+                    Orbit = new BodyLockedOffset(point.ObjSS) };
             }
             return new SffPathTarget { Points = captured };
         }
         var model = new SffTarget { Initial = OrbitalMotion.Read(situation), Start = start };
         if (situation.bIsBO || situation.bBOLocked || situation.bOrbitLocked) {
             if (situation.strBOPORShip == null || !system.aBOs.TryGetValue(situation.strBOPORShip, out model.Locked)) return null;
-            model.Offset = new DVector(situation.vBOOffsetx, situation.vBOOffsety) * OrbitalMotion.KmPerAU;
+            model.Orbit = new BodyLockedOffset(situation);
         } else model.Reference = environment.Select(model.Initial.Position, start, out _);
         return model;
     }
@@ -297,6 +304,7 @@ internal sealed class SffSimulation : IDisposable {
             if (!plan.Travel || plan.Target == null || plan.Outcome.Impact != null) continue;
             if (plan.TargetShip != null && plan.TargetShip.bDestroyed) continue;
             ShipSitu actualTarget = plan.TargetShip?.objSS ?? plan.Target;
+            actualTarget.UpdateTime(StarSystem.fEpoch);
             var target = OrbitalMotion.Read(actualTarget);
             var actual = OrbitalMotion.Read(plan.Anchor);
             plan.Ready = (actual.Position - target.Position).Length <= plan.Handoff && (actual.Velocity - target.Velocity).Length <= plan.ArrivalSpeed;
@@ -307,6 +315,35 @@ internal sealed class SffSimulation : IDisposable {
         if (!plan.AwaitingPilot && plan.Ready && plan.Outcome.Impact == null) return true;
         suppressedCatchup++; return false;
     }
+    // A coordinate target is deliberately distinct from a hull registry ID.
+    // Preview performs no playback, AI evaluation, fuel write or live ephemeris update.
+    internal double DecisionStep(List<AIShip> urgent) {
+        double step = seconds;
+        foreach (var plan in plans) {
+            if (plan.AwaitingPilot || plan.Outcome.Impact == null) continue;
+            bool playerGroup = false;
+            foreach (var member in plan.Ships) playerGroup |= ReferenceEquals(member, CrewSim.coPlayer?.ship);
+            if (playerGroup) continue;
+            foreach (var ship in plan.Ships) {
+                if (ReferenceEquals(ship, CrewSim.coPlayer?.ship) || !ship.IsAIShip || ship.NavPlayerManned ||
+                    !ship.NavAIManned || !(ship.RCSAccelMax > 0)) continue;
+                var ai = AIShipManager.dictAIs == null ? null : AIShipManager.GetAIShipByRegID(ship.strRegID);
+                if (ai == null || !Scheduled(ai)) continue;
+                urgent.Add(ai);
+                // Let native command phases run before the earliest predicted
+                // impact, rather than coast through every intervening AI turn.
+                step = Math.Min(step, Math.Min(60, Math.Max(.01, plan.Outcome.ImpactAfter * .25)));
+            }
+        }
+        return step;
+    }
+    static bool Scheduled(AIShip ai) {
+        foreach (var pair in AIShipManager.dictAIs) {
+            if (pair.Key != AIShipManager.strATCLast && pair.Key != "INTERREGIONAL") continue;
+            foreach (var registered in pair.Value) if (ReferenceEquals(registered, ai)) return true;
+        }
+        return false;
+    }
     void AddRow(object row) { if (rows.Count < 512) rows.Add(row); else rowsTruncated = true; }
     internal static object Snapshot() => last;
     internal static void Reset() { Current?.Dispose(); Current = null; last = SnapshotJson.Map("state", "No corrected SFF jump recorded."); }
@@ -316,11 +353,13 @@ internal sealed class SffSimulation : IDisposable {
         try {
             foreach (var plan in plans) AddRow(SnapshotJson.Map("ships", Ids(plan.Ships), "mode", plan.Mode, "applied", plan.Applied,
                 "targetId", plan.TargetShip?.strRegID, "arrivalAfterSeconds", plan.Outcome.Arrived ? (object)plan.Outcome.ArrivalAfter : null,
+                "commandAtStart", plan.CommandAtStart, "hasCoordinateTarget", plan.Target != null,
+                "guided", plan.Guided, "impactAfterSeconds", plan.Outcome.Impact != null ? (object)plan.Outcome.ImpactAfter : null,
                 "nativeArrivalAllowed", plan.Ready, "steps", plan.Outcome.Steps, "gravitySwitches", plan.Outcome.Switches,
                 "awaitingPilot", plan.AwaitingPilot,
                 "atmosphere", plan.Outcome.Atmosphere, "budgetFallback", plan.Outcome.BudgetFallback,
                 "planetaryDetour", plan.Detour, "impactBody", plan.Outcome.Impact?.Native.strName, "aerodynamicModels", plan.AeroModels));
-            last = SnapshotJson.Map("startEpoch", start, "skipSeconds", seconds, "prepared", plans.Count,
+            if (!preview) last = SnapshotJson.Map("startEpoch", start, "skipSeconds", seconds, "prepared", plans.Count,
                 "nativeCourses", excludedRoutes, "nativeCombat", excludedCombat, "nativeLocked", excludedLocks,
                 "nativeOther", excludedOther, "nativeInvalidStart", excludedInvalid, "nativeHidden", excludedHidden, "failures", failures, "suppressedInstantCatchup", suppressedCatchup,
                 "impactChecks", collisions, "preparationMs", preparationMs, "elapsedWallMs", (Stopwatch.GetTimestamp() - began) * 1000d / Stopwatch.Frequency,

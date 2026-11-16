@@ -8,6 +8,11 @@ the original tree-scheduling experiment and the explicit replacement lifecycle.
 None are deployable patches or contact the running game or edit game/mod sources
 or assets.
 
+The current replacement suite binds game **1.1.0.0** and passes **529 assertions
+across 101 scenarios**. Its [upgrade qualification](../../Navigation/Architecture/Replacement/UPGRADE-1.1.0.0.md)
+separates native mechanisms from fixture boundaries; the earlier 1.0 receipts
+remain preserved. The runner refuses an unexpected game assembly hash.
+
 Run the prototype from the repository root (requires a current full Debug plugin):
 
 ```powershell
@@ -25,7 +30,7 @@ the world update and queue under explicit scene/economy fixtures; see
 [qualification](../../Navigation/Architecture/Replacement/NAVY-LIFECYCLE.md).
 Integrated world cases install the real existing Orbital/SFF/Economy patches
 offline with synthetic world/market data. See their
-[ownership, accounting and remaining playback gap](../../Navigation/Architecture/Replacement/WORLD-SERVICES.md).
+[ownership, accounting and shared time coordination](../../Navigation/Architecture/Replacement/WORLD-SERVICES.md).
 The [command-effect pass](../../Navigation/Architecture/Replacement/COMMAND-EFFECTS.md)
 compares native fuel transfers across fresh reloads and executes selected shipped
 surrender/boarding rules, including native received and in-flight message DTOs.

@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using BepInEx.Configuration;
 using HarmonyLib;
 using Ostrabus.NavConsole.Outlines;
+using Ostrabus.Orbital;
 
 namespace Ostrabus.ShipNavigation.Collisions;
 
@@ -14,6 +15,7 @@ internal static class PhysicalCollisions {
     sealed class Track {
         internal Sample Previous,Latest;
         internal bool Initialized,HasPrevious;
+        internal long JumpGeneration;
     }
     internal readonly struct Sample {
         internal readonly double Epoch,X,Y,Angle,VX,VY;
@@ -48,23 +50,24 @@ internal static class PhysicalCollisions {
     internal static void Begin(out ScanState state) {
         state=new ScanState{Previous=prepared};prepared=default;
         if(!Enabled)return;
-        bool jump=GUIFFWD.Active;
+        bool jump=GUIFFWD.Active || JumpBoundary.Active;
         if(jump!=wasJump){tracks=new ConditionalWeakTable<Ship,Track>();wasJump=jump;}
         if(!jump)HullDisplay.Pump();
     }
     internal static void End(ScanState state)=>prepared=state.Previous;
-    internal static float Nonzero(float distance,Ship a,Ship b)=>distance==0&&Enabled&&!GUIFFWD.Active&&a!=null&&b!=null&&a.objSS!=null&&b.objSS!=null&&
+    internal static double Nonzero(double distance,Ship a,Ship b)=>distance==0&&Enabled&&!GUIFFWD.Active&&!JumpBoundary.Active&&a!=null&&b!=null&&a.objSS!=null&&b.objSS!=null&&
         a.Classification==Ship.TypeClassification.Default&&b.Classification==Ship.TypeClassification.Default&&
         !StationDockedCollisions.ActualStation(a)&&!StationDockedCollisions.ActualStation(b)?float.Epsilon:distance;
     static double Turn(double value){value%=Math.PI*2;if(value>Math.PI)value-=Math.PI*2;if(value< -Math.PI)value+=Math.PI*2;return value;}
     static Track Observe(Ship ship,double epoch,float radius) {
         var track=tracks.GetValue(ship,Create);var now=new Sample(ship,epoch,radius);
-        if(!track.Initialized||epoch<track.Latest.Epoch){track.Latest=now;track.Initialized=true;track.HasPrevious=false;}
+        if(!track.Initialized||track.JumpGeneration!=JumpBoundary.Generation||epoch<track.Latest.Epoch){track.Latest=now;track.Initialized=true;track.HasPrevious=false;}
         else if(epoch>track.Latest.Epoch){track.Previous=track.Latest;track.Latest=now;track.HasPrevious=true;}
         else {
             if (now.Radius != track.Latest.Radius || now.Grid != track.Latest.Grid) track.HasPrevious=false;
             track.Latest=now;
         }
+        track.JumpGeneration=JumpBoundary.Generation;
         if(track.HasPrevious) {
             var before=track.Previous;double dt=epoch-before.Epoch;
             double dx=(now.X-before.X)*MetresPerAU,dy=(now.Y-before.Y)*MetresPerAU;
@@ -93,9 +96,9 @@ internal static class PhysicalCollisions {
         var d=b-a;double squared=d.Dot(d),t=squared>0?Math.Max(0,Math.Min(1,-a.Dot(d)/squared)):0;
         var p=a+d*t;return p.Dot(p);
     }
-    internal static bool Overlap(Ship a,Ship b,float nativeDistance,float nativeRadius) {
+    internal static bool Overlap(Ship a,Ship b,double nativeDistance,float nativeRadius) {
         prepared=default;bool native=nativeDistance<nativeRadius;
-        if(!Enabled||GUIFFWD.Active||a==null||b==null||a.objSS==null||b.objSS==null||
+        if(!Enabled||GUIFFWD.Active||JumpBoundary.Active||a==null||b==null||a.objSS==null||b.objSS==null||
             a.Classification!=Ship.TypeClassification.Default||b.Classification!=Ship.TypeClassification.Default||a.objSS.bIsBO||b.objSS.bIsBO)return native;
         double epoch=StarSystem.fEpoch;var ta=Observe(a,epoch,HullDisplay.Radius(a));var tb=Observe(b,epoch,HullDisplay.Radius(b));var path=Path(ta,tb,epoch);
         double radius=path.RA+path.RB;

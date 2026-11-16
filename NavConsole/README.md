@@ -2,6 +2,10 @@
 
 Planned: [compact target periapsis/apoapsis readout](TARGET-ORBIT-DISPLAY.md).
 
+[Module placement](MODULE-PLACEMENT.md) fixes native drag conversion for
+non-centered parent pivots, including the 1.1 course panel disappearing above
+the console. Native fit rules and saved layout remain authoritative.
+
 [RCS rotation module](Rotation/README.md) adds a physical 1x1 ROTATION panel with
 target-relative turns and bearing hold. It reuses native Controls artwork, consumes
 native RCS fuel and continues through console closure/save loading.

@@ -20,7 +20,7 @@ static partial class Program {
         var changedPda = JArray.Parse(File.ReadAllText(Path.Combine(root, "data/condowners/quick_pda.json"))).OfType<JObject>().Single();
         var metadata = new Dictionary<string, JsonModInfo>();
         DataHandler.JsonToData(Path.Combine(root, "mod_info.json"), metadata);
-        Check(metadata.Count == 1 && metadata.Values.Single().strGameVersion == "1.0.1.10", "Native metadata missing or targets another game version.");
+        Check(metadata.Count == 1 && metadata.Values.Single().strGameVersion == "1.1.0.0", "Native metadata missing or targets another game version.");
         Check(Directory.GetFiles(Path.GetDirectoryName(root), "*.cs", SearchOption.AllDirectories).Length == 0, "PDA hacking must contain no runtime C# source.");
         var cos = new Dictionary<string, JsonCondOwner>();
         var overrides = new Dictionary<string, JsonInteractionOverride>();

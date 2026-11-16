@@ -34,9 +34,12 @@ dependencies without requiring an accepted snapshot.
 
 ## What triggers review
 
-Each slice's manifest binds its catalogued source groups to native methods (41
-retriever, 35 scavenger and 24 deployer groups after the waiting/return expansion). Each selected
-method includes its overload set, signature, metadata and normalized IL. Tracked
+Each slice's manifest binds its catalogued source groups to native methods.
+The reviewed 1.1.0.0 manifests contain 60 retriever, 54 scavenger, 44 deployer,
+34 target-lifecycle, 85 traffic, 13 bounty and 27 encounter groups. Each selected
+method includes its overload set, signature, metadata and normalized IL. The
+1.1 catalogue additionally tracks unexpanded native entrypoints as dependencies;
+their presence is not a behavioral model or an execution proof. Tracked
 dependencies include local calls, referenced fields/types, constructors and
 conservative virtual-call candidates. Directly referenced external DLL bytes are
 also compared when present alongside the game assembly. Explicit JSON dependencies

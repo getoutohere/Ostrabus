@@ -26,11 +26,14 @@ These are conditional reference traces, not live-game measurements or new native
 | restore-valid-body-goal | planned; no modeled finding | planned; no modeled finding |
 | restore-valid-asteroid-goal | planned; no modeled finding | planned; no modeled finding |
 | nonretrieval-station-destruction | planned; target.retained_goal, target.dead_flight | resume; no modeled finding |
+| environment-conversion-shared-true | planned; target.retired_representation | planned; no modeled finding |
+| environment-conversion-shared-false | planned; target.retired_representation | planned; no modeled finding |
 
 ## Behavioral tradeoffs
 
 - **replacement_references / reference_integrity_fix**: Existing same-ID replacement repair transfers exact Ship/ShipSitu references without changing owned waypoints or routes. Removes: Dangling exact references after DestroyAndReload.. Preserves: Owned waypoints.; Existing route and fuel state.; Unrelated destination choices..
 - **target_lifetime / reference_integrity_fix**: At permanent vessel removal or restored missing ship identity, clear the affected native goal, route, propulsion input, saved references and fuel prediction. Defer normal replacement teardown and preserve existing same-ID reference transfer. Removes: Destroyed vessel or restored missing ship remaining a flight destination.; Shallow saved optional fields resurrecting a cleared target.. Preserves: Same-ID replacement including nested transactions and native exception propagation.; Hidden live ships and occupied ports.; Independent coordinate and stellar-object destinations.; Unrelated navigation, momentum, fuel and native behavior selection.; Projectile combat teardown and whole-world teardown are excluded..
+- **environment_conversion_targets / reference_integrity_fix**: Scope native region-conversion teardown as a same-identity representation change. Rebind shared situations, clear obsolete physical references, preserve owned waypoints and courses; deliberately dropped identities still use ordinary removal handling. Removes: Orphaned references to a physical hull retired during native environment conversion.; Legacy cancellation of a surviving same-ID stellar destination.. Preserves: Native environment eligibility, asset-driven deletion and identity changes.; Existing courses, owned waypoints, momentum and fuel.; No forced loading or additional AI behavior..
 
 ## Dependencies not transition-expanded
 

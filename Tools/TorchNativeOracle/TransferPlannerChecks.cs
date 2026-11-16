@@ -50,11 +50,11 @@ static partial class Program {
         var destination = new ShipSitu(false) { vPosx = start.vPosx+distanceKm*1000/TransferAu+targetVelocity.X*estimate,
             vPosy = start.vPosy+targetVelocity.Y*estimate, vVelX = targetVelocity.X, vVelY = targetVelocity.Y };
         double fuel = ship.fShallowFusionRemain > 0 ? ship.fShallowFusionRemain : 1e6;
-        var origin = new NavDataPoint(fixtureEpoch,start,1e6,0,fuel);
-        var target = new NavDataPoint(fixtureEpoch,destination,1e6,0,fuel);
+        var origin = new NavDataPoint(fixtureEpoch,start,1e6,0,fuel,rcsCount:0F);
+        var target = new NavDataPoint(fixtureEpoch,destination,1e6,0,fuel,rcsCount:0F);
         var prior = scoped ? TorchTransferPlanning.Enter() : default;
         try {
-            var course = (NavData)AccessTools.Method(typeof(FlyToPath),"PlanTrip4Sub").Invoke(path,new object[] { origin,target,limiter,estimate,torch,atmosphere });
+            var course = (NavData)AccessTools.Method(typeof(FlyToPath),"PlanTrip4Sub").Invoke(path,new object[] { origin,target,limiter,estimate,torch,atmosphere,false });
             if (scoped && torch && !atmosphere) {
                 var context = (TorchTransferPlanning.Scope)AccessTools.Field(typeof(TorchTransferPlanning),"current").GetValue(null);
                 Check(context.Changed,"Representable vector transfer uses production solver");
@@ -153,7 +153,7 @@ static partial class Program {
                 NavData nav;
                 bool valid;
                 try {
-                    nav = path.PlanTrip4(new NavDataPoint(fixtureEpoch,origin,1e6,0,1e6),new NavDataPoint(fixtureEpoch,target,1e6,0,1e6),limiter,coast);
+                    nav = path.PlanTrip4(new NavDataPoint(fixtureEpoch,origin,1e6,0,1e6,rcsCount:0F),new NavDataPoint(fixtureEpoch,target,1e6,0,1e6,rcsCount:0F),limiter,coast);
                     valid = TorchTransferPlanning.ArrivalValid(nav);
                     Check(ReferenceEquals(TorchTransferPlanning.Complete(nav),nav) == valid,"UI completion retains converged courses and rejects bad endpoints");
                     Check(body.dTimeCalcLast == fixtureEpoch,"Arrival validation restores shared BodyOrbit to current epoch");
@@ -167,7 +167,7 @@ static partial class Program {
                     var nativeTarget = new ShipSitu(false) { bBOLocked = true, strBOPORShip = body.strName };
                     nativeTarget.UpdateTime(fixtureEpoch);
                     var nativePath = TransferPath();
-                    var native = nativePath.PlanTrip4(new NavDataPoint(fixtureEpoch,origin,1e6,0,1e6),new NavDataPoint(fixtureEpoch,nativeTarget,1e6,0,1e6),limiter,coast);
+                    var native = nativePath.PlanTrip4(new NavDataPoint(fixtureEpoch,origin,1e6,0,1e6,rcsCount:0F),new NavDataPoint(fixtureEpoch,nativeTarget,1e6,0,1e6,rcsCount:0F),limiter,coast);
                     nativeTarget.UpdateTime(native.Destination.ArrivalTime);
                     double nativeClearance = (native.Destination.ObjSS.vPos-nativeTarget.vPos).magnitude*TransferAu;
                     if (Math.Abs(nativeClearance-300000) > 1000) nativeFailures++;

@@ -25,7 +25,9 @@ static class HaulerRunawayChecks {
             var template=JToken.Parse(File.ReadAllText(assets+"ships/Light Tug.json"));
             if (template is JArray) template=template[0];
             check(!(bool)template["bFusionTorch"] && (double)template["fFusionThrustMax"]==0,"Light Tug asset unexpectedly torch-capable");
-            check((double)template["nRCSCount"]==8 && Math.Abs((double)template["fShallowMass"]-6827.87)<.001,"Live hull does not match asset mass/thrusters");
+            // Current 1.1 template sanity; the historical latched-thrust motion
+            // fixture below retains its captured controls/fuel independently.
+            check((double)template["nRCSCount"]==4 && Math.Abs((double)template["fShallowMass"]-6715.87)<.001,"Current Light Tug asset mass/thrusters changed");
             var ship=Empty<Ship>();ship.strRegID="hauler-proof";ship.IsAIShip=true;
             var s=Empty<ShipSitu>();AccessTools.Property(typeof(Ship),nameof(Ship.objSS)).SetValue(ship,s);
             AccessTools.Field(typeof(Ship),"nLoadState").SetValue(ship,Ship.Loaded.Shallow);

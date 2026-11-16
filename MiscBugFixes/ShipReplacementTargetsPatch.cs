@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 using HarmonyLib;
 using Ostranauts.Ships;
 using Ostranauts.Ships.Commands;
@@ -175,6 +177,36 @@ internal static class ShipStellarConversionTargetsPatch {
         if (!__state.Captured) return;
         try { ShipReplacementTargetsPatch.Complete(__state, stellarConversion: true); }
         finally { ShipReplacementTargetsPatch.Replacing = __state.PreviousScope; }
+    }
+}
+
+// 1.1 region unloading publishes a stellar representation before retiring the
+// physical Ship. Scope only that native teardown call, not unrelated removals.
+// A deliberately dropped or renamed environment entity still loses its old ID.
+[HarmonyPatch(typeof(SolarSystem.EnvironmentEntities), nameof(SolarSystem.EnvironmentEntities.UnloadEnvironmentForRegion))]
+internal static class EnvironmentConversionTargetsPatch {
+    internal static void DestroyConverted(Ship ship, bool isDespawning) {
+        ShipReplacementTargetsPatch.Prefix(ship, out var state);
+        try { ship.Destroy(isDespawning); }
+        finally {
+            try { ShipReplacementTargetsPatch.Complete(state, stellarConversion: true); }
+            finally { ShipReplacementTargetsPatch.Replacing = state.PreviousScope; }
+        }
+    }
+
+    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+        var destroy = AccessTools.Method(typeof(Ship), nameof(Ship.Destroy));
+        var converted = AccessTools.Method(typeof(EnvironmentConversionTargetsPatch), nameof(DestroyConverted));
+        int count = 0;
+        foreach (var instruction in instructions) {
+            if (instruction.Calls(destroy)) {
+                instruction.opcode = OpCodes.Call;
+                instruction.operand = converted;
+                count++;
+            }
+            yield return instruction;
+        }
+        if (count != 1) throw new InvalidOperationException("Native environment conversion teardown changed.");
     }
 }
 

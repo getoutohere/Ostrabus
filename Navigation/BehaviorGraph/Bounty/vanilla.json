@@ -1,9 +1,9 @@
 {
     "schemaVersion":  1,
-    "id":  "bounty-1.0.1.10",
-    "gameVersion":  "1.0.1.10",
-    "assemblySha256":  "8058f7a07f93d5d44678aaf8d7f749050c0d9b1c9ed1c7419eb521ddcd2097e7",
-    "baselineCommit":  "ed83d460873cb27a2b3346861f614d286b56f444",
+    "id":  "bounty-1.1.0.0",
+    "gameVersion":  "1.1.0.0",
+    "assemblySha256":  "a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07",
+    "baselineCommit":  "be8e282",
     "scope":  {
                   "roles":  [
                                 "Existing-hull bounty activation; Navy selection branch reproduced natively"
@@ -17,25 +17,69 @@
                                  "Complete military/combat trees, human agendas and numerical flight.",
                                  "Timer draws and randomized candidate ordering are native external results.",
                                  "Physical transfer, docking success and station CO placement are native external results.",
-                                 "Other bounty plots, quest rewards, arrests and station-only fallback selection."
+                                 "Other bounty plots, quest rewards, arrests and station-only fallback selection.",
+                                 "Combat/physiology death, reward processing and physical destruction remain native external outcomes; policy is not immortality."
                              ],
                   "covered":  [
                                   "MoveTargets eligibility/due-pass/one-target selection boundary.",
                                   "SpawnBountyTarget station departure versus same-ship/in-space restoration.",
                                   "Existing-hull constructor bypass of CreateAIShip station service.",
-                                  "Native low-fuel home choice and observed immediate retirement loop."
+                                  "Native low-fuel home choice and observed immediate retirement loop.",
+                                  "Administrative station rejection, original ownership release, regional hull disposal and stale parked-hull cleanup."
                               ],
-                  "status":  "bounty_reactivation_entrypoint_and_service_boundary",
+                  "status":  "bounty_reactivation_and_administrative_preservation_boundaries",
                   "notProven":  [
                                     "All ship AI entrypoints and interleavings.",
                                     "This slice fixes no reserve-hull spawn relocation/teleport behavior."
                                 ]
               },
     "sources":  {
-"flight_rcs_native":{"origin":"game","path":"Ship.cs","symbol":"Ship.Maneuver: direct combat/undock/tow RCS command boundary","anchors":["public void Maneuver("],"sha256":"659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"},
-
-"flight_handoff_native": {"origin":"game","path":"Ostranauts.Ships.Commands/FlyTo.cs","symbol":"FlyTo.RunCommand: path, pause and manual control ownership","anchors":["public override CommandStatus RunCommand"],"sha256":"bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"},"flight_shutdown_native": {"origin":"game","path":"Ostranauts.Ships.Commands/FlyToPath.cs","symbol":"FlyToPath.TorchOff and explicit shutdown callers","anchors":["private void TorchOff()"],"sha256":"154f29356fe9e558c3179dc152c56415f1771236dd64c4f44fd843616523ce18"},"flight_control_repair": {"origin":"repo","path":"Navigation/FlightControlHandoffPatch.cs","symbol":"FlightControlHandoff / validated route-exit and shallow shutdown hooks","anchors":["internal static void ResetForRcs","class ShallowTorchShutdownPatch"],"sha256":"7d0f7932dcde09f5ae3749d799597d3c3accc53353ac19f30dedf4b21236a0f1"},"flight_control_stop": {"origin":"repo","path":"Navigation/NavigationRoute.cs","symbol":"NavigationRoute.Stop / StopTorch preserve momentum and fuel","anchors":["internal static void StopTorch"],"sha256":"ec3915ac92cde1e37618a11fc372d219f499a664bc0c5c005669cbc4b2708cf2"},
-
+                    "flight_rcs_native":  {
+                                              "origin":  "game",
+                                              "path":  "Ship.cs",
+                                              "symbol":  "Ship.Maneuver: direct combat/undock/tow RCS command boundary",
+                                              "anchors":  [
+                                                              "public void Maneuver("
+                                                          ],
+                                              "sha256":  "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
+                                          },
+                    "flight_handoff_native":  {
+                                                  "origin":  "game",
+                                                  "path":  "Ostranauts.Ships.Commands/FlyTo.cs",
+                                                  "symbol":  "FlyTo.RunCommand: path, pause and manual control ownership",
+                                                  "anchors":  [
+                                                                  "public override CommandStatus RunCommand"
+                                                              ],
+                                                  "sha256":  "bf1dbb63dc16f3b7a5704914a46f56bacf024b71018274b36e15635dcb271f52"
+                                              },
+                    "flight_shutdown_native":  {
+                                                   "origin":  "game",
+                                                   "path":  "Ostranauts.Ships.Commands/FlyToPath.cs",
+                                                   "symbol":  "FlyToPath.TorchOff and explicit shutdown callers",
+                                                   "anchors":  [
+                                                                   "private void TorchOff()"
+                                                               ],
+                                                   "sha256":  "677658509cd59ee08d4220b6ae6b993df4546336bf7e5521a7cb93c2f839022b"
+                                               },
+                    "flight_control_repair":  {
+                                                  "origin":  "repo",
+                                                  "path":  "Navigation/FlightControlHandoffPatch.cs",
+                                                  "symbol":  "FlightControlHandoff / validated route-exit and shallow shutdown hooks",
+                                                  "anchors":  [
+                                                                  "internal static void ResetForRcs",
+                                                                  "class ShallowTorchShutdownPatch"
+                                                              ],
+                                                  "sha256":  "be2eab769cb6bb45de7f6cd50029a99cca0ad33b5aa4f25fd37eeb40591d2eab"
+                                              },
+                    "flight_control_stop":  {
+                                                "origin":  "repo",
+                                                "path":  "Navigation/NavigationRoute.cs",
+                                                "symbol":  "NavigationRoute.Stop / StopTorch preserve momentum and fuel",
+                                                "anchors":  [
+                                                                "internal static void StopTorch"
+                                                            ],
+                                                "sha256":  "ec3915ac92cde1e37618a11fc372d219f499a664bc0c5c005669cbc4b2708cf2"
+                                            },
                     "bounty":  {
                                    "origin":  "game",
                                    "path":  "Ostranauts.Systems/BountyManager.cs",
@@ -43,7 +87,7 @@
                                    "anchors":  [
                                                    "class BountyManager"
                                                ],
-                                   "sha256":  "8b54dedda1f6da43457fecc36b00de5f53f51288c33f9f8e3eb84eab44d00def"
+                                   "sha256":  "d835c345473343f69c2f91c58ffcf3700d9df706d28e1ef844fd923f730caf94"
                                },
                     "navy":  {
                                  "origin":  "game",
@@ -61,7 +105,7 @@
                                        "anchors":  [
                                                        "class AIShip"
                                                    ],
-                                       "sha256":  "713ed29317fc3512c8923c78e4cbf746d177a0057571d177c76035b2016a3103"
+                                       "sha256":  "64c02064a2bb7df7a1106e02c34f17ffc2d03116b44a761d81bffa17eae969ae"
                                    },
                     "manager":  {
                                     "origin":  "game",
@@ -70,7 +114,7 @@
                                     "anchors":  [
                                                     "class AIShipManager"
                                                 ],
-                                    "sha256":  "f658d9a0168a04981a5762c08226a966d6e2842ec82dca982af82dc7ce65918f"
+                                    "sha256":  "4e5557c959855e4398b80bc198a526b19aeb65c79073270cbe216738fa71c4ba"
                                 },
                     "select":  {
                                    "origin":  "game",
@@ -88,7 +132,7 @@
                                  "anchors":  [
                                                  "DockAndDespawn"
                                              ],
-                                 "sha256":  "3f4396cd567159dd3a132cc148e72c6df331c6fef08ced4423e0f495afeea038"
+                                 "sha256":  "7e82e6e28014bd71be4a9b55f2255ca12f82706c8ed5b4a3a84f5c9e05fc0123"
                              },
                     "ship":  {
                                  "origin":  "game",
@@ -97,7 +141,7 @@
                                  "anchors":  [
                                                  "void AIRefuel"
                                              ],
-                                 "sha256":  "659d540b4d7d7aec74f675cfd388bd8c3f67a7dbe26b57df0434c50005ce7e48"
+                                 "sha256":  "cbd09840144b93108c0aed9bf9130db9ca13d3461ea1be24c9e5d29e779bbbbb"
                              },
                     "patch":  {
                                   "origin":  "repo",
@@ -107,7 +151,39 @@
                                                   "class BountyDepartureFuelPatch"
                                               ],
                                   "sha256":  "23dad0df53d94b6f9f1b1b294b1b340db3f6f122baf29441adb29d4821cb9a32"
-                              }
+                              },
+                    "preservation":  {
+                                         "origin":  "repo",
+                                         "path":  "Navigation/BountyPreservationPatch.cs",
+                                         "symbol":  "BountyPreservation and three administrative patch classes",
+                                         "anchors":  [
+                                                         "class BountyPreservation",
+                                                         "class BountyRetirementPatch",
+                                                         "class BountyStaleCandidatesPatch"
+                                                     ],
+                                         "sha256":  "7da802dc1f6d0567321202124ea9a1f778d6564736f518d32dbf1455a94d2047"
+                                     },
+                    "preservation_test":  {
+                                              "origin":  "repo",
+                                              "path":  "Tests/BountyPreservationCheck/Program.cs",
+                                              "symbol":  "Native lifecycle controls and production-policy tests",
+                                              "anchors":  [
+                                                              "static void Dock(",
+                                                              "static void Regional(",
+                                                              "static void Stale("
+                                                          ],
+                                              "sha256":  "fd4f1db096e7161020d3bcc2847cb964f46f9842c4b51903a0c017e9242939aa"
+                                          },
+                    "stale_cleanup":  {
+                                          "origin":  "game",
+                                          "path":  "StarSystem.cs",
+                                          "symbol":  "StarSystem.CleanupStaleShips / TryRecycleCrew",
+                                          "anchors":  [
+                                                          "private static void CleanupStaleShips()",
+                                                          "private bool TryRecycleCrew("
+                                                      ],
+                                          "sha256":  "319cfe060c9ff22a425b3c76952088defc69dd7b5d9c46f165206cf30df0514d"
+                                      }
                 },
     "evidence":  {
                      "review":  {
@@ -124,7 +200,17 @@
                                   "supports":  "Four Anthony Rosario FD03/B-MC6/FD03 cycles in Player.log; current B-MC6 fuel 8.755%. No live postpatch departure claimed.",
                                   "level":  "live_observation",
                                   "artifact":  "Navigation/BOUNTY-DEPARTURES.md"
-                              }
+                              },
+                     "preservation_native":  {
+                                                 "supports":  "Native station rejection, same actor/hull reboarding, regional retirement, four-hour stale parking, expiry and accepted hand-ins. Destructive teardown and Unity boundaries are instrumented.",
+                                                 "level":  "native_offline",
+                                                 "artifact":  "Tests/BountyPreservationCheck/README.md"
+                                             },
+                     "preservation_review":  {
+                                                 "supports":  "Native C# and JSON administrative-lifecycle audit; explicit new simulation policy, not blanket immortality or forced departure.",
+                                                 "level":  "source_review",
+                                                 "artifact":  "Navigation/BOUNTY-PRESERVATION.md"
+                                             }
                  },
     "variables":  {
                       "eligible":  {
@@ -212,7 +298,56 @@
                                                          ],
                                               "description":  "Native LowFuel result after full RCS service; failed propulsion/insufficient full-tank delta-v may still require home.",
                                               "kind":  "native_result"
-                                          }
+                                          },
+                      "active_contract":  {
+                                              "values":  [
+                                                             "true",
+                                                             "false"
+                                                         ],
+                                              "description":  "Current native bounty record exists; a leftover hull flag alone is insufficient.",
+                                              "kind":  "native_result"
+                                          },
+                      "dropoff":  {
+                                      "values":  [
+                                                     "accepted",
+                                                     "rejected"
+                                                 ],
+                                      "description":  "Native drop-off trigger/reputation outcome after CatchUp. Rejected also includes a dead body.",
+                                      "kind":  "native_result"
+                                  },
+                      "actor":  {
+                                    "values":  [
+                                                   "retained",
+                                                   "missing"
+                                               ],
+                                    "description":  "Same target CO retained versus administratively destroyed.",
+                                    "kind":  "state"
+                                },
+                      "reserved_hull":  {
+                                            "values":  [
+                                                           "present",
+                                                           "missing"
+                                                       ],
+                                            "description":  "Original assigned hull identity retained versus destroyed; a later replacement is not preservation.",
+                                            "kind":  "state"
+                                        },
+                      "claim":  {
+                                    "values":  [
+                                                   "retained",
+                                                   "lost"
+                                               ],
+                                    "description":  "Existing actor claim on assigned hull; preservation never invents ownership.",
+                                    "kind":  "state"
+                                },
+                      "loss_cause":  {
+                                         "values":  [
+                                                        "none",
+                                                        "administrative",
+                                                        "physical"
+                                                    ],
+                                         "description":  "Do not classify physical destruction as administrative bounty loss.",
+                                         "kind":  "state"
+                                     }
                   },
     "predicates":  {
                        "station_service":  {
@@ -250,7 +385,14 @@
                                                "require":  [
                                                                "station_service"
                                                            ]
-                                           }
+                                           },
+                       "preserve_active_contract":  {
+                                                        "facts":  {
+                                                                      "active_contract":  [
+                                                                                              "true"
+                                                                                          ]
+                                                                  }
+                                                    }
                    },
     "nodes":  {
                   "parked":  {
@@ -331,7 +473,37 @@
                                                   "controller"
                                               ],
                                   "detail":  ""
-                              }
+                              },
+                  "target_missing":  {
+                                         "label":  "Administrative target deletion",
+                                         "layer":  "control",
+                                         "sources":  [
+                                                         "crew",
+                                                         "manager",
+                                                         "stale_cleanup"
+                                                     ],
+                                         "detail":  "Bookkeeping outcome, distinct from physical misadventure or accepted bounty hand-in."
+                                     },
+                  "hull_missing":  {
+                                       "label":  "Original hull disposed",
+                                       "layer":  "control",
+                                       "sources":  [
+                                                       "crew",
+                                                       "manager",
+                                                       "stale_cleanup"
+                                                   ],
+                                       "detail":  "Bookkeeping outcome, distinct from physical misadventure or accepted bounty hand-in."
+                                   },
+                  "replacement_pending":  {
+                                              "label":  "Target ashore; original hull destroyed",
+                                              "layer":  "control",
+                                              "sources":  [
+                                                              "crew",
+                                                              "manager",
+                                                              "stale_cleanup"
+                                                          ],
+                                              "detail":  "Bookkeeping outcome, distinct from physical misadventure or accepted bounty hand-in."
+                                          }
               },
     "edges":  [
                   {
@@ -625,18 +797,122 @@
                                       "crew"
                                   ],
                       "event":  "dock",
-                      "note":  "External successful native station arrival. Does not grant fuel; permits the same low-fuel loop on the next actual selection.",
+                      "note":  "Native accepted arrival transfers the target and unclaims its original hull. Departure still uses the registered bounty hull ID.",
                       "set":  {
                                   "decision":  "none",
-                                  "origin":  "station"
+                                  "origin":  "station",
+                                  "actor":  "retained",
+                                  "reserved_hull":  "present",
+                                  "claim":  "lost"
                               },
                       "from":  "home",
+                      "when":  {
+                                   "facts":  {
+                                                 "dropoff":  [
+                                                                 "accepted"
+                                                             ]
+                                             }
+                               },
+                      "to":  "parked"
+                  },
+                  {
+                      "id":  "return.rejected",
+                      "from":  "home",
+                      "to":  "target_missing",
+                      "event":  "dock",
+                      "when":  {
+                                   "facts":  {
+                                                 "dropoff":  [
+                                                                 "rejected"
+                                                             ]
+                                             }
+                               },
+                      "set":  {
+                                  "actor":  "missing",
+                                  "claim":  "lost",
+                                  "reserved_hull":  "present",
+                                  "loss_cause":  "administrative"
+                              },
+                      "sources":  [
+                                      "crew"
+                                  ],
+                      "evidence":  [
+                                       "preservation_review",
+                                       "preservation_native"
+                                   ],
+                      "note":  "Administrative boundary only; physical outcomes and successful docking are external preconditions."
+                  },
+                  {
+                      "id":  "park.stale",
+                      "from":  "parked",
+                      "to":  "hull_missing",
+                      "event":  "stale_cleanup",
                       "when":  {
                                    "facts":  {
 
                                              }
                                },
-                      "to":  "parked"
+                      "set":  {
+                                  "reserved_hull":  "missing",
+                                  "loss_cause":  "administrative"
+                              },
+                      "sources":  [
+                                      "stale_cleanup"
+                                  ],
+                      "evidence":  [
+                                       "preservation_review",
+                                       "preservation_native"
+                                   ],
+                      "note":  "Administrative boundary only; physical outcomes and successful docking are external preconditions."
+                  },
+                  {
+                      "id":  "region.retire",
+                      "from":  "ordinary",
+                      "to":  "replacement_pending",
+                      "event":  "region_cleanup",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "actor":  "retained",
+                                  "claim":  "lost",
+                                  "reserved_hull":  "missing",
+                                  "origin":  "station",
+                                  "loss_cause":  "administrative"
+                              },
+                      "sources":  [
+                                      "manager"
+                                  ],
+                      "evidence":  [
+                                       "preservation_review",
+                                       "preservation_native"
+                                   ],
+                      "note":  "Administrative boundary only; physical outcomes and successful docking are external preconditions."
+                  },
+                  {
+                      "id":  "physical.destroy",
+                      "from":  "ordinary",
+                      "to":  "hull_missing",
+                      "event":  "physical_destruction",
+                      "when":  {
+                                   "facts":  {
+
+                                             }
+                               },
+                      "set":  {
+                                  "reserved_hull":  "missing",
+                                  "loss_cause":  "physical"
+                              },
+                      "sources":  [
+                                      "ship"
+                                  ],
+                      "evidence":  [
+                                       "preservation_review",
+                                       "preservation_native"
+                                   ],
+                      "note":  "Administrative boundary only; physical outcomes and successful docking are external preconditions."
                   }
               ],
     "findings":  [
@@ -671,6 +947,59 @@
                          "note":  "Station departure skipped ordinary servicing and immediately selected home. This is not evidence of a randomized decision to remain ashore.",
                          "kind":  "reactivation_loop",
                          "severity":  "bug"
+                     },
+                     {
+                         "id":  "bounty.administrative_target_loss",
+                         "sources":  [
+                                         "crew"
+                                     ],
+                         "kind":  "actor_loss",
+                         "when":  {
+                                      "facts":  {
+                                                    "actor":  [
+                                                                  "missing"
+                                                              ],
+                                                    "active_contract":  [
+                                                                            "true"
+                                                                        ],
+                                                    "loss_cause":  [
+                                                                       "administrative"
+                                                                   ]
+                                                }
+                                  },
+                         "note":  "Rejected station retirement deletes the contract target rather than retaining an actor.",
+                         "evidence":  [
+                                          "preservation_review",
+                                          "preservation_native"
+                                      ],
+                         "severity":  "simulation_gap"
+                     },
+                     {
+                         "id":  "bounty.original_hull_loss",
+                         "sources":  [
+                                         "manager",
+                                         "stale_cleanup"
+                                     ],
+                         "kind":  "hull_loss",
+                         "when":  {
+                                      "facts":  {
+                                                    "reserved_hull":  [
+                                                                          "missing"
+                                                                      ],
+                                                    "active_contract":  [
+                                                                            "true"
+                                                                        ],
+                                                    "loss_cause":  [
+                                                                       "administrative"
+                                                                   ]
+                                                }
+                                  },
+                         "note":  "Administrative cleanup destroys the original hull despite a retained captain and contract.",
+                         "evidence":  [
+                                          "preservation_review",
+                                          "preservation_native"
+                                      ],
+                         "severity":  "simulation_gap"
                      }
                  ],
     "scenarios":  [
@@ -708,7 +1037,13 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -743,7 +1078,13 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -783,7 +1124,13 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -821,7 +1168,13 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -859,7 +1212,13 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -896,7 +1255,13 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "low",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -938,7 +1303,13 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "low",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -973,7 +1344,13 @@
                                         "hull":  "physical",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -1008,7 +1385,13 @@
                                         "hull":  "station",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -1038,7 +1421,13 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -1068,7 +1457,13 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
                       },
                       {
@@ -1103,8 +1498,336 @@
                                         "hull":  "shallow",
                                         "decision":  "none",
                                         "serviced_budget":  "ready",
-                                        "service":  "missing"
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
                                     }
+                      },
+                      {
+                          "id":  "rejected-active-bounty-is-retained",
+                          "start":  "home",
+                          "events":  [
+                                         "dock"
+                                     ],
+                          "facts":  {
+                                        "selected":  "true",
+                                        "transfer":  "success",
+                                        "origin":  "station",
+                                        "eligible":  "true",
+                                        "purpose":  "flight",
+                                        "fuel":  "low",
+                                        "hull":  "shallow",
+                                        "decision":  "none",
+                                        "serviced_budget":  "ready",
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "rejected",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
+                                    },
+                          "note":  "Conditional administrative lifecycle; supported by actual native-method tests, not a claim of numerical flight or full combat coverage.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actor",
+                                                         "stop":  "",
+                                                         "node":  "target_missing",
+                                                         "value":  "missing"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actor",
+                                                           "stop":  "",
+                                                           "node":  "parked",
+                                                           "value":  "retained"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "accepted-bounty-keeps-existing-hull-claim",
+                          "start":  "home",
+                          "events":  [
+                                         "dock"
+                                     ],
+                          "facts":  {
+                                        "selected":  "true",
+                                        "transfer":  "success",
+                                        "origin":  "station",
+                                        "eligible":  "true",
+                                        "purpose":  "flight",
+                                        "fuel":  "low",
+                                        "hull":  "shallow",
+                                        "decision":  "none",
+                                        "serviced_budget":  "ready",
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
+                                    },
+                          "note":  "Conditional administrative lifecycle; supported by actual native-method tests, not a claim of numerical flight or full combat coverage.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "claim",
+                                                         "stop":  "",
+                                                         "node":  "parked",
+                                                         "value":  "lost"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "claim",
+                                                           "stop":  "",
+                                                           "node":  "parked",
+                                                           "value":  "retained"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "ordinary-rejected-arrival-is-unchanged",
+                          "start":  "home",
+                          "events":  [
+                                         "dock"
+                                     ],
+                          "facts":  {
+                                        "selected":  "true",
+                                        "transfer":  "success",
+                                        "origin":  "station",
+                                        "eligible":  "true",
+                                        "purpose":  "flight",
+                                        "fuel":  "low",
+                                        "hull":  "shallow",
+                                        "decision":  "none",
+                                        "serviced_budget":  "ready",
+                                        "service":  "missing",
+                                        "active_contract":  "false",
+                                        "dropoff":  "rejected",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
+                                    },
+                          "note":  "Conditional administrative lifecycle; supported by actual native-method tests, not a claim of numerical flight or full combat coverage.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "actor",
+                                                         "stop":  "",
+                                                         "node":  "target_missing",
+                                                         "value":  "missing"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "actor",
+                                                           "stop":  "",
+                                                           "node":  "target_missing",
+                                                           "value":  "missing"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "parked-active-bounty-hull-survives-stale-sweep",
+                          "start":  "parked",
+                          "events":  [
+                                         "stale_cleanup"
+                                     ],
+                          "facts":  {
+                                        "selected":  "true",
+                                        "transfer":  "success",
+                                        "origin":  "station",
+                                        "eligible":  "true",
+                                        "purpose":  "flight",
+                                        "fuel":  "low",
+                                        "hull":  "shallow",
+                                        "decision":  "none",
+                                        "serviced_budget":  "ready",
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
+                                    },
+                          "note":  "Conditional administrative lifecycle; supported by actual native-method tests, not a claim of numerical flight or full combat coverage.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "reserved_hull",
+                                                         "stop":  "",
+                                                         "node":  "hull_missing",
+                                                         "value":  "missing"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "reserved_hull",
+                                                           "stop":  "",
+                                                           "node":  "parked",
+                                                           "value":  "present"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "expired-bounty-hull-can-prune",
+                          "start":  "parked",
+                          "events":  [
+                                         "stale_cleanup"
+                                     ],
+                          "facts":  {
+                                        "selected":  "true",
+                                        "transfer":  "success",
+                                        "origin":  "station",
+                                        "eligible":  "true",
+                                        "purpose":  "flight",
+                                        "fuel":  "low",
+                                        "hull":  "shallow",
+                                        "decision":  "none",
+                                        "serviced_budget":  "ready",
+                                        "service":  "missing",
+                                        "active_contract":  "false",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
+                                    },
+                          "note":  "Conditional administrative lifecycle; supported by actual native-method tests, not a claim of numerical flight or full combat coverage.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "reserved_hull",
+                                                         "stop":  "",
+                                                         "node":  "hull_missing",
+                                                         "value":  "missing"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "reserved_hull",
+                                                           "stop":  "",
+                                                           "node":  "hull_missing",
+                                                           "value":  "missing"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "region-retirement-keeps-original-hull",
+                          "start":  "ordinary",
+                          "events":  [
+                                         "region_cleanup"
+                                     ],
+                          "facts":  {
+                                        "selected":  "true",
+                                        "transfer":  "success",
+                                        "origin":  "station",
+                                        "eligible":  "true",
+                                        "purpose":  "flight",
+                                        "fuel":  "low",
+                                        "hull":  "shallow",
+                                        "decision":  "none",
+                                        "serviced_budget":  "ready",
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
+                                    },
+                          "note":  "Conditional administrative lifecycle; supported by actual native-method tests, not a claim of numerical flight or full combat coverage.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "reserved_hull",
+                                                         "stop":  "",
+                                                         "node":  "replacement_pending",
+                                                         "value":  "missing"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "reserved_hull",
+                                                           "stop":  "",
+                                                           "node":  "parked",
+                                                           "value":  "present"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "ordinary-region-retirement-unchanged",
+                          "start":  "ordinary",
+                          "events":  [
+                                         "region_cleanup"
+                                     ],
+                          "facts":  {
+                                        "selected":  "true",
+                                        "transfer":  "success",
+                                        "origin":  "station",
+                                        "eligible":  "true",
+                                        "purpose":  "flight",
+                                        "fuel":  "low",
+                                        "hull":  "shallow",
+                                        "decision":  "none",
+                                        "serviced_budget":  "ready",
+                                        "service":  "missing",
+                                        "active_contract":  "false",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
+                                    },
+                          "note":  "Conditional administrative lifecycle; supported by actual native-method tests, not a claim of numerical flight or full combat coverage.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "reserved_hull",
+                                                         "stop":  "",
+                                                         "node":  "replacement_pending",
+                                                         "value":  "missing"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "reserved_hull",
+                                                           "stop":  "",
+                                                           "node":  "replacement_pending",
+                                                           "value":  "missing"
+                                                       }
+                                     }
+                      },
+                      {
+                          "id":  "physical-hull-destruction-remains-possible",
+                          "start":  "ordinary",
+                          "events":  [
+                                         "physical_destruction"
+                                     ],
+                          "facts":  {
+                                        "selected":  "true",
+                                        "transfer":  "success",
+                                        "origin":  "station",
+                                        "eligible":  "true",
+                                        "purpose":  "flight",
+                                        "fuel":  "low",
+                                        "hull":  "shallow",
+                                        "decision":  "none",
+                                        "serviced_budget":  "ready",
+                                        "service":  "missing",
+                                        "active_contract":  "true",
+                                        "dropoff":  "accepted",
+                                        "actor":  "retained",
+                                        "reserved_hull":  "present",
+                                        "claim":  "retained",
+                                        "loss_cause":  "none"
+                                    },
+                          "note":  "Conditional administrative lifecycle; supported by actual native-method tests, not a claim of numerical flight or full combat coverage.",
+                          "expect":  {
+                                         "vanilla":  {
+                                                         "fact":  "reserved_hull",
+                                                         "stop":  "",
+                                                         "node":  "hull_missing",
+                                                         "value":  "missing",
+                                                         "without":  "bounty.original_hull_loss"
+                                                     },
+                                         "effective":  {
+                                                           "fact":  "reserved_hull",
+                                                           "stop":  "",
+                                                           "node":  "hull_missing",
+                                                           "value":  "missing",
+                                                           "without":  "bounty.original_hull_loss"
+                                                       }
+                                     }
                       }
                   ]
 }

@@ -26,13 +26,14 @@ sealed class WorldServiceFixtures : IDisposable
     internal readonly BodyOrbit Body;
     readonly BepInEx.Logging.ManualLogSource previousLogger;
     readonly object oldCollections, oldCos;
+    readonly object oldMarketSingleton;
     readonly List<System.Reflection.MethodInfo> arrivalFixture = new List<System.Reflection.MethodInfo>();
     internal readonly Dictionary<string, int> Arrivals = new Dictionary<string, int>();
     internal readonly Dictionary<string, int> Playbacks = new Dictionary<string, int>();
     internal readonly Dictionary<string, int> NativeWrappers = new Dictionary<string, int>();
     internal int MixedPlaybackOwners;
 
-    internal WorldServiceFixtures(NativeWorld world, bool resetSubject = true)
+    internal WorldServiceFixtures(NativeWorld world, bool resetSubject = true, bool preserveGeometry = false)
     {
         Current = this;
         World = world;
@@ -43,24 +44,32 @@ sealed class WorldServiceFixtures : IDisposable
         logger.SetValue(null, log);
         Body = NativeWorld.Empty<BodyOrbit>();
         Body.strName = "HOME";
-        Body.fMass = 1e18;
+        Body.fMass = preserveGeometry ? 0 : 1e18;
         Body.fPeriod = 31556926;
         Body.fRadius = 1e-12;
         Body.aAtmospheres = Array.Empty<JsonAtmosphere>();
         CrewSim.system.aBOs["HOME"] = Body;
         CrewSim.system.boStar = Body;
-        world.Home.objSS.vPosx = world.Home.objSS.vBOOffsetx = 1e-5;
-        if (resetSubject)
-            world.Subject.objSS.vPosx = 1.1e-5;
-        world.Enemy.objSS.vPosx = 1.2e-5;
-        world.Patrol.vPosx = world.Patrol.vBOOffsetx = 1.3e-5;
+        if (!preserveGeometry)
+        {
+            world.Home.objSS.vPosx = world.Home.objSS.vBOOffsetx = 1e-5;
+            if (resetSubject)
+                world.Subject.objSS.vPosx = 1.1e-5;
+            world.Enemy.objSS.vPosx = 1.2e-5;
+            world.Patrol.vPosx = world.Patrol.vBOOffsetx = 1.3e-5;
+        }
         Manager = NativeWorld.Empty<MarketManager>();
         NativeWorld.Set(Manager, "_market", Markets);
         NativeWorld.Set(Manager, "_regionalMarketMap", new Dictionary<string, List<string>>());
         NativeWorld.Set(Manager, "_init", true);
         NativeWorld.Set(Manager, "_lastUpdateTime", StarSystem.fEpoch);
         AccessTools.Field(typeof(AIShipManager), "fTimeOfNextTradeCheck").SetValue(null, StarSystem.fEpoch + 7200);
-        Patch(AccessTools.PropertyGetter(typeof(MonoSingleton<MarketManager>), "Instance"), nameof(MarketManagerInstance));
+        // Mono shares generic getter machine code. Detouring this closed
+        // singleton getter can corrupt later Objective/Racing singleton reads.
+        // Set and restore its actual closed-type static instead.
+        var singleton = AccessTools.Field(typeof(MonoSingleton<MarketManager>), "_instance");
+        oldMarketSingleton = singleton.GetValue(null);
+        singleton.SetValue(null, Manager);
         Patch(AccessTools.PropertyGetter(typeof(ShipMarket), "BlockadeDiscount"), nameof(Discount));
         Patch(AccessTools.Method(typeof(ShipMarket), "RequestTraderUpdate"), nameof(Refresh));
         Patch(AccessTools.Method(typeof(MarketManager), "GetTradeRoute"), nameof(Trades));
@@ -88,11 +97,6 @@ sealed class WorldServiceFixtures : IDisposable
     }
 
     void Patch(System.Reflection.MethodBase method, string name) => hooks.Patch(method, prefix: new HarmonyMethod(typeof(WorldServiceFixtures), name));
-    static bool MarketManagerInstance(ref MarketManager __result)
-    {
-        __result = Current.Manager;
-        return false;
-    }
     static bool Discount(ref float __result)
     {
         __result = 0;
@@ -187,8 +191,8 @@ sealed class WorldServiceFixtures : IDisposable
         AIShipManager.dictAIs["HOME"].Add(ai);
         new TargetData(World.Home).ApplyToShip(ship);
         var route = new NavData(ship);
-        route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(ship.objSS, false), 300, 0, 100));
-        route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + duration, new ShipSitu(World.Home.objSS, false), 290, 0, 90));
+        route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(ship.objSS, false), 300, 0, 100, rcsCount: ship.RCSCount));
+        route.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + duration, new ShipSitu(World.Home.objSS, false), 290, 0, 90, rcsCount: ship.RCSCount));
         ship.objSS.NavData = route;
         Market(ship.strRegID, metal: metal);
         return ship;
@@ -202,6 +206,7 @@ sealed class WorldServiceFixtures : IDisposable
             original.Patch(AccessTools.Method(typeof(CrewSim), "DockAndDespawn"), prefix: new HarmonyMethod(prefix));
         DataHandler.dictDataCoCollections = (Dictionary<string, DataCoCollection>)oldCollections;
         DataHandler.dictDataCOs = (Dictionary<string, DataCO>)oldCos;
+        AccessTools.Field(typeof(MonoSingleton<MarketManager>), "_instance").SetValue(null, oldMarketSingleton);
         AccessTools.Field(typeof(Ostrabus.OstrabusPlugin), "Logger").SetValue(null, previousLogger);
     }
 }

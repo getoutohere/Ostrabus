@@ -128,8 +128,8 @@ static partial class Program {
         Check(allocated == 0, "Unchanged selection waits allocated " + allocated + " bytes.");
         StarSystem.fEpoch += 65;
         plannedFixture = new NavData(ship);
-        plannedFixture.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 1873, 0, 0));
-        plannedFixture.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 600, homeFixture.objSS, 1700, 0, 0));
+        plannedFixture.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 1873, 0, 0,rcsCount:0F));
+        plannedFixture.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch + 600, homeFixture.objSS, 1700, 0, 0,rcsCount:0F));
         Check(target.RunCommand(pilot.Blackboard).Status == CommandCode.Finished && ship.shipScanTarget == homeFixture && ReferenceEquals(ship.objSS.NavData, plannedFixture), "Feasible fallback did not preserve native station and plan.");
         Check(sends == sent + 1 && pilot.Blackboard.HasKey("TripFuelPrediction"), "Successful return sent false distress or lost fuel prediction.");
         Check(pilot.Blackboard.Get<string>("TripFuelPrediction").EndsWith("&173"), "Return prediction did not use the actual one-leg RCS difference.");

@@ -1,6 +1,7 @@
 # Ship mission executive: feasibility and decision
 
-Status: researched design and working offline prototype for game 1.0.1.10.
+Status: researched design and working offline prototype, requalified against
+game 1.1.0.0. See the [1.1 rework](Replacement/UPGRADE-1.1.0.0.md).
 **No production executive, patch changes, asset changes, deployment or live
 intervention is included.** The prototype runs under bundled Mono with explicit
 world fixtures; its results do not satisfy every production acceptance gate.

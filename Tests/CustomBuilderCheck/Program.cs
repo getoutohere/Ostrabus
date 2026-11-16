@@ -15,6 +15,67 @@ static class Program {
         __result = 1;
         return false;
     }
+    static int motionEntries;
+    static bool MotionProbe() { motionEntries++; return false; }
+    static void SffDecisionComposition(Assembly assembly, Harmony harmony) {
+        var observer = assembly.GetType("Ostrabus.Orbital.OrbitalStepObservationPatch", true);
+        var advance = assembly.GetType("Ostrabus.Orbital.SffAdvance", true);
+        var orbital = assembly.GetType("Ostrabus.Orbital.OrbitalSimulation", true);
+        var simulation = assembly.GetType("Ostrabus.Orbital.SffSimulation", true);
+        var enabled = AccessTools.Property(orbital, "Enabled");
+        var stepping = AccessTools.Property(advance, "Active");
+        var gui = AccessTools.Field(typeof(GUIFFWD), "bFFWDActive");
+        object priorEnabled = enabled.GetValue(null), priorStepping = stepping.GetValue(null), priorGui = gui.GetValue(null);
+        var begin = AccessTools.Method(simulation, "Begin");
+        harmony.Patch(begin, prefix: new HarmonyMethod(typeof(Program), nameof(MotionProbe)));
+        try {
+            var world = (StarSystem)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(StarSystem));
+            enabled.SetValue(null, true); stepping.SetValue(null, true); gui.SetValue(null, true);
+            motionEntries = 0;
+            AccessTools.Method(observer, "Prefix").Invoke(null, new object[] { world, .5d, null });
+            if (motionEntries != 1) throw new Exception("Generated SFF build drops sub-minute decision-step physics.");
+            stepping.SetValue(null, false);
+            AccessTools.Method(observer, "Prefix").Invoke(null, new object[] { world, .5d, null });
+            if (motionEntries != 1) throw new Exception("Generated SFF build captures ordinary short updates.");
+            gui.SetValue(null, false);
+            AccessTools.Method(observer, "Prefix").Invoke(null, new object[] { world, 1500d, null });
+            if (motionEntries != 1) throw new Exception("Generated SFF build captured an untagged non-GUI update.");
+            var boundary = assembly.GetType("Ostrabus.Orbital.JumpBoundary", true);
+            using ((IDisposable)Activator.CreateInstance(boundary, BindingFlags.Instance | BindingFlags.NonPublic, null, new object[] { "pass" }, null)) {
+                AccessTools.Method(observer, "Prefix").Invoke(null, new object[] { world, 1500d, null });
+                stepping.SetValue(null, true);
+                AccessTools.Method(observer, "Prefix").Invoke(null, new object[] { world, .5d, null });
+                if (motionEntries != 3 || (bool)gui.GetValue(null)) throw new Exception("Generated PASS build drops tagged long/short physics or fakes the GUI flag.");
+            }
+            Console.WriteLine("Custom SFF/PASS composition: tagged short/long windows execute; ordinary untagged updates retain their gates.");
+        } finally {
+            harmony.Unpatch(begin, HarmonyPatchType.Prefix, harmony.Id);
+            stepping.SetValue(null, priorStepping); enabled.SetValue(null, priorEnabled); gui.SetValue(null, priorGui);
+        }
+    }
+
+    static Action<double> worldCheck;
+    static bool WorldProbe(double fTimeDelta) { worldCheck(fTimeDelta); return false; }
+    static void CollisionJumpComposition(Assembly assembly, Harmony harmony) {
+        var boundary = assembly.GetType("Ostrabus.Orbital.JumpBoundary", true);
+        var orbital = assembly.GetType("Ostrabus.Orbital.OrbitalSimulation", true);
+        var advance = assembly.GetType("Ostrabus.Orbital.SffAdvance", true);
+        var update = AccessTools.Method(typeof(StarSystem), nameof(StarSystem.Update));
+        harmony.Patch(update, prefix: new HarmonyMethod(typeof(Program), nameof(WorldProbe)));
+        try {
+            if ((bool)AccessTools.Property(orbital, "Enabled").GetValue(null)) throw new Exception("Collision-only build enabled orbital simulation.");
+            int calls = 0;
+            worldCheck = seconds => {
+                calls++;
+                if (seconds != 30 || !(bool)AccessTools.Property(boundary, "Active").GetValue(null) || GUIFFWD.Active)
+                    throw new Exception("Collision-only PASS lost its discontinuity tag or altered native progression.");
+            };
+            var world = (StarSystem)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(StarSystem));
+            AccessTools.Method(advance, "Pass").Invoke(null, new object[] { world, 30d });
+            if (calls != 1 || (bool)AccessTools.Property(boundary, "Active").GetValue(null)) throw new Exception("Collision-only PASS leaked state or changed world-update count.");
+            Console.WriteLine("Custom collision-only composition: PASS history boundary works with orbital simulation disabled.");
+        } finally { worldCheck = null; harmony.Unpatch(update, HarmonyPatchType.Prefix, harmony.Id); }
+    }
 
     static int Main(string[] args) {
         if (args.Length != 1) throw new ArgumentException("Pass a generated Ostrabus.dll.");
@@ -81,6 +142,9 @@ static class Program {
                     Console.WriteLine("FAILED " + type.FullName + ": " + error);
                 }
             }
+
+            if (features.Contains("sff")) SffDecisionComposition(assembly, harmony);
+            if (features.Contains("hull-collisions") && !features.Contains("sff")) CollisionJumpComposition(assembly, harmony);
 
             foreach (var item in new[] {
                 new[] { "em-propagation", "Ostrabus.EMPropagation.EmPropagation", "com.ostranauts.template.em-propagation" },

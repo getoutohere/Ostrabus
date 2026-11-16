@@ -2,113 +2,113 @@
     "schemaVersion":  1,
     "description":  "BeatManager staging and deferred GUI entrypoint; not a complete military AI model.",
     "bindings":  {
-"combat_handoff_blockade":  [
-                                    {
-                                        "type":  "Ostranauts.Ships.AIPilots.BlockadePilot",
-                                        "methods":  [
-                                                        ".ctor"
-                                                    ]
-                                    }
-                                ],
-    "combat_handoff_admission":  [
-                                     {
-                                         "type":  "Ostranauts.Ships.Commands.AmIInCombat",
-                                         "methods":  [
-                                                         "RunCommand"
-                                                     ]
-                                     }
-                                 ],
-    "combat_handoff_scan":  [
-                                {
-                                    "type":  "Ostranauts.Ships.Commands.AreThreatsNearby",
-                                    "methods":  [
-                                                    "RunCommand"
-                                                ]
-                                }
-                            ],
-    "combat_handoff_blockade_scan":  [
-                                         {
-                                             "type":  "Ostranauts.Ships.Commands.AreThreatsNearbyBlockade",
-                                             "methods":  [
-                                                             "RunCommand"
-                                                         ]
-                                         }
-                                     ],
-    "combat_handoff_cleanup":  [
-                                   {
-                                       "type":  "Ostranauts.Ships.Commands.IsTargetNeutralized",
-                                       "methods":  [
-                                                       "RunCommand"
-                                                   ]
-                                   }
-                               ],
-    "combat_handoff_station":  [
-                                   {
-                                       "type":  "Ostranauts.Ships.Commands.TargetNearestStation",
-                                       "methods":  [
-                                                       "RunCommand"
-                                                   ]
-                                   }
-                               ],
-    "combat_handoff_sequence":  [
-                                    {
-                                        "type":  "Ostranauts.Ships.Commands.SequenceCommand",
-                                        "methods":  [
-                                                        "RunCommand"
-                                                    ]
-                                    }
-                                ],
-    "combat_handoff_adapter":  [
-                                   {
-                                       "type":  "Ostranauts.Ships.Commands.ConditionCommand",
-                                       "methods":  [
-                                                       ".ctor",
-                                                       "RunCommand"
-                                                   ]
-                                   }
-                               ],
-    "combat_handoff_patch":  [
-                                 {
-                                     "type":  "Ostranauts.Ships.AIPilots.NavyPilot",
-                                     "methods":  [
-                                                     ".ctor"
-                                                 ]
-                                 },
-                                 {
-                                     "type":  "Ostranauts.Ships.AIPilots.BlockadePilot",
-                                     "methods":  [
-                                                     ".ctor"
-                                                 ]
-                                 },
-                                 {
-                                     "type":  "Ostranauts.Ships.Commands.ConditionCommand",
-                                     "methods":  [
-                                                     ".ctor",
-                                                     "RunCommand"
-                                                 ]
-                                 }
-                             ],
-    "combat_acquisition_patch":  [
-                                     {
-                                         "type":  "Ostranauts.Ships.Commands.AreThreatsNearby",
-                                         "methods":  [
-                                                         "HasSurrenderedToUs"
-                                                     ]
-                                     },
-                                     {
-                                         "type":  "Ostranauts.Ships.Commands.AreThreatsNearbyBlockade",
-                                         "methods":  [
-                                                         "RunCommand"
-                                                     ]
-                                     },
-                                     {
-                                         "type":  "Ostranauts.Ships.Commands.IsTargetNeutralized",
-                                         "methods":  [
-                                                         "RunCommand"
-                                                     ]
-                                     }
-                                 ],
-"flight_rcs_native":  [
+                     "combat_handoff_blockade":  [
+                                                     {
+                                                         "type":  "Ostranauts.Ships.AIPilots.BlockadePilot",
+                                                         "methods":  [
+                                                                         ".ctor"
+                                                                     ]
+                                                     }
+                                                 ],
+                     "combat_handoff_admission":  [
+                                                      {
+                                                          "type":  "Ostranauts.Ships.Commands.AmIInCombat",
+                                                          "methods":  [
+                                                                          "RunCommand"
+                                                                      ]
+                                                      }
+                                                  ],
+                     "combat_handoff_scan":  [
+                                                 {
+                                                     "type":  "Ostranauts.Ships.Commands.AreThreatsNearby",
+                                                     "methods":  [
+                                                                     "RunCommand"
+                                                                 ]
+                                                 }
+                                             ],
+                     "combat_handoff_blockade_scan":  [
+                                                          {
+                                                              "type":  "Ostranauts.Ships.Commands.AreThreatsNearbyBlockade",
+                                                              "methods":  [
+                                                                              "RunCommand"
+                                                                          ]
+                                                          }
+                                                      ],
+                     "combat_handoff_cleanup":  [
+                                                    {
+                                                        "type":  "Ostranauts.Ships.Commands.IsTargetNeutralized",
+                                                        "methods":  [
+                                                                        "RunCommand"
+                                                                    ]
+                                                    }
+                                                ],
+                     "combat_handoff_station":  [
+                                                    {
+                                                        "type":  "Ostranauts.Ships.Commands.TargetNearestStation",
+                                                        "methods":  [
+                                                                        "RunCommand"
+                                                                    ]
+                                                    }
+                                                ],
+                     "combat_handoff_sequence":  [
+                                                     {
+                                                         "type":  "Ostranauts.Ships.Commands.SequenceCommand",
+                                                         "methods":  [
+                                                                         "RunCommand"
+                                                                     ]
+                                                     }
+                                                 ],
+                     "combat_handoff_adapter":  [
+                                                    {
+                                                        "type":  "Ostranauts.Ships.Commands.ConditionCommand",
+                                                        "methods":  [
+                                                                        ".ctor",
+                                                                        "RunCommand"
+                                                                    ]
+                                                    }
+                                                ],
+                     "combat_handoff_patch":  [
+                                                  {
+                                                      "type":  "Ostranauts.Ships.AIPilots.NavyPilot",
+                                                      "methods":  [
+                                                                      ".ctor"
+                                                                  ]
+                                                  },
+                                                  {
+                                                      "type":  "Ostranauts.Ships.AIPilots.BlockadePilot",
+                                                      "methods":  [
+                                                                      ".ctor"
+                                                                  ]
+                                                  },
+                                                  {
+                                                      "type":  "Ostranauts.Ships.Commands.ConditionCommand",
+                                                      "methods":  [
+                                                                      ".ctor",
+                                                                      "RunCommand"
+                                                                  ]
+                                                  }
+                                              ],
+                     "combat_acquisition_patch":  [
+                                                      {
+                                                          "type":  "Ostranauts.Ships.Commands.AreThreatsNearby",
+                                                          "methods":  [
+                                                                          "HasSurrenderedToUs"
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "type":  "Ostranauts.Ships.Commands.AreThreatsNearbyBlockade",
+                                                          "methods":  [
+                                                                          "RunCommand"
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "type":  "Ostranauts.Ships.Commands.IsTargetNeutralized",
+                                                          "methods":  [
+                                                                          "RunCommand"
+                                                                      ]
+                                                      }
+                                                  ],
+                     "flight_rcs_native":  [
                                                {
                                                    "methods":  [
                                                                    "Maneuver"

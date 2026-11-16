@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Ostrabus.ApartmentRefuel</AssemblyName>
     <RootNamespace>Ostrabus.ApartmentRefuel</RootNamespace>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <LangVersion>latest</LangVersion>
     <PathMap>$(MSBuildProjectDirectory)=/_/ApartmentRefuel</PathMap>
   </PropertyGroup>

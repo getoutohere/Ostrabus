@@ -21,11 +21,12 @@ internal static class HullCollisionScanPatch {
         var locations=Enumerable.Range(0,code.Count).Where(i=>code[i].Calls(radius)).ToArray();
         if(locations.Length!=1)throw new InvalidOperationException("Expected one physical Ship/Ship radius branch; collision patch requires review.");
         int at=locations[0],start=at+2;
-        if(at<8||start+2>=code.Count||!LoadShip(code[at-1],__originalMethod)||
-            code[at-7].opcode!=OpCodes.Conv_R4||!code[at-8].Calls(AccessTools.Method(typeof(ShipSitu),nameof(ShipSitu.GetDistance),new[]{typeof(double),typeof(double)}))||
-            code[start+2].opcode!=OpCodes.Bge_Un_S&&code[start+2].opcode!=OpCodes.Bge_Un||
-            code[start].blocks.Count!=0||code[start+1].blocks.Count!=0||code[start+2].blocks.Count!=0||
-            LabelCount(code[start+1])!=0||LabelCount(code[start+2])!=0)
+        if(at<7||start+3>=code.Count||!LoadShip(code[at-1],__originalMethod)||
+            !code[at-7].Calls(AccessTools.Method(typeof(ShipSitu),nameof(ShipSitu.GetDistance),new[]{typeof(double),typeof(double)}))||
+            code[start+2].opcode!=OpCodes.Conv_R8||
+            code[start+3].opcode!=OpCodes.Bge_Un_S&&code[start+3].opcode!=OpCodes.Bge_Un||
+            code[start].blocks.Count!=0||code[start+1].blocks.Count!=0||code[start+2].blocks.Count!=0||code[start+3].blocks.Count!=0||
+            LabelCount(code[start+1])!=0||LabelCount(code[start+2])!=0||LabelCount(code[start+3])!=0)
             throw new InvalidOperationException("Physical overlap IL changed; refusing an unverified collision branch.");
         // Verify both comparison operands are the locals just computed, not a
         // superficially similar proximity/planet/projectile comparison.
@@ -54,7 +55,7 @@ internal static class HullCollisionScanPatch {
                 yield return new CodeInstruction(code[i].opcode,code[i].operand);
                 yield return new CodeInstruction(code[i+1].opcode,code[i+1].operand);
                 yield return new CodeInstruction(OpCodes.Call,AccessTools.Method(typeof(PhysicalCollisions),nameof(PhysicalCollisions.Overlap)));
-                yield return new CodeInstruction(OpCodes.Brfalse,code[i+2].operand);i+=2;
+                yield return new CodeInstruction(OpCodes.Brfalse,code[i+3].operand);i+=3;
             } else {
                 yield return code[i];
                 if(thresholds.Contains(i)) {

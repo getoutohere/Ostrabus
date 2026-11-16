@@ -70,7 +70,7 @@ static partial class Program {
             var situ = new ShipSitu(false) { vPosx = 1 + i * 1e-6, vPosy = 2 + i * 2e-6, fRot = .7f, bIgnoreGrav = true };
             situ.vVelX = 1e-8; situ.vVelY = 2e-8;
             situ.vAccIn = new Vector2(1e-12f, 2e-12f);
-            nav.AddNavDataPoint(new NavDataPoint(start + duration * i, situ, 100, .2, 100000 - duration * i));
+            nav.AddNavDataPoint(new NavDataPoint(start + duration * i, situ, 100, .2, 100000 - duration * i,rcsCount:0F));
         }
         ship.objSS.NavData = nav;
         return nav;
@@ -78,8 +78,8 @@ static partial class Program {
     static NavData BurnCoastBrake(Ship ship) {
         var path = Empty<FlyToPath>(); Set(path, "_shipUs", ship);
         var nav = new NavData(ship);
-        nav.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false), 100, 0, 100000));
-        var destination = new NavDataPoint(1000, new ShipSitu(false), 100, 0, 100000);
+        nav.AddNavDataPoint(new NavDataPoint(1000, new ShipSitu(false), 100, 0, 100000,rcsCount:0F));
+        var destination = new NavDataPoint(1000, new ShipSitu(false), 100, 0, 100000,rcsCount:0F);
         var generate = AccessTools.Method(typeof(FlyToPath), "PlotBurnLoop");
         double acceleration = ship.GetMaxTorchThrust(.2f);
         foreach (var stage in new[] { (1200d, acceleration, 2, 0), (21600d, 0d, 0, 0), (1200d, -acceleration, 0, 2) }) {

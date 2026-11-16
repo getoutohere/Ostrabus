@@ -1,0 +1,512 @@
+{
+  "schemaVersion": 1,
+  "scope": "Direct CMD aliases in loot/loot.json plus core/generated-stakes interaction references; conditional reachability and recursive loot closure are not certified.",
+  "lootSource": "loot/loot.json",
+  "lootSha256": "a99c68909b9b661c8785efa229cf4f9dc89f877f1a0ca1ed4ede070267df709a",
+  "dialogueSources": [
+    {
+      "path": "interactions/interactions.json",
+      "sha256": "d62120c3564c0801da6e769e783dd4185d004486cb27d2ce67126e8dfb454ee1"
+    },
+    {
+      "path": "interactions/interactions_social_core.json",
+      "sha256": "9cdad996262584b5dc05b6db3126678af38f3910ca553b400f8fffbc30c35400"
+    },
+    {
+      "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+      "sha256": "e5726d8e1378b1af849ad396214be780cda8c80e8e0dfde341a0b712316f72c8"
+    },
+    {
+      "path": "condtrigs/condtrigs.json",
+      "sha256": "0e33fbb53f7ddde1655f5d286be160f9107cf53b6e5a18768e917e9346ed4b2e"
+    },
+    {
+      "path": "condtrigs/condtrigs2.json",
+      "sha256": "c916feb1ab67711d7c81f871251e5abf0697b2287939e7a823bbcfeb74fcda10"
+    },
+    {
+      "path": "tsv/output/stakes/condtrigs/condTriggers_STKShipSurrender_PlayerDemand.json",
+      "sha256": "4ec669449dc1bad1ff8507aa4c1af88e3317f923e83a82b61784bc45305fb72c"
+    },
+    {
+      "path": "loot/loot.json",
+      "sha256": "a99c68909b9b661c8785efa229cf4f9dc89f877f1a0ca1ed4ede070267df709a"
+    },
+    {
+      "path": "tsv/output/stakes/loot/loot_STKShipSurrender_PlayerDemand.json",
+      "sha256": "9626398d1d7738aa26bb281748889291a5a252c19d7bbbe5d60dadffc0fc0a11"
+    },
+    {
+      "path": "shipSpecs/shipspecs.json",
+      "sha256": "2ac9645520eb44de028c897583f680c8510c8127d9f209c362d429e778a3ce92"
+    },
+    {
+      "path": "personSpecs/personspecs.json",
+      "sha256": "d313f9ca30c434072806e2bef25263ea018a38df4f8ad5195dd2cd0455127f32"
+    }
+  ],
+  "sources": [
+    {
+      "path": "interactions/interactions_ship_to_ship.json",
+      "sha256": "f2e29e95e6196203725633a520b47c9681b4a5c3547c47a85b6d7bb25830e2b5"
+    },
+    {
+      "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIDemand.json",
+      "sha256": "2c0c01737c37f6027aeae7f9312d504a1dc803707ac9d8fec462c35305aa42d8"
+    },
+    {
+      "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIOffer.json",
+      "sha256": "3ba70ddec1bfdee9ef9373150befff7d5536279cf7c3e538b35939eab9cd3cb8"
+    },
+    {
+      "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+      "sha256": "e5726d8e1378b1af849ad396214be780cda8c80e8e0dfde341a0b712316f72c8"
+    },
+    {
+      "path": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerOffer.json",
+      "sha256": "ba17e8da22c00908b6751097de50e0b60661bcb58940fd1a0130b731852ffd97"
+    }
+  ],
+  "aliases": [
+    {
+      "alias": "CMDComeHere",
+      "command": "ComeHere",
+      "arguments": [],
+      "disposition": "explicit-phases-fixture-qualified",
+      "references": [
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPComingAllow",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": null,
+          "ctThem": null
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+          "interaction": "STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_Allow",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_Allow_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_Allow_Them"
+        }
+      ]
+    },
+    {
+      "alias": "CMDTakeFuel",
+      "command": "TakeFuel",
+      "arguments": [],
+      "disposition": "native-receipt-and-transfer-provider-qualified; materialized-gas-storage-not-qualified",
+      "references": [
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPTransferFuelAllow",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": null,
+          "ctThem": null
+        }
+      ]
+    },
+    {
+      "alias": "CMDConsiderSurrender",
+      "command": "SurrenderConsiderOffer",
+      "arguments": [],
+      "disposition": "native-body-fixture-qualified",
+      "references": [
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPSurrenderAI",
+          "side": "LootCTsThem",
+          "shipTestUs": null,
+          "shipTestThem": "IsInCombatWithOther",
+          "ctUs": null,
+          "ctThem": null
+        },
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPSurrender",
+          "side": "LootCTsThem",
+          "shipTestUs": null,
+          "shipTestThem": "IsInCombatWithOther",
+          "ctUs": null,
+          "ctThem": null
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIDemand.json",
+          "interaction": "STKShipSurrender_AIDemand_Intro_Allow_Friendly",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIDemand_Intro_Allow_Friendly_Us",
+          "ctThem": null
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIDemand.json",
+          "interaction": "STKShipSurrender_AIDemand_Intro_Allow_DcAltruismBad",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIDemand_Intro_Allow_DcAltruismBad_Us",
+          "ctThem": "CT_STKShipSurrender_AIDemand_Intro_Allow_DcAltruismBad_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIDemand.json",
+          "interaction": "STKShipSurrender_AIDemand_Intro_Allow_DcSecurityBad",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIDemand_Intro_Allow_DcSecurityBad_Us",
+          "ctThem": "CT_STKShipSurrender_AIDemand_Intro_Allow_DcSecurityBad_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIDemand.json",
+          "interaction": "STKShipSurrender_AIDemand_Intro_Allow_Faction_Likes",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIDemand_Intro_Allow_Faction_Likes_Us",
+          "ctThem": null
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIDemand.json",
+          "interaction": "STKShipSurrender_AIDemand_Intro_Allow_TraitUs_Kind",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIDemand_Intro_Allow_TraitUs_Kind_Us",
+          "ctThem": "CT_STKShipSurrender_AIDemand_Intro_Allow_TraitUs_Kind_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIDemand.json",
+          "interaction": "STKShipSurrender_AIDemand_Intro_Allow_TraitUs_Forgiving",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIDemand_Intro_Allow_TraitUs_Forgiving_Us",
+          "ctThem": "CT_STKShipSurrender_AIDemand_Intro_Allow_TraitUs_Forgiving_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIDemand.json",
+          "interaction": "STKShipSurrender_AIDemand_Intro_Allow_TraitUs_Agliophobic",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIDemand_Intro_Allow_TraitUs_Agliophobic_Us",
+          "ctThem": "CT_STKShipSurrender_AIDemand_Intro_Allow_TraitUs_Agliophobic_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIOffer.json",
+          "interaction": "STKShipSurrender_AIOffer_Intro_Allow_TraitUs_Kind",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIOffer_Intro_Allow_TraitUs_Kind_Us",
+          "ctThem": "CT_STKShipSurrender_AIOffer_Intro_Allow_TraitUs_Kind_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIOffer.json",
+          "interaction": "STKShipSurrender_AIOffer_Intro_Allow_TraitUs_Forgiving",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIOffer_Intro_Allow_TraitUs_Forgiving_Us",
+          "ctThem": "CT_STKShipSurrender_AIOffer_Intro_Allow_TraitUs_Forgiving_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_AIOffer.json",
+          "interaction": "STKShipSurrender_AIOffer_Intro_Allow_TraitUs_Agliophobic",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_AIOffer_Intro_Allow_TraitUs_Agliophobic_Us",
+          "ctThem": "CT_STKShipSurrender_AIOffer_Intro_Allow_TraitUs_Agliophobic_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerOffer.json",
+          "interaction": "STKShipSurrender_PlayerOffer_Intro_Allow_Friendly",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_Friendly_Us",
+          "ctThem": null
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerOffer.json",
+          "interaction": "STKShipSurrender_PlayerOffer_Intro_Allow_DcAltruismBad",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_DcAltruismBad_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_DcAltruismBad_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerOffer.json",
+          "interaction": "STKShipSurrender_PlayerOffer_Intro_Allow_DcSecurityBad",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_DcSecurityBad_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_DcSecurityBad_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerOffer.json",
+          "interaction": "STKShipSurrender_PlayerOffer_Intro_Allow_Faction_Likes",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_Faction_Likes_Us",
+          "ctThem": null
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerOffer.json",
+          "interaction": "STKShipSurrender_PlayerOffer_Intro_Allow_TraitUs_Kind",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_TraitUs_Kind_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_TraitUs_Kind_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerOffer.json",
+          "interaction": "STKShipSurrender_PlayerOffer_Intro_Allow_TraitUs_Forgiving",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_TraitUs_Forgiving_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_TraitUs_Forgiving_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerOffer.json",
+          "interaction": "STKShipSurrender_PlayerOffer_Intro_Allow_TraitUs_Agliophobic",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_TraitUs_Agliophobic_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerOffer_Intro_Allow_TraitUs_Agliophobic_Them"
+        }
+      ]
+    },
+    {
+      "alias": "CMDConsiderPlayerDemandSurrender",
+      "command": "SurrenderConsiderPlayerDemand",
+      "arguments": [],
+      "disposition": "shipped-reply-order-and-native-evaluators-qualified-subset; crew-effects-fixtured",
+      "references": [
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+          "interaction": "STKShipSurrender_PlayerDemand_Intro",
+          "side": "LootCTsThem",
+          "shipTestUs": "PlayerCurrentShip",
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerDemand_Intro_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerDemand_Intro_Them"
+        }
+      ]
+    },
+    {
+      "alias": "CMDSurrenderArrestAndDespawn",
+      "command": "SurrenderArrestAndDespawn",
+      "arguments": [],
+      "disposition": "exclusive-native-takeover; subsystem-outcome-not-qualified",
+      "references": [
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+          "interaction": "STKShipSurrender_PlayerDemand_Gambit_DemandArrest_Allow_BCER_Reward",
+          "side": "LootCTsThem",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandArrest_Allow_BCER_Reward_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandArrest_Allow_BCER_Reward_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+          "interaction": "STKShipSurrender_PlayerDemand_Gambit_DemandArrest_Allow_BCRS_Reward",
+          "side": "LootCTsThem",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandArrest_Allow_BCRS_Reward_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandArrest_Allow_BCRS_Reward_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+          "interaction": "STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_SwitchArrest_AllowBCER",
+          "side": "LootCTsThem",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_SwitchArrest_AllowBCER_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_SwitchArrest_AllowBCER_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+          "interaction": "STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_SwitchArrest_AllowBCRS",
+          "side": "LootCTsThem",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_SwitchArrest_AllowBCRS_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_SwitchArrest_AllowBCRS_Them"
+        }
+      ]
+    },
+    {
+      "alias": "CMDDeployHauler",
+      "command": "DeployHauler",
+      "arguments": [],
+      "disposition": "exclusive-native-takeover; subsystem-outcome-not-qualified",
+      "references": [
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPSOSDispatchHauler",
+          "side": "LootCTsUs",
+          "shipTestUs": "AnyStation",
+          "shipTestThem": "IsNotDocked",
+          "ctUs": null,
+          "ctThem": null
+        }
+      ]
+    },
+    {
+      "alias": "CMDDeployLeo",
+      "command": "DeployLeo",
+      "arguments": [],
+      "disposition": "exclusive-native-takeover; subsystem-outcome-not-qualified",
+      "references": [
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPSOSDispatchLEO",
+          "side": "LootCTsUs",
+          "shipTestUs": "AnyStation",
+          "shipTestThem": "CanDockAnywhere",
+          "ctUs": null,
+          "ctThem": null
+        }
+      ]
+    },
+    {
+      "alias": "CMDScuttle",
+      "command": "Scuttle",
+      "arguments": [],
+      "disposition": "exclusive-native-takeover; subsystem-outcome-not-qualified",
+      "references": [
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+          "interaction": "STKShipSurrender_PlayerDemand_Gambit_DemandArrest_Deny_ScuttleDo",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandArrest_Deny_ScuttleDo_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandArrest_Deny_ScuttleDo_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+          "interaction": "STKShipSurrender_PlayerDemand_Gambit_DemandMoney_Deny_ScuttleDo",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandMoney_Deny_ScuttleDo_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandMoney_Deny_ScuttleDo_Them"
+        },
+        {
+          "source": "tsv/output/stakes/interactions/interactions_STKShipSurrender_PlayerDemand.json",
+          "interaction": "STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_Deny_ScuttleDo",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_Deny_ScuttleDo_Us",
+          "ctThem": "CT_STKShipSurrender_PlayerDemand_Gambit_DemandBoarding_Deny_ScuttleDo_Them"
+        }
+      ]
+    },
+    {
+      "alias": "CMDShoot",
+      "command": "Shoot",
+      "arguments": [],
+      "disposition": "native-body-empty-weapon-fixture",
+      "references": [
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPReally",
+          "side": "LootCTsUs",
+          "shipTestUs": null,
+          "shipTestThem": null,
+          "ctUs": null,
+          "ctThem": null
+        }
+      ]
+    },
+    {
+      "alias": "CMDStartPractice",
+      "command": "RaceComms",
+      "arguments": [
+        "IsPractice"
+      ],
+      "disposition": "exclusive-native-takeover; subsystem-outcome-not-qualified",
+      "references": [
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPStartPracticeAllow",
+          "side": "LootCTsUs",
+          "shipTestUs": "AnyStation",
+          "shipTestThem": "PlayerCurrentShip",
+          "ctUs": null,
+          "ctThem": null
+        }
+      ]
+    },
+    {
+      "alias": "CMDStartRace",
+      "command": "RaceComms",
+      "arguments": [
+        "IsRace"
+      ],
+      "disposition": "exclusive-native-takeover; subsystem-outcome-not-qualified",
+      "references": [
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPStartRacAllow",
+          "side": "LootCTsUs",
+          "shipTestUs": "AnyStation",
+          "shipTestThem": "PlayerCurrentShip",
+          "ctUs": null,
+          "ctThem": null
+        }
+      ]
+    },
+    {
+      "alias": "CMDCancelRaceSession",
+      "command": "RaceComms",
+      "arguments": [
+        "end"
+      ],
+      "disposition": "exclusive-native-takeover; subsystem-outcome-not-qualified",
+      "references": [
+        {
+          "source": "interactions/interactions_ship_to_ship.json",
+          "interaction": "SHIPRaceCancelAllow",
+          "side": "LootCTsUs",
+          "shipTestUs": "AnyStation",
+          "shipTestThem": "PlayerCurrentShip",
+          "ctUs": null,
+          "ctThem": null
+        }
+      ]
+    },
+    {
+      "alias": "CMDTargetPlayer",
+      "command": "TargetPlayer",
+      "arguments": [],
+      "disposition": "native-body-fixture-qualified",
+      "references": []
+    }
+  ],
+  "nativeInputs": [
+    "BeatManager: FlyToPatrol",
+    "BeatManager: LockPirate",
+    "WeaponsSystem.DodgeHandling: Dodge then late DodgeTarget publication",
+    "AIShip.FFWD: OneShotWrapperCommand (disabled for executive-owned actors)"
+  ],
+  "productionReady": false
+}

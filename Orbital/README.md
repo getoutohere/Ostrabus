@@ -1,10 +1,15 @@
 # Orbital physics and Super Fast Forward
 
+[Celestial impact forecasting](../Navigation/SFF-DECISION-GAP.md) prevents a long
+SFF coast from consuming the decision turns between native patrol legs.
+
 Namespace/subdirectory `Ostrabus.Orbital`. Experimental; default off.
 
-[PASS time-skip audit](PASS-TIME-SKIPS.md) documents the remaining shuttle boundary
-integration work. The separate [route-completion bugfix](../Navigation/ROUTE-COMPLETION.md)
-repairs native completed-route fall-through without changing the GUI SFF scopes.
+[PASS time-skip integration](PASS-TIME-SKIPS.md) shares motion, freight progression,
+decision turns and collision-history boundaries with GUI SFF. Native course
+completion hands its remaining coast to the existing solver; GUI state and
+passenger transfer remain native. The separate
+[route-completion bugfix](../Navigation/ROUTE-COMPLETION.md) also protects ordinary playback.
 
 [Economic SFF catch-up](Economy/README.md) processes production, freight dispatch and
 eligible cargo arrivals in simulation-time order without changing the player's course.
@@ -19,11 +24,31 @@ This setting in `BepInEx/config/com.ostranauts.template.cfg` supplies the game-l
 default. Console `orbital on`, `orbital off`, `orbital toggle`, and `orbital status`
 override it **for this session only**; they do not rewrite the launch setting.
 Scene/save changes retain the session choice and clear diagnostic caches/counters.
-`SuperFastForward` enables the SFF replacement when the main Orbital flag is on.
+`SuperFastForward` enables the SFF/PASS replacement when the main Orbital flag is on.
 `orbital sff on/off` changes that subfeature for the session. No configuration value
 is rewritten by either console toggle.
 
 ## Confirmed force-law problem and correction
+
+### Boundary with native 1.1 circular orbits
+
+Native `ShipSitu.LockToBOOrbit`/`AdvanceBOOrbit` prescribe circular motion for
+body-locked objects. They do not replace the free-ship numerical force law or
+integrator. `StarSystem.GetGreatestGravBOFast` still returns only the selected
+body's acceleration; the unlocked branch of `ShipSitu.TimeAdvance` still uses
+one constant acceleration for the whole step.
+
+Our gravity correction, normal coast integrator and SFF physical propagation
+already exclude body/orbit-locked objects. Native circular motion therefore
+remains authoritative without removing these hooks. The version comparison
+identified no orbital hook or free-flight correction made redundant by it.
+
+The small rotation formula in `BodyLockedOffset` mirrors native
+`GetBOOffsetPrediction` on captured scalar state for detached SFF/freight
+prediction. The native instance method itself is read-only, but invoking it on a
+live mutable target would not preserve that captured state; a detached
+`ShipSitu` would require another object. Replacing this arithmetic would remove
+no hook and is not an established simplification win.
 
 Analytical `BodyOrbit` motion adds each parent's changing position. Numerical free
 ships instead receive only the selected strongest body's gravity. The missing

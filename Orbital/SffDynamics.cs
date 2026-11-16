@@ -65,11 +65,11 @@ internal sealed class SffPathTarget : ISffTarget {
         internal double Epoch;
         internal MotionState State;
         internal BodyOrbit Body;
-        internal DVector Offset;
+        internal BodyLockedOffset Orbit;
         internal MotionState At(double epoch) {
             if (Body == null) return State;
             if (!OrbitalMotion.BodyAt(Body, epoch, out var body)) throw new InvalidOperationException("Invalid route target ephemeris");
-            return new MotionState(body.Position + Offset, body.Velocity);
+            return Orbit.At(body, epoch);
         }
     }
     internal Point[] Points;
@@ -94,12 +94,12 @@ internal sealed class SffTarget : ISffTarget {
     internal MotionState Initial;
     internal double Start;
     internal BodyOrbit Locked;
-    internal DVector Offset;
+    internal BodyLockedOffset Orbit;
     internal SffBody Reference;
     public MotionState At(double epoch) {
         if (Locked != null) {
             if (!OrbitalMotion.BodyAt(Locked, epoch, out var body)) throw new InvalidOperationException("Invalid target ephemeris");
-            return new MotionState(body.Position + Offset, body.Velocity);
+            return Orbit.At(body, epoch);
         }
         if (Reference == null) return new MotionState(Initial.Position + Initial.Velocity * (epoch - Start), Initial.Velocity);
         var origin = Reference.At(Start); var end = Reference.At(epoch);
@@ -110,7 +110,7 @@ internal sealed class SffTarget : ISffTarget {
     public DVector Acceleration(double epoch) {
         if (Locked != null) {
             if (!OrbitAcceleration.TryFrame(Locked, epoch, out var a, out _)) throw new InvalidOperationException("Invalid target acceleration");
-            return new DVector(a.X, a.Y) * OrbitalMotion.KmPerAU;
+            return new DVector(a.X, a.Y) * OrbitalMotion.KmPerAU + Orbit.Acceleration(epoch);
         }
         if (Reference == null) return default;
         return Reference.Acceleration(epoch) + OrbitalMotion.Gravity(At(epoch).Position - Reference.At(epoch).Position, Reference.Mu);
@@ -166,7 +166,7 @@ internal struct SffOutcome {
     internal MotionState State;
         internal DVector Acceleration;
     internal SffBody Body, Impact;
-    internal double ArrivalAfter;
+    internal double ArrivalAfter, ImpactAfter;
     internal int Steps, Switches;
     internal bool Arrived, Atmosphere, BudgetFallback;
 }
@@ -186,7 +186,7 @@ internal static class SffDynamics {
             var reference = body.At(t);
             DVector relative = state.Position - reference.Position;
             double radius = relative.Length;
-            if (radius <= body.Radius + collisionRadius) return Impact(result, body, relative, state.Velocity - reference.Velocity, start + seconds, collisionRadius);
+            if (radius <= body.Radius + collisionRadius) return Impact(result, body, relative, state.Velocity - reference.Velocity, start + seconds, collisionRadius, elapsed);
             if (flight != null) {
                 var target = flight.Target.At(t);
                 if ((target.Position - state.Position).Length <= flight.HandoffKm && (target.Velocity - state.Velocity).Length <= flight.ArrivalSpeed) {
@@ -260,9 +260,22 @@ internal static class SffDynamics {
                     double closest = (lo + hi) * .5;
                     if (!Coast(state, body, t, closest, out var exact)) throw new InvalidOperationException("Impact arc did not converge");
                     var center = body.At(t + closest);
-                    if ((exact.Position - center.Position).Length <= body.Radius + collisionRadius)
-                        return Impact(result, body, exact.Position - center.Position, exact.Velocity - center.Velocity, start + seconds, collisionRadius);
-                } else return Impact(result, body, nearest, next.Velocity - endReference.Velocity, start + seconds, collisionRadius);
+                    if ((exact.Position - center.Position).Length <= body.Radius + collisionRadius) {
+                        // Scheduling needs the first surface crossing, not the
+                        // later closest approach used for collision placement.
+                        double first = 0, last = closest;
+                        for (int i = 0; i < 28; i++) {
+                            double middle = (first + last) * .5;
+                            // Impact is already verified. A degenerate conic
+                            // must not turn a conservative deadline refinement
+                            // into a failed trajectory or a later deadline.
+                            if (!Coast(state, body, t, middle, out var sample)) { last = 0; break; }
+                            if ((sample.Position - body.At(t + middle).Position).Length <= body.Radius + collisionRadius) last = middle;
+                            else first = middle;
+                        }
+                        return Impact(result, body, exact.Position - center.Position, exact.Velocity - center.Velocity, start + seconds, collisionRadius, elapsed + last);
+                    }
+                } else return Impact(result, body, nearest, next.Velocity - endReference.Velocity, start + seconds, collisionRadius, elapsed + step * fraction);
             }
             state = next; elapsed += step;
         }
@@ -270,13 +283,13 @@ internal static class SffDynamics {
         result.Acceleration = Acceleration(state, result.Body, start + seconds, seconds, engines, aero, flight);
         return result;
     }
-    static SffOutcome Impact(SffOutcome result, SffBody body, DVector relative, DVector velocity, double end, double shipRadius) {
+    static SffOutcome Impact(SffOutcome result, SffBody body, DVector relative, DVector velocity, double end, double shipRadius, double elapsed) {
         var atEnd = body.At(end);
         double r = relative.Length;
         DVector inward = r > 0 ? relative * (Math.Max(0, body.Radius + shipRadius - .05) / r) : new DVector(body.Radius - .05, 0);
         result.State = new MotionState(atEnd.Position + inward, atEnd.Velocity + velocity);
         result.Acceleration = body.Acceleration(end) + OrbitalMotion.Gravity(inward, body.Mu);
-        result.Impact = result.Body = body; return result;
+        result.Impact = result.Body = body; result.ImpactAfter = elapsed; return result;
     }
     internal static bool Coast(MotionState state, SffBody body, double epoch, double seconds, out MotionState result) {
         var a = body.At(epoch); var b = body.At(epoch + seconds);

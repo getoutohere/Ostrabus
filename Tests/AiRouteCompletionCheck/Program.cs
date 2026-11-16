@@ -34,8 +34,8 @@ static partial class Program {
     }
     static NavData Route(Ship ship, ShipSitu endpoint, double end = 1000) {
         var nav = new NavData(ship);
-        nav.AddNavDataPoint(new NavDataPoint(900, new ShipSitu(false), 0, 0, 0));
-        nav.AddNavDataPoint(new NavDataPoint(end, endpoint, 0, 0, 0));
+        nav.AddNavDataPoint(new NavDataPoint(900, new ShipSitu(false), 0, 0, 0,rcsCount:0F));
+        nav.AddNavDataPoint(new NavDataPoint(end, endpoint, 0, 0, 0,rcsCount:0F));
         ship.objSS.NavData = nav;
         return nav;
     }
@@ -95,7 +95,7 @@ static partial class Program {
         var production = new Harmony("offline.ai-route.production");
         production.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.MiscBugFixes.SffNavigationDestinationPatch", true)).Patch();
         Completion(true);
-        MooringCompletion(boundary);
+        MooringCompletion(boundary, production);
         PilotRefusal(boundary, production);
         Recovery();
         HoldContinuation();
