@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/1b3907ab03abeae1ed752da21f5146d459bac163b478bfb07fa9be3db5570019.json.br",
+  "reason": "Reviewed native absolute clock and GUI/PASS boundaries against authored asset ownership. Fractional propagation matches the representable endpoint; course completion bounds previews without removing earlier danger turns. 241 timing checks and 5368 composed orbital checks pass, with 1494 economy, 689 completion/recovery and 449 docking/orbit checks. Deterministic preview work is 64 versus 255 steps; whole-game wall-time gain remains to be measured. Numerical details remain external to the lifecycle graph.",
+  "acceptedUtc": "2026-11-17T01:31:01.4736958Z",
+  "previousSnapshot": "assembly-baselines/6bb1e01dcde1fe775d64490079392d7c43bd66078d92d5e8b794ea35b48f752c.json.br"
+}

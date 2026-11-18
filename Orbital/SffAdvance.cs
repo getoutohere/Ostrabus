@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
+using System.Diagnostics;
 using HarmonyLib;
 using Ostranauts.Ships.AIPilots;
 using Ostrabus.Inspection;
@@ -50,6 +51,9 @@ internal static class SffAdvance {
         if (Active || !OrbitalSimulation.Enabled || !SffSimulation.Enabled) { system.Update(seconds); return; }
         double start = StarSystem.fEpoch, end = start + seconds;
         int steps = 0, decisionSteps = 0, courseSteps = 0;
+        int previews = 0;
+        double previewSeconds = 0;
+        long began = Stopwatch.GetTimestamp(), previewTicks = 0, worldTicks = 0;
         bool budgetFallback = false;
         var urgent = new List<AIShip>();
         var affected = new HashSet<string>(StringComparer.Ordinal);
@@ -65,10 +69,17 @@ internal static class SffAdvance {
                 // A fixed bound limits pathological planning cost. Falling back
                 // preserves native time progression; it grants no crash immunity.
                 if (steps < 512) {
+                    // Playback can change the next decision at this boundary.
+                    // Do not calculate hours of trajectories beyond it first.
+                    double horizon = before + step;
+                    double course = CourseBoundary(system, before, horizon, run.CompletionOffered);
+                    step = course - before;
+                    previews++; previewSeconds += step;
+                    long previewBegan = Stopwatch.GetTimestamp();
                     using (var preview = SffSimulation.Preview(system, step))
                         if (preview != null) step = Math.Min(step, preview.DecisionStep(urgent));
-                    double course = CourseBoundary(system, before, end, run.CompletionOffered);
-                    if (course < before + step) { step = course - before; courseSteps++; }
+                    previewTicks += Stopwatch.GetTimestamp() - previewBegan;
+                    if (course < horizon && before + step == course) courseSteps++;
                 } else budgetFallback = true;
                 if (urgent.Count != 0 && step < remaining) {
                     decisionSteps++;
@@ -81,7 +92,9 @@ internal static class SffAdvance {
                 // economy and clock advancement. No detached actor is ticked
                 // against a temporarily rewound shared world.
                 run.FinalWindow = before + step == end;
-                system.Update(step);
+                long worldBegan = Stopwatch.GetTimestamp();
+                try { system.Update(step); }
+                finally { worldTicks += Stopwatch.GetTimestamp() - worldBegan; }
                 steps++;
                 if (!(StarSystem.fEpoch > before) || StarSystem.fEpoch > end)
                     throw new InvalidOperationException("Time-skip world step did not advance within the requested interval.");
@@ -99,6 +112,10 @@ internal static class SffAdvance {
             last = SnapshotJson.Map("source", source, "startEpoch", start, "requestedSeconds", seconds,
                 "endEpoch", StarSystem.fEpoch, "worldSteps", steps, "decisionSteps", decisionSteps,
                 "courseCompletionSteps", courseSteps, "roleCallbacksAdmitted", run.Admitted,
+                "previews", previews, "previewSeconds", previewSeconds,
+                "previewWallMs", previewTicks * 1000d / Stopwatch.Frequency,
+                "worldWallMs", worldTicks * 1000d / Stopwatch.Frequency,
+                "elapsedWallMs", (Stopwatch.GetTimestamp() - began) * 1000d / Stopwatch.Frequency,
                 "affectedShips", ids, "budgetFallback", budgetFallback);
         }
     }

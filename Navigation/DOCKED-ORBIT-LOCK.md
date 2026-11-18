@@ -3,6 +3,58 @@
 Implemented and tested offline November 16, 2026 against 1.1.0.0. The full Debug
 DLL is built. **Not deployed or live-playtested; no live ship recovery applied.**
 
+## Undocking reference overwrite, November 16 follow-up
+
+The initial repair missed a native undocking transition. `Ship.Undock(Ship)`
+calls `GetNearestBO(..., bIncludePlaceholders: false)` and then
+`ShipSitu.TryRelockToBO` for an unmanned derelict, even if it still has the
+attachment retained during docking. A station-relative wreck can therefore
+leave its passive visit with `bBOLocked == true` but a different reference.
+The old Phobos fixture supplied Phobos as both the original reference and the
+nearest body; checking the final lock flag and reference against that fixture
+could not expose the overwrite.
+
+Live/save evidence: E-XMH is locked to **HQCH_DET** and docked to civilian O-S04
+in `arrive`, then locked to **Mercury** in `pathcheck`; the current live snapshot
+retains Mercury during another civilian visit. V-6BM, J-ZEK and H-QS10 also have
+Mercury references. This confirms the saved reference change, not the exact
+historical method-call arguments. A compiled-native-method A/B reproduces the
+undocking transition with deliberately distinct original/candidate bodies.
+
+`PassiveUndockAttachmentPatch` replaces only Undock's derelict relock call.
+If a non-orbit-placeholder wreck is still body-locked and its reference exists,
+the helper reports the existing attachment as retained, leaving its reference,
+offset, angular rate and phase untouched. Applied control/course release already
+clears the lock; those hulls and missing-reference cases keep native candidate
+selection and the native speed limit. The existing VORB candidate-selection
+patch stays authoritative for free hulls. No global relock override, new saved
+marker, attachment history or repair timer is introduced.
+
+The reviewed HQCH environment map 100 already requests body-locked wrecks;
+native spawning honors the body's authored reference. JSON does not define the
+undocking reassignment, so this repair belongs in C#. Existing misplaced wrecks
+are **not** automatically moved or relocked: their earlier reference is not
+reliably recoverable from current state alone.
+
+`Tools/DockingOrbitStudy/UndockReferenceChecks.cs` adds **385 assertions**:
+the uncorrected control replaces HQCH/HQCH_DET with Mercury and Phobos with Mars;
+the repaired control preserves the original reference. Both docking directions,
+either departure actor, fixed/circular attachments, retained offset/rate/phase,
+released excessive-speed rejection and missing-reference fallback are covered.
+The complete suite now passes **834 checks**, including the new hook in the
+existing real-ephemeris, native hauler, SFF/PASS and collateral compositions.
+Body caches and nearest-body selection are explicit fixtures in this A/B; it
+does not claim a full historical Unity replay. Private read-only snapshots and
+test output are under `obj/SffStall-20261116/attachment-*` and
+`undock-reference-checks.txt`.
+
+The rebuilt full DLL binds all 302 patch classes without failures or warnings.
+Standalone attachment and towing packages compile, retain full-build ordering
+and bind successfully; the custom builder passes 596 self-checks. The Traffic
+model passes 571 checks and its 101 reviewed source/dependency groups and 20
+asset entries audit cleanly. The correction is built for deployment and remains
+pending live playtest.
+
 **Current verdict:** repair the lifetime of an existing authored body attachment
 during a passive visit, with explicit release for applied control or course
 execution. Do not create attachments for arbitrary AI holds, remove AI gravity
@@ -234,8 +286,9 @@ the undocking method's exact historical arguments.
    Admit a pending course even if the first skip ends past arrival, so the
    existing completion/remainder-coasting repair retains authority.
 
-This uses three native hook targets (the docking overload, group input and the
-HaulShip member-unlock write), plus changes inside existing towing callbacks.
+This uses four native hook targets (the docking overload, undocking derelict
+relock, group input and the HaulShip member-unlock write), plus changes inside
+existing towing callbacks.
 The helper operates on the
 current docking group at explicit docking/control/course boundaries. No global
 registry, per-frame fleet scan, new AI controller, saved marker or repair timer.
@@ -262,7 +315,7 @@ repair must not require optional hull collisions or torch fuel corrections.
 
 ## Offline evidence and limits
 
-[DockingOrbitStudy](../Tools/DockingOrbitStudy/README.md) passes **449 checks**:
+[DockingOrbitStudy](../Tools/DockingOrbitStudy/README.md) originally passed **449 checks**:
 the original 188 controls plus production course-refusal, three-member/residual-spin
 controls, station-collision exemption controls and native hauler/SFF/PASS lifecycle
 integration, plus the independent collateral review below.

@@ -448,6 +448,10 @@
                                                               ]
                                               }
                                           ],
+                     "avoidance_prediction": [],
+    "avoidance_flight": [{"type":"Ostranauts.Ships.Commands.FlyTo","methods":["RunCommand"]},{"type":"Ostranauts.Ships.Commands.FlyToPath","methods":["RunCommand"]}],
+    "avoidance_route": [{"type":"Ostranauts.ShipGUIs.Utilities.NavData","methods":["TimeAdvance","GetNavDataPoints"]},{"type":"ShipSitu","methods":["UpdateTime"]}],
+    "avoidance_query": [],
                      "avoidance_repair":  [
 
                                           ],

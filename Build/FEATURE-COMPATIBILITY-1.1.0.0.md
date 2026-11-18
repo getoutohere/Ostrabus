@@ -1,5 +1,9 @@
 # Feature compatibility decisions: Ostranauts 1.1.0.0
 
+The [subsequent 1.1.0.1 review](COMPATIBILITY-1.1.0.1.md) retains these features
+without runtime adaptations or retirements, and separately verifies the newly
+added orbital-velocity repair. This document preserves the original 1.1.0.0 audit.
+
 This is the source/native-execution verdict for the feature catalog in
 `CustomBuilder/features.json`, against native assembly SHA-256
 `a79a5081d9c94307a45fe1d0b55ff1aa1d0af6ea8dfce1f9acc5961cf260ef07`.
@@ -11,8 +15,9 @@ and the [shared PASS adapter](../Orbital/PASS-TIME-SKIPS.md)
 to the existing `sff` feature. The subsequent independent
 [`bounty-preservation`](../Navigation/BOUNTY-PRESERVATION.md) simulation feature
 adds actor/original-hull lifecycle policy beyond the 114-feature compatibility
-checkpoint below. Passive attachment adds three further classes; the current
-full binding audit has 297 classes;
+checkpoint below. Passive attachment added three further classes; that
+binding checkpoint had 297 classes. The later orbital-velocity implementation
+passes the full binding audit with 306 classes, zero failures and zero warnings;
 the 289-class DLL identities and receipts below describe the earlier compatibility
 candidate and are preserved as evidence for that candidate.
 
@@ -60,7 +65,7 @@ decorated inventory and have their own runtime-harness checks.
 | `local-navigation-frames` | Retain | The changed tutorial/authority callers still generate local offsets. Native patrol/ambush and six-hour frame tests retain regional motion while preserving planetary controls. |
 | `departure-waypoints` | Retain | New RCS plotting still uses the same station/body departure construction. Native hierarchy/waypoint checks retain authored destinations and incoming RCS capability. |
 | `escape-targets` | Retain | Native target replacement still leaves an old escape course valid unless invalidated. Retarget/flight tests preserve same-target continuation and mission intent. |
-| `ai-avoidance` | Retain | Native collision scan improvements do not fix the past-encounter or unsafe planetary dodge choices. `PlanetaryNavigationCheck` and whole-plugin collision-order checks preserve native station and nonhazard behavior. |
+| `ai-avoidance` | Retain | Native admission/low-speed, past-warning and planetary dodge defects remain. The first admission repair failed live through route/evasion oscillation. Corrected candidate adds one FlyTo admission hook, native-route prediction and stable lateral escape: 93 sustained A/B assertions, 53 focused checks, 886 planetary checks and full-DLL hull-toggle/order tests. Corrected build awaits live acceptance. |
 | `bounty-departure-fuel` | Retain | Changed bounty spawning still reaches the native departure activation. `BountyDepartureCheck` covers activation, low-fuel branches, assets and scope; station servicing does not teleport the target. |
 | `bounty-escort` | Retain | Current roster/airlock assets still deny manually escorted arrested targets. Native permission/tile/expiry checks retain the narrow arrested/manual exception. |
 
@@ -115,6 +120,13 @@ decorated inventory and have their own runtime-harness checks.
 | `cargo-loading` | Retain | New native docking environment flags do not repair market manifest/load/arrival defects. Native economic tests preserve physical cargo backing, capacity/overflow policy, trade accounting and native arrival stages. |
 
 ## Navigation, geometry and torch courses
+
+Subsequent independent bugfix `orbital-velocity` adds two native prefixes on
+`BodyOrbit.UpdateTime` and `BodyOrbit.CreateBOFromShip`. The production-source
+[study](../Tools/OrbitalVelocityStudy/README.md) verifies common-time velocities,
+position-preserving coasting conversion, native body lifecycle and composition
+with navigation, docking, SFF/PASS and torch/fuel suites. This is later repair
+work, not a retirement or reclassification in the original compatibility audit.
 
 | Feature ID | Decision | Contract and supporting evidence |
 | --- | --- | --- |

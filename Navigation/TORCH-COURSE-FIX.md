@@ -5,6 +5,227 @@ powered SFF, coast and final braking. Automatic endpoint cleanup and the newest
 moored-departure preview correction remain offline-validated cases. The record
 below distinguishes implementation, native-assembly tests and live evidence.
 
+## Sensor selection cancelling a player course, 2026-11-17
+
+**Status: implemented and offline validated against 1.1.0.2; pending live test.**
+
+Native `Ostranauts.Ships.Commands.FlyToAutoPilot.RunCommand` replaces
+`shipSituTarget` with the selected sensor contact's situation while an existing
+course continues. `FlyToPath.RunCommand` can then finish early near that contact.
+Our `ShipTargetLifetime.Removed` also mistook that shared situation for proof
+that the plotted destination had been removed, clearing the unrelated route.
+This is a C# association defect. Reviewed `condowners_navmods.json` and
+`cooverlays_navmods.json` register the course module; they do not define this
+target-resolution or cleanup mechanism.
+
+`Navigation/PlayerCourseTargetPatch.cs` keeps those native command reads tied to
+the existing plotted destination rather than the sensor selection, without
+changing the selection shown in the UI. Registered destinations retain native
+motion, independently offset targets remain owned, and coordinate fallback
+copies its endpoint rather than allowing native updates to mutate a waypoint.
+Target removal uses the explicit destination identity for an active player
+course and repairs legacy shared-contact associations before cleanup. Removing
+the actual destination still cancels the course. Native plotting also omitted
+clearing an earlier hull ID for an empty-space plot; the successful-plan postfix
+records the current hull, stellar or body identity, or clears it for coordinates.
+
+The feature is packaged with `navigation-targets`, applies to player/non-NPC
+course playback, and adds no saved fields, per-frame callback, tracking table or
+replacement flight controller. Native requirements, pause aborts, route playback,
+fuel, movement and NPC targeting remain authoritative.
+
+`Tests/AiPlannerDiagnosis -- autopilot-target` executes the shipped native
+commands and destruction/restore hooks. Its A/B controls reproduce native
+scan retargeting and premature arrival; repaired cases include nearby, distant,
+hidden and saved/reloaded contacts, coordinate/offset goals, genuine destination
+loss, NPC exclusion and native pause failure. Successful-plan identity checks
+exercise the production postfix with a detached GUI fixture; they do not execute
+Unity drag/input or the full GUI planner. Engine presentation and asset
+materialization are fixture boundaries. The original live O-WG8P selection and
+subsequent disposal fit the reproduced failure, but no original cancellation
+call stack was captured. Diagnostic evidence is under
+`obj/AutopilotStop-20261117/`.
+
+## Coast acceleration / crew knockdown integration repair, 2026-11-16
+
+**Status: implemented, offline validated and live coast replay confirmed.**
+
+At epoch 65634576597.314873, M-TZ3T and its braced partner O-GXD reported
+1.087722 G while the corrected reactor's FLOW/CYCLE and modeled thrust were
+zero. Course points 28/29 have identical velocities: X =
+6.75063184760173e-6 AU/s and Y = 2.6773542711665261e-6 AU/s. The interval is a
+coast, but its first waypoint retains the previous 3 G burn's `vAccIn`; the
+second has zero. Native `NavData.TimeAdvance` interpolates those cached force
+vectors independently of velocity. At progress 0.63742590346815142, this yields
+1.087722 G, matching the captured ship/group input. The trajectory itself still
+interpolates equal velocities and therefore appears correct.
+
+Our reactor control correctly clears thrust for coast; native course playback
+can restore the obsolete vector between the reactor's .27-second updates.
+This is a missing integration boundary in our corrected playback. Native
+`Ship.Gravity` uses reported onboard acceleration for crew encumbrance, maneuver
+wear and a >1 G change threshold for `KnockDownCrew`. The reviewed assets
+`ACTShipKnockDown` / `TIsShipKnockDownTarget` correctly protect seated/prone crew;
+neither those rules nor the threshold should be weakened.
+
+The existing playback postfix now reports the derivative of the velocity that
+native playback actually prescribes for the current interval, after reactor
+catch-up and before group gravity consumes it. It changes neither waypoint
+positions/velocities nor the interpolation of those values. Equal endpoint
+velocities report zero internal acceleration; powered intervals report their
+prescribed velocity slope. The corrected input is synchronized through the
+existing native docking-group input method. Fuel, controls, attachment release
+and completion retain their existing mechanisms.
+
+Scope is an eligible corrected player torch profile and its actual course-owner
+situation. Intervals with analytical/body-attached points or RCS force/fuel use
+retain native handling; their velocity changes must not be double-counted as
+torch force. Uncorrected/AI/manual/unsupported courses are untouched. No new
+Harmony class/target, polling, saved field or replacement controller is added.
+Per-interval slopes are cached in the existing weak profile, not serialized.
+
+`Tools/TorchNativeOracle/CoastGravityChecks.cs` reproduces the observed numbers
+with a numerical coast segment and synthetic surrounding burns. The old
+playback postfix is removed for the A/B control; all other corrected-control
+logic remains installed. Actual native `Ship.SetThrust` and `Ship.Gravity`
+produce 10 knockdown requests across five prescribed conflicting update cycles.
+The repair produces zero coast input and zero requests. This establishes the
+mechanism and repairs the observed stale vector; the paused live capture did
+not record the exact historical Unity call order.
+
+The focused suite passes 707 checks: solo/towed groups, native-format/fresh/saved
+courses, independently advanced reactor clocks, normal/SFF mode, repeated coast
+updates, powered acceleration and legitimate knockdowns, RCS/analytical
+exclusions and uncorrected fallback. The native gravity setter executes; actor
+queue effects, audiovisual effects, damage application and crew gravity/item
+recalculation are explicit fixture boundaries. The earlier fuel/towing harness
+substituted SetThrust or suppressed Gravity and therefore did not prove this
+interaction safe. Native SFF also suppresses knockdowns during the skip itself.
+These limits explain how earlier validation could miss it, without claiming a
+proven date for the first live occurrence. Code history at `ed83d46` (0.4.0)
+already has the zero-coast reactor control and a playback postfix that only
+handles aborts; native 1.0.1.10 and 1.1.0.0 both interpolate the cached input
+vector. The reproduction uses a fresh attached profile and an ordinary debit,
+not native-course adoption or a refund. The mismatch therefore does not require
+either recent fuel repair. Private live snapshots and native
+outputs are in `obj/Knockdown-20261116/`.
+
+Final validation: the full torch oracle passes 408,488 assertions, including
+the focused 707. Docking/orbit 834 and route-completion 689 checks pass, all
+304 current full-plugin patch classes bind cleanly, and independent corrected
+fuel/towing custom packages compile and bind with their original class counts
+(7 and 8). This change extends an existing postfix and adds no runtime hook.
+
+### Live replay
+
+Loaded module `706bae10-4c4c-471f-882c-a8f3d93c411b` matches the rebuilt DLL.
+At epoch 65634576657.051994 the same 67-point VORB course remained attached in
+segment 28. FLOW/CYCLE, modeled reactor thrust, member input, group-anchor input
+and both hulls' interior gravity were zero. Subsequent ordinary-time snapshots
+retained those values. Ayden's complete active-condition snapshot at
+65634576724.621567 contains neither Prone nor Sitting/SittingSecure, so that
+observation does not depend on the native seated exemption.
+
+A later snapshot at 65634598345.664253 still has zero coast input and the same
+course in segment 31. Over 21,688.612259 game seconds since the initial snapshot,
+He-3 decreased by 1.200644349829 kg and D2O by 0.800829776135 kg; core wall damage
+did not change. The next captured GUI SFF receipt covers exactly 21,600 seconds,
+65634598357.178986 through 65634619957.178986. At 65634620001.9031, after normal
+time resumed, the course remains active in segment 34 with zero reactor/member/
+anchor input and zero interior gravity on M-TZ3T and O-GXD. Core wall damage is
+still 1.83360720971577.
+
+These are polled live states and a native SFF receipt, not a continuous record
+of every crew interaction. They confirm removal of the captured coast mismatch
+through normal updates and skips; the repaired build's later braking/arrival
+are not yet claimed as live observations. Evidence: private
+`obj/Knockdown-20261116/post-reload-*`, `live-*` and the orbital receipt.
+
+## Reactant refund and native-course recovery repairs, 2026-11-16
+
+**Status: implemented; offline validated against 1.1.0.0, pending live playtest.**
+
+The `depart`, `coast` and `arrive` snapshots retain the same D2O tank identity.
+Its stored amount changes from 16,822.15198861 kg to 10,413.5440748712 kg,
+then exactly its 44,722.8 kg capacity. The player reports no D2O purchase or
+transfer. At arrival, five He-3 canisters are empty and the last holds its
+5,216.0440246582 kg capacity. Later live tank purchases are outside this saved
+increase. No live fuel repair or retroactive fuel subtraction has been applied.
+
+`Ship.AIRefuel()` assigns only `fShallowRCSRemass`; the RCS refill patches do not
+write fusion reactants. This path does not explain D2O appearing in a tank.
+
+Native `FusionIC.SetReactants(double)` can reconcile an overstated remaining
+budget by adding reactants through `RemoveFromTanks`. Its temporary
+`CTReactantA`/`CTReactantB` selectors require the corresponding positive fuel
+condition, so `CODicts.GetTriggeredCOListByType` excludes empty canisters.
+If the included He-3 tank is already full, the paired refund cannot reach its
+target. Repeated reconciliation can keep adding D2O until that tank fills too.
+There is also a remainder error in `FusionIC.RemoveFromTanks`: after filling a
+tank, native code sets the outstanding negative withdrawal to minus that tank's
+free space, discarding the actual remainder. A full first tank therefore stops
+a refund even if empty tanks follow it.
+
+The optional `saved-fuel` oracle mode loads only extracted numerical tank/core
+and route records. A controlled native refund case starts with 10,000 kg D2O,
+one full He-3 tank and empty spare He-3 tanks. Eighty reconciliation calls fill
+D2O to 44,722.8 kg while He-3 stays at 5,216.0440246582 kg. Removing the
+production fuel-cache postfix gives the same result. Including empty tanks
+before the full tank permits one paired refund; ordering the full tank first
+also requires the remainder correction. Fuel
+debit/reconciliation executes native C#; typed-list eligibility is an explicit
+fixture matching the reviewed native selectors. This establishes a reachable
+native mechanism matching the observed asymmetry, not an exact replay of the
+historical calls or proof of the original excessive-budget source.
+
+The saved trip also retains native one-budget-second-per-powered-second and
+zero-coast-rate points. Its route fails recognition by the corrected saved
+profile, so installed patch classes alone do not establish that this historical
+trip used corrected consumption. The old recovery path recognizes only an
+already-corrected saved profile, and permanently ignores a course after even a
+temporary eligibility failure. The exact initial plotting call that missed the
+correction has not been established. Private evidence is retained under
+`obj/SffStall-20261116/fuel-*.json` and `saved-fuel-*.txt`; full saves are not
+copied into the repository.
+
+The existing fuel-cache feature now supplies all non-destroyed typed tanks to
+native `SetReactants`, retaining its own ship-ownership filter. A prefix limits
+refunds to the smaller paired free capacity. A narrow additional transpiler
+changes only `RemoveFromTanks`' refund remainder to
+`outstanding += capacity - contents`. Positive withdrawals retain native logic.
+This fixes materialized fuel reconciliation generally; it does not refuel AI
+ships, alter manual reactor consumption or change tank capacity/stoichiometry.
+The `conditions.json`/`condowners.json` assets define kg quantities and tank
+hardware correctly; the selectors and arithmetic are native C# defects.
+
+Player course recovery now explicitly recognizes native powered/coast budgets.
+After native reactor catch-up, it anchors a corrected remaining-trip budget to
+the physical inventory at `FusionIC.TimeLastRun`. The pending interval through
+global time is charged once by the existing settlement mechanism. Past fuel
+expenditure is retained; adoption does not credit or deduct historical burns.
+Cold or temporarily unavailable player/control state is retried. Unknown budget
+formats retain native handling; a recognized but unaffordable remainder aborts.
+This uses existing waypoint/flow serialization and weak runtime profiles, with
+no new saved fields, polling or long-running telemetry.
+
+`ReconciliationRepairChecks.cs` runs 5,065 assertions covering 80 repeated refunds
+per tank arrangement, one/two/four feeder pairs, missing/full/empty/overfilled
+tanks, paired capacity, ordinary withdrawals and exclusion of foreign/destroyed
+tanks. The stripped numerical
+`Tests/Fixtures/Torch/NativeBudgetCoast.json` retains the observed 67-point native
+course shape. Both clock orders consume the remaining analytic burn/coast
+integral within 1 mg He-3, preserve the D2O ratio, never gain fuel, and recognize
+the adopted course through native JSON reconstruction. The private full
+numerical extract also advances coast through braking with both fuels declining.
+These are native algorithm tests with fixture Unity boundaries, not a replay of
+every historical Unity call or proof that all past flights used the correction.
+
+Final validation: 407,781 torch-oracle assertions, 449 docking/orbit checks,
+689 route-completion checks and 5,368 orbital checks pass. All 301 full-build
+patch classes bind with zero failures or warnings. Custom fuel-cache, corrected
+fuel and towing packages compile, preserve ordering and bind successfully; the
+custom builder passes 595 self-checks. Debug DLL/PDB build without warnings.
+
 ## First live normal-simulation burn, 2026-11-11
 
 O-GXD, 26,798 kg, one active feeder/laser pair, approximately 30-minute course

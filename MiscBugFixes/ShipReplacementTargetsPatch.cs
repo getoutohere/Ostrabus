@@ -122,8 +122,12 @@ internal static class ShipTargetLifetime {
             if (observer == null || observer.bDestroyed) continue;
             TargetData target = observer.TargetData;
             bool scan = ReferenceEquals(observer.shipScanTarget, state.Previous);
+            bool sharedSituation = ReferenceEquals(observer.shipSituTarget, state.Situation);
+            bool independentCourse = PlayerCourseTarget.Active(observer) && observer.targetRegID != state.Id;
+            if (independentCourse) PlayerCourseTarget.Prepare(observer);
             bool goal = observer.targetRegID == state.Id || ReferenceEquals(observer.shipSituTarget, state.Situation) ||
                 (observer.shipSituTarget != null && target != null && ReferenceEquals(target.Ship, state.Previous) && ReferenceEquals(target.Situ, observer.shipSituTarget));
+            if (independentCourse) goal = false;
             if (goal) Invalidate(observer);
             else {
                 if (scan) observer.shipScanTarget = null;
@@ -134,6 +138,7 @@ internal static class ShipTargetLifetime {
             if (ReferenceEquals(observer.shipUndock, state.Previous)) observer.shipUndock = null;
             JsonShip json = observer.json;
             if (json == null) continue;
+            if (independentCourse && sharedSituation) json.objSituScanTarget = observer.shipSituTarget?.GetJSON();
             if (json.strTargetRegID == state.Id) {
                 json.strTargetRegID = null;
                 json.objSituScanTarget = null;

@@ -96,6 +96,14 @@ These are conditional reference traces, not live-game measurements or new native
 | passive-attachment-native-small-relock | p_end; no modeled finding | p_end; no modeled finding |
 | passive-attachment-permanent-identity-rcs | p_motion; no modeled finding | p_motion; no modeled finding |
 | passive-attachment-permanent-identity-course | p_motion; no modeled finding | p_motion; no modeled finding |
+| rendezvous.converged.converged | t_fly; no modeled finding | t_fly; no modeled finding |
+| rendezvous.converged.divergent | t_fly; no modeled finding | t_fly; no modeled finding |
+| rendezvous.divergent.converged | t_fly; traffic.unconverged_rendezvous | t_fly; no modeled finding |
+| rendezvous.divergent.divergent | t_fly; traffic.unconverged_rendezvous | t_fly; no modeled finding |
+| passive-undock-reference-retained | p_end; no modeled finding | p_end; no modeled finding |
+| passive-undock-reference-released | p_end; attachment.lost_wreck | p_end; attachment.lost_wreck |
+| passive-undock-reference-missing | p_end; no modeled finding | p_end; no modeled finding |
+| civilian-random-derelict-policy | t_fly; no modeled finding | t_station; no modeled finding |
 
 ## Behavioral tradeoffs
 
@@ -112,7 +120,9 @@ These are conditional reference traces, not live-game measurements or new native
 - **controller_identity / native_control_flow_repair**: Unsaved registration reuses an existing controller across regions rather than enrolling the same hull under a second role. Removes: Cross-region collision fallback creating an additional local controller for an active interregional freighter.. Preserves: Original role, region, home, behavior/blackboard state, route, fuel and manifest.; Native fallback creation when no controller exists and explicit saved/player-autopilot setup..
 - **civilian_wait_continuation / native_control_flow_repair**: Release eligible ordinary shallow civilian waits under the existing fuel abstraction, preserve SFF clocks and use the native faction home method. Removes: Permanent below-1kg visit lock when a safe faction home exists.; SFF restarting a routine mining clock.; Interface dispatch bypassing civilian home filtering.. Preserves: Actual tanks, native planning/selection and physical docking.; Materialized/combat fuel, explicit help and scripted/priority holds.; No resolved home retains native fallback and cannot release an empty waiter..
 - **asteroid_visit_duration / simulation_policy**: Draw a 5-120 game minute prospecting duration once on actual asteroid attachment. Removes: Uniformly brief mining visits after the deadlock is removed.. Preserves: Other visit durations and native next-job selection.; An existing saved remaining duration..
-- **passive_docking_attachment / simulation_attachment_lifetime**: Retain an authored body attachment for passive visits; release group and members for applied movement or authorized braced course. Defer HaulShip's member unlock while still waiting. Removes: Passive link changes dropping an existing body attachment.; Retained locks trapping applied movement or disappearing from paused-haul saved members.. Preserves: Native AI targets, Hold gravity policy and visit timing.; Station/ground/mooring constraints, brace abort and native relock thresholds.; Previously free hull motion; no automatic recovery..
+- **passive_docking_attachment / simulation_attachment_lifetime**: Retain an authored body attachment for passive visits; release group and members for applied movement or authorized braced course. Defer HaulShip's member unlock while still waiting. Retain a still-valid body reference through native undocking instead of replacing it with the nearest natural body. Removes: Passive link changes dropping an existing body attachment.; Retained locks trapping applied movement or disappearing from paused-haul saved members.. Preserves: Native AI targets, Hold gravity policy and visit timing.; Station/ground/mooring constraints, brace abort and native relock thresholds.; Previously free hull motion; no automatic recovery..
+- **ai_rendezvous / native_numerical_planning_repair**: Separate NPC RCS from reactor limiting and require physical rendezvous convergence before publication. Removes: Reactor power throttling unrelated RCS acceleration.; Finite but unconverged approach routes being accepted.. Preserves: Native RCS safety cap, player/torch/rotor limits and intermediate destinations.; Shallow fuel abstraction, freight destination and native retry counters; no forced arrival or replacement mission..
+- **civilian_derelict_destinations / simulation_policy**: Exclude native Derelict hulls from future random civilian ship visits; keep scavenger salvage on its own native selector. Removes: Civilian roaming selecting derelicts as casual docking destinations.. Preserves: Native station/ordinary ship selection, asteroid prospecting and fallback.; Existing visits, explicit destinations, scavenger and hauler work..
 
 ## Dependencies not transition-expanded
 

@@ -1,6 +1,6 @@
 # Apartment Refuel Terminal 0.1.1
 
-Optional standalone QoL mod for Ostranauts 1.1.0.0 / BepInEx 5. Includes its own
+Optional standalone QoL mod for Ostranauts 1.1.0.2 / BepInEx 5. Includes its own
 plugin and native item assets. It works independently of `Ostrabus.dll` and the
 Ostrabus Settings app. No per-frame callbacks or new saved simulation state.
 
@@ -28,7 +28,7 @@ Close the game and run `Install.cmd` from the standalone distribution. For a
 nonstandard installation:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\Install.ps1 -GameDirectory "D:\Games\Ostranauts"
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Install.ps1 -GameDirectory "<your-game-directory>"
 ```
 
 The installer honors the native custom Mods location, verifies file copies and

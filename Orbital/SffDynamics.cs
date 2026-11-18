@@ -173,6 +173,10 @@ internal struct SffOutcome {
 internal static class SffDynamics {
     internal static SffOutcome Propagate(SffEnvironment environment, MotionState initial, double start, double seconds,
         DVector engines, SffAero[] aero, double collisionRadius, SffFlight flight) {
+        // Native StarSystem.Update advances an absolute double epoch. Integrate
+        // that same representable interval, rather than an unattainable tail
+        // left by a fractional impact/decision deadline.
+        seconds = (start + seconds) - start;
         var state = initial;
         var result = new SffOutcome();
         double elapsed = 0;

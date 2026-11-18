@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net8.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>disable</Nullable></PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
+    <Compile Include="../../StandaloneMods/StationMigration/Catalog.cs" Link="Catalog.cs" />
+    <Compile Include="../../StandaloneMods/StationMigration/Grid.cs" Link="Grid.cs" />
+    <Compile Include="../../StandaloneMods/StationMigration/Migration.cs" Link="Migration.cs" />
+    <Compile Include="../StationMigrationStudy/AssetFiles.cs" Link="AssetFiles.cs" />
+  </ItemGroup>
+</Project>

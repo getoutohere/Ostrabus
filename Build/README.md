@@ -2,10 +2,15 @@
 
 Run these commands from the repository root.
 
-The [0.6.0 snapshot](RELEASE-0.6.0.md) targets Ostranauts 1.1.0.0 with partial
-in-game acceptance and separately documented offline-only additions. Read the
+The [0.7.0 release](RELEASE-0.7.0.md) targets **Ostranauts 1.1.0.2**, Windows
+and BepInEx 5, with partial in-game acceptance and documented offline-only repairs.
+The [0.6.0 snapshot](RELEASE-0.6.0.md) remains the historical 1.1.0.0 checkpoint. Read the
 [compatibility audit](COMPATIBILITY-1.1.0.0.md) and
 [feature ledger](FEATURE-COMPATIBILITY-1.1.0.0.md) for validation evidence and boundaries.
+The port also passes the [1.1.0.1](COMPATIBILITY-1.1.0.1.md) and
+[1.1.0.2](COMPATIBILITY-1.1.0.2.md) incremental reviews. The latter updates the
+separately packaged Station Kiosk Migration companion; normal full-plugin
+deployment remains unchanged.
 The separate [content-availability audit](CONTENT-AVAILABILITY-1.1.0.0.md) covers
 new equipment, ship-design sources, stations, residents and narrative access in
 the player's continuing save; it does not infer availability from hook compatibility.

@@ -9,7 +9,7 @@ internal static class MicrometeoroidInspection {
         var result = MeteorTest.Trigger();
         return new InspectionApi.Reply(200, SnapshotJson.Map(
             "triggered", result.Triggered,
-            "reason", result.Triggered ? null : "BeatManager eligibility rejected the event (station, station docking, torch drive or atmosphere).",
+            "reason", result.Triggered ? null : "BeatManager eligibility or target selection rejected the event (station, station docking, torch drive, atmosphere or no exposed hull).",
             "shipId", result.ShipId, "angleDegrees", result.Angle,
             "detectionProbability", result.DetectionProbability, "detected", result.Detected,
             "intercepted", result.Intercepted, "bursts", result.Bursts, "rounds", result.Rounds,

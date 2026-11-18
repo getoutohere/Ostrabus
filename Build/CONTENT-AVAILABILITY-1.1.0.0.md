@@ -1,5 +1,24 @@
 # Native content availability: 1.0.1.10 continuation in 1.1.0.0
 
+## Later 1.1.0.1 distinction
+
+The later [hotfix review](COMPATIBILITY-1.1.0.1.md) identifies actual station
+fixture changes and a native station-respawn migration. These changes are new
+in 1.1.0.1, not omitted station additions discovered retrospectively in the
+1.1.0.0 comparison. For example, `Station_HQCH.json` is byte-identical in the
+preserved 1.0.1.10 and 1.1.0.0 installations; 1.1.0.1 replaces one generic
+Refuel Kiosk instance with `ItmKioskHQCHScrap01` and its regional trader data.
+The hotfix also expands the Luna/Jade Rabbit first-docking encounter into a
+branching conversation. Its loader clears the old seen-encounter flag once,
+making the updated encounter eligible in an existing save without starting over.
+
+This demonstrates why a saved station needs an explicit retrofit to receive a
+changed fixture. The hotfix supplies that retrofit by replacing station
+interiors, with the player-property loss described in its review. It does not
+establish that the original 1.1.0.0 announcement's blanket fresh-save requirement
+was necessary for the boneyards, new ship designs or equipment already verified
+in the continuation. The verdict below remains scoped to 1.1.0.0.
+
 ## Verdict
 
 The dedicated content audit finds no demonstrated save-origin restriction that

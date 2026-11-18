@@ -257,7 +257,7 @@
         "Transfer only references",
         "observer.shipUndock = replacement"
       ],
-      "sha256": "cf8a11dea22b28ee4775da43c3abff2e03a3680024b57e5fbb0a95dd25c87ae3"
+      "sha256": "fad1ca49e22dae616ae753bb1c10c90b1a5083a5e9af6fc235728f86806cfd57"
     },
     "fix_flightfuel": {
       "origin": "repo",
@@ -338,7 +338,43 @@
         "internal static Point SelectEscape(",
         "internal static bool FutureCollision("
       ],
-      "sha256": "66e387fb1c6ee519624eb5699bc61fbcae3dd415292f9d58037b5bbf375e505a"
+      "sha256": "a0ccd3d076b2235de023ae51c54541ff66352b83d8d06a93f118594370860ecd"
+    },
+    "avoidance_prediction": {
+      "origin": "repo",
+      "path": "Navigation/AvoidancePrediction.cs",
+      "symbol": "AvoidancePrediction.Collision: bounded acceleration and hull-aware admission",
+      "anchors": [
+        "internal static bool Collision("
+      ],
+      "sha256": "3252ce2ad5b6084b45eca50117829cd941b1a37ebfaeff76f81208ad47316945"
+    },
+    "avoidance_flight": {
+      "origin": "repo",
+      "path": "Navigation/AvoidanceFlightPatch.cs",
+      "symbol": "AvoidanceFlightPatch: reject new unsafe courses through native manual/fuel branch",
+      "anchors": [
+        "internal static bool RejectCourse("
+      ],
+      "sha256": "d8f07c881345ed815ce280f99ab61550b6dc9442a82ec0c30dbf807fa0b4f4ac"
+    },
+    "avoidance_route": {
+      "origin": "repo",
+      "path": "Navigation/AvoidanceRouteForecast.cs",
+      "symbol": "AvoidanceRouteForecast: native waypoint interpolation, local admission and group/reference geometry",
+      "anchors": [
+        "internal static bool TryCollision("
+      ],
+      "sha256": "7f11ece29eb4fea47887de732cda2f0c537404d3122f2d322b6472ceb20a49a1"
+    },
+    "avoidance_query": {
+      "origin": "repo",
+      "path": "Navigation/AvoidanceQuery.cs",
+      "symbol": "AvoidanceQuery: stack-scoped flight/candidate/query restoration",
+      "anchors": [
+        "internal static State BeginFlight("
+      ],
+      "sha256": "27e0de71024928a55d9f01b7a90948c5b2317da75080585adf5d6a7404874e00"
     },
     "avoidance_geometry": {
       "origin": "repo",
@@ -434,7 +470,7 @@
         "Coast",
         "InCombat"
       ],
-      "sha256": "b047966823b44400b24ea83f33d03bedddd76f08d4de5d5c7b2ed66e9fe39692"
+      "sha256": "3a1815426285fdf24deb684ddaa2cda914b3baa6ab879cc917b5bfb1ee249e9d"
     },
     "local_frame_navy": {
       "origin": "game",
@@ -870,7 +906,7 @@
         "true",
         "false"
       ],
-      "description": "Orbital policy enabled and free unpowered vacuum wait eligible; atmosphere/combat excluded",
+      "description": "Orbital policy enabled, free unpowered wait eligible, supported clear bound trajectory; radial/impact/escape/atmosphere/combat excluded",
       "kind": "native_result"
     },
     "fallback_plan": {
@@ -2763,7 +2799,7 @@
       "evidence": [
         "waiting_checks"
       ],
-      "note": "Free unpowered vacuum waits retain normal gravity; atmospheric, combat, powered, docked and locked modes keep native behavior.",
+      "note": "Eligible free unpowered waits retain gravity only on supported bound trajectories with periapsis clear of the body, atmosphere and hull; other waits retain native physics.",
       "guards": [],
       "patch": "orbital_waiting"
     }
@@ -3930,6 +3966,47 @@
         }
       },
       "note": "Event means the saved authored deadline was reached; no new duration or forced dispatch is assumed."
+    },
+    {
+      "id": "unsafe-free-wait-keeps-native-physics",
+      "start": "scav_target",
+      "facts": {
+        "help": "true",
+        "gravity": "off",
+        "orbital_wait": "false",
+        "rotor": "false",
+        "goal": "absent",
+        "docked": "false",
+        "fallback_plan": "false",
+        "help_origin": "target",
+        "fuel": "ge1",
+        "retry_pause": "future",
+        "registered": "true",
+        "leaf": "target",
+        "main": "1"
+      },
+      "events": [
+        "wait_physics"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "scav_target",
+          "finding": null,
+          "without": null,
+          "fact": "gravity",
+          "value": "off",
+          "stop": null
+        },
+        "effective": {
+          "node": "scav_target",
+          "finding": null,
+          "without": null,
+          "fact": "gravity",
+          "value": "off",
+          "stop": null
+        }
+      },
+      "note": "orbital_wait=false represents rejected trajectory admission, including radial rest, body/atmosphere intersection or escape. Native numeric admission is independently exercised; this graph does not calculate orbital elements."
     },
     {
       "id": "sample-failure-with-feasible-return",

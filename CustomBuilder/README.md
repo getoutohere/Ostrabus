@@ -9,10 +9,18 @@ features, then press **b** to build. Dependencies are added automatically and
 shown with `+` and a reason. Remove their dependents first to exclude them.
 Profiles can be saved and loaded from the menu.
 
+`orbital-velocity` independently repairs shared orbital velocity caches and
+RCS-to-coast conversion. It is included in bugfix presets and needs no optional
+`orbital`, `coast` or `sff` feature. It adds two hooks and no frame callback or
+save fields; see the [scope and evidence](../Orbital/Velocity/README.md).
+
 `course-controls` adds mouse-wheel adjustment alongside the game's native
 Shift-drag precision controls. Existing profiles retain that feature ID.
 The separate `nav-module-placement` bugfix corrects native dragging under
 non-centered parent pivots; it remains independently selectable.
+
+Custom DLLs reference the adjacent `Ostrabus.pdb`, and symbol documents use virtual
+source paths; final verification rejects machine-specific or temporary PDB paths.
 
 The result is a folder and ZIP under `dist/`, including an installer, DLL/PDB,
 selection manifest and the selected profile. Nothing is installed automatically.
@@ -58,6 +66,8 @@ The Ceres feature requires the shared native-priority return integration.
 General RCS budget, Navy candidate affordability and native retreat progression
 repairs are included with `navigation-targets` in bugfix presets without enabling
 Ceres reserve policy.
+That feature also prevents inspecting or losing a sensor contact from cancelling
+an unrelated player course; removal of the actual destination still cancels it.
 `ai-flight-controls` independently includes controller-withdrawal cancellation,
 normal/SFF stale-dispatch checks, player course handoff and terminal fuel-retreat
 repair. Selecting it alone preserves the same protections as the full build;

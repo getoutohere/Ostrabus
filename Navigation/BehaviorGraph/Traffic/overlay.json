@@ -653,13 +653,15 @@
       "classification": "simulation_attachment_lifetime",
       "sources": [
         "patch_attachment",
-        "attachment_towing"
+        "attachment_towing",
+        "attachment_undock_checks"
       ],
       "evidence": [
         "attachment_checks",
-        "attachment_collateral"
+        "attachment_collateral",
+        "attachment_undock"
       ],
-      "summary": "Retain an authored body attachment for passive visits; release group and members for applied movement or authorized braced course. Defer HaulShip's member unlock while still waiting.",
+      "summary": "Retain an authored body attachment for passive visits; release group and members for applied movement or authorized braced course. Defer HaulShip's member unlock while still waiting. Retain a still-valid body reference through native undocking instead of replacing it with the nearest natural body.",
       "removes": [
         "Passive link changes dropping an existing body attachment.",
         "Retained locks trapping applied movement or disappearing from paused-haul saved members."
@@ -716,6 +718,115 @@
           "set": {
             "attachment_member": "body"
           }
+        },
+        {
+          "kind": "replace",
+          "edge": "attachment.depart.reference_changed",
+          "id": "fix.attachment.depart.reference",
+          "to": "p_end",
+          "set": {
+            "attachment_link": "departed",
+            "attachment_reference": "original"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ai_rendezvous",
+      "classification": "native_numerical_planning_repair",
+      "sources": [
+        "rendezvous_patch",
+        "rendezvous_checks"
+      ],
+      "evidence": [
+        "rendezvous_repair"
+      ],
+      "summary": "Separate NPC RCS from reactor limiting and require physical rendezvous convergence before publication.",
+      "removes": [
+        "Reactor power throttling unrelated RCS acceleration.",
+        "Finite but unconverged approach routes being accepted."
+      ],
+      "preserves": [
+        "Native RCS safety cap, player/torch/rotor limits and intermediate destinations.",
+        "Shallow fuel abstraction, freight destination and native retry counters; no forced arrival or replacement mission."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "rendezvous.converged.converged",
+          "id": "fix.rendezvous.converged.converged",
+          "to": "t_fly",
+          "set": {
+            "rcs_authority": "independent_rcs",
+            "rendezvous_geometry": "converged",
+            "rendezvous_plan": "accepted"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "rendezvous.converged.divergent",
+          "id": "fix.rendezvous.converged.divergent",
+          "to": "t_fly",
+          "set": {
+            "rcs_authority": "independent_rcs",
+            "rendezvous_geometry": "divergent",
+            "rendezvous_plan": "rejected"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "rendezvous.divergent.converged",
+          "id": "fix.rendezvous.divergent.converged",
+          "to": "t_fly",
+          "set": {
+            "rcs_authority": "independent_rcs",
+            "rendezvous_geometry": "converged",
+            "rendezvous_plan": "accepted"
+          }
+        },
+        {
+          "kind": "replace",
+          "edge": "rendezvous.divergent.divergent",
+          "id": "fix.rendezvous.divergent.divergent",
+          "to": "t_fly",
+          "set": {
+            "rcs_authority": "independent_rcs",
+            "rendezvous_geometry": "divergent",
+            "rendezvous_plan": "rejected"
+          }
+        }
+      ]
+    },
+    {
+      "id": "civilian_derelict_destinations",
+      "classification": "simulation_policy",
+      "sources": [
+        "civilian_derelict_policy",
+        "civilian_derelict_checks"
+      ],
+      "evidence": [
+        "civilian_derelict_policy"
+      ],
+      "summary": "Exclude native Derelict hulls from future random civilian ship visits; keep scavenger salvage on its own native selector.",
+      "removes": [
+        "Civilian roaming selecting derelicts as casual docking destinations."
+      ],
+      "preserves": [
+        "Native station/ordinary ship selection, asteroid prospecting and fallback.",
+        "Existing visits, explicit destinations, scavenger and hauler work."
+      ],
+      "operations": [
+        {
+          "kind": "replace",
+          "edge": "ship.derelict",
+          "id": "policy.visit.no_derelict",
+          "to": "t_station",
+          "removeSet": [
+            "goal",
+            "goal_state",
+            "leaf"
+          ],
+          "set": {}
         }
       ]
     }

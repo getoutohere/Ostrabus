@@ -416,7 +416,7 @@
       "anchors": [
         "class ShipTargetLifetime"
       ],
-      "sha256": "cf8a11dea22b28ee4775da43c3abff2e03a3680024b57e5fbb0a95dd25c87ae3"
+      "sha256": "fad1ca49e22dae616ae753bb1c10c90b1a5083a5e9af6fc235728f86806cfd57"
     },
     "patch_fuel": {
       "origin": "repo",
@@ -445,7 +445,7 @@
         "class PassPendingEndTurnsPatch",
         "CompletePendingEndTurns"
       ],
-      "sha256": "b61fb1392bd9298922858140b4c48932eb34e23ac21b9509d9439073b6717a18"
+      "sha256": "0e171ca69705de51050f24de886d644a613ae00ea10c90976da1cbee563b7aad"
     },
     "jump_discontinuity": {
       "origin": "repo",
@@ -895,12 +895,12 @@
     "patch_attachment": {
       "origin": "repo",
       "path": "Navigation/Attachments/PassiveAttachmentPatch.cs",
-      "symbol": "Preserve authored attachment during passive visits; release on applied movement; defer premature haul member unlock",
+      "symbol": "Preserve authored attachment and reference through passive docking/undocking; release on applied movement; defer premature haul member unlock",
       "anchors": [
         "internal static class PassiveAttachment",
         "class HaulAttachmentReleasePatch"
       ],
-      "sha256": "c9730b615478003369eb924ecc2491d0112e49949fdfdb8a01ef83ed32bf0ed4"
+      "sha256": "9c0f3f3c338fafe3653637b55e325ae79ea726d7bbc99c7d2aa3f8cfdfe8a95b"
     },
     "attachment_towing": {
       "origin": "repo",
@@ -911,6 +911,92 @@
         "internal static void PrepareStep"
       ],
       "sha256": "73e498a10014e7a1b91ab22028435c6c7bbfa23814440b87a6d1786a30ae1dc4"
+    },
+    "rendezvous_patch": {
+      "origin": "repo",
+      "path": "Navigation/AiRendezvousPatch.cs",
+      "symbol": "NPC RCS authority, finite rendezvous acceptance and freight numerical-rejection target retention",
+      "anchors": [
+        "class AiRcsAccelerationPatch",
+        "class AiRendezvousValidationPatch",
+        "class FreightRendezvousFailurePatch"
+      ],
+      "sha256": "5e2aa519ef6d9e22df3e51e55b3fc63774fbb157d7d953d3c6219f263cddbbb1"
+    },
+    "rendezvous_limiter": {
+      "origin": "game",
+      "path": "Ostranauts.ShipGUIs.NavStation/NavModTorchDrive.cs",
+      "symbol": "Native reactor-specific GetLimiterSafetyMax reused by the RCS planner",
+      "anchors": [
+        "GetLimiterSafetyMax"
+      ],
+      "sha256": "bf20c1d1bc68fd0773b76967bbbc806bc9ca0e2f594dd0f4a4dcff8b6c153e66"
+    },
+    "rendezvous_checks": {
+      "origin": "repo",
+      "path": "Tests/AiRendezvousCheck/Checks.cs",
+      "symbol": "Native moving-station reproduction and role/clock/goal regression checks",
+      "anchors": [
+        "PlanningChecks",
+        "FailureChecks"
+      ],
+      "sha256": "0adf10c5f94fba19fa455afdb05f5aa901d5be3137beea702c5d339985e07db3"
+    },
+    "sff_dynamics": {
+      "origin": "repo",
+      "path": "Orbital/SffDynamics.cs",
+      "symbol": "Corrected trajectory integration with native representable clock endpoint",
+      "anchors": [
+        "class SffDynamics",
+        "seconds = (start + seconds) - start"
+      ],
+      "sha256": "87e4f04de7b34a76fed1ddee2101047ca40a2a335b915130de6d7bde849f1ed2"
+    },
+    "sff_timing_checks": {
+      "origin": "repo",
+      "path": "Tests/OrbitalCheck/SffTimingChecks.cs",
+      "symbol": "Fractional coast/powered interval regression controls",
+      "anchors": [
+        "class SffTimingChecks"
+      ],
+      "sha256": "13e7a4980660067956162a10d118f5d204e239a51b4a7ef069227c0c21a1224c"
+    },
+    "sff_preview_checks": {
+      "origin": "repo",
+      "path": "Tests/OrbitalCheck/SffDecisionChecks.cs",
+      "symbol": "Bounded preview work, native course playback and earlier-danger controls",
+      "anchors": [
+        "PreviewRequested",
+        "PreviewFinished"
+      ],
+      "sha256": "18562e1658da8e6ba557bd7c1c2d1dda0eac635c2f820ae895c48db68b94a025"
+    },
+    "attachment_undock_checks": {
+      "origin": "repo",
+      "path": "Tools/DockingOrbitStudy/UndockReferenceChecks.cs",
+      "symbol": "Native A/B for original attachment versus a different nearest natural body",
+      "anchors": [
+        "static void UndockReferenceChecks"
+      ],
+      "sha256": "e7783e6a1a3a3fa00401f99d48dafb4f581d5ecb145efa51b3ef655332e4c86d"
+    },
+    "civilian_derelict_policy": {
+      "origin": "repo",
+      "path": "Navigation/CivilianDerelictVisitsPatch.cs",
+      "symbol": "Simulation policy: exclude native derelicts from new random civilian visits",
+      "anchors": [
+        "class CivilianDerelictVisitsPatch"
+      ],
+      "sha256": "d4947f5e5d5fa8be36eff5d89fc46df21a6e5a75d09d2d4f15cf3efe31e163d0"
+    },
+    "civilian_derelict_checks": {
+      "origin": "repo",
+      "path": "Tests/AiPlannerDiagnosis/DerelictVisitPolicyChecks.cs",
+      "symbol": "Native selection A/B and scavenger, asteroid, explicit-target controls",
+      "anchors": [
+        "static void DerelictVisitPolicy"
+      ],
+      "sha256": "19a1792c42c15aceb61c3df162e647de22ccf256a9ab3d122ba34f37ea10f1f2"
     }
   },
   "evidence": {
@@ -988,6 +1074,36 @@
       "level": "native_offline",
       "artifact": "Tools/DockingOrbitStudy/CollateralChecks.cs",
       "supports": "Independent production-DLL A/B tests execute actual SetThrust, current group-mass repair, native unbraced/braced wear, shutdown and saved-state release. Constructed native permanent identities reproduce the previous incomplete guard. They are not claims of a live station incident."
+    },
+    "rendezvous_native": {
+      "level": "native_offline",
+      "artifact": "Tests/AiRendezvousCheck/Program.cs",
+      "supports": "Native real-ephemeris moving-station control produces a divergent course. Unity/control identity, cargo mass and obstruction-detour absence are explicit fixtures. Numerical results are external inputs to this graph, not graph predictions."
+    },
+    "rendezvous_repair": {
+      "level": "native_offline",
+      "artifact": "Tests/AiRendezvousCheck/Checks.cs",
+      "supports": "Production hooks execute across native roles, torch/RCS/player and recursive-leg cases. Weak-RCS rejection preserves a cargo target through the native five-failure transition, while ordinary target loss retains native cleanup. SFF/PASS composition is covered separately by Tests/OrbitalCheck."
+    },
+    "sff_timing": {
+      "level": "native_offline",
+      "artifact": "Tests/OrbitalCheck/SffTimingChecks.cs",
+      "supports": "241 checks compare fractional coast/powered intervals with the absolute double clock endpoint. The pre-repair implementation reproduces the below-clock-resolution failure. These numerical outcomes are external evidence, not lifecycle graph predictions."
+    },
+    "sff_preview": {
+      "level": "native_offline",
+      "artifact": "Tests/OrbitalCheck/SffDecisionChecks.cs",
+      "supports": "The existing native queue/playback fixture bounds a first preview to its mandatory course completion: 64 integration steps versus 255 for the discarded full horizon. Earlier danger, remaining coast and unconsumed-course controls pass. Not a claim of measured whole-game speedup."
+    },
+    "attachment_undock": {
+      "level": "native_offline",
+      "artifact": "Tools/DockingOrbitStudy/UndockReferenceChecks.cs",
+      "supports": "385 assertions execute production docking/undocking hooks and native Ship.Undock. HQCH/HQCH_DET versus Mercury and Phobos versus Mars are deliberately distinct. Both call directions, either departure actor, static/circular phase preservation, released excessive-speed rejection and missing-reference fallback are covered. Body caches and nearest-body lookup are supplied fixtures, not a numerical orbit forecast."
+    },
+    "civilian_derelict_policy": {
+      "level": "native_offline",
+      "artifact": "Tests/AiPlannerDiagnosis/DerelictVisitPolicyChecks.cs",
+      "supports": "Production filter and native CivilianPilot.GetTarget/CanDockWith reproduce derelict acceptance versus station fallback, while native ScavCanDockWith, ordinary visits, asteroid eligibility, explicit cargo destinations and hidden-visit composition remain effective. RNG, crew creation and affordability are fixture boundaries; no full voyage claim."
     }
   },
   "variables": {
@@ -1159,7 +1275,8 @@
         "attached",
         "loaded",
         "tutorial",
-        "none"
+        "none",
+        "derelict"
       ],
       "description": "Candidate classification from native CanDockWith and reservation/range/fuel predicates.",
       "kind": "native_result"
@@ -1634,6 +1751,59 @@
       ],
       "kind": "native_result",
       "description": "Native station/substation/ground identity protects a member independently of transient body/ground flags."
+    },
+    "rendezvous_geometry": {
+      "values": [
+        "unassessed",
+        "converged",
+        "divergent"
+      ],
+      "description": "Externally measured native reactor-limited approach geometry.",
+      "kind": "native_result"
+    },
+    "rendezvous_full_rcs": {
+      "values": [
+        "unassessed",
+        "converged",
+        "divergent"
+      ],
+      "description": "Externally evaluated native approach using independent RCS acceleration; no numerical prediction is performed by this graph.",
+      "kind": "native_result"
+    },
+    "rendezvous_plan": {
+      "values": [
+        "none",
+        "accepted",
+        "rejected"
+      ],
+      "description": "Publication of a numerically evaluated AI approach.",
+      "kind": "state"
+    },
+    "rcs_authority": {
+      "values": [
+        "reactor_limiter",
+        "independent_rcs"
+      ],
+      "description": "Reactor-derived limiter versus native RCS acceleration and its existing safety cap.",
+      "kind": "state"
+    },
+    "attachment_reference": {
+      "values": [
+        "original",
+        "candidate",
+        "none",
+        "missing"
+      ],
+      "description": "Identity of the retained authored body reference versus native nearest-body fallback; separate from the lock flag.",
+      "kind": "state"
+    },
+    "attachment_candidate": {
+      "values": [
+        "same",
+        "different"
+      ],
+      "description": "Whether the nearest natural body matches the pre-visit reference. Original Phobos tests supplied the same body for both roles.",
+      "kind": "native_result"
     }
   },
   "predicates": {
@@ -2105,9 +2275,12 @@
         "sff_destination_refresh",
         "patch_sff",
         "shared_jump_adapter",
-        "jump_discontinuity"
+        "jump_discontinuity",
+        "sff_dynamics",
+        "sff_timing_checks",
+        "sff_preview_checks"
       ],
-      "detail": "Completed-course coordinates must be current before instant mooring; waiting for a pilot cannot become invented guidance or arrival. World physics runs before the native AI decision. Shared SFF/PASS windows split at native course completion and projected-impact decision opportunities, retain the original hourly role threshold once per eligible controller identity, and exclude unearned newborn time. Tests/OrbitalCheck/PassAdapterChecks.cs, PassHandoffStudy.cs and PassReuseChecks.cs execute those boundaries. Native scheduler worker draining, Unity scene transfer and elapsed-time geometry remain outside this role-lifecycle projection; see Orbital/PASS-TIME-SKIPS.md."
+      "detail": "Completed-course coordinates must be current before instant mooring; waiting for a pilot cannot become invented guidance or arrival. World physics runs before the native AI decision. Shared SFF/PASS windows split at native course completion and projected-impact decision opportunities, retain the original hourly role threshold once per eligible controller identity, and exclude unearned newborn time. Tests/OrbitalCheck/PassAdapterChecks.cs, PassHandoffStudy.cs and PassReuseChecks.cs execute those boundaries. Native scheduler worker draining, Unity scene transfer and elapsed-time geometry remain outside this role-lifecycle projection; see Orbital/PASS-TIME-SKIPS.md. Fractional intervals use the native representable clock endpoint. Mandatory course completions bound forecasts before trajectory calculation; earlier projected dangers can still request shorter updates. Whole-jump timings are bounded last-receipt scalars. Numerical and performance evidence is external to this lifecycle projection."
     },
     "t_sff_role": {
       "label": "Role-specific FFWD",
@@ -5461,6 +5634,9 @@
         "facts": {
           "attachment_relock": [
             "retained"
+          ],
+          "attachment_candidate": [
+            "same"
           ]
         }
       },
@@ -5758,7 +5934,8 @@
         "attachment_lock": "body",
         "attachment_member": "body",
         "attachment_link": "departed",
-        "attachment_relock": "retained"
+        "attachment_relock": "retained",
+        "attachment_reference": "candidate"
       },
       "sources": [
         "attachment_ship",
@@ -5769,6 +5946,172 @@
         "attachment_checks"
       ],
       "note": "Native boundary; scenario supplies any free-coast velocity mismatch from separate physical evidence."
+    },
+    {
+      "id": "rendezvous.converged.converged",
+      "from": "t_fly",
+      "to": "t_fly",
+      "event": "plot_rcs_approach",
+      "when": {
+        "facts": {
+          "rendezvous_geometry": [
+            "converged"
+          ],
+          "rendezvous_full_rcs": [
+            "converged"
+          ]
+        }
+      },
+      "set": {
+        "rendezvous_plan": "accepted",
+        "rcs_authority": "reactor_limiter"
+      },
+      "sources": [
+        "cmd_FlyToPath",
+        "rendezvous_limiter"
+      ],
+      "evidence": [
+        "rendezvous_native"
+      ],
+      "note": "Native PlanTrip4 returns the last finite refinement without a convergence requirement. These conditional outcomes use externally supplied geometry, not an assumption that all native routes diverge."
+    },
+    {
+      "id": "rendezvous.converged.divergent",
+      "from": "t_fly",
+      "to": "t_fly",
+      "event": "plot_rcs_approach",
+      "when": {
+        "facts": {
+          "rendezvous_geometry": [
+            "converged"
+          ],
+          "rendezvous_full_rcs": [
+            "divergent"
+          ]
+        }
+      },
+      "set": {
+        "rendezvous_plan": "accepted",
+        "rcs_authority": "reactor_limiter"
+      },
+      "sources": [
+        "cmd_FlyToPath",
+        "rendezvous_limiter"
+      ],
+      "evidence": [
+        "rendezvous_native"
+      ],
+      "note": "Native PlanTrip4 returns the last finite refinement without a convergence requirement. These conditional outcomes use externally supplied geometry, not an assumption that all native routes diverge."
+    },
+    {
+      "id": "rendezvous.divergent.converged",
+      "from": "t_fly",
+      "to": "t_fly",
+      "event": "plot_rcs_approach",
+      "when": {
+        "facts": {
+          "rendezvous_geometry": [
+            "divergent"
+          ],
+          "rendezvous_full_rcs": [
+            "converged"
+          ]
+        }
+      },
+      "set": {
+        "rendezvous_plan": "accepted",
+        "rcs_authority": "reactor_limiter"
+      },
+      "sources": [
+        "cmd_FlyToPath",
+        "rendezvous_limiter"
+      ],
+      "evidence": [
+        "rendezvous_native"
+      ],
+      "note": "Native PlanTrip4 returns the last finite refinement without a convergence requirement. These conditional outcomes use externally supplied geometry, not an assumption that all native routes diverge."
+    },
+    {
+      "id": "rendezvous.divergent.divergent",
+      "from": "t_fly",
+      "to": "t_fly",
+      "event": "plot_rcs_approach",
+      "when": {
+        "facts": {
+          "rendezvous_geometry": [
+            "divergent"
+          ],
+          "rendezvous_full_rcs": [
+            "divergent"
+          ]
+        }
+      },
+      "set": {
+        "rendezvous_plan": "accepted",
+        "rcs_authority": "reactor_limiter"
+      },
+      "sources": [
+        "cmd_FlyToPath",
+        "rendezvous_limiter"
+      ],
+      "evidence": [
+        "rendezvous_native"
+      ],
+      "note": "Native PlanTrip4 returns the last finite refinement without a convergence requirement. These conditional outcomes use externally supplied geometry, not an assumption that all native routes diverge."
+    },
+    {
+      "id": "attachment.depart.reference_changed",
+      "from": "p_motion",
+      "to": "p_end",
+      "event": "depart",
+      "when": {
+        "facts": {
+          "attachment_relock": [
+            "retained"
+          ],
+          "attachment_candidate": [
+            "different"
+          ]
+        }
+      },
+      "set": {
+        "attachment_link": "departed",
+        "attachment_reference": "candidate"
+      },
+      "sources": [
+        "attachment_ship",
+        "attachment_group",
+        "attachment_situ"
+      ],
+      "evidence": [
+        "attachment_undock"
+      ],
+      "note": "Native Undock tries the nearest natural body even when a passive attachment remains. Numerical acceptance is externally supplied; this edge describes reference replacement after acceptance."
+    },
+    {
+      "id": "ship.derelict",
+      "from": "t_ship",
+      "to": "t_fly",
+      "event": "sample_ship",
+      "when": {
+        "facts": {
+          "candidate": [
+            "derelict"
+          ]
+        }
+      },
+      "set": {
+        "goal": "ship",
+        "goal_state": "live",
+        "leaf": "fly"
+      },
+      "sources": [
+        "civilian"
+      ],
+      "evidence": [
+        "civilian_derelict_policy"
+      ],
+      "note": "Native eligibility accepts derelicts with ports; separating them from other valid candidates records the intentional simulation policy change."
     }
   ],
   "findings": [
@@ -6055,6 +6398,29 @@
         "attachment_checks"
       ],
       "note": "Conditional on externally established excessive free-coast mismatch. Does not claim every unlocked visit loses its wreck."
+    },
+    {
+      "id": "traffic.unconverged_rendezvous",
+      "kind": "navigation_integrity",
+      "severity": "bug",
+      "when": {
+        "facts": {
+          "rendezvous_geometry": [
+            "divergent"
+          ],
+          "rendezvous_plan": [
+            "accepted"
+          ]
+        }
+      },
+      "sources": [
+        "cmd_FlyToPath",
+        "rendezvous_limiter"
+      ],
+      "evidence": [
+        "rendezvous_native"
+      ],
+      "note": "A failed numerical intercept is published as executable travel. Bounded native reproduction demonstrates escaping RCS trajectories without a phantom-force patch."
     }
   ],
   "scenarios": [
@@ -6130,7 +6496,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -6220,7 +6592,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -6311,7 +6689,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -6397,7 +6781,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -6486,7 +6876,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -6576,7 +6972,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -6662,7 +7064,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -6748,7 +7156,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -6834,7 +7248,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -6920,7 +7340,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7009,7 +7435,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7098,7 +7530,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7183,7 +7621,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7268,7 +7712,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7353,7 +7803,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7438,7 +7894,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7523,7 +7985,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7608,7 +8076,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7693,7 +8167,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7782,7 +8262,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7871,7 +8357,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -7955,7 +8447,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8043,7 +8541,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8132,7 +8636,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8218,7 +8728,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8308,7 +8824,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8398,7 +8920,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8488,7 +9016,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8575,7 +9109,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8662,7 +9202,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8746,7 +9292,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8835,7 +9387,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -8920,7 +9478,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9005,7 +9569,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9092,7 +9662,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9180,7 +9756,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9267,7 +9849,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9355,7 +9943,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9443,7 +10037,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9531,7 +10131,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9619,7 +10225,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9708,7 +10320,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9799,7 +10417,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9889,7 +10513,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -9981,7 +10611,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10071,7 +10707,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10159,7 +10801,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10247,7 +10895,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10337,7 +10991,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10427,7 +11087,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10517,7 +11183,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10609,7 +11281,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10699,7 +11377,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10785,7 +11469,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10873,7 +11563,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -10961,7 +11657,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11049,7 +11751,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11137,7 +11845,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11225,7 +11939,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11313,7 +12033,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11401,7 +12127,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11489,7 +12221,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11577,7 +12315,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11665,7 +12409,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11753,7 +12503,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11841,7 +12597,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -11929,7 +12691,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12017,7 +12785,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12105,7 +12879,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12195,7 +12975,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12283,7 +13069,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12371,7 +13163,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12455,7 +13253,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12539,7 +13343,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12623,7 +13433,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12711,7 +13527,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12799,7 +13621,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12887,7 +13715,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -12975,7 +13809,13 @@
         "visit_duration": "native",
         "visit_clock": "intact",
         "home_filter": "native",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "expect": {
         "vanilla": {
@@ -13007,7 +13847,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "passive_dock",
@@ -13049,7 +13895,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "passive_dock",
@@ -13091,7 +13943,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "rcs"
@@ -13126,7 +13984,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "course"
@@ -13161,7 +14025,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "unsecured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "course"
@@ -13196,7 +14066,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "rcs"
@@ -13231,7 +14107,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "rcs"
@@ -13266,7 +14148,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "haul_pause",
@@ -13302,7 +14190,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "false"
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "advance",
@@ -13340,7 +14234,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "true"
+        "attachment_permanent_identity": "true",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "rcs"
@@ -13375,7 +14275,13 @@
         "attachment_relock": "pending",
         "attachment_braces": "secured",
         "attachment_visit": "passive",
-        "attachment_permanent_identity": "true"
+        "attachment_permanent_identity": "true",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
       },
       "events": [
         "course"
@@ -13395,6 +14301,599 @@
         }
       },
       "note": "Station identity is permanent even when bIsBO/bGrounded are false. This tests the release boundary, not whole-world reachability or native playback of a blocked course."
+    },
+    {
+      "id": "rendezvous.converged.converged",
+      "start": "t_fly",
+      "events": [
+        "plot_rcs_approach"
+      ],
+      "facts": {
+        "role": "freight",
+        "registry": "interregional",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "destination",
+        "goal_state": "live",
+        "nav": "route",
+        "leaf": "fly",
+        "main": "1",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "positive",
+        "help": "false",
+        "hold_ready": "false",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "free",
+        "hold_fuel_blocked": "false",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native",
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "converged",
+        "rendezvous_full_rcs": "converged",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
+      },
+      "expect": {
+        "vanilla": {
+          "node": "t_fly",
+          "fact": "rendezvous_plan",
+          "value": "accepted",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_fly",
+          "fact": "rendezvous_plan",
+          "value": "accepted",
+          "stop": ""
+        }
+      },
+      "note": "Conditional numerical result: adequate independent RCS can repair the captured approach; intrinsically weak or still-divergent plots must be rejected. No forced arrival, fuel grant or mission replacement is represented."
+    },
+    {
+      "id": "rendezvous.converged.divergent",
+      "start": "t_fly",
+      "events": [
+        "plot_rcs_approach"
+      ],
+      "facts": {
+        "role": "freight",
+        "registry": "interregional",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "destination",
+        "goal_state": "live",
+        "nav": "route",
+        "leaf": "fly",
+        "main": "1",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "positive",
+        "help": "false",
+        "hold_ready": "false",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "free",
+        "hold_fuel_blocked": "false",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native",
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "converged",
+        "rendezvous_full_rcs": "divergent",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
+      },
+      "expect": {
+        "vanilla": {
+          "node": "t_fly",
+          "fact": "rendezvous_plan",
+          "value": "accepted",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_fly",
+          "fact": "rendezvous_plan",
+          "value": "rejected",
+          "stop": ""
+        }
+      },
+      "note": "Conditional numerical result: adequate independent RCS can repair the captured approach; intrinsically weak or still-divergent plots must be rejected. No forced arrival, fuel grant or mission replacement is represented."
+    },
+    {
+      "id": "rendezvous.divergent.converged",
+      "start": "t_fly",
+      "events": [
+        "plot_rcs_approach"
+      ],
+      "facts": {
+        "role": "freight",
+        "registry": "interregional",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "destination",
+        "goal_state": "live",
+        "nav": "route",
+        "leaf": "fly",
+        "main": "1",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "positive",
+        "help": "false",
+        "hold_ready": "false",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "free",
+        "hold_fuel_blocked": "false",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native",
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "divergent",
+        "rendezvous_full_rcs": "converged",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
+      },
+      "expect": {
+        "vanilla": {
+          "node": "t_fly",
+          "fact": "rendezvous_plan",
+          "value": "accepted",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_fly",
+          "fact": "rendezvous_plan",
+          "value": "accepted",
+          "stop": ""
+        }
+      },
+      "note": "Conditional numerical result: adequate independent RCS can repair the captured approach; intrinsically weak or still-divergent plots must be rejected. No forced arrival, fuel grant or mission replacement is represented."
+    },
+    {
+      "id": "rendezvous.divergent.divergent",
+      "start": "t_fly",
+      "events": [
+        "plot_rcs_approach"
+      ],
+      "facts": {
+        "role": "freight",
+        "registry": "interregional",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "aboard",
+        "goal": "destination",
+        "goal_state": "live",
+        "nav": "route",
+        "leaf": "fly",
+        "main": "1",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "valid",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "positive",
+        "help": "false",
+        "hold_ready": "false",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "free",
+        "hold_fuel_blocked": "false",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native",
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "divergent",
+        "rendezvous_full_rcs": "divergent",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
+      },
+      "expect": {
+        "vanilla": {
+          "node": "t_fly",
+          "fact": "rendezvous_plan",
+          "value": "accepted",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_fly",
+          "fact": "rendezvous_plan",
+          "value": "rejected",
+          "stop": ""
+        }
+      },
+      "note": "Conditional numerical result: adequate independent RCS can repair the captured approach; intrinsically weak or still-divergent plots must be rejected. No forced arrival, fuel grant or mission replacement is represented."
+    },
+    {
+      "id": "passive-undock-reference-retained",
+      "start": "p_motion",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "true",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "small",
+        "attachment_relock": "retained",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "different"
+      },
+      "events": [
+        "depart"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_end",
+          "fact": "attachment_reference",
+          "value": "candidate",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_end",
+          "fact": "attachment_reference",
+          "value": "original",
+          "stop": ""
+        }
+      },
+      "note": "Conditional Undock boundary with deliberately different candidate. Native A/B validates reference identity and released/missing-reference fallbacks; graph does not calculate relock speed or trajectories."
+    },
+    {
+      "id": "passive-undock-reference-released",
+      "start": "p_motion",
+      "facts": {
+        "attachment_lock": "free",
+        "attachment_member": "free",
+        "attachment_ignore": "true",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "large",
+        "attachment_relock": "rejected",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "none",
+        "attachment_candidate": "different"
+      },
+      "events": [
+        "depart"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_end",
+          "fact": "attachment_reference",
+          "value": "none",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_end",
+          "fact": "attachment_reference",
+          "value": "none",
+          "stop": ""
+        }
+      },
+      "note": "Conditional Undock boundary with deliberately different candidate. Native A/B validates reference identity and released/missing-reference fallbacks; graph does not calculate relock speed or trajectories."
+    },
+    {
+      "id": "passive-undock-reference-missing",
+      "start": "p_motion",
+      "facts": {
+        "attachment_lock": "body",
+        "attachment_member": "body",
+        "attachment_ignore": "true",
+        "attachment_path": "pending",
+        "attachment_input": "retained",
+        "attachment_link": "docked",
+        "attachment_mismatch": "small",
+        "attachment_relock": "pending",
+        "attachment_braces": "secured",
+        "attachment_visit": "passive",
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "missing",
+        "attachment_candidate": "different"
+      },
+      "events": [
+        "depart"
+      ],
+      "expect": {
+        "vanilla": {
+          "node": "p_end",
+          "fact": "attachment_reference",
+          "value": "candidate",
+          "stop": ""
+        },
+        "effective": {
+          "node": "p_end",
+          "fact": "attachment_reference",
+          "value": "candidate",
+          "stop": ""
+        }
+      },
+      "note": "Conditional Undock boundary with deliberately different candidate. Native A/B validates reference identity and released/missing-reference fallbacks; graph does not calculate relock speed or trajectories."
+    },
+    {
+      "id": "civilian-random-derelict-policy",
+      "start": "t_ship",
+      "events": [
+        "sample_ship"
+      ],
+      "facts": {
+        "role": "civilian",
+        "registry": "interregional",
+        "hull": "visible",
+        "crew": "aboard",
+        "manifest": "none",
+        "goal": "none",
+        "goal_state": "live",
+        "nav": "none",
+        "leaf": "none",
+        "main": "1",
+        "queue": "empty",
+        "reaction": "none",
+        "combat": "false",
+        "threat": "false",
+        "damaged": "false",
+        "combat_choice": "surrender",
+        "candidate": "derelict",
+        "draw": "asteroid",
+        "asteroid_ok": "true",
+        "station_ok": "true",
+        "fuel": "positive",
+        "help": "false",
+        "hold_ready": "false",
+        "scene": "shallow",
+        "arrival": "true",
+        "instant": "success",
+        "market": "present",
+        "stale": "false",
+        "population": "ordinary",
+        "pass_destinations": "few",
+        "spawn_ok": "true",
+        "trade": "true",
+        "path_ok": "true",
+        "home": "source",
+        "skip_gate": "native",
+        "bounded_enabled": "true",
+        "economic_enabled": "true",
+        "dispatch_due": "one",
+        "dispatch_done": "none",
+        "remaining": "false",
+        "stock": "conserved",
+        "partner": "none",
+        "regional_lookup": "correct",
+        "other_goal": "asteroid",
+        "other_route": "preserved",
+        "targeted_reserve": "false",
+        "stale_due": "false",
+        "protected": "false",
+        "directive": "false",
+        "delivery_path": "cargo",
+        "crew_cleanup": "transferred",
+        "cargo_unregistered": "false",
+        "connection": "free",
+        "hold_fuel_blocked": "false",
+        "retained_local": "false",
+        "visit_pending": "false",
+        "visit_queue_owned": "false",
+        "visit_command": "main",
+        "visit_encounter": "false",
+        "visit_home_safe": "false",
+        "visit_duration": "native",
+        "visit_clock": "intact",
+        "home_filter": "native",
+        "attachment_permanent_identity": "false",
+        "rendezvous_geometry": "unassessed",
+        "rendezvous_full_rcs": "unassessed",
+        "rendezvous_plan": "none",
+        "rcs_authority": "reactor_limiter",
+        "attachment_reference": "original",
+        "attachment_candidate": "same"
+      },
+      "expect": {
+        "vanilla": {
+          "node": "t_fly",
+          "fact": "goal",
+          "value": "ship",
+          "stop": ""
+        },
+        "effective": {
+          "node": "t_station",
+          "fact": "goal",
+          "value": "none",
+          "stop": ""
+        }
+      },
+      "note": "A candidate-stage policy, not visit cancellation or forced docking. Native station selection still evaluates its existing range/fuel/faction rules afterward."
     }
   ]
 }

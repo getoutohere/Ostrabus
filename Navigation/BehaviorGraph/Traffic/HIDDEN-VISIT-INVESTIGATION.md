@@ -4,6 +4,12 @@ Status: repaired against 1.0.1.10 by `MiscBugFixes/CivilianVisitsPatch.cs`, incl
 selection, retired/restored visits, priority/SFF ownership and physical encounters.
 Native offline production tests pass; the effective graph includes the repair.
 
+The independent [civilian destination simulation policy](../../CIVILIAN-DERELICT-VISITS.md)
+now excludes native Derelict hulls from new random civilian visits. Statements
+below about visible derelict eligibility describe the hidden-hull bugfix on its
+own; the separate policy intentionally narrows that behavior. Existing visits
+are not canceled by the new selection filter.
+
 ## Defect ownership and meaning of hidden
 
 `CivilianPilot.GetTarget` chooses an asteroid, a nonstation Ship, or a station,

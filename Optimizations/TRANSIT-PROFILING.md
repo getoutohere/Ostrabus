@@ -20,10 +20,19 @@ active load profile must finish first.
 
 The observations cover:
 
-- Individual `GUITransit._Go` and `BarterZoneShip.Init` iterator MoveNext calls.
-- Old-ship serialization (`SaveToShallow`) and normal hull destruction.
+- Individual `GUITransit._Go`, PASS `CrewSim._TeleportCO`, and
+  `BarterZoneShip.Init` iterator MoveNext calls, including the optimized barter
+  iterator when included in the build.
+- Destination `StarSystem.SpawnShip`/`Ship.InitShip`, old-ship serialization
+  (`SaveToShallow`, ship/owner JSON creation), replacement, and hull destruction.
+  Load, unload, and destruction entry points establish their own scopes even
+  when called outside a transit coroutine.
+- Crew movement, owner catch-up, station inventory catch-up visits and visibility.
+- Teardown subphases: item removal/destruction, tile destruction, scheduler
+  cancellation and owner-index removal. When present, the mod's tile-helper
+  cleanup caller is observed separately; its reverse patch is not modified.
 - Item creation, post-load setup, container insertion and slot assignment while
-  inside the observed loading iterators.
+  inside an observed loading/lifecycle scope.
 - Zone assignment, local inventory indexing and final hull movement.
 - CrewSim Update duration and the most recent 16 Update-to-Update gaps of at
   least 50 ms, with UTC/frame numbers and intervening GC counts.
@@ -48,8 +57,19 @@ the visible hitch to finish, then stop and export the result. Return trips can
 be included in the same short session. Stopping actually unpatches the methods;
 the code may remain dormant without continuing to observe gameplay.
 
+An eight-hour PASS capture on 2026-11-17 exposed a coverage defect in the earlier
+profiler: it observed the boarding GUI but not the separate teleport coroutine.
+That capture measured a 107.879-second frame gap, 4.470 seconds of world advance
+and 31.900 seconds of VENC unloading (including 29.364 seconds in destruction).
+The remaining 71.508 seconds were outside those measurements. They cannot be
+retrospectively attributed to destination loading, NPC catch-up or mod hooks.
+There was no GC during that frame gap. The expanded scopes above address this
+diagnostic gap; they are not a performance fix or an attribution of that stall.
+
 `Tests/TransitProfilingCheck` verifies default dormancy, explicit method binding,
 root/subphase scoping, frame/hull correlation, preserved native calls/results
 and exception identity, frame-gap reporting, repeated start/stop and complete
-unpatching. Its 17 checks use fixture Unity frame counts and engine-heavy
-bodies, not a live transit performance claim.
+unpatching. Its 26 checks additionally exercise the PASS coroutine, destination
+initialization/catch-up and independent hull teardown, and verify per-owner
+probes stay silent outside loading. They use fixture Unity frame counts and
+engine-heavy bodies, not a live transit performance claim.

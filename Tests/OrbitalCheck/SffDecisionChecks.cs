@@ -24,6 +24,16 @@ static partial class SffDecisionChecks {
     static BodyOrbit planet;
     static bool pilotAvailable, guiActive, throwOnStep;
     static int worldSteps, impacts, selections, shortPhysicsSteps;
+    static double firstWorldStep;
+    static readonly List<double> previews = new List<double>();
+    static readonly List<int> previewIntegrationSteps = new List<int>();
+    static void PreviewRequested(double duration) => previews.Add(duration);
+    static void PreviewFinished(SffSimulation __result) {
+        int count = 0;
+        if (__result != null) foreach (var plan in (List<SffSimulation.Plan>)AccessTools.Field(typeof(SffSimulation), "plans").GetValue(__result))
+            count += plan.Outcome.Steps;
+        previewIntegrationSteps.Add(count);
+    }
     static double epoch;
     static DVector destinationOffset;
     static MotionState expectedEnd;
@@ -77,6 +87,7 @@ static partial class SffDecisionChecks {
     static bool WorldStep(double fTimeDelta) {
         if (throwOnStep) throw new InvalidOperationException("fixture step failed");
         worldSteps++;
+        if (worldSteps == 1) firstWorldStep = fTimeDelta;
         OrbitalStepObservationPatch.Prefix(world, fTimeDelta, out var step);
         try {
             if (fTimeDelta < 60 && step?.Motion != null) shortPhysicsSteps++;
@@ -100,6 +111,7 @@ static partial class SffDecisionChecks {
         epoch = (double)fixture["epoch"];
         StarSystem.fEpoch = epoch;
         worldSteps = impacts = selections = shortPhysicsSteps = 0;
+        firstWorldStep = 0; previews.Clear(); previewIntegrationSteps.Clear();
         stepAction = null;
         omitQueue = false;
         gravitySample = null;
@@ -163,6 +175,9 @@ static partial class SffDecisionChecks {
             Prefix(typeof(TargetNewIfNone), "RunCommand", nameof(ChooseTarget));
             Prefix(typeof(FlyToPatrol), "RunCommand", nameof(ContinueFlight));
             Prefix(typeof(StarSystem), nameof(StarSystem.Update), nameof(WorldStep));
+            h.Patch(AccessTools.Method(typeof(SffSimulation), nameof(SffSimulation.Preview)),
+                prefix: new HarmonyMethod(typeof(SffDecisionChecks), nameof(PreviewRequested)),
+                postfix: new HarmonyMethod(typeof(SffDecisionChecks), nameof(PreviewFinished)));
             Prefix(typeof(AIShip), nameof(AIShip.RunAI), nameof(OtherActor));
             h.CreateClassProcessor(typeof(SffMotionPatch)).Patch();
             if (passStudy) { PassCompletionStudy(check, h); return; }
@@ -244,6 +259,54 @@ static partial class SffDecisionChecks {
                 check(worldSteps == (exclusion == "plotted" ? 2 : 1) && StarSystem.fEpoch == epoch + 7200, "Changed excluded case: " + exclusion);
                 CrewSim.coPlayer = null; SffSimulation.Enabled = true;
             }
+            // A mandatory course completion bounds the forecast before any
+            // trajectories are calculated. Native playback still owns arrival.
+            Setup();
+            CommandStatus courseStatus = null;
+            ChooseTarget(new TargetNewIfNone(controller.AICharacter), ref courseStatus);
+            double arrival = ship.objSS.NavData.Destination.ArrivalTime;
+            double completion = BitConverter.Int64BitsToDouble(BitConverter.DoubleToInt64Bits(arrival) + 1);
+            var coaster = Empty<Ship>(); coaster.strRegID = "preview-coast-fixture";
+            var coastState = new ShipSitu(ship.objSS, false);
+            OrbitalMotion.BodyAt(planet, epoch, out var previewCenter);
+            var coastRadius = OrbitalMotion.Read(coastState).Position - previewCenter.Position;
+            var coastVelocity = previewCenter.Velocity + new DVector(-coastRadius.Y, coastRadius.X) *
+                (Math.Sqrt(OrbitalMotion.GravityConstant * planet.fMass / coastRadius.Length) / coastRadius.Length);
+            coastState.vVelX = coastVelocity.X / OrbitalMotion.KmPerAU; coastState.vVelY = coastVelocity.Y / OrbitalMotion.KmPerAU;
+            Set(coaster, "<objSS>k__BackingField", coastState);
+            world.dictShips.Add(coaster.strRegID, coaster);
+            using (var fullPreview = SffSimulation.Preview(world, 7200)) { }
+            int fullPreviewSteps = previewIntegrationSteps[0];
+            previews.Clear(); previewIntegrationSteps.Clear();
+            SffAdvance.Update(world, 7200);
+            check(previews.Count > 0 && previews[0] == completion - epoch && firstWorldStep == previews[0],
+                "Preview calculated beyond the first mandatory course completion");
+            check(StarSystem.fEpoch == epoch + 7200 && impacts == 0,
+                "Bounded preview changed native course completion or remaining coast");
+            check(previewIntegrationSteps[0] > 0 && previewIntegrationSteps[0] * 2 < fullPreviewSteps,
+                "Bounding the forecast did not avoid the discarded trajectory work");
+            var timing = (Dictionary<string, object>)SffAdvance.Snapshot();
+            check((int)timing["previews"] == previews.Count && (double)timing["previewSeconds"] >= 7200 &&
+                (double)timing["elapsedWallMs"] >= (double)timing["previewWallMs"] + (double)timing["worldWallMs"],
+                "Whole-jump timing receipt lost forecast/world work");
+            Console.WriteLine("Bounded first preview: " + previewIntegrationSteps[0] + " integration steps versus " + fullPreviewSteps + " for the discarded full-horizon forecast.");
+
+            // An actual danger before that boundary must still get an earlier
+            // decision turn; this unrelated route is intentionally unconsumed.
+            Setup();
+            var scheduled = Empty<Ship>(); scheduled.strRegID = "course-boundary-bystander";
+            Set(scheduled, "<objSS>k__BackingField", Destination(epoch));
+            var pendingCourse = new NavData(scheduled);
+            pendingCourse.AddNavDataPoint(new NavDataPoint(epoch, new ShipSitu(scheduled.objSS, false)));
+            pendingCourse.AddNavDataPoint(new NavDataPoint(epoch + 1200, new ShipSitu(scheduled.objSS, false)));
+            scheduled.objSS.NavData = pendingCourse;
+            world.dictShips.Add(scheduled.strRegID, scheduled);
+            SffAdvance.Update(world, 7200);
+            check(previews[0] < 1201 && firstWorldStep <= 60 && impacts == 0 && selections == 1,
+                "Earlier danger was missed after bounding the preview to a course completion");
+            check(StarSystem.fEpoch == epoch + 7200 && worldSteps < 10,
+                "Bounded preview lost time or retried an unconsumed course");
+
             Setup(); throwOnStep = true;
             bool threw = false;
             try { SffAdvance.Update(world, 7200); } catch (InvalidOperationException error) { threw = error.Message == "fixture step failed"; }

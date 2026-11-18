@@ -30,12 +30,22 @@ try {
     $run=Join-Path $repo ('obj\CustomBuilder\tests-'+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $run -Force | Out-Null
     $cases=[ordered]@{
+        'orbital-velocity'=@('orbital-velocity');
+        'orbital-velocity-simulation'=@('orbital-velocity','economy-sff','coast','passive-docking-attachment');
+        'ai-avoidance'=@('ai-avoidance');
+        'avoidance-collisions'=@('ai-avoidance','hull-collisions');
+        'ai-rendezvous'=@('ai-rendezvous');
+        'ai-rendezvous-navigation'=@('ai-rendezvous','ai-flight-controls','departure-waypoints','economy-sff');
+        'mm-fairness'=@('mm-fairness');
+        'mm-fairness-defense'=@('mm-fairness','pdc-defense');
         'nav-module-placement'=@('nav-module-placement');
         'course-controls'=@('course-controls');
         'save-forward-compatibility'=@('save-forward-compatibility');
         'rotation-module'=@('rotation-module');
         'bounty-departure-fuel'=@('bounty-departure-fuel');
         'civilian-visits'=@('civilian-visits');
+        'civilian-no-derelict-visits'=@('civilian-no-derelict-visits');
+        'civilian-visit-policies'=@('civilian-no-derelict-visits','civilian-visits','civilian-asteroid-visits');
         'civilian-asteroid-visits'=@('civilian-asteroid-visits');
         'faction-encounters'=@('faction-encounters');
         'ai-flight-controls'=@('ai-flight-controls');

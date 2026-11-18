@@ -23,7 +23,7 @@ static partial class Program
             foreach (bool enabled in new[] { false, true })
             {
                 if (enabled)
-                    foreach (string type in new[] { "PassiveDockAttachmentPatch", "PassiveAttachmentInputPatch", "HaulAttachmentReleasePatch" })
+                    foreach (string type in new[] { "PassiveDockAttachmentPatch", "PassiveUndockAttachmentPatch", "PassiveAttachmentInputPatch", "HaulAttachmentReleasePatch" })
                         production.CreateClassProcessor(plugin.GetType("Ostrabus.ShipNavigation." + type, true)).Patch();
 
                 foreach (bool reverse in new[] { false, true })
@@ -110,6 +110,7 @@ static partial class Program
         {
             foreach (string name in new[] {
                 "Ostrabus.ShipNavigation.PassiveDockAttachmentPatch",
+                "Ostrabus.ShipNavigation.PassiveUndockAttachmentPatch",
                 "Ostrabus.ShipNavigation.PassiveAttachmentInputPatch",
                 "Ostrabus.ShipNavigation.Towing.DockedCourseMemberPatch",
                 "Ostrabus.ShipNavigation.Towing.DockedCourseGroupPatch" })

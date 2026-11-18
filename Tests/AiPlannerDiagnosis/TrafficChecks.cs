@@ -82,7 +82,7 @@ static partial class TrafficChecks {
         if (command is QueuedCommandsNode) node["dynamicQueue"] = true;
         return node;
     }
-    internal static void Run(bool hiddenVisits = false, bool visitRepair = false) {
+    internal static void Run(bool hiddenVisits = false, bool visitRepair = false, bool derelictVisits = false) {
         var h = new Harmony("offline.cargo-civilian-model");
         try {
             h.Patch(AccessTools.Method(typeof(BaseCharacter), "AssignCaptain"), prefix: new HarmonyMethod(typeof(TrafficChecks), nameof(Quiet)));
@@ -196,6 +196,7 @@ static partial class TrafficChecks {
                 "Selected hidden hull is not simultaneously eligible for native spawn-pool reuse");
             if (hiddenVisits) HiddenVisitInvestigation(h, civilian, visitor, reserve);
             if (visitRepair) CivilianVisitRepair(h);
+            if (derelictVisits) DerelictVisitPolicy(civilian, visitor, reserve);
             TreeSemantics(cargo, civilian);
             CoordinateRepair(h, civilian, visitor);
             Console.WriteLine(checks + " native traffic role checks passed; actual constructor trees exported. Crew creation and physical instant docking are prescribed boundaries; regional geometry executes natively.");

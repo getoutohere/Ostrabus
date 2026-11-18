@@ -1,5 +1,24 @@
 # Planetary navigation checks
 
+Run the departure-avoidance regressions with:
+
+```powershell
+dotnet build Tests/PlanetaryNavigationCheck -c Release
+dotnet Tests/SaveJsonCompatibility/Host/bin/Release/net8.0/MonoHost.dll Tests/PlanetaryNavigationCheck/bin/Release/netstandard2.1/PlanetaryNavigationCheck.dll avoidance-repair
+```
+
+`AvoidanceRepair.cs` establishes native failure controls, replays the numeric
+O-YKWV approach in `AcceleratingDeparture.json`, and executes native `FlyTo`
+before/after patching to verify route interruption and ordinary resumption.
+It covers slow closing, acceleration from rest, acceleration turning a pass
+clear, separating/overlapping/stationary cases, long coasting horizons,
+unchanged shared collision tests, unchanged actor state and zero warmed query
+allocation. Unity equality, a fixed regional station/acceleration, ephemeris
+updates and escape-point presentation are test boundaries. The native `FlyTo`
+dispatcher executes with counting manual/path leaves; this does not claim a
+complete Unity collision-free flight replay. Run the default suite below for
+the actual native planetary steering/arrival replays.
+
 See [the defect, repair and evidence boundaries](../../Navigation/PLANETARY-AVOIDANCE-AUDIT.md).
 The requested [station-docked traffic policy](../../Navigation/STATION-DOCKED-COLLISIONS.md)
 is covered by `StationPolicy.cs`, including actual native proximity-scan execution.
@@ -38,3 +57,23 @@ Patrol initial velocity is estimated from saved neighboring path samples; the
 hauler retains its saved velocity and existing plan. This is a
 controlled replay, not a complete Unity simulation or an assertion that every
 possible obstacle configuration is solvable by reversing a native dodge.
+
+`departure-replay` first reproduces the deployed guard's sustained oscillation
+(701 plans, 1,398 thrust reversals, no arrival). It then requires completed trips,
+positive hull clearance, bounded replanning and retained destinations for head-on,
+mirrored and moving encounters, two AI cadences, a clear pass and full-DLL hull
+toggle/installation-order combinations. Build the Debug omnibus before running
+this mode: it tests that DLL as well as linked helpers. Native planned fuel debits
+are recorded; the translation fixture does not charge manual/rotational fuel.
+
+```powershell
+dotnet build Ostrabus.csproj -c Debug
+dotnet build Tests/PlanetaryNavigationCheck -c Release
+dotnet Tests/SaveJsonCompatibility/Host/bin/Release/net8.0/MonoHost.dll Tests/PlanetaryNavigationCheck/bin/Release/netstandard2.1/PlanetaryNavigationCheck.dll departure-replay
+```
+
+`avoidance-repair` also checks local/admission horizons, distant speculative
+encounters, group-anchor offsets, exact manufactured reference identity,
+exceptional flight/query cleanup and zero warmed allocation. Its earlier
+counting-leaf dispatch check is retained as a branch check; it cannot prove that
+continuous navigation works.

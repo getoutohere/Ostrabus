@@ -1,8 +1,8 @@
 # Scavenger selection, return and orbital waiting checks
 
 Run `ScavFuelDiagnosis.dll vorb-hold` through the existing bundled-Mono host.
-156 cumulative assertions currently pass: the 23 native asset/SOS checks plus
-133 continuation, clock, return, exclusion, allocation and condition checks.
+159 cumulative assertions currently pass: the 23 native asset/SOS checks plus
+136 continuation, clock, return, exclusion, allocation and condition checks.
 
 Native contrast establishes premature retirement, expired positive deadlines
 bypassing Hold's speed check, pause countdown and gravity exemption. With the
@@ -27,6 +27,12 @@ loaded atmospheric layers, surface positions, actual dock links, body/orbit lock
 grounding, input/RCS/lift/drag, player ownership, hidden hulls, missing body,
 combat blackboard/target, navigation plans, torch use, stations, non-AI hulls and
 the existing Orbital switch being off.
+The positive wait fixture now has a real, clear bound trajectory; additional
+targetless-selection controls reject radial rest, an intersecting bound orbit
+and escape. The [gravity-mode study](../../Tools/DockingOrbitStudy/README.md)
+separately executes native free-wait physics, production dodge cleanup and the
+new trajectory admission, including closest approach inside the atmosphere,
+hull clearance, reversed orbit direction and zero-allocation repeated Holds.
 The native absolute pause stays unchanged while visit duration still counts down.
 
 The installed ShipRequestedHelp definition supplies its real duration. Its native

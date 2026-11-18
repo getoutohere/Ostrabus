@@ -1,5 +1,113 @@
 # Planetary avoidance: O-ENB / Ganymed
 
+## Initial accelerating-departure repair (historical)
+
+The first candidate was built/tested offline, then deployed. It failed live on
+O-YKWV / Hard Pass through a sustained route/evasion loop. The initial branch
+tests below did not cover that loop. The correction and stronger tests follow.
+This first candidate extended the existing hook only.
+
+O-YKWV accelerated its departure from a wreck toward HQCH at about 15.17 m/s²
+while approaching the player. The paused capture contained a 5.36 km centre
+distance and 176.30 m/s relative speed. Native
+`AIShipManager.IsOnCollisionCourse` rejected the pair against only 2.05 km of
+twice-stopping-distance **before** its own doubled-hull circle predictor could
+report a collision. Native `CollisionManager.WillCollide` separately treats
+squared relative velocity below about 1e-18 AU²/s² as zero: separated head-on
+approaches below about 149.6 m/s are missed. The ship eventually announced
+`SHIPCorrectingCourse` about 8.38 game seconds before the player damage event.
+
+`AIShipAvoidancePatch` now removes that one guarded centre/stopping-distance
+comparison. `AvoidancePrediction` performs an allocation-free reach rejection
+using the actual prediction bounds and relative motion, followed by closest
+approach in metres. At least the native default 30-second escape window is
+considered; longer native stopping-time horizons remain available. Current
+relative RCS/torch/external/lift/drag acceleration is projected for 30 seconds,
+then coasted over any remaining horizon. This is a bounded local forecast;
+it does not simulate future AI decisions or promise that a multi-stage burn
+maintains its current acceleration. Zero-acceleration cases use a direct
+future-time closest approach with no game-speed epsilon.
+
+`HullAvoidance` copies numeric acceleration into its existing scratch situations
+and invokes the corrected predictor only when the AI fix is installed. The
+independent hull toggle still controls its geometric bounds. Native candidate
+exclusions, `FlyTo` route interruption/manual steering/resumption, escape
+direction selection and planetary safety checks remain in place. Shared native
+`WillCollide`, physical collision response and projectile/combat callers are
+unchanged. JSON collision-safety conditions still own their existing new-player
+and undocking grace exemptions; the defects are C# numeric/admission mechanisms.
+
+Evidence: `PlanetaryNavigationCheck avoidance-repair` passes 39 checks, including
+native failure controls and actual native `FlyTo` branch execution before/after
+patching. The default planetary suite passes 886 checks and its patrol/returning
+hauler arrival replays. `PatchBindingCheck hull-interop` executes the full DLL
+in both patch-installation orders, including low-speed/accelerating enlarged
+hulls, hull-toggle independence, native station/docking exclusions and exception
+scope cleanup. `HullOutlinesCheck` passes its geometry/physical/docking/range
+regressions. These are offline results, not an in-game acceptance claim.
+
+## Sustained route/evasion regression and correction
+
+The deployed guard correctly interrupted an unsafe course, but native FlyTo
+accepted another course through the same obstacle when the current dodge looked
+clear. Escape selection also forecast the acceleration being replaced, allowing
+the next evasive thrust to reverse the last one. Hard Pass oscillated and
+exhausted its fuel. Counting dispatches into stubbed command leaves did not test
+whether sustained native flight could complete; that verification was inadequate.
+
+The corrected candidate is built and tested offline, not yet deployed. It adds
+one guarded Harmony target, `Ostranauts.Ships.Commands.FlyTo.RunCommand`, to the
+existing `AIShipManager.IsOnCollisionCourse` hook. It uses no actor registry,
+maneuver timer, saved state or parallel behavior controller.
+
+- `AvoidanceRouteForecast` follows native NavData position interpolation through
+  braking/turns instead of extrapolating a route's current acceleration. Free
+  motion retains the 30-second acceleration forecast followed by coasting.
+- `AvoidanceFlightPatch` inspects a newly generated course before accepting it.
+  For the nearby encounter, inspect the remaining waypoints; ordinary flight
+  checks retain local lookahead. The nearby envelope uses hull clearance, native
+  reaction/stopping time and physical RCS reach, so distant speculative meetings
+  do not cause immediate evasion.
+- Reject unsafe courses through FlyTo's existing manual/fuel-handling branch.
+  Preserve the candidate only through that call's second collision query, so
+  clearing NavData does not substitute the old dodge for the rejected course.
+- Choose the native perpendicular escape using relative lateral velocity,
+  independent of the thrust being replaced. The existing planetary and alternate
+  obstacle checks remain responsible for vetting that direction.
+
+Flight/query scopes restore in finalizers, including exceptional exits. Group
+anchor offsets remain relative to the hull owning the course. Locked route points
+preserve their exact manufactured/natural reference and use detached ephemerides
+without changing live body caches. Native station, docking, target, torch and
+visibility exclusions remain authoritative. Shared combat/history predictors and
+physical collision response are unchanged. Inspected JSON collision-safety and
+undocking grace conditions already express their intended exemptions; these
+defects belong to the C# prediction and route/manual handoff mechanisms.
+
+`PlanetaryNavigationCheck departure-replay` executes actual native FlyTo,
+FlyToPath planning, FlyToManual, AIIntercept2, NavData playback and ShipSitu
+advancement continuously. The previous-repair control reproduces **701 replans
+and 1,398 thrust reversals**, failing to arrive in 1,200 simulated seconds. The
+corrected head-on case arrives with **two accepted routes, three reversals and
+1.16 km minimum hull clearance**. Native planned-flight debits fall from about
+6,188 kg to 666 kg in this fixture. This is not a complete fuel-efficiency figure:
+the engine double does not debit manual/rotational maneuver fuel.
+
+The 93 sustained assertions include mirrored approaches, moving traffic, two AI
+cadences, a clear pass, the actual full DLL, hull toggle on/off and both hook
+installation orders, including the existing flight-fuel, thrust-release and
+rendezvous patches. The admission transpiler runs before the existing reset-site
+rewriter, so its fallback still executes that thrust-release repair in either
+installation order. The 53 focused checks cover local/admission horizons,
+distant speculative encounters, group offsets, manufactured reference identity,
+body-cache preservation and exceptional scope cleanup. A thousand complete
+candidate checks took about 54 ms in bundled Mono with zero warmed allocation.
+The existing 886 planetary checks and patrol/returning-hauler replays remain
+required. Unity/input, presentation and eligibility are explicit doubles; these
+results are controlled native execution, not a live acceptance claim.
+
+The station attachment/orbit repair is separate.
+
 Implemented in `AIShipAvoidancePatch.cs` and `ConstantAccelerationApproach.cs`,
 2026-11-09. Deployed and under live testing; the follow-up below records an
 additional group-overlap case not resolved by the initial repair.

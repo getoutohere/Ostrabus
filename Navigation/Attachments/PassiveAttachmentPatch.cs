@@ -20,6 +20,20 @@ internal static class PassiveAttachment
         situation.UnlockFromBO();
     }
 
+    internal static bool UndockRelock(ShipSitu situation, BodyOrbit candidate)
+    {
+        // Passive docking retained the original attachment. Undock's nearest
+        // natural body is only a candidate for a free hull, not a reason to
+        // replace that attachment (e.g. HQCH with Mercury). Applied movement
+        // already clears this flag through Release; keep native acceptance and
+        // speed checks for those released hulls and missing references.
+        if (situation.bBOLocked && !situation.bIsBO && !situation.bOrbitLocked &&
+            !string.IsNullOrEmpty(situation.strBOPORShip) &&
+            CrewSim.system?.GetBO(situation.strBOPORShip) != null)
+            return true;
+        return situation.TryRelockToBO(candidate);
+    }
+
     internal static bool CanRelease(DockGroup group)
     {
         var anchor = group?.Anchor;
@@ -86,6 +100,28 @@ internal static class PassiveAttachment
         current.vAccIn = torch;
         current.fA = angular;
         current.fW = spin;
+    }
+}
+
+[HarmonyPatch(typeof(Ship), nameof(Ship.Undock), new[] { typeof(Ship) })]
+internal static class PassiveUndockAttachmentPatch
+{
+    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+    {
+        var relock = AccessTools.Method(typeof(ShipSitu), nameof(ShipSitu.TryRelockToBO));
+        int count = 0;
+        foreach (var instruction in instructions)
+        {
+            if (instruction.Calls(relock))
+            {
+                count++;
+                instruction.opcode = OpCodes.Call;
+                instruction.operand = AccessTools.Method(typeof(PassiveAttachment), nameof(PassiveAttachment.UndockRelock));
+            }
+            yield return instruction;
+        }
+        if (count != 1)
+            throw new InvalidOperationException("Expected one native undocking derelict relock; passive attachment requires review.");
     }
 }
 

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>netstandard2.1</TargetFramework><LangVersion>latest</LangVersion></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Inspection/ShipDestructionEvidence.cs" Link="ShipDestructionEvidence.cs" />
+    <Compile Include="../../Inspection/InspectionLogHooks.cs" Link="InspectionLogHooks.cs" />
+    <Compile Include="../../Inspection/InspectionLog.cs" Link="InspectionLog.cs" />
+    <Compile Include="../../Inspection/InspectionEventHistory.cs" Link="InspectionEventHistory.cs" />
+    <Compile Include="../../Inspection/ControllerInspection.cs" Link="ControllerInspection.cs" />
+    <Compile Include="../../Inspection/SnapshotJson.cs" Link="SnapshotJson.cs" />
+    <Compile Include="../../Orbital/JumpBoundary.cs" Link="JumpBoundary.cs" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(Game)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+    <Reference Include="BepInEx"><HintPath>$(Game)/BepInEx/core/BepInEx.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

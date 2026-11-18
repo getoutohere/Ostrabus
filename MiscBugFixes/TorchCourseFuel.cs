@@ -12,10 +12,16 @@ internal static class TorchCourseFuel {
     static readonly ConditionalWeakTable<NavData, Profile> Profiles = new ConditionalWeakTable<NavData, Profile>();
     static readonly ConditionalWeakTable<NavData, object> Ignored = new ConditionalWeakTable<NavData, object>();
     static readonly object Ignore = new object();
+    static readonly object NativeFormat = new object();
     static readonly AccessTools.FieldRef<NavData, Ship> Owner = AccessTools.FieldRefAccess<NavData, Ship>("_shipUs");
     static readonly AccessTools.FieldRef<Ship, double> Pilot = AccessTools.FieldRefAccess<Ship, double>("fFuelEfficiencyMod");
     static readonly List<CondOwner> NoTanks = new List<CondOwner>();
     internal static Profile Playing;
+    internal static NavData PlayingNav;
+    internal struct PlaybackScope {
+        internal Profile Profile;
+        internal NavData Nav;
+    }
     internal sealed class Profile {
         internal Ship Ship;
         internal CondOwner Reactor;
@@ -25,10 +31,13 @@ internal static class TorchCourseFuel {
         internal double[] Volumes;
         internal Interval[] Intervals;
         internal bool Invalid;
+        internal bool AdoptedNative;
         internal double ObservedD, ObservedHe;
     }
     internal struct Interval {
         internal double Start, End, Cycle, Fuel, Rate;
+        internal double InputX, InputY;
+        internal bool InputKnown;
     }
     internal static bool Finite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
     static bool Player(Ship ship) => ship != null && !ship.bDestroyed && ship.LoadState == Ship.Loaded.Full &&
@@ -76,7 +85,7 @@ internal static class TorchCourseFuel {
     }
     static bool InventoryUnchanged(Profile profile) =>
         Math.Abs(Total(profile, false)-profile.ObservedD) <= 1e-6 && Math.Abs(Total(profile, true)-profile.ObservedHe) <= 1e-6;
-    internal static bool Attach(NavData nav, bool restore) {
+    internal static bool Attach(NavData nav, bool restore, bool remainingOnly = false, double inventoryEpoch = 0) {
         if (nav == null || Profiles.TryGetValue(nav, out _)) return false;
         var ship = Owner(nav);
         if (!Player(ship) || !ship.bFusionReactorRunning || !Warm(ship.Reactor) || CrewSim.objInstance?.coDicts == null) return false;
@@ -91,7 +100,10 @@ internal static class TorchCourseFuel {
             (pilot != 1 && pilot != .75) || core.GetCondAmount("IsTorchDrive") <= 0) return false;
         var points = nav.GetNavDataPoints();
         if (points == null || points.Count < 2 || nav.InAtmo) return false;
-        if (restore) {
+        foreach (var point in points) if (point == null || point.ObjSS == null) return false;
+        if (remainingOnly && (!ReferenceEquals(ship.objSS?.NavData, nav) || ratio != "1" ||
+            StarSystem.fEpoch < points[0].ArrivalTime || StarSystem.fEpoch >= points[points.Count-1].ArrivalTime)) return false;
+        if (restore && !remainingOnly) {
             for (int i = 1; i < points.Count; i++) {
                 double cycle = Cycle(points[i-1], points[i]);
                 if (cycle <= 0 || !Finite(cycle)) continue;
@@ -104,7 +116,7 @@ internal static class TorchCourseFuel {
             }
         }
         var intervals = new Interval[points.Count-1];
-        double fuel = points[0].TorchFuelLevel;
+        double fuel = remainingOnly ? 0 : points[0].TorchFuelLevel;
         bool powered = false; double maxCycle = 0;
         for (int i = 1; i < points.Count; i++) {
             var a = points[i-1]; var b = points[i];
@@ -115,35 +127,104 @@ internal static class TorchCourseFuel {
             maxCycle = Math.Max(maxCycle, cycle);
             double rate = Math.Max(Idle(capacity), 5*cycle/capacity) * pilot;
             double cost = duration * rate;
-            if (restore && Math.Abs((a.TorchFuelLevel-b.TorchFuelLevel)-cost) > Math.Max(.00001, cost*.0001)) return false;
-            intervals[i-1] = new Interval { Start = a.ArrivalTime, End = b.ArrivalTime, Cycle = cycle, Fuel = fuel, Rate = rate };
+            double savedCost = a.TorchFuelLevel-b.TorchFuelLevel;
+            if (remainingOnly) {
+                // Native PlotBurnLoop bills one budget second per powered
+                // second (times pilot efficiency), and zero during coast.
+                // Recognize that format explicitly; do not adopt arbitrary or
+                // mixed propulsion budgets as a corrected torch course.
+                double nativeCost = duration * (cycle > 0 ? pilot : 0);
+                if (Math.Abs(savedCost-nativeCost) > Math.Max(.00001, nativeCost*.0001)) return false;
+            } else if (restore && Math.Abs(savedCost-cost) > Math.Max(.00001, cost*.0001)) return false;
+            intervals[i-1] = new Interval { Start = a.ArrivalTime, End = b.ArrivalTime, Cycle = cycle, Fuel = fuel, Rate = rate,
+                InputX = (b.ObjSS.vVelX-a.ObjSS.vVelX)/duration, InputY = (b.ObjSS.vVelY-a.ObjSS.vVelY)/duration,
+                // Analytical/body-attached waypoints can change velocity from
+                // orbital following; do not report that as onboard thrust.
+                InputKnown = !a.ObjSS.bIsBO && !a.ObjSS.bBOLocked && !a.ObjSS.bOrbitLocked &&
+                    !b.ObjSS.bIsBO && !b.ObjSS.bBOLocked && !b.ObjSS.bOrbitLocked &&
+                    Math.Abs(a.FuelLevel-b.FuelLevel) <= .001 &&
+                    a.ObjSS.vAccRCS.x == 0 && a.ObjSS.vAccRCS.y == 0 && b.ObjSS.vAccRCS.x == 0 && b.ObjSS.vAccRCS.y == 0 };
             fuel -= cost;
         }
         if (!powered) return false;
         double plotFlow = BalancedFlow(capacity, maxCycle, Ideal, .27000001072883606);
         // This existing field already stores the FLOW used when plotting. Preserve
         // that meaning, and require it when recognizing a corrected saved course.
-        if (restore && Math.Abs(nav.fFlowMultPlot-plotFlow) > .00001) return false;
+        if (restore && !remainingOnly && Math.Abs(nav.fFlowMultPlot-plotFlow) > .00001) return false;
         var profile = new Profile { Ship = ship, Reactor = core, Nav = nav, Capacity = capacity, Usage = usage,
-            PilotMod = pilot, Theory = theory, Exhaust = core.GetCondAmount("StatICVe"), Intervals = intervals };
+            PilotMod = pilot, Theory = theory, Exhaust = core.GetCondAmount("StatICVe"), Intervals = intervals,
+            AdoptedNative = remainingOnly };
         CaptureTanks(profile);
         if (profile.Tanks.Length == 0) return false;
         Observe(profile);
-        if (restore && Math.Min(profile.ObservedD/(usage*FusionIC.aReactantAmounts[0]), profile.ObservedHe/(usage*FusionIC.aReactantAmounts[1])) < Budget(profile, StarSystem.fEpoch)-1) return false;
-        if (!restore) for (int i = 1; i < points.Count; i++) {
+        double actualBudget = Math.Min(profile.ObservedD/(usage*FusionIC.aReactantAmounts[0]), profile.ObservedHe/(usage*FusionIC.aReactantAmounts[1]));
+        if (remainingOnly) {
+            if (!Finite(actualBudget) || actualBudget < 0) return false;
+            // Only future costs are adopted. Shift the ledger to the physical
+            // inventory now; never recreate earlier fuel or charge past burns.
+            double anchor = Math.Max(points[0].ArrivalTime, Math.Min(StarSystem.fEpoch, inventoryEpoch));
+            double shift = actualBudget-Budget(profile, anchor);
+            for (int i = 0; i < intervals.Length; i++) intervals[i].Fuel += shift;
+            points[0].TorchFuelLevel = intervals[0].Fuel;
+            profile.Invalid = Budget(profile, intervals[intervals.Length-1].End) < -1e-6;
+        } else if (restore && actualBudget < Budget(profile, StarSystem.fEpoch)-1) return false;
+        if (!restore || remainingOnly) for (int i = 1; i < points.Count; i++) {
             var interval = intervals[i-1];
             points[i].TorchFuelLevel = interval.Fuel - (interval.End-interval.Start) * interval.Rate;
         }
-        if (!restore) nav.SetFlowMultPlot(plotFlow);
+        if (!restore || remainingOnly) nav.SetFlowMultPlot(plotFlow);
         Profiles.Add(nav, profile);
         return true;
     }
     internal static Profile Find(NavData nav, bool restore = true) {
         if (nav == null) return null;
         if (!Profiles.TryGetValue(nav, out var profile) && restore && !Ignored.TryGetValue(nav, out _)) {
-            if (!Attach(nav, true)) Ignored.Add(nav, Ignore);
+            var ship = Owner(nav);
+            // Cold cores and temporarily unavailable player/control state are
+            // not permanent evidence about a route's format. Retry when ready.
+            if (!Player(ship) || !ship.bFusionReactorRunning || CrewSim.objInstance?.coDicts == null ||
+                !ReferenceEquals(ship.objSS?.NavData, nav)) return null;
+            var core = ship.Reactor;
+            if (!Warm(core)) return null;
+            string ratio = ship.GetReactorGPMValue("knobRatio");
+            if (ratio != "0" && ratio != "1") return null;
+            if (!Attach(nav, true)) {
+                Ignored.Add(nav, NativeBudget(nav, Pilot(ship)) ? NativeFormat : Ignore);
+            }
             Profiles.TryGetValue(nav, out profile);
         }
+        return profile;
+    }
+
+    static bool NativeBudget(NavData nav, double pilot) {
+        var points = nav.GetNavDataPoints();
+        if (points == null || points.Count < 2 || nav.InAtmo || (pilot != 1 && pilot != .75)) return false;
+        foreach (var point in points) if (point == null || point.ObjSS == null) return false;
+        bool powered = false;
+        for (int i = 1; i < points.Count; i++) {
+            var a = points[i-1]; var b = points[i];
+            double duration = b.ArrivalTime-a.ArrivalTime, cycle = Cycle(a,b);
+            if (!Finite(duration) || duration <= 0 || !Finite(cycle) || cycle < 0 || cycle > 1 ||
+                !Finite(a.TorchFuelLevel) || !Finite(b.TorchFuelLevel)) return false;
+            powered |= cycle > 0;
+            double expected = duration*(cycle > 0 ? pilot : 0);
+            if (Math.Abs(a.TorchFuelLevel-b.TorchFuelLevel-expected) > Math.Max(.00001, expected*.0001)) return false;
+        }
+        return powered;
+    }
+
+    internal static Profile AdoptNative(FusionIC reactor) {
+        var nav = PlayingNav;
+        if (nav == null || reactor?.COSelf == null || !ReferenceEquals(Owner(nav), reactor.COSelf.ship)) return null;
+        // Called from SetReactants, after native CatchUp has paid whatever its
+        // own CO clock already simulated. Anchor to that inventory epoch, not
+        // to an earlier planned balance or an unadvanced global-clock guess.
+        var existing = Find(nav);
+        if (existing != null) { Playing = existing; return existing; }
+        if (!Ignored.TryGetValue(nav, out var format) || !ReferenceEquals(format, NativeFormat) ||
+            !Finite(reactor.TimeLastRun) || !Attach(nav, true, remainingOnly: true, inventoryEpoch: reactor.TimeLastRun)) return null;
+        Profiles.TryGetValue(nav, out var profile);
+        Playing = profile;
         return profile;
     }
     internal static bool Valid(Profile profile, bool inventory = true) {
@@ -184,6 +265,20 @@ internal static class TorchCourseFuel {
         return interval.Fuel-Math.Max(0, Math.Min(interval.End-interval.Start, epoch-interval.Start))*interval.Rate;
     }
     internal static double CycleAt(Profile profile, double epoch) => epoch >= profile.Intervals[profile.Intervals.Length-1].End ? 0 : Current(profile, epoch).Cycle;
+    internal static void PlaybackInput(Profile profile, ShipSitu situation) {
+        if (!ReferenceEquals(situation,profile.Ship.objSS) || !ReferenceEquals(situation.NavData,profile.Nav) ||
+            StarSystem.fEpoch < profile.Intervals[0].Start) return;
+        var interval = Current(profile,StarSystem.fEpoch);
+        if (!interval.InputKnown || !Finite(interval.InputX) || !Finite(interval.InputY)) return;
+        bool arrived = StarSystem.fEpoch >= profile.Intervals[profile.Intervals.Length-1].End;
+        // Native playback linearly interpolates velocity, but also interpolates
+        // the prior waypoint's cached force into the next interval. During coast
+        // that resurrects thrust after Fusion has set it to zero. Report the
+        // derivative of the actual played velocity instead. Do this after native
+        // reactor catch-up, before the group/crew gravity consumer runs.
+        situation.vAccIn.Set(arrived ? 0 : (float)interval.InputX, arrived ? 0 : (float)interval.InputY);
+        profile.Ship.UpdateDockedShips(situation);
+    }
     internal static void WritePlaybackControl(Ship ship, string key, string value) {
         var profile = Playing;
         // This replaces only TimeAdvance's ordinary computed FLOW/CYCLE writes.

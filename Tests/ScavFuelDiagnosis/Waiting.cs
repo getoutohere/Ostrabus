@@ -107,7 +107,9 @@ static partial class Program {
         enabled.SetValue(null, true);
         foreach (string name in new[] { "ScavengerReturnFallbackPatch", "OrbitalHoldWaitingPatch", "OrbitalSelectionWaitingPatch" })
             production.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.ShipNavigation." + name, true)).Patch();
-        waitingBody = Empty<BodyOrbit>(); waitingBody.fRadius = 1E-6;
+        waitingBody = Empty<BodyOrbit>(); waitingBody.fRadius = 1E-6; waitingBody.fMass = 2.23e23;
+        CrewSim.system.boStar = waitingBody;
+        Set(CrewSim.system, "fGravAccelConstant", 2e-44f);
         boundary.Patch(AccessTools.Method(typeof(StarSystem), nameof(StarSystem.GetNearestBO)), prefix: new HarmonyMethod(typeof(Program), nameof(WaitingBody)));
         var search = AccessTools.Method(typeof(TargetNewIfNone), "FindTarget");
         boundary.Unpatch(search, HarmonyPatchType.Prefix, boundary.Id);
@@ -115,7 +117,7 @@ static partial class Program {
         CrewSim.system.dictShips = new Dictionary<string, Ship> { [homeFixture.strRegID] = homeFixture };
         Set(homeFixture, "aDockingPorts", new List<string> { "station-port" });
         var ship = HelpShip(); ship.IsAIShip = true; ship.fShallowRCSRemass = 1873;
-        ship.objSS.vPosx = 1E-4; ship.objSS.vVelX = 1000 / 149597872000.0;
+        ship.objSS.vPosx = 1E-4; ship.objSS.vVelX = 0; ship.objSS.vVelY = 1000 / 149597872000.0;
         var pilot = new HelpPilot(ship); var target = new TargetNewIfNone(pilot);
         lowFixture = false; help = false; plannedFixture = null;
         int sent = sends, planned = plans;
@@ -126,6 +128,13 @@ static partial class Program {
         long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
         Check(plans == planned + 1 && sends == sent + 1, "Idle cooldown repeated planning or requests.");
         Check(allocated == 0, "Unchanged selection waits allocated " + allocated + " bytes.");
+        foreach (double unsafeSpeed in new[] { 0d, 50 / 149597872000d, 2000 / 149597872000d }) {
+            ship.objSS.bIgnoreGrav = true;
+            ship.objSS.vVelY = unsafeSpeed;
+            target.RunCommand(pilot.Blackboard);
+            Check(ship.objSS.bIgnoreGrav, "Selection wait admitted radial rest, impact or escape.");
+        }
+        ship.objSS.vVelY = 1000 / 149597872000d;
         StarSystem.fEpoch += 65;
         plannedFixture = new NavData(ship);
         plannedFixture.AddNavDataPoint(new NavDataPoint(StarSystem.fEpoch, new ShipSitu(false), 1873, 0, 0,rcsCount:0F));
@@ -186,8 +195,10 @@ static partial class Program {
             if (scenario == "unknown-body") waitingBody = null;
             else {
                 waitingBody = Empty<BodyOrbit>(); waitingBody.fRadius = scenario == "surface" ? .001 : 1E-6;
+                waitingBody.fMass = 2.23e23;
                 if (scenario == "atmosphere") waitingBody.aAtmospheres = new[] { new JsonAtmosphere { fMaxAltitude = 20000 } };
             }
+            CrewSim.system.boStar = waitingBody;
             var wait = new Hold(pilot);
             wait.RunCommand(pilot.Blackboard);
             Check(ship.objSS.bIgnoreGrav == (scenario != "vacuum"), "Orbital waiting exclusion failed: " + scenario);

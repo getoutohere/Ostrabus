@@ -22,8 +22,8 @@ manifest and reviewed IL/asset baseline track these native boundaries for future
 game updates. Baseline acceptance records reviewed declarations and fingerprints,
 not proof of complete behavior coverage.
 
-Five observer control points, 57 native/effective transitions and 20 scenarios
-have 161 scenario/model checks. Orthogonal facts separate collector progression,
+Five observer control points, 63 native/effective transitions and 22 scenarios
+have 171 scenario/model checks. Orthogonal facts separate collector progression,
 target lifetime, registry membership, scan reference, situation ownership,
 route state and port availability. Source-bound events represent actor
 interleaving; the collector's full controller remains in the retriever model.
@@ -76,3 +76,13 @@ This expansion fixes a specific analytical omission, not the entire behavior
 model. The assembly-derived `coverage` command inventories native roles and
 commands missing even from source bindings. Bindings are review references,
 not proof of transition completeness.
+
+The 2026-11-17 player-course investigation found another concrete omission:
+`FlyToAutoPilot.RunCommand` can overwrite the navigation situation with a
+selected sensor contact while retaining the original destination ID and route.
+The existing scan-only preservation control kept its coordinate situation
+independent and therefore did not represent this native mutation. The
+[player-course repair](../../TORCH-COURSE-FIX.md#sensor-selection-cancelling-a-player-course-2026-11-17)
+and `AiPlannerDiagnosis autopilot-target` native A/B suite cover the interaction.
+This slice's JSON scenarios still model shared FlyTo consumers, not player
+autopilot sensor retargeting; they must not be cited as coverage of that path.

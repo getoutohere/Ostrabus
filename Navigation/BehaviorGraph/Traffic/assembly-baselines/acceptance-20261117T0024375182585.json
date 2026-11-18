@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/b1212f4a25341d39b7e6f1bd5f5ee9df16f0bf7d325a7055dfcad6fb89866c64.json.br",
+  "reason": "Reviewed shared FlyToPath RCS/convergence repair and preserved freight retry semantics against native code/assets. 1449 native checks include exact parent-body position/velocity cache restoration and historical clocks; composed SFF/PASS and economy regressions pass. Completes explicit native bindings for the numerical test evidence; supersedes the incomplete test-source binding acceptance.",
+  "acceptedUtc": "2026-11-17T00:24:37.5166415Z",
+  "previousSnapshot": "assembly-baselines/e2bbaab6ef91e90feb43184b39adfa539a146a79004e91a83b33eb746127634a.json.br"
+}

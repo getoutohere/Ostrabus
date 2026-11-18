@@ -4,7 +4,7 @@ The [passive docking/orbit-lock investigation](../../DOCKED-ORBIT-LOCK.md)
 reproduces and now models a native physical side effect:
 reciprocal docking clears a wreck's body attachment, and a later tether removal
 can transfer the civilian Hold's gravity-ignore flag into the shared anchor.
-The 449-check production-DLL harness includes the initial native controls;
+The 834-check production-DLL harness includes the initial native controls;
 physical A/B controls show that ordinary corrected gravity retains native relock
 eligibility in the Phobos setup without that alternative. A separate native Hold
 counterexample falls into Mars when gravity is enabled; blanket space-waiting
@@ -17,7 +17,36 @@ native from effective transitions; free-coast velocity mismatch remains an
 external input, not a numerical prediction inferred by the graph.
 The independent review adds permanent substation/ground identity exclusions to
 manual/course release. Their native methods participate in assembly invalidation.
-The Traffic slice currently passes 529 conditional expectations/safety checks.
+The follow-up undocking repair distinguishes reference identity from lock state:
+native Undock can replace a preserved HQCH_DET lock with Mercury. Three additional
+boundary scenarios model retained-reference preservation, released high-speed
+rejection and missing-reference fallback. The 385-assertion native A/B supplies
+different original/candidate bodies; the original Phobos fixture did not.
+The Traffic slice currently passes 577 conditional expectations/safety checks.
+
+The optional [civilian destination policy](../../CIVILIAN-DERELICT-VISITS.md)
+separates native derelict candidates from ordinary ship visits. Vanilla accepts
+the former; the full effective overlay excludes them and leaves native station
+fallback available. Existing assigned visits and scavenger/hauler selectors
+retain their own mechanisms. This is a simulation policy rather than a defect
+claim about native target choice; the native A/B and scope controls run in
+`civilian-derelicts`.
+
+The [shared rendezvous investigation](../../FREIGHT-RCS-APPROACH-INVESTIGATION.md)
+reproduces reactor-limited NPC RCS planning and acceptance of an unconverged
+moving-station approach. Four conditional scenarios distinguish native acceptance
+from effective rejection or convergence with independent RCS. Their numerical
+outcomes are external facts backed by 1,454 native checks, not calculations made
+by this graph. Native retries and valid freight destinations remain authoritative;
+the graph does not invent an arrival or rescue for an impossible approach.
+
+The shared SFF/PASS adapter also has external timing evidence:
+[fractional-deadline and bounded-preview checks](../../SFF-DECISION-GAP.md#fractional-deadlines-and-preview-cost)
+cover native clock precision, earlier danger turns and course completion. The
+first bounded forecast uses 64 integration steps versus 255 in the full-horizon
+control. The lifecycle projection does not calculate those trajectories or
+predict a whole-game speedup; the source inventory pins the solver and both
+dedicated test files for later revalidation.
 
 The [Ceres SFF displacement investigation](../../CERES-SFF-DISPLACEMENT.md)
 establishes stale preserved-target coordinates at instant mooring and false
@@ -76,8 +105,8 @@ projection's `stale`/`stale_due` variables represent the current conditions;
 registration-time timer bookkeeping and worker interleavings are verified by
 Tests/StaleShipDiagnosis rather than simulated by this lifecycle projection.
 
-The current reference has 33 control points, 137 vanilla / 157 effective edges,
-90 scenarios and 529 consistency checks. It pins 94 source groups and 19 asset
+The current reference has 33 control points, 143 vanilla / 163 effective edges,
+98 scenarios and 577 consistency checks. It pins 103 source groups and 20 asset
 entries. The accepted IL/asset baseline reports no missing selectors or unresolved
 members. These counts describe coverage of the reference, not proof that the
 entire game simulation is correct.

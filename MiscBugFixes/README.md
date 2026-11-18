@@ -250,12 +250,18 @@ not cancel an unrelated coordinate course. Native ClearShipTarget also clears
 the corresponding optional saved JSON fields, preventing shallow serialization
 from restoring the old goal.
 
+Player autopilot also shares target fields with sensor inspection. The
+`navigation-targets` feature now keeps playback and lifetime cleanup tied to the
+plotted destination, including when native code previously overwrote its situation
+with an inspected contact. See the [repair and evidence](../Navigation/TORCH-COURSE-FIX.md#sensor-selection-cancelling-a-player-course-2026-11-17).
+
 Normal same-ID replacement defers this cleanup until the replacement transaction
 finishes, then transfers references without cancelling routes. A finally path
 restores the suppression scope across nested transactions and exceptions. Hidden
 ships, occupied ports, live named destinations and coordinate/stellar-object
 goals remain distinct. Projectile teardown and whole-world teardown are excluded
-from fleet scans. There is no periodic fleet poll or per-flight-tick validation.
+from fleet scans. There is no periodic fleet poll. Player course target reads
+are separated from sensor selection during the existing native command update.
 
 Native asteroid unmooring also replaces representations: `Undock.AttemptToUnMoor`
 destroys an unvisited asteroid Ship and recreates its stellar object under the
@@ -431,6 +437,14 @@ editor operations and temporary barter copies retain their original accounting.
 Existing corruption is not automatically repaired. Validation includes 475 mass
 checks, 105 remote-barter checks and 77 Venus dolly checks, with the patches active
 together in the compatibility cases.
+
+The initialization hook also preserves native assembly context for
+`CondOwner.SetData`'s asset component lookup. Harmony's dynamic method otherwise
+makes bare names such as `LootSpawner` resolve to null. This broke station
+unloading during PASS travel, leaving the loading overlay visible after a null
+component exception. The correction stays in the existing mass initialization
+hook; it adds no hook, asset override or saved state. Native initializer A/B
+coverage is in `Tests/ComponentInitializationCheck`.
 
 Run `massfix` (replaces `dollyfix`) to repair eligible containers, reviewed human
 anatomical components and `Crew01` characters on materialized world ships

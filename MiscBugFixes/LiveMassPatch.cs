@@ -63,6 +63,27 @@ internal static class LiveMass {
 internal static class LiveMassInitializationPatch {
     static void Prefix(out bool __state) { LiveMass.Initializing++; __state = true; }
     static void Finalizer(bool __state) { if (__state) LiveMass.Initializing--; }
+
+    // Harmony moves SetData's body into a dynamic method. Bare asset component
+    // names must still resolve in Assembly-CSharp, as they did in the native body.
+    internal static Type ComponentType(string name) => Type.GetType(name, null, ResolveComponent, false);
+    static Type ResolveComponent(Assembly assembly, string name, bool ignoreCase) =>
+        (assembly ?? typeof(CondOwner).Assembly).GetType(name, false, ignoreCase) ??
+        (assembly == null ? typeof(object).Assembly.GetType(name, false, ignoreCase) : null);
+
+    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+        var native = AccessTools.Method(typeof(Type), nameof(Type.GetType), new[] { typeof(string) });
+        var resolve = AccessTools.Method(typeof(LiveMassInitializationPatch), nameof(ComponentType));
+        int sites = 0;
+        foreach (var instruction in instructions) {
+            if (instruction.Calls(native)) {
+                sites++;
+                instruction.operand = resolve;
+            }
+            yield return instruction;
+        }
+        if (sites != 1) throw new InvalidOperationException("Expected one native asset component type lookup in CondOwner.SetData.");
+    }
 }
 
 [HarmonyPatch(typeof(Condition), nameof(Condition.AddAmount))]

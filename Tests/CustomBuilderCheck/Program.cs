@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 // Deliberately no reference to a normal Ostrabus build: load only the generated
 // DLL passed by the caller. Binding runs inside the game's bundled Mono runtime.
-static class Program {
+static partial class Program {
     static bool ShaderId(ref int __result) {
         __result = 1;
         return false;
@@ -79,6 +79,7 @@ static class Program {
 
     static int Main(string[] args) {
         if (args.Length != 1) throw new ArgumentException("Pass a generated Ostrabus.dll.");
+        var orbitalVelocityCheck = CaptureOrbitalVelocityControl();
         var engine = new Harmony("ostrabus.custom-check.engine");
         engine.Patch(
             AccessTools.Method(typeof(UnityEngine.Shader), nameof(UnityEngine.Shader.PropertyToID),
@@ -144,6 +145,7 @@ static class Program {
             }
 
             if (features.Contains("sff")) SffDecisionComposition(assembly, harmony);
+            orbitalVelocityCheck(features.Contains("orbital-velocity"));
             if (features.Contains("hull-collisions") && !features.Contains("sff")) CollisionJumpComposition(assembly, harmony);
 
             foreach (var item in new[] {

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "snapshot": "assembly-baselines/ccd1cee80a0a5969e084af26d9c223e6e71d8a79565c85a4baec6c68a295359e.json.br",
-  "reason": "Reviewed 1.1.0.0 native method and asset boundaries, adapted collision/conversion/circular predictions, and reran native role/control suites. Unexpanded entrypoints remain dependency references; live scene acceptance and semantic completeness are not implied.",
-  "acceptedUtc": "2026-11-15T21:03:49.0244151Z",
-  "previousSnapshot": "assembly-baselines/6f97d4f3f7e4f2419d710a3dee07599f6901bb2f33de6947765fee6ad2353d0c.json.br"
+  "snapshot": "assembly-baselines/41bec14a015bfe95dbfff0b5877ce71884bf650dc0b148d8679f72ae61288c12.json.br",
+  "reason": "Reviewed final avoidance handoff including explicit priority before the existing reset-site rewriter. Native assembly and prior native members unchanged. 93 continuous native/full-DLL A/B assertions include fuel/thrust-release/rendezvous hooks in both installation orders; 53 focused checks and 886 planetary checks pass. Native target policy retained; numerical geometry remains an explicit boundary.",
+  "acceptedUtc": "2026-11-17T04:39:01.0558492Z",
+  "previousSnapshot": "assembly-baselines/d142ddb33e5de2d36273863f46fa08ff381951d8668b00ea87d0da89212d4db0.json.br"
 }

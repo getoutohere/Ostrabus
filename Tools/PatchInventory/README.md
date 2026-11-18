@@ -1,6 +1,8 @@
 # Static Harmony declaration inventory
 
-The current 1.1.0.0 candidate has 297 decorated patch classes, including the
+The current working tree binds 306 decorated patch classes against both 1.1.0.0
+and 1.1.0.1; see the [incremental review](../../Build/COMPATIBILITY-1.1.0.1.md).
+The earlier 297-class 1.1.0.0 checkpoint included the
 native parent-pivot placement repair, restored wheel/Shift-drag coexistence,
 [shared SFF/PASS world stepping and end-turn drain](../../Orbital/PASS-TIME-SKIPS.md),
 three classes covering five [administrative bounty-preservation boundaries](../../Navigation/BOUNTY-PRESERVATION.md),
@@ -67,5 +69,5 @@ initial Debug DLL contained 165 decorated patch types. After the native-priority
 return repair added one and target-observer consolidation removed one, the
 inventory returned to 165; shared refill observers replace two regional
 observers without increasing that count. The escape-setter repair adds one,
-bringing the current inventory to 166. See the
+bringing that checkpoint's inventory to 166. See the
 [behavior audit](../../Notes/AI-BEHAVIOR-PATCH-AUDIT.md) for interpretation.

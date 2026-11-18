@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/044752440315a741deff265aba87ee5ca944fe9dd6e28fbf33215050d80619db.json.br",
+  "reason": "Reviewed native Undock reference replacement against authored HQCH attachment; production A/B preserves existing reference, phase and release fallbacks.",
+  "acceptedUtc": "2026-11-17T03:14:35.9248355Z",
+  "previousSnapshot": "assembly-baselines/1b3907ab03abeae1ed752da21f5146d459bac163b478bfb07fa9be3db5570019.json.br"
+}

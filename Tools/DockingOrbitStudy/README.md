@@ -5,6 +5,24 @@ The harness loads and patches the actual full Debug Ostrabus DLL. The earlier
 study-only prototype was removed after promotion into production code.
 The tool does not contact the live game or write saves/assets.
 
+The separate [AI gravity-exemption investigation](../../Navigation/AI-GRAVITY-EXEMPTIONS.md)
+uses `GravityModeChecks.cs`. After building, append `gravity-modes` to the
+MonoHost invocation below to run its **66 native/production assertions** instead
+of the docking suite. It compares momentum changes, analytical-lock RCS release,
+conic-fit admission, the orbit-entry atmosphere calculation, lost-projectile
+dodge cleanup and the former free-wait policy's unsafe admission. It then runs
+the production dodge/admission repairs, a native numerical circular coast and
+repeated native Hold calls with zero managed allocation, including admission
+relative to a moving body rather than heliocentric speed. These are offline
+checks with controlled fixture boundaries; they do not mutate the live game.
+
+The [orbital velocity study](../OrbitalVelocityStudy/README.md) also composes
+experimental ephemeris changes with this suite in a separate Mono process.
+`UndockReferenceChecks` explicitly freezes its synthetic bodies, whose arbitrary
+coordinates are fixture inputs rather than orbital solutions. This prevents
+zero-period NaN arithmetic from making the missing-reference fallback pass.
+The velocity study tests that fallback separately using a valid ephemeris.
+
 The current candidate preserves an existing authored attachment for a passive
 visit, with required release on applied control or authorized course execution.
 It leaves the native Hold gravity exemption intact. Native Hold then
@@ -19,7 +37,7 @@ dotnet build Tools/DockingOrbitStudy -c Release
 dotnet Tests/SaveJsonCompatibility/Host/bin/Release/net8.0/MonoHost.dll Tools/DockingOrbitStudy/bin/Release/netstandard2.1/DockingOrbitStudy.dll
 ```
 
-The bundled-Mono run passes **449 checks**. First it executes native docking
+The bundled-Mono run passes **834 checks**. First it executes native docking
 without the candidate to reproduce lock loss. It then tests a candidate
 docking-expression replacement and group-input handoff, including the failure
 of lock preservation alone. Finally it installs the existing production towing
@@ -27,6 +45,18 @@ and route-completion patches and exercises their composition with the candidate.
 Eight independent assertions also execute native Hold/MoorTo/UnMoorFrom and
 show that rebuilding the pair disables group gravity. Correcting only that
 numeric anchor flag restores the expected response to an applied gravity force.
+
+`UndockReferenceChecks.cs` adds 385 assertions for a missing boundary in the
+original fixture: the preserved attachment's body and nearest natural body must
+be different. Native undocking replaces HQCH/HQCH_DET with Mercury, or Phobos
+with Mars, even after docking preserved the original lock. The production
+undocking hook retains an existing valid attachment and leaves released/missing
+reference cases on native relock rules. Both docking directions, either
+departure actor, fixed/circular phase and offset, and released excessive-speed
+rejection are checked. The earlier tests supplied Phobos for both roles, hiding
+this defect. Body caches and nearest-body lookup are explicit fixtures here;
+native docking, undocking, group teardown and relocking execute. The new hook
+also runs in the existing physical, lifecycle and collateral compositions.
 
 `GravityPhysics.cs` adds 20 checks using captured Sol/Mars/Phobos parameters in
 `PhobosBodies.json`. Actual body ephemerides, native group-world integration and

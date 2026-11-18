@@ -12,13 +12,26 @@ internal static class AIShipAvoidance {
     const double KmPerAU = OrbitalMotion.KmPerAU;
     const double NativeAccelerationCap = 1.9016982118751132E-10;
 
-    // Keep the shared projectile/history predicate intact. Only its AI caller
-    // must reject a separated object whose encounter is wholly behind us.
-    internal static bool FutureCollision(ShipSitu us, ShipSitu them, double seconds) {
-        Point p = us.vPos - them.vPos, v = us.vVel - them.vVel;
-        float radius = CollisionManager.GetCollisionDistanceAU(us, them);
-        if (p.Dot(p) > (double)(radius * radius) && p.Dot(v) >= 0) return false;
-        return CollisionManager.WillCollide(us, them, seconds);
+    internal static bool FutureCollision(ShipSitu us, ShipSitu them, double seconds) =>
+        AvoidancePrediction.Collision(us, them, seconds, AvoidanceQuery.Route, them.NavData, AvoidanceQuery.Owner?.objSS);
+
+    internal static Point CurrentMotionEscape(Point original, Ship ship, ShipSitu obstacle) {
+        ShipSitu current = ship?.objSS;
+        if (current != null && !current.bGrounded && obstacle != null) {
+            // Replacement thrust must not choose its side from the thrust it
+            // replaces. Preserve the native perpendicular escape, selecting
+            // the side already opened by relative lateral motion.
+            double x = obstacle.vPosx - current.vPosx, y = obstacle.vPosy - current.vPosy;
+            double length = Math.Sqrt(x * x + y * y);
+            if (length > 0 && OrbitAcceleration.Finite(length)) {
+                double cross = x * (obstacle.vVelY - current.vVelY) - y * (obstacle.vVelX - current.vVelX);
+                if (!OrbitAcceleration.Finite(cross)) return original;
+                double side = cross > 0 ? -1 : 1;
+                original = new Point(current.vPosx - side * y / length * 3.342293553032505E-08,
+                    current.vPosy + side * x / length * 3.342293553032505E-08);
+            }
+        }
+        return original;
     }
 
     internal static Point SelectEscape(Point original, Ship ship, ShipSitu obstacle, float predictionTime) {
@@ -83,11 +96,14 @@ internal static class AIShipAvoidance {
 
 [HarmonyPatch(typeof(AIShipManager), nameof(AIShipManager.IsOnCollisionCourse))]
 internal static class AIShipAvoidancePatch {
+    static void Prefix(Ship shipUs,out AvoidanceQuery.State __state) => __state=AvoidanceQuery.BeginQuery(shipUs);
+    static Exception Finalizer(Exception __exception,AvoidanceQuery.State __state) {AvoidanceQuery.EndQuery(__state);return __exception;}
     internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod) {
         var code = new List<CodeInstruction>(instructions);
         var collision = AccessTools.Method(typeof(CollisionManager), nameof(CollisionManager.WillCollide));
         var escape = AccessTools.Method(typeof(AIShipManager), "GetEscapePoint");
         var hidden = AccessTools.PropertyGetter(typeof(Ship), nameof(Ship.HideFromSystem));
+        RemoveDistanceGate(code, __originalMethod);
         CodeInstruction obstacle = null;
         int predictions = 0, escapes = 0, hiddenChecks = 0;
         for (int i = 0; i < code.Count; i++) {
@@ -113,10 +129,33 @@ internal static class AIShipAvoidancePatch {
                 if (!instruction.Calls(escape)) continue;
                 yield return new CodeInstruction(OpCodes.Ldarg_0);
                 yield return new CodeInstruction(obstacle.opcode, obstacle.operand);
+                yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AIShipAvoidance), nameof(AIShipAvoidance.CurrentMotionEscape)));
+                yield return new CodeInstruction(OpCodes.Ldarg_0);
+                yield return new CodeInstruction(obstacle.opcode, obstacle.operand);
                 yield return new CodeInstruction(OpCodes.Ldarg_2);
                 yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AIShipAvoidance), nameof(AIShipAvoidance.SelectEscape)));
             }
         }
+    }
+    static void RemoveDistanceGate(List<CodeInstruction> code, MethodBase method) {
+        var stopping = AccessTools.Method(typeof(MathUtils), nameof(MathUtils.GetStoppingDistance));
+        var distance = AccessTools.Method(typeof(ShipSitu), nameof(ShipSitu.GetDistance), new[] { typeof(ShipSitu) });
+        var situation = AccessTools.PropertyGetter(typeof(Ship), nameof(Ship.objSS));
+        int at = -1, count = 0;
+        for (int i = 0; i < code.Count; i++) if (code[i].Calls(stopping)) { at = i; count++; }
+        // Release IL leaves the distance on the evaluation stack while it
+        // calculates/stores stopping distance. Remove both sides of that one
+        // comparison; preserve labels/blocks at their existing locations.
+        if (count != 1 || at < 15 || at + 5 >= code.Count ||
+            code[at - 15].opcode != OpCodes.Ldarg_0 || !code[at - 14].Calls(situation) ||
+            !LoadLocal(code[at - 13], method, typeof(Ship)) || !code[at - 12].Calls(situation) || !code[at - 11].Calls(distance) ||
+            !LoadLocal(code[at - 2], method, typeof(double)) || !LoadLocal(code[at - 1], method, typeof(double)) ||
+            code[at + 3].opcode != OpCodes.Ldc_R8 || !(code[at + 3].operand is double two) || two != 2 ||
+            code[at + 4].opcode != OpCodes.Mul || code[at + 5].opcode != OpCodes.Bgt && code[at + 5].opcode != OpCodes.Bgt_S)
+            throw new InvalidOperationException("AI avoidance braking-distance filter changed; prediction admission requires review.");
+        void Nop(int i) { code[i].opcode = OpCodes.Nop; code[i].operand = null; }
+        for (int i = at - 15; i <= at - 11; i++) Nop(i);
+        for (int i = at - 2; i <= at + 5; i++) Nop(i);
     }
     static bool LoadLocal(CodeInstruction instruction, MethodBase method, Type type) {
         int index;

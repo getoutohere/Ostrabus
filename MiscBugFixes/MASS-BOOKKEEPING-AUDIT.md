@@ -146,3 +146,41 @@ dotnet run --project Tests/SaveJsonCompatibility/Host -c Release --no-build -- T
 ```
 
 These checks do not modify a live game or a saved archive.
+
+## Initialization regression found during PASS travel (1.1.0.1)
+
+The original `LiveMassInitializationPatch` preserved accounting scope but did
+not preserve the caller-assembly semantics of `Type.GetType(string)` inside
+`CondOwner.SetData`. Under the game's Mono runtime, the Harmony-generated body
+resolves bare component names against its dynamic assembly. Both authored
+`aComponents` definitions (`SysLootSpawner` and `SysLootSpawnerLot`) consequently
+lose their `LootSpawner` / `LootSpawnerLot` components.
+
+The 2026-11-17 VNCA-to-VENC PASS capture recorded nine invalid AddComponent
+messages followed by a `SaveToShallow` null reference. Native `Ship.InitShip`
+calls `GetComponent<LootSpawner>().UpdateAppearance()` while rebuilding saved
+spawners; failed reconstruction leaves the station at load state `None`.
+The exception exits `_TeleportCO` through our pending-end-turn wrapper before
+its loading-popup dismissal and final region refresh. The world advance and
+player transfer have already happened. The earlier attribution to an established
+native-only defect was incorrect.
+
+The existing initialization class now replaces its one native type lookup with
+an explicit Assembly-CSharp/core-library resolver, retaining normal qualified
+type resolution. No assembly scan, replacement behavior controller, new hook,
+JSON edit, saved field or per-frame work is introduced. Unknown types remain
+unknown and exceptions remain visible.
+
+`Tests/ComponentInitializationCheck` executes the actual native `SetData` body
+using the installed assets' component names. The unpatched control creates all
+components, an ordinary prefix reproduces null types, and the repaired production
+hook matches the native control. Only Unity component allocation and behavior/UI
+setup are fixture boundaries; this is not a full Unity shuttle scene test.
+Receipts for the live failure and profiler shutdown are in
+`obj/PassShuttle-20261117/trip2/` (scratch artifacts, not packaged).
+
+Correction validation: 25 native component-resolution/initialization checks,
+475 mass bookkeeping checks, 5,368 orbital/PASS checks, 19 transit-profiler checks,
+and 306 production Harmony classes bound with zero failures or warnings. Debug
+build completed without warnings/errors. These are offline receipts; the
+corrected build has not yet been deployed or accepted in a live shuttle scene.

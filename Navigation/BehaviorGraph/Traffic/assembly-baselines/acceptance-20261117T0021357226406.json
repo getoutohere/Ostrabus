@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/e2bbaab6ef91e90feb43184b39adfa539a146a79004e91a83b33eb746127634a.json.br",
+  "reason": "Reviewed shared FlyToPath RCS limiter and unchecked convergence against native code and asset ownership. Native reproduction and 1430 production-hook checks validate independent NPC RCS, route rejection, preserved freight goals, recursive waypoints and ephemeris clocks; composed orbital/SFF/PASS and freight regressions pass. Adds explicit conditional graph outcomes and three new source groups without claiming full numerical coverage.",
+  "acceptedUtc": "2026-11-17T00:21:35.7209998Z",
+  "previousSnapshot": "assembly-baselines/6ef415e218e39f184199947e952c5f60e89175fe9cce322ab78adc5a39976699.json.br"
+}

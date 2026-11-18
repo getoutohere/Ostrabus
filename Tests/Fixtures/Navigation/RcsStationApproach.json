@@ -1,0 +1,65 @@
+{
+    "epoch":  65634307014.8366,
+    "massKg":  31321.35,
+    "rcsCount":  10,
+    "rcsFuelKg":  1552.83715820152,
+    "fusionThrustMax":  7413387.97622797,
+    "fusionPelletMax":  3.99900007247925,
+    "origin":  {
+                   "vPosx":  0.541290729720085,
+                   "vPosy":  0.473596878065202,
+                   "vVelX":  -1.84607614031451E-07,
+                   "vVelY":  1.68311236811612E-07,
+                   "size":  960
+               },
+    "targetBody":  "VORB",
+    "targetSize":  1500,
+    "bodies":  [
+                   {
+                       "strName":  "Sol",
+                       "fPerh":  0.0,
+                       "fAph":  0.0,
+                       "fAxis1":  0.0,
+                       "fAxis2":  0.0,
+                       "fEcc":  0.0,
+                       "fAngle":  0.0,
+                       "fPeriod":  31556926.0,
+                       "fRadius":  0.00464919714900757,
+                       "fMass":  1.98910005267383E+30,
+                       "fPeriodShift":  0.0,
+                       "nOrbitDirection":  1
+                   },
+                   {
+                       "strName":  "Venus",
+                       "fPerh":  0.718340772273422,
+                       "fAph":  0.728031465972241,
+                       "fAxis1":  1.44637223824566,
+                       "fAxis2":  1.44633977405843,
+                       "fEcc":  0.00669999979436398,
+                       "fAngle":  76.6999969482422,
+                       "fPeriod":  19407509.7909503,
+                       "fRadius":  4.04551209124151E-05,
+                       "fMass":  4.86999981091681E+24,
+                       "fPeriodShift":  0.0,
+                       "nOrbitDirection":  1
+                   },
+                   {
+                       "strName":  "VORB",
+                       "fPerh":  4.345E-05,
+                       "fAph":  0.000116,
+                       "fAxis1":  0.00015945,
+                       "fAxis2":  0.000141988731947292,
+                       "fEcc":  0.455001567889621,
+                       "fAngle":  0.0,
+                       "fPeriod":  14470.310399692,
+                       "fRadius":  6.68458706417963E-09,
+                       "fMass":  100000.0,
+                       "fPeriodShift":  0.0,
+                       "nOrbitDirection":  1
+                   }
+               ],
+    "hierarchy":  [
+                      "Venus=Sol",
+                      "VORB=Venus"
+                  ]
+}

@@ -23,10 +23,14 @@ static class Program {
         var completion = new Harmony("offline.orbital.route-completion-interop");
         try {
             completion.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.RouteCompletionPatch)).Patch();
+            completion.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.AiRcsAccelerationPatch)).Patch();
+            completion.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.AiRendezvousValidationPatch)).Patch();
+            completion.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.FreightRendezvousFailurePatch)).Patch();
             return Run(args);
         } finally { completion.UnpatchSelf(); }
     }
     static int Run(string[] args) {
+        if (args.Length != 0 && args[0] == "timing") { SffTimingChecks.Run(Check); Console.WriteLine(checks + " SFF timing checks passed."); return 0; }
         if (args.Length != 0 && args[0] == "pass-handoff-study") { Enable(true); SffDecisionChecks.Run(Check, true); Console.WriteLine(checks + " PASS handoff study checks passed."); return 0; }
         if (args.Length != 0 && args[0] == "decisions") { Enable(true); SffDecisionChecks.Run(Check); Console.WriteLine(checks + " SFF decision checks passed."); return 0; }
         if (args.Length > 1 && args[0] == "compat-impact-study") { CeresSffStudy.CompatibilityImpacts(args[1]); return 0; }
@@ -139,6 +143,7 @@ static class Program {
             Check(energy>0,"Native six-hour numerical step should reproduce escape corruption");
             Console.WriteLine("Native six-hour jump reproduced escape energy: "+energy+" km²/s², even with parent correction enabled.");
             CoastChecks.Run(Check);
+            SffTimingChecks.Run(Check);
             SffChecks.Run(Check);
             SffDecisionChecks.Run(Check);
             HaulerRunawayChecks.Run(Check);

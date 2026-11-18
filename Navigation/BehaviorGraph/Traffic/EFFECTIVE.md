@@ -198,4 +198,10 @@ flowchart TD
   n_p_wait -->|"rcs / passive_docking_attachment [conditional]"| n_p_motion
   n_p_wait -->|"course / passive_docking_attachment [conditional]"| n_p_motion
   n_p_wait -->|"haul_pause / passive_docking_attachment"| n_p_wait
+  n_p_motion -->|"depart / passive_docking_attachment"| n_p_end
+  n_t_fly -->|"plot_rcs_approach / ai_rendezvous"| n_t_fly
+  n_t_fly -->|"plot_rcs_approach / ai_rendezvous"| n_t_fly
+  n_t_fly -->|"plot_rcs_approach / ai_rendezvous"| n_t_fly
+  n_t_fly -->|"plot_rcs_approach / ai_rendezvous"| n_t_fly
+  n_t_ship -->|"sample_ship / civilian_derelict_destinations"| n_t_station
 ```

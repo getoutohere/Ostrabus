@@ -62,11 +62,21 @@ internal static class MeteorTargetPatch {
         var shipGetter = AccessTools.PropertyGetter(typeof(CondOwner), "ship");
         int logShip = code.FindIndex(call + 1, i => i.Calls(shipGetter));
         if (logShip < 0) throw new InvalidOperationException("BeatManager meteor log target IL changed.");
+        var labels = AccessTools.Field(typeof(CodeInstruction), "labels");
+        var rejection = code.Take(call).LastOrDefault(i => i.opcode.FlowControl == FlowControl.Cond_Branch &&
+            code.Skip(call + 1).Any(next => ((System.Collections.IList)labels.GetValue(next)).Contains(i.operand)));
+        if (rejection == null) throw new InvalidOperationException("BeatManager meteor rejection branch IL changed.");
         var selected = generator.DeclareLocal(typeof(Ship));
         code[call].operand = AccessTools.Method(typeof(MeteorTargets), nameof(MeteorTargets.Spawn));
         code.Insert(logShip + 1, new CodeInstruction(OpCodes.Pop));
         code.Insert(logShip + 2, new CodeInstruction(OpCodes.Ldloc, selected));
-        code.Insert(call + 1, new CodeInstruction(OpCodes.Stloc, selected));
+        // Reuse the native failure path when selection finds only sheltered hulls.
+        // This avoids a null log receiver, false impact entry and successful event.
+        code.InsertRange(call + 1, new[] {
+            new CodeInstruction(OpCodes.Stloc, selected),
+            new CodeInstruction(OpCodes.Ldloc, selected),
+            new CodeInstruction(OpCodes.Brfalse, rejection.operand)
+        });
         return code;
     }
 }

@@ -1281,7 +1281,8 @@
         "type": "Ship",
         "methods": [
           "Dock",
-          "UpdateDockedShips"
+          "UpdateDockedShips",
+          "Undock"
         ]
       }
     ],
@@ -1342,6 +1343,153 @@
         "type": "Ostranauts.Ships.AIPilots.AIShip",
         "methods": [
           "FFWD"
+        ]
+      }
+    ],
+    "rendezvous_checks": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToPath",
+        "methods": [
+          "GetAcceleration",
+          "PlanTrip4",
+          "RunCommand"
+        ]
+      },
+      {
+        "type": "BodyOrbit",
+        "methods": [
+          "UpdateTime"
+        ]
+      }
+    ],
+    "rendezvous_limiter": [
+      {
+        "type": "Ostranauts.ShipGUIs.NavStation.NavModTorchDrive",
+        "methods": [
+          "GetLimiterSafetyMax"
+        ]
+      }
+    ],
+    "rendezvous_patch": [
+      {
+        "type": "Ostranauts.Ships.Commands.FlyToPath",
+        "methods": [
+          "GetAcceleration",
+          "PlanTrip4",
+          "RunCommand"
+        ]
+      }
+    ],
+    "sff_dynamics": [
+      {
+        "type": "StarSystem",
+        "methods": [
+          "Update"
+        ]
+      },
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "TimeAdvance"
+        ]
+      }
+    ],
+    "sff_timing_checks": [
+      {
+        "type": "StarSystem",
+        "methods": [
+          "Update"
+        ]
+      },
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "TimeAdvance"
+        ]
+      }
+    ],
+    "sff_preview_checks": [
+      {
+        "type": "GUIFFWD/<FFWD>d__31",
+        "methods": [
+          "MoveNext"
+        ]
+      },
+      {
+        "type": "CrewSim/<_TeleportCO>d__356",
+        "methods": [
+          "MoveNext"
+        ]
+      },
+      {
+        "type": "CrewSim",
+        "methods": [
+          "_TeleportCO"
+        ]
+      },
+      {
+        "type": "StarSystem",
+        "methods": [
+          "Update"
+        ]
+      },
+      {
+        "type": "AIShipManager",
+        "methods": [
+          "FFWD"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.AIShip",
+        "methods": [
+          "FFWD"
+        ]
+      }
+    ],
+    "attachment_undock_checks": [
+      {
+        "type": "Ship",
+        "methods": [
+          "Dock",
+          "Undock"
+        ]
+      },
+      {
+        "type": "ShipSitu",
+        "methods": [
+          "TryRelockToBO",
+          "LockToBO"
+        ]
+      },
+      {
+        "type": "StarSystem",
+        "methods": [
+          "GetBO"
+        ]
+      }
+    ],
+    "civilian_derelict_policy": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.CivilianPilot",
+        "methods": [
+          "CanDockWith",
+          "GetTarget"
+        ]
+      }
+    ],
+    "civilian_derelict_checks": [
+      {
+        "type": "Ostranauts.Ships.AIPilots.CivilianPilot",
+        "methods": [
+          "CanDockWith",
+          "GetTarget"
+        ]
+      },
+      {
+        "type": "Ostranauts.Ships.AIPilots.ScavPilot",
+        "methods": [
+          "ScavCanDockWith",
+          "GetTarget"
         ]
       }
     ]
@@ -1620,6 +1768,17 @@
         "attachment_ship",
         "attachment_group",
         "patch_attachment"
+      ]
+    },
+    {
+      "id": "attachment_hqch_100",
+      "path": "blueprints/environments/environments.json",
+      "entry": "100",
+      "sources": [
+        "attachment_spawn",
+        "attachment_ship",
+        "patch_attachment",
+        "attachment_undock_checks"
       ]
     }
   ]

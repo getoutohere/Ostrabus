@@ -6,149 +6,204 @@ I'm making it public as inspiration, reference material, or a source of code to 
 
 There is no guarantee it will be maintained for new game patches. Issues and pull requests are welcome, but will most likely be ignored. Your best bet is to hit me up on Discord.
 
-**Ostrabus 0.6.0** targets **Ostranauts 1.1.0.0 (`public_test`) with BepInEx 5**.
-This snapshot has partial in-game playtesting and extensive offline/native checks.
-The latest bounty-preservation, passive-attachment and PASS refinements still need
-live acceptance; see the [0.6.0 release notes](Build/RELEASE-0.6.0.md) for the exact scope and evidence.
-The [compatibility audit](Build/COMPATIBILITY-1.1.0.0.md) and [per-feature decisions](Build/FEATURE-COMPATIBILITY-1.1.0.0.md) record native/offline evidence and its limits. The [save-content investigation](StandaloneMods/SaveMigration110/FINDINGS.md) confirms native 1.1 already supplies the verified new world content. Its metadata-only migration prototype is unnecessary and is not recommended.
-The [preserved 1.0.1.10 baseline](Build/BASELINE-1.0.1.10.md) is commit `be8e282`, tagged `Ostrabus-5.1.0`.
-It is an experimental snapshot; compatibility with other game versions is not implied.
-See [build/install instructions](Build/README.md) and the [release preparation notes](Build/RELEASE-PREP.md).
-For a custom selection of fixes and features, use the [custom plugin builder](CustomBuilder/README.md).
+**Ostrabus 0.7.0 supports Ostranauts 1.1.0.2 (`public_test`), Windows and BepInEx 5.**
+It is experimental and partially playtested; the [release notes](Build/RELEASE-0.7.0.md) separate live observations from offline/native tests and list known limitations.
+The [1.1 compatibility audit](Build/COMPATIBILITY-1.1.0.0.md), [feature review](Build/FEATURE-COMPATIBILITY-1.1.0.0.md) and incremental [1.1.0.1](Build/COMPATIBILITY-1.1.0.1.md) / [1.1.0.2](Build/COMPATIBILITY-1.1.0.2.md) reviews document the port.
+
+Use the [build/install instructions](Build/README.md) for the full package or the [custom plugin builder](CustomBuilder/README.md) for selected features.
+Normal deployment continues to install the full package.
+
+The optional [Station Kiosk Migration plugin 0.1.2](StandaloneMods/StationMigration/README.md) preserves station interiors during the game's kiosk upgrades; install it separately before loading an affected older save, then remove it after saving.
+It is not a general content migration: the [content audit](Build/CONTENT-AVAILABILITY-1.1.0.0.md) explains what 1.1 already adds to continuing saves and why the earlier metadata-only migration prototype is unnecessary.
+
+For the old game, use the [preserved 1.0.1.10 baseline](Build/BASELINE-1.0.1.10.md), commit `be8e282`, tagged `Ostrabus-5.1.0`; this 0.7.0 build does not declare support for other game versions.
 
 ## Inventory of changes
 
+Choose categories or individual features with the [custom plugin builder](CustomBuilder/README.md); module links provide implementation details, settings and test evidence.
+SFF means Super Fast Forward; PASS shuttle trips also advance the simulation while you travel.
+
 ### Bug fixes
 
-- [CO2 scrubber audio](MiscBugFixes/ScrubberAudio/README.md): remove the extra generic pump loops introduced in 1.1 while preserving the scrubber's own hum and native controls; assets only.
+#### Navigation, orbits and docking
 
-- [Radio surrender](MiscBugFixes/SHIP-SURRENDER-WORK-STALL.md): keep ship negotiations from blocking crew work or overwriting face-to-face conversation state.
-- [AI surrender accounting](Navigation/SURRENDER-COMBAT-LOOP.md): preserve engagements when an offer cannot be sent, preventing repeated combat lock/release cycles.
-- [Disabled combat targets](Navigation/COMBAT-NEUTRALIZATION.md): stop regular and Blockade detectors reacquiring offscreen AI ships that native combat logic considers neutralized, preserving cleanup and pilot reactivation.
-- [Combat-to-patrol handoff](Navigation/PATROL-TARGET-HANDOFF.md): let Navy and Blockade pilots finish native combat cleanup after losing contact instead of resuming patrol against an abandoned enemy target.
-- [Signal boxes](MiscBugFixes/SignalBoxes/README.md): repair gate updates, effective outputs, disconnections and saved message queues while preserving wiring across temporary reconstruction.
-- [Saved inventory](MiscBugFixes/SAVED-INVENTORY-PARENTS.md): restore saved contents beneath damaged parents before native destruction recipes transfer or drop them.
-- [Tile helper memory leak](MiscBugFixes/TILE-HELPER-CLEANUP.md): properly retire grid helper COs during tile and async-hull destruction, releasing stale registry entries and old ship references.
-- [Comms channel display](Optimizations/COMMS-HISTORY.md): show the newest 100 stored messages chronologically instead of the oldest 100.
-- [Console history](MiscBugFixes/CONSOLE-BUFFER.md): discard oldest output reliably and size the scrollable display to its text so long sessions keep showing recent messages.
-- [Shallow refueling](RefuelRCSPatch.cs): replenish RCS fuel instead of incorrectly adding the fuel to ship mass.
-- [AI flight fuel accounting](MiscBugFixes/AI-FLIGHT-FUEL-HANDOFF.md): prevent navigation-mode and loaded-state handoffs from charging the same travel twice, including across save/load.
-- [AI flight control handoffs](Navigation/FLIGHT-CONTROL-HANDOFF.md): release abandoned courses/thrust, wait safely for incapacitated pilots, reject retired controllers, and preserve legitimate autopilot and combat handoffs.
-- [AI crew identities](MiscBugFixes/NPC-IDENTITY-COLLISION-AUDIT.md): prevent newly generated crew from regenerating and relocating an existing NPC whose name collides, preserving legitimate station recruitment.
-- [AI patrol priority](Navigation/PATROL-PRIORITY.md): keep Navy patrols interruptible by combat and threats, and preserve SFF one-shot callbacks and queued command order across save/load.
-- [AI RCS replenishment](Navigation/RCS-REPLENISHMENT.md): preserve actual refills in stored route budgets across AI roles and stations without changing planned consumption.
-- [Save forward compatibility](SaveCompatibility/README.md): reconstruct missing 1.1 RCS caches from legacy hull data while retaining native combat losses and existing fuel.
-- [Nav module placement](NavConsole/MODULE-PLACEMENT.md): use the actual parent pivot when dragging modules, fixing the course panel moving above the console in 1.1.
-- [Scav emergency recovery](MiscBugFixes/SCAV-EMERGENCY-RECOVERY.md): release empty visits, reject unaffordable returns and keep failed selection in a throttled retry instead of a destinationless Hold, preserving native assistance.
-- [AI wait clocks](Navigation/SCAVENGER-WAITING.md): keep pause deadlines absolute and expire shallow SOS cooldowns using their native saved timers.
-- [Bounty escorts](MiscBugFixes/BOUNTY-ESCORT.md): let temporarily arrested targets follow manual airlock orders without changing their faction roster or autonomous permissions.
-- [Torch autopilot fuel checks](MiscBugFixes/TorchFuelCachePatch.cs): synchronize cached fuel with actual tanks so affordable braking legs do not disengage autopilot.
-- [Torch course consumption](Navigation/TORCH-COURSE-FIX.md): calculate fuel and reactor controls from the planned burn/coast phases, including previews and SFF without double charging.
-- [Torch towing](Navigation/Towing/README.md): execute plotted courses for braced tow groups, account for their mass and preview station departures without counting the station.
-- [Ranged self-hits](MiscBugFixes/RangedShooterExclusionPatch.cs): exclude the shooter from character hit processing without blocking damage to intended targets or objects downrange.
-- [Meat duplication](MiscBugFixes/MeatScrapPatches.cs): destroy loose meat through the native default recipe instead of spawning another batch of loose meat.
-- [PDC ammunition](MiscBugFixes/PDC-CONVERSION-AMMO.md): prevent installation, uninstallation and other PDC conversions from generating another starting magazine before transferring existing ammunition.
-- [AI navigation targets](MiscBugFixes/ShipReplacementTargetsPatch.cs): preserve destinations across ship reconstruction and asteroid representation changes, and discard destroyed or missing saved targets before their stale routes can continue.
-- [Civilian SFF station selection](MiscBugFixes/CivilianSffCoordinatesPatch.cs): use X/Y position instead of X/X when choosing a regional station during fast-forward.
-- [SFF navigation destinations](MiscBugFixes/SFF-NAVIGATION-DESTINATION.md): preserve AI mission targets and refresh their coordinates before fast-forward instant mooring can save enormous docking offsets.
-- [Route completion](Navigation/ROUTE-COMPLETION.md): stop completed maneuvers and advance only remaining coast time, preventing phantom thrust and duplicate integration during PASS travel and ordinary non-SFF updates.
-- [Civilian rendezvous](Navigation/BehaviorGraph/Traffic/HIDDEN-VISIT-INVESTIGATION.md): exclude hidden hulls, release visits whose destinations retire, and preserve physically docked encounters.
-- [Civilian visit completion](MiscBugFixes/CIVILIAN-VISIT-WAITS.md): let peaceful shallow civilians finish empty-tank visits, preserve clocks through SFF/reload and use native faction-home selection.
-- [AI crew lifecycle](Navigation/CREWLESS-AI.md): prevent premature cleanup/reuse and crewless thrust; preserve player-connected faction ships and their controllers across ATC changes ([regional cleanup](Navigation/BehaviorGraph/Traffic/REGIONAL-CLEANUP.md)).
-- [AI retirement](MiscBugFixes/ACTIVE-SHIP-STALE-CLEANUP.md): cancel obsolete disposal timers on valid hull reactivation and save restoration so active ships and living crews are not deleted as stale.
-- [Bounty departures](Navigation/BOUNTY-DEPARTURES.md): restore native station refueling when bounty targets relaunch in existing ships, preventing immediate low-fuel returns.
-- [AI controller identity](MiscBugFixes/FREIGHT-CONTROLLER-IDENTITY.md): stop station collisions giving active freighters a second local controller that can destroy their hull and strand cargo; repair demonstrated saved duplicates.
-- [Hauler returns](Haulers/README.md): restore home targets after derelict release, cancel abandoned thrust, and preserve the retrieval stage after SFF pickups.
-- [VORB collection](Venus/HAULER-RETRIEVAL-AUDIT.md): let VORB retrievers use their home depot's assignments and wreck ownership instead of VNCA's regional station.
-- [Navy target selection](Navigation/NavyCandidateFuelPatch.cs): reject unaffordable candidates before selection, closing the single-candidate and all-rejected fuel-check bypasses.
-- [Propulsion checks](Navigation/RCS-BUDGET.md): include pilot efficiency in remaining RCS delta-v and reject invalid propulsion budgets in low-fuel checks.
-- [AI return orders](Navigation/RETURN-PRIORITY.md): preserve return stages across save/reload, retry failed native retreat approaches/docking, and retain urgent/combat priorities; discard obsolete fuel predictions when retargeting.
-- [AI escape destinations](Navigation/ESCAPE-RETARGET.md): discard the previous route and fuel prediction when selecting a new escape station, preserving native retreat decisions.
-- [AI collision avoidance](Navigation/PLANETARY-AVOIDANCE-AUDIT.md): stop dodging encounters in the past and reject evasive turns into planetary bodies while retaining ship avoidance and native destinations.
-- [Planetary gravity](Orbital/README.md): correct missing parent-body acceleration when integrating free objects near an orbiting planet.
-- [AI departure waypoints](Navigation/DEPARTURE-WAYPOINTS.md): clear a station relative to its own orbit instead of an unrelated planet, and continue intermediate freight legs during SFF.
-- [Local AI navigation frames](Navigation/LOCAL-NAVIGATION-FRAMES.md): keep patrols, lurking and local encounter points with their regional orbit instead of inheriting a distant body's motion.
-- [SFF economy and freight accounting](Orbital/Economy/README.md): preserve time-skip production/dispatch ordering, fix bundled loading and shared market stock accounting, size haulers for the whole load, and complete cargo handoffs before retirement.
-- [VORB derelicts](Venus/README.md): restore native derelict anchoring and correct the orbit lookup used after undocking.
-- [Docked gravity](MiscBugFixes/DOCKED-GRAVITY.md): inherit the anchored group's gravity after transit instead of leaving reconstructed ships at the default 0.3 g.
-- [Ship-view rotation](MiscBugFixes/ShipRotationPatch.cs): check whether the ship being rotated is docked, rather than an unrelated ship occupied by the captain.
-- [Docking clearance](MiscBugFixes/DockingGridPrecisionPatch.cs): eliminate phantom obstructions caused by tiny coordinate errors in docking-fit checks.
-- [Remote barter](MiscBugFixes/BarterRemovalPatch.cs): remove sold items from unloaded ship inventories instead of crediting the sale while leaving the item available to sell again.
-- [Remote repurchases](MiscBugFixes/MULTI-SHIP-BARTER-AUDIT.md): preserve already-marked delivered items during writeback and restore temporary coordinates even if serialization fails.
-- [Background ship loading](MiscBugFixes/MULTI-SHIP-BARTER-AUDIT.md): unloading one inventory, preview or rating copy cancels only its own loading job, preserving other ships' barter inventories.
-- [Preview cargo markets](MiscBugFixes/PREVIEW-MARKET-ISOLATION.md): prevent presentation copies from registering phantom cargo pods; reconcile verified empty ghosts with `cargopodfix`.
-- [Container mass](MiscBugFixes/STACK-REMOVAL-MASS.md): prevent repeated mass subtraction during nested removals and preserve mass changes made through remote barter copies.
-- [Mass propagation](MiscBugFixes/MASS-BOOKKEEPING-AUDIT.md): conserve mass during stack merges and propagate live item/body mass changes to owners and character encumbrance.
-- [Door auto-close](MiscBugFixes/DOOR-AUTO-CLOSE.md): preserve the auto-close setting through power loss and restoration.
-- [Automatic work selection](MiscBugFixes/AutoTaskScratchPatch.cs): keep patching, repair, and restoration candidate lists separate instead of letting native scratch-list aliasing mix them together.
-- [Crew sleeping](MiscBugFixes/CREW-REST.md): prevent autonomous player crew from choosing backpacks and EVA suits as beds.
-- [Idle sitting](MiscBugFixes/CREW-REST.md): let autonomously seated crew resume available automatic patching, repair, or restoration work while preserving manual seating orders.
-- [Adjacent wall work](MiscBugFixes/WALL-WORK-PATH.md): stop workers trying to walk into a wall when they are already within reach of its work order.
+- [Orbital velocity and coasting handoffs](Orbital/Velocity/README.md): calculate orbital reference velocities at the requested time and preserve ship velocity when RCS gives way to coasting, preventing jumping VCRS readings.
+- [Planetary gravity](Orbital/README.md): include the parent body's acceleration when integrating free objects near an orbiting planet.
+- [AI collision avoidance](Navigation/PLANETARY-AVOIDANCE-AUDIT.md): detect slow and accelerating collision approaches, reject unsafe course resumption, and prevent repeated evasive reversals while retaining the game's steering.
+- [AI departure waypoints](Navigation/DEPARTURE-WAYPOINTS.md): place station departure points relative to the station's own orbit and continue intermediate freight legs during fast-forward.
+- [AI rendezvous planning](Navigation/FREIGHT-RCS-APPROACH-INVESTIGATION.md): give NPC RCS its own acceleration limit, reject approach routes that fail to converge, and preserve freight destinations when planning fails.
+- [Local AI navigation frames](Navigation/LOCAL-NAVIGATION-FRAMES.md): keep patrol, ambush and encounter locations near their regional stations instead of inheriting a distant celestial body's motion.
+- [AI navigation targets](MiscBugFixes/ShipReplacementTargetsPatch.cs): retain destinations through ship reconstruction and asteroid representation changes, and discard obsolete routes when the actual destination disappears.
+- [Civilian SFF station selection](MiscBugFixes/CivilianSffCoordinatesPatch.cs): use both position coordinates when choosing a regional station during fast-forward instead of passing X twice.
+- [SFF navigation destinations](MiscBugFixes/SFF-NAVIGATION-DESTINATION.md): retain AI mission targets and refresh their positions before instant mooring can save a huge docking offset.
+- [Route completion](Navigation/ROUTE-COMPLETION.md): stop finished maneuvers and integrate only the remaining coast time, preventing duplicate movement and residual thrust during PASS travel and normal play.
+- [VORB derelicts](Venus/README.md): restore wreck anchoring and use the correct orbital reference after undocking.
+- [Docked gravity](MiscBugFixes/DOCKED-GRAVITY.md): restore the anchored docking group's gravity after transit instead of leaving a rebuilt ship at the default 0.3 g.
+- [Docking clearance](MiscBugFixes/DockingGridPrecisionPatch.cs): prevent tiny coordinate errors from creating false obstructions in docking-fit checks.
+- [Ship-view rotation](MiscBugFixes/ShipRotationPatch.cs): check the ship being rotated for docking restrictions instead of checking an unrelated ship occupied by its captain.
+
+#### Fuel, autopilot and towing
+
+- [Shallow refueling](RefuelRCSPatch.cs): add refilled RCS fuel to a background ship's fuel reserve instead of only increasing its mass.
+- [AI flight fuel accounting](MiscBugFixes/AI-FLIGHT-FUEL-HANDOFF.md): prevent navigation and loading transitions from charging AI travel fuel twice, including across save/load.
+- [AI RCS replenishment](Navigation/RCS-REPLENISHMENT.md): carry actual RCS refills into an AI ship's stored route budget without changing the route's planned consumption.
+- [Propulsion checks](Navigation/RCS-BUDGET.md): include pilot efficiency in remaining RCS delta-v and reject invalid propulsion calculations during low-fuel decisions.
+- [Torch autopilot fuel checks](MiscBugFixes/TorchFuelCachePatch.cs): synchronize cached reactor fuel with actual tanks and prevent fuel reconciliation from refunding unmatched or excess reactants.
+- [Torch course consumption](Navigation/TORCH-COURSE-FIX.md): keep fuel use, reactor settings and reported acceleration consistent with plotted burns and coasts, including previews, saved courses and fast-forward.
+- [Player course destinations](Navigation/TORCH-COURSE-FIX.md#sensor-selection-cancelling-a-player-course-2026-11-17): keep the plotted destination separate from the selected sensor contact so inspecting or losing another ship cannot cancel the course or end it early.
+- [Torch towing](Navigation/Towing/README.md): execute plotted courses with braced towing groups, include their mass, and exclude a station's mass when previewing departure.
+
+#### AI activity, recovery and ship lifetimes
+
+- [AI flight control handoffs](Navigation/FLIGHT-CONTROL-HANDOFF.md): release abandoned courses and thrust, wait for incapacitated pilots, and prevent retired controllers from continuing to steer.
+- [Scav emergency recovery](MiscBugFixes/SCAV-EMERGENCY-RECOVERY.md): end empty scavenging visits and retry failed destination selection so stranded scavengers can reach the game's emergency-assistance behavior.
+- [AI wait clocks](Navigation/SCAVENGER-WAITING.md): preserve absolute waiting deadlines and let background ships' saved emergency-call cooldowns expire correctly.
+- [Civilian rendezvous](Navigation/BehaviorGraph/Traffic/HIDDEN-VISIT-INVESTIGATION.md): exclude hidden ships from civilian visit choices and release vanished destinations while preserving visits already physically docked.
+- [Civilian visit completion](MiscBugFixes/CIVILIAN-VISIT-WAITS.md): allow background civilians to finish visits with empty fuel tanks and retain their departure timing through fast-forward and reload.
+- [AI crew lifecycle](Navigation/CREWLESS-AI.md): prevent premature ship cleanup, reuse and crewless acceleration while preserving player-connected faction ships through changes of ATC region.
+- [AI retirement](MiscBugFixes/ACTIVE-SHIP-STALE-CLEANUP.md): clear obsolete disposal timers when a ship becomes active again so cleanup cannot delete an active hull and its living crew.
+- [AI return orders](Navigation/RETURN-PRIORITY.md): preserve return stages through reload, retry failed return approaches and docking, and discard stale fuel predictions when the destination changes.
+- [AI escape destinations](Navigation/ESCAPE-RETARGET.md): discard the old course and fuel prediction when a retreat selects a different station.
+- [Hauler returns](Haulers/README.md): restore the home destination after releasing a wreck, stop abandoned thrust, and preserve the return stage after fast-forward pickups.
+- [VORB collection](Venus/HAULER-RETRIEVAL-AUDIT.md): let VORB retrievers use their own depot's assignments and wreck ownership instead of the VNCA regional station's records.
+
+#### Combat, crew and bounty targets
+
+- [Radio surrender](MiscBugFixes/SHIP-SURRENDER-WORK-STALL.md): keep ship surrender negotiations from blocking crew work or overwriting face-to-face conversation state.
+- [AI surrender accounting](Navigation/SURRENDER-COMBAT-LOOP.md): retain combat engagements when a surrender offer cannot be sent, preventing repeated targeting lock-and-release loops.
+- [AI dodge cleanup](Navigation/AI-GRAVITY-EXEMPTIONS.md#implemented-follow-up): restore gravity and clear completed dodge state when the incoming projectile disappears.
+- [Disabled combat targets](Navigation/COMBAT-NEUTRALIZATION.md): stop Navy and Blockade ships repeatedly targeting disabled enemy ships that the game's combat rules already consider neutralized.
+- [Combat-to-patrol handoff](Navigation/PATROL-TARGET-HANDOFF.md): let Navy and Blockade pilots finish combat cleanup after losing contact instead of resuming patrol toward an abandoned enemy target.
+- [AI patrol priority](Navigation/PATROL-PRIORITY.md): allow combat and threats to interrupt Navy patrols while preserving queued commands and fast-forward callbacks across save/load.
+- [Navy target selection](Navigation/NavyCandidateFuelPatch.cs): reject unaffordable targets before selection, including cases with only one candidate or no affordable candidates.
+- [AI crew identities](MiscBugFixes/NPC-IDENTITY-COLLISION-AUDIT.md): prevent a newly generated crew member with a matching name from replacing and relocating an existing NPC.
+- [Bounty escorts](MiscBugFixes/BOUNTY-ESCORT.md): allow temporarily arrested bounty targets to follow manual airlock orders without granting them unrestricted autonomous movement.
+- [Bounty departures](Navigation/BOUNTY-DEPARTURES.md): restore station refueling when bounty targets relaunch in their existing ships, preventing immediate returns for lack of fuel.
+- [Ranged self-hits](MiscBugFixes/RangedShooterExclusionPatch.cs): exclude the shooter from character hit checks while preserving damage to intended targets and objects farther along the shot.
+- [PDC ammunition](MiscBugFixes/PDC-CONVERSION-AMMO.md): preserve existing ammunition during PDC installation and conversion without generating another starting magazine.
+
+#### Freight, markets and remote trading
+
+- [SFF economy and freight accounting](Orbital/Economy/README.md): preserve production and dispatch order during time skips, conserve cargo and shared market stock, and deliver freight before retiring its hauler.
+- [AI controller identity](MiscBugFixes/FREIGHT-CONTROLLER-IDENTITY.md): prevent station collisions from assigning a second local controller to an active freighter and stranding its cargo when that controller deletes the ship.
+- [Remote barter](MiscBugFixes/BarterRemovalPatch.cs): remove sold items from an unloaded ship's saved inventory instead of paying for them while leaving them available to sell again.
+- [Remote repurchases](MiscBugFixes/MULTI-SHIP-BARTER-AUDIT.md): preserve delivered items when remote inventories are saved and restore temporary coordinates even if saving fails.
+- [Background ship loading](MiscBugFixes/MULTI-SHIP-BARTER-AUDIT.md): cancel only the loading job belonging to the inventory or preview being closed, preserving other ships' barter inventories.
+- [Preview cargo markets](MiscBugFixes/PREVIEW-MARKET-ISOLATION.md): prevent inventory and rating previews from registering phantom cargo pods, with a command to repair verified empty leftovers.
+
+#### Inventory, mass and saved state
+
+- [Save forward compatibility](SaveCompatibility/README.md): rebuild missing 1.1 RCS performance data from an older save's installed parts while preserving fuel and combat damage.
+- [Saved inventory](MiscBugFixes/SAVED-INVENTORY-PARENTS.md): restore contents inside damaged containers before destruction transfers or drops those contents, preventing items from disappearing on load.
+- [Ship component loading](MiscBugFixes/MASS-BOOKKEEPING-AUDIT.md): resolve asset component names in the game assembly after patching, preventing missing ship components and stuck loading overlays.
+- [Container mass](MiscBugFixes/STACK-REMOVAL-MASS.md): prevent repeated mass subtraction during nested removals and retain mass changes made through remote barter inventories.
+- [Mass propagation](MiscBugFixes/MASS-BOOKKEEPING-AUDIT.md): conserve mass during stack merges and pass item and body-mass changes to their containers, ships and character encumbrance.
+- [Meat duplication](MiscBugFixes/MeatScrapPatches.cs): destroy loose meat through the default destruction recipe instead of creating another batch of loose meat.
+
+#### Crew work and ship systems
+
+- [Automatic work selection](MiscBugFixes/AutoTaskScratchPatch.cs): keep patching, repair and restoration candidate lists separate so one search cannot overwrite another's results.
+- [Idle sitting](MiscBugFixes/CREW-REST.md): let seated crew notice available automatic patching, repair and restoration work while preserving manual seating orders.
+- [Adjacent wall work](MiscBugFixes/WALL-WORK-PATH.md): stop workers trying to walk into a wall when they are already close enough to perform its work order.
+- [Crew sleeping](MiscBugFixes/CREW-REST.md): stop autonomous player crew from treating backpacks and EVA suits as beds.
+- [Signal boxes](MiscBugFixes/SignalBoxes/README.md): correct gate updates, outputs, disconnected wires and saved signal queues while preserving wiring when devices are temporarily rebuilt.
+- [Door auto-close](MiscBugFixes/DOOR-AUTO-CLOSE.md): retain a door's auto-close setting through power loss and restoration.
+- [CO2 scrubber audio](MiscBugFixes/ScrubberAudio/README.md): remove the extra generic pump sounds added in 1.1 while preserving the scrubber's own hum and controls, using game assets only.
+
+#### Interfaces and long sessions
+
+- [Nav module placement](NavConsole/MODULE-PLACEMENT.md): use the panel's actual parent pivot when dragging modules, preventing the course plotter from disappearing above the nav console in 1.1.
+- [Comms channel display](Optimizations/COMMS-HISTORY.md): show the newest 100 stored messages in chronological order instead of leaving the local channel stuck on its oldest messages.
+- [Console history](MiscBugFixes/CONSOLE-BUFFER.md): trim old console output and size its scrollable display to the text so long sessions keep showing new messages.
+- [Tile helper memory leak](MiscBugFixes/TILE-HELPER-CLEANUP.md): remove obsolete tile helper objects during hull destruction so they stop retaining registry entries and references to old ships.
 
 ### Simulation improvements
 
-- [Passive docking attachments](Navigation/DOCKED-ORBIT-LOCK.md): preserve a wreck's existing body lock during visits and tether changes; release it for applied movement or an authorized towing course, including paused-haul save/load and SFF/PASS continuation.
+#### Traffic, encounters and persistence
 
-- [Bounty persistence](Navigation/BOUNTY-PRESERVATION.md): preserve active bounty targets and their original ships across administrative retirement and cleanup, retaining native station stays and later reboarding.
-- [Asteroid prospecting visits](MiscBugFixes/CIVILIAN-VISIT-WAITS.md): give civilian asteroid visits one 5-minute-to-2-hour duration while retaining ordinary timing for visits to other ships.
-- [Faction encounters](Navigation/Encounters/README.md): stage faction ships only near regional infrastructure at plausible relative speeds, preserving busy actors and existing patrol motion.
-- [Scavenger returns](Navigation/SCAVENGER-WAITING.md): try a feasible native station return after random job selection fails, preserving successful jobs and normal navigation/docking.
-- [Orbital waiting](Navigation/SCAVENGER-WAITING.md): let free, unpowered AI ships wait under gravity while preserving atmospheric hovering, combat, docking and plotted courses.
-- [Torch course planning](Navigation/TORCH-INITIAL-VELOCITY.md): use existing velocity in player torch trajectories instead of cancelling it before starting a new transfer.
-- [EM propagation](EMPropagation/README.md): use inverse-square EM falloff for player and AI reception, independently toggleable in PDA settings.
-- [Contact position estimates](Sensors/README.md): replace distant-contact jitter with sensor-based range/bearing uncertainty and acquired transponder ranging, independently toggleable in PDA settings.
-- [Micrometeoroid detection and defense](Micrometeoroids/README.md): share docked-group sensors and PDC defense, veto bursts whose native projectile paths threaten connected hulls, and spend ammo on missed bursts.
-- [Micrometeoroid target fairness](Micrometeoroids/README.md): choose targets among loaded scene vessels by hull area instead of seeking the player's ship, preserving BeatManager event timing and exclusions.
-- [Shallow boarding combat](ShipboardAction/README.md): resolve hostile dockings between Galcon, CCRE, and Belt Pirates using crew numbers, weapon loadouts, injuries, and randomized casualties over time.
-- [Prize ships](ShipboardAction/README.md): let victors assign a spare healthy crew member to return a captured, flyable ship home for disposal, while keeping captains on their original ships.
-- [Ceres navigation](CeresNavigation/README.md): apply a homeward fuel reserve to patrol selection and chase retreat decisions.
-- [Station docking traffic](Navigation/STATION-DOCKED-COLLISIONS.md): ships attached to a station through docking/tether chains do not cause ship collisions, AI evasions or proximity warnings; free-space tows remain physical obstacles.
-- [Hull-shaped collisions](Navigation/Collisions/README.md): optionally use cached hull geometry for free-ship impacts, AI clearance, consistent docking/range/proximity alarms and safe group placement, preserving native weapon hits and impact damage rules.
-- [Free coasting](Orbital/README.md): reduce timestep-dependent orbital drift with velocity-Verlet integration and consistent native orbital coordinates.
-- [Super Fast Forward and PASS](Orbital/SFF-IMPLEMENTATION.md): preserve orbital coasting, AI decision turns, freight progression and collision history across time skips; hand completed courses to corrected coasting without changing native passenger transfers.
-- [VORB wreck variety](Venus/README.md): default to 50% Venus-specific wrecks, adjustable from 0–100% in the PDA settings app.
+- [Passive docking attachments](Navigation/DOCKED-ORBIT-LOCK.md): retain a wreck's existing orbital attachment through visits, undocking and tether changes, releasing it for applied movement or an authorized towing course.
+- [Civilian visit destinations](Navigation/CIVILIAN-DERELICT-VISITS.md): exclude derelicts from random civilian docking choices while preserving scavenger salvage, ordinary visits and asteroid prospecting.
+- [Asteroid prospecting visits](MiscBugFixes/CIVILIAN-VISIT-WAITS.md): give civilian asteroid visits a duration of 5 minutes to 2 hours without changing visits to other ships.
+- [Faction encounters](Navigation/Encounters/README.md): stage faction ships near their regional infrastructure at plausible relative speeds without relocating ships already busy with other activity.
+- [Scavenger returns](Navigation/SCAVENGER-WAITING.md): try a feasible station return after random scavenging-job selection fails while preserving successful jobs and normal navigation.
+- [Orbital waiting](Navigation/SCAVENGER-WAITING.md): let free, unpowered AI ships coast under gravity on supported bound trajectories that clear the body and atmosphere, preserving other native waits.
+- [Bounty persistence](Navigation/BOUNTY-PRESERVATION.md): protect active bounty targets and their original ships from administrative cleanup while retaining station stays, later departures and physical death.
+- [NPC gender distribution](Population/README.md): generate random NPCs with 49.5% male, 49.5% female and 1% non-binary probabilities without changing authored characters.
+- [Ceres navigation](CeresNavigation/README.md): reserve fuel for the trip home when choosing patrols and deciding when to end a chase.
+
+#### Flight, sensing and collision rules
+
+- [Torch course planning](Navigation/TORCH-INITIAL-VELOCITY.md): use the player's existing velocity when plotting a torch transfer instead of cancelling that motion before departure.
+- [EM propagation](EMPropagation/README.md): apply inverse-square signal falloff to player and AI EM reception, with an independent PDA setting.
+- [Contact position estimates](Sensors/README.md): replace arbitrary distant-contact jitter with uncertainty based on sensor range, bearing and acquired transponder signals.
+- [Micrometeoroid detection and defense](Micrometeoroids/README.md): share sensors and PDC defense across a docking group, block shots that threaten connected hulls, and consume ammunition even when a burst misses.
+- [Micrometeoroid target fairness](Micrometeoroids/README.md): select exposed loaded ships in proportion to hull area while excluding stations and every ship connected to them.
+- [Station docking traffic](Navigation/STATION-DOCKED-COLLISIONS.md): exempt ships connected to a station from ship collisions, AI avoidance and proximity warnings while keeping free-space towing groups as obstacles.
+- [Hull-shaped collisions](Navigation/Collisions/README.md): optionally use cached hull geometry for ship impacts, AI clearance, docking ranges and proximity alarms while preserving weapon hits and impact-damage rules.
+- [Free coasting](Orbital/README.md): reduce time-step-dependent orbital drift using velocity-Verlet integration and consistent orbital coordinates.
+- [Super Fast Forward and PASS](Orbital/SFF-IMPLEMENTATION.md): advance orbital motion, AI decisions, freight and collision checks through time skips without changing the game's passenger-transfer rules.
+
+#### Salvage and boarding
+
+- [Shallow boarding combat](ShipboardAction/README.md): resolve offscreen hostile dockings between Galcon, CCRE and Belt Pirates using crew numbers, weapons, injuries and casualties over time.
+- [Prize ships](ShipboardAction/README.md): let victors assign a spare healthy crew member to take a captured, flyable ship home while leaving the captain on the original ship.
+- [VORB wreck variety](Venus/README.md): set the share of Venus-specific wrecks delivered to VORB, defaulting to 50% and adjustable from 0-100% in the PDA app.
 
 ### Performance enhancements
 
-- [Trigger searches](Optimizations/TRIGGER-CLASSIFICATION.md): restore conservative people-only search classification without changing authored condition evaluation.
-- [Socials portraits](Optimizations/SOCIALS-FIRST-OPEN.md): compose uncached portraits through borrowed pixel buffers, a streamlined blend loop and one bulk write, reducing a measured first opening from 5.75 to 0.52 seconds.
-- [Autonomous target selection](Optimizations/AUTONOMOUS-DISEMBARK.md): exclude needs, leisure and social targets on other ships when disembarking is forbidden, before sampling and evaluating candidates.
-- [Remote barter loading](Optimizations/BARTER-FINALIZATION.md): replace repeated inventory scans with an item-ID lookup and spread offscreen reconstruction/finalization across frames to reduce post-transit freezes.
-- [Remote trading](Optimizations/INVENTORY-PERFORMANCE.md): reuse an ID lookup during inventory write-back instead of repeatedly searching the saved inventory.
-- [Contained-item loading](Optimizations/INVENTORY-PERFORMANCE.md): remove processed records at their known index while preserving parent and slot restoration order.
-- [Save cleanup](Optimizations/INVENTORY-PERFORMANCE.md): compact remaining-item ID lists in batches using reusable scratch storage instead of repeatedly searching and shifting them.
-- [Comms history](Optimizations/COMMS-HISTORY.md): trim transcripts older than seven days after loading and before saving, preserving unread messages, pending deliveries and latest conversation context.
-- [Save loading](Optimizations/README.md): replace repeated scans of every saved ship with a shared ship-ID lookup.
-- [System initialization](Optimizations/README.md): batch cheap coroutine steps within a frame budget instead of spending a frame on each tiny restoration step.
-- [Work planning](AlternativeWork/README.md): reuse route and carried-material searches, and prepare upcoming work while the current job runs.
-- [Save parsing](Optimizations/README.md): provide an experimental, opt-in Newtonsoft reader with compatibility handling for the game's LitJson save format.
+#### Loading, inventories and saves
+
+- [Remote barter loading](Optimizations/BARTER-FINALIZATION.md): use an item-ID lookup and spread background inventory reconstruction across frames to reduce freezes after transit.
+- [Remote trading](Optimizations/INVENTORY-PERFORMANCE.md): reuse an item-ID lookup when saving remote inventory changes instead of repeatedly searching the entire inventory.
+- [Contained-item loading](Optimizations/INVENTORY-PERFORMANCE.md): remove processed save records at their known positions while retaining the correct order for restoring containers and item slots.
+- [Save cleanup](Optimizations/INVENTORY-PERFORMANCE.md): remove processed item IDs in batches instead of repeatedly searching and shifting the remaining list.
+- [Save loading](Optimizations/README.md): look up saved ships by ID instead of repeatedly scanning every ship record.
+- [System initialization](Optimizations/README.md): combine small restoration steps within a frame's time budget instead of spending a full frame on each step.
+- [Save parsing](Optimizations/README.md): offer an experimental, opt-in Newtonsoft reader that handles the game's LitJson save format.
+
+#### AI, work and displays
+
+- [Trigger searches](Optimizations/TRIGGER-CLASSIFICATION.md): limit people-only trigger searches to people when their conditions permit it, without changing how those conditions are evaluated.
+- [Autonomous target selection](Optimizations/AUTONOMOUS-DISEMBARK.md): exclude needs, leisure and social activities on other ships before evaluating them when the character may not disembark.
+- [Work planning](AlternativeWork/README.md): reuse route and carried-material searches and prepare upcoming work while the current job runs.
+- [Socials portraits](Optimizations/SOCIALS-FIRST-OPEN.md): compose portraits with reused pixel buffers and a single image write, reducing a measured first Socials opening from 5.75 to 0.52 seconds.
+- [Comms history](Optimizations/COMMS-HISTORY.md): trim messages older than seven days after load and before save while retaining unread messages, pending deliveries and recent conversation context.
 
 ### Quality of life
 
-- [Apartment refuel terminal](StandaloneMods/ApartmentRefuel/README.md): optional independent plugin and native item mod; buy an expensive terminal for an owned station apartment and use paid station services for directly docked ships. Packaged separately; pending live acceptance testing.
+#### Navigation and console controls
 
-- [RCS rotation module](NavConsole/Rotation/README.md): add a physical 1x1 console module for target-relative turns and persistent bearing hold, canceled by manual rotation.
+- [RCS rotation module](NavConsole/Rotation/README.md): add a physical 1x1 nav-console module for target-relative turns and bearing hold that releases when the player rotates manually.
+- [Nav hull outlines](NavConsole/HULL-OUTLINES.md): draw correctly sized outer hull outlines with corners and recesses intact, updating geometry in the background and showing useful detail at wider zooms.
+- [Station-docked hull exemption](Navigation/STATION-DOCKED-COLLISIONS.md): choose in the PDA app whether station-connected ships cause collisions, AI avoidance and proximity warnings.
+- [Proximity alarm dial](NavConsole/README.md): select a ship's warning range of 5, 10, 15 or 20 km from the nav console.
+- [Nav/comms scrollbacks](NavConsole/README.md#comms-and-diagnostic-scrollbacks): support draggable scrollbars and reliable mouse-wheel scrolling, with comms auto-follow suspended while reading older messages.
+- [Course-plot fine controls](QoL/CoursePlot/README.md): adjust ACCEL LIMIT in 0.01 G steps or DRIFT PHASE in 0.01 steps with the mouse wheel while retaining the game's Shift-drag precision control.
+- [Hide nav tutorial note](NavConsole/README.md): hide the clickable "Don't crash!" paper through a saved PDA setting so it no longer obscures console controls.
 
-- [Quick PDA hacking](QoL/PdaHacking/README.md): unlock PDAs directly from the quick-action menu when the controlled character has Hacking, preserving native requirements and effects.
-- [Multiple-ship barter zones](QoL/BarterZones/README.md): identify sell-list zones by ship callsign and sort them by callsign and zone name, keeping identically named zones accessible.
-- [Nav hull outlines](NavConsole/HULL-OUTLINES.md): draw cached exterior hull perimeters with consistent sizing, corners and recesses intact, background updates, and unpadded detail selected by screen size instead of a fixed zoom cutoff.
-- [Socials contact filtering](QoL/Socials/README.md): hide construction drones from the contact list without changing their relationships or simulation.
-- [Venus dolly handling](Venus/DOLLY-ENCUMBRANCE.md): reduce dolly-and-payload encumbrance by 90% on Venus aerostats and their docked ships to approximate wheeled handling.
-- [Alternative autotask](AlternativeWork/README.md): favor nearby, reachable, supplied work and prevent crew from reserving jobs on vessels their permissions forbid them to enter.
-- [Crew hotkeys](Hotkeys/README.md): toggle Airlock (Shift+R), Disembark (Shift+T), or helmet/EVA battery (Shift+F); rebind equipment in the PDA settings app.
-- [Station-docked hull exemption](Navigation/STATION-DOCKED-COLLISIONS.md): toggle visiting hulls and station-connected tows as traffic/proximity obstacles in the PDA settings app.
-- [Proximity alarm dial](NavConsole/README.md): choose a ship's warning range from 5, 10, 15, or 20 km using a dial on the nav console.
-- [Nav/comms scrollbacks](NavConsole/README.md#comms-and-diagnostic-scrollbacks): drag scrollbars, scroll long transcripts consistently, and suspend comms auto-follow while reading older messages.
-- [Course-plot fine controls](QoL/CoursePlot/README.md): hover and scroll ACCEL LIMIT in 0.01 G steps or DRIFT PHASE in 0.01 steps, alongside native Shift-drag adjustment.
-- [Hide nav tutorial note](NavConsole/README.md): use a saved PDA setting to hide the clickable "Don't crash!" paper that obscures nav-console controls.
-- [Kang auto-vents](QoL/AutoVents/README.md): tolerate brief airlock-induced oxygen-pressure dips while retaining rapid closure for dangerous depressurization.
-- [Stabilizer sound cues](MiscBugFixes/StabilizerCreakPatch.cs): scale the maneuver creaking threshold with active stabilizers' native damage reduction.
-- [PDA settings](PdaSettings/README.md): toggle supported mod features and adjust their settings through a native PDA app.
-- [Bounty indicators](QoL/BOUNTY-INDICATORS.md): mark missing targets and those in the offscreen holding pool as MIA in bounty lists and details.
-- [Maintenance commands](MiscBugFixes/README.md): repair container, anatomical and character masses with `massfix`, and recover corrupted navigation targets with `navfix`.
-- [Console noise](MiscBugFixes/README.md): keep routine electrical-audit, missing-font-glyph and recovered gas-buffer spam out of the player console while retaining diagnostic logs.
-- [Inspection API](Inspection/INSPECTION-API.md): inspect ships, crew, AI, navigation, work orders, station economies and freight, with removable combat/memory diagnostics, exact-quantity stranded cargo recovery, explicit ship pruning and a BeatManager MM test-strike endpoint.
-- [Meat scrap cover](MiscBugFixes/MeatScrapPatches.cs): let ranged shots pass over loose meat scraps, eyes, hooves and horns on the floor without consuming projectile damage.
+#### Crew and shipboard conveniences
+
+- [Quick PDA hacking](QoL/PdaHacking/README.md): offer PDA unlocking directly in the quick-action menu for characters with Hacking while retaining the game's requirements and effects.
+- [Venus dolly handling](Venus/DOLLY-ENCUMBRANCE.md): reduce dolly-and-payload encumbrance by 90% on Venus aerostats and docked ships to approximate wheeled handling.
+- [Alternative autotask](AlternativeWork/README.md): favor nearby, reachable work with available supplies and avoid reserving jobs on ships the worker is forbidden to enter.
+- [Crew hotkeys](Hotkeys/README.md): toggle airlock permission with Shift+R, disembarking with Shift+T, or helmet/EVA battery equipment with rebindable Shift+F and an oxygen safety check.
+- [Kang auto-vents](QoL/AutoVents/README.md): tolerate brief oxygen-pressure dips caused by airlock use while retaining rapid closure during dangerous depressurization.
+- [Stabilizer sound cues](MiscBugFixes/StabilizerCreakPatch.cs): account for active stabilizers' damage reduction when deciding whether a maneuver should cause creaking sounds.
+- [Meat scrap cover](MiscBugFixes/MeatScrapPatches.cs): let ranged shots pass over loose meat, eyes, hooves and horns on the floor without consuming projectile damage.
+
+#### PDA apps and trading
+
+- [PDA settings](PdaSettings/README.md): toggle included features and adjust their controls through a PDA app that hides settings for features omitted from a custom build.
+- [Apartment refuel terminal](StandaloneMods/ApartmentRefuel/README.md): offer a separately installed, expensive terminal for owned station apartments that sells refueling services to directly docked ships, pending live acceptance.
+- [Multiple-ship barter zones](QoL/BarterZones/README.md): label sell-list zones with each ship's callsign and sort them by callsign and zone name so identically named zones remain usable.
+- [Socials contact filtering](QoL/Socials/README.md): hide construction drones from Socials without changing their relationships or activity in the world.
+- [Bounty indicators](QoL/BOUNTY-INDICATORS.md): mark missing targets, including those moved to the offscreen holding pool, as MIA in bounty lists and details.
+
+#### Diagnostics and maintenance
+
+- [Maintenance commands](MiscBugFixes/README.md): repair item and character masses with `massfix`, recover damaged navigation references with `navfix`, and inspect phantom cargo pods with `cargopodfix`.
+- [Console noise](MiscBugFixes/README.md): hide routine electrical-audit, missing-glyph and recovered gas-buffer messages from the player console while retaining diagnostic logs.
+- [Inspection API](Inspection/INSPECTION-API.md): inspect ships, crew, AI, work, markets and freight through a local API, with explicit recovery commands and removable diagnostic captures.
 
 ## Testing strategy
 

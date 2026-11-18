@@ -149,6 +149,7 @@ static partial class Program {
             AIShipManager.dictAIs = new Dictionary<string, List<AIShip>> { ["fixture"] = new List<AIShip>() };
             production.CreateClassProcessor(typeof(RotationPhysicsPatch)).Patch();
             production.CreateClassProcessor(typeof(RotationManualInputPatch)).Patch();
+            ExhaustFallback(fixture, production);
             Directions(); Assets(); UiInput(fixture);
             NativeControls(fixture, production);
             Boundaries(fixture);

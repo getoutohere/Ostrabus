@@ -328,7 +328,7 @@
                                                        "ReferenceEquals(observer.shipSituTarget",
                                                        "target.Situ = replacement.objSS"
                                                    ],
-                                       "sha256":  "cf8a11dea22b28ee4775da43c3abff2e03a3680024b57e5fbb0a95dd25c87ae3"
+                                       "sha256":  "fad1ca49e22dae616ae753bb1c10c90b1a5083a5e9af6fc235728f86806cfd57"
                                    },
                     "fix_depot":  {
                                       "origin":  "repo",
@@ -449,8 +449,12 @@
                                                              "internal static Point SelectEscape(",
                                                              "internal static bool FutureCollision("
                                                          ],
-                                             "sha256":  "66e387fb1c6ee519624eb5699bc61fbcae3dd415292f9d58037b5bbf375e505a"
+                                             "sha256":  "a0ccd3d076b2235de023ae51c54541ff66352b83d8d06a93f118594370860ecd"
                                          },
+                    "avoidance_prediction": { "origin": "repo", "path": "Navigation/AvoidancePrediction.cs", "symbol": "AvoidancePrediction.Collision: bounded acceleration and hull-aware admission", "anchors": ["internal static bool Collision("], "sha256": "3252ce2ad5b6084b45eca50117829cd941b1a37ebfaeff76f81208ad47316945" },
+                      "avoidance_flight": {"path":"Navigation/AvoidanceFlightPatch.cs","sha256":"d8f07c881345ed815ce280f99ab61550b6dc9442a82ec0c30dbf807fa0b4f4ac","symbol":"AvoidanceFlightPatch: reject new unsafe courses through native manual/fuel branch","origin":"repo","anchors":["internal static bool RejectCourse("]},
+                      "avoidance_route": {"path":"Navigation/AvoidanceRouteForecast.cs","sha256":"7f11ece29eb4fea47887de732cda2f0c537404d3122f2d322b6472ceb20a49a1","symbol":"AvoidanceRouteForecast: native waypoint interpolation, local admission and group/reference geometry","origin":"repo","anchors":["internal static bool TryCollision("]},
+                      "avoidance_query": {"path":"Navigation/AvoidanceQuery.cs","sha256":"27e0de71024928a55d9f01b7a90948c5b2317da75080585adf5d6a7404874e00","symbol":"AvoidanceQuery: stack-scoped flight/candidate/query restoration","origin":"repo","anchors":["internal static State BeginFlight("]},
                     "avoidance_geometry":  {
                                                "origin":  "repo",
                                                "path":  "Navigation/ConstantAccelerationApproach.cs",

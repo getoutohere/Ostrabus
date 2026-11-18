@@ -12,6 +12,10 @@ static class Program {
     static void Check(bool ok, string message) { if (!ok) throw new Exception(message); }
     static void Main(string[] args) {
         try {
+            if (args.FirstOrDefault() == "assembly-diff") {
+                AssemblyDelta.Run(args);
+                return;
+            }
             query = args.FirstOrDefault() is "scenario" or "search" or "node" or "source" or "evidence" or "patch";
             root = Path.GetFullPath(Environment.CurrentDirectory);
             while (!File.Exists(Path.Combine(root, "Ostrabus.csproj"))) root = Directory.GetParent(root)?.FullName ?? throw new Exception("Run from within the repository.");

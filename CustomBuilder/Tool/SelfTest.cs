@@ -19,6 +19,12 @@ static class SelfTest {
         Plan Make(params string[] ids) => Inventory.Plan(catalog, new Profile { Features = ids }, declarations);
         string Read(string file) => File.ReadAllText(Path.Combine(root, file));
         var pdaHack = Make("quick-pda-hack");
+        var velocity = Make("orbital-velocity");
+        Check(velocity.Included.Length == 1 && velocity.Patches.Length == 2 && velocity.TickCalls == 0,
+            "orbital velocity and coasting handoffs are independent bugfixes without polling");
+        Check(catalog.Features.Single(feature => feature.Id == "orbital-velocity").Category == "bugfix" &&
+            Presets.Create(catalog, "bugfixes").Features.Contains("orbital-velocity"),
+            "orbital velocity is included in bugfix presets without selecting orbital simulation");
         var rotation = Make("rotation-module");
         Check(rotation.Included.Contains("ai-flight-controls") && rotation.NativeMods.Length == 1 && rotation.NativeMods[0].Name == "OstrabusRotation",
             "Rotation includes its native item and controller-lifetime safeguards");
@@ -41,7 +47,10 @@ static class SelfTest {
             "return fallback includes recovery and remains independent of orbital waiting");
         Check(new[] { "orbital", "scav-assistance", "coast", "sff" }.All(Make("orbital-waiting").Included.Contains),
             "physical waiting includes orbital and recovery prerequisites");
-        Check(Make("torch-fuel-cache").Patches.Length == 1, "fuel cache remains independently selectable");
+        var fuelCache = Make("torch-fuel-cache");
+        Check(fuelCache.Included.Length == 1 && fuelCache.Patches.Length == 2 &&
+            fuelCache.Patches.Any(patch => patch.Type == "Ostrabus.MiscBugFixes.TorchFuelRefundRemainderPatch"),
+            "fuel cache and paired native refund repair remain independently selectable");
         Check(Make("sff-navigation-destination").Included.Length == 1 && Make("sff-navigation-destination").Patches.Length == 1,
             "SFF destination integrity is independent of orbital and torch modifications");
         var flightControls = Make("ai-flight-controls");
@@ -89,7 +98,7 @@ static class SelfTest {
         Check(Make("torch-towing").Included.Contains("route-completion") &&
             Make("torch-towing").Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.RouteCompletionPatch"),
             "towing includes shared completion/remainder coasting for ordinary and PASS steps");
-        Check(Make("passive-docking-attachment").Patches.Length == 3 &&
+        Check(Make("passive-docking-attachment").Patches.Length == 4 &&
             !Make("passive-docking-attachment").Included.Contains("torch-towing") &&
             !Make("passive-docking-attachment").Included.Contains("orbital-waiting"),
             "passive docking has three owned hooks and does not enable towing or free-wait policy");
@@ -152,6 +161,12 @@ static class SelfTest {
         Check(civilianVisits.Included.Contains("ai-hold-clock") && !civilianVisits.Included.Contains("civilian-asteroid-visits"),
             "civilian wait repair includes clocks without the mining-duration policy");
         var asteroidVisits = Make("civilian-asteroid-visits");
+        var noWreckVisits = Make("civilian-no-derelict-visits");
+        Check(noWreckVisits.Included.Length == 1 && noWreckVisits.Patches.Length == 1 && noWreckVisits.TickCalls == 0,
+            "civilian derelict visit policy is independent and adds no frame callback");
+        Check(recommendedPlan.Included.Contains("civilian-no-derelict-visits") &&
+            !Inventory.Plan(catalog, Presets.Create(catalog, "bugfixes"), declarations).Included.Contains("civilian-no-derelict-visits"),
+            "civilian derelict visit policy belongs to recommended simulation, not bugfix-only builds");
         Check(asteroidVisits.Included.Contains("civilian-visits") && asteroidVisits.TickCalls == 0 &&
             asteroidVisits.Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.CivilianAsteroidVisitPatch"),
             "asteroid duration policy includes its ordinary-visit mechanism without a frame callback");

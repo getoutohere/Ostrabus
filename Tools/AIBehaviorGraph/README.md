@@ -69,3 +69,15 @@ scenario that was expected to finish.
 the dependency manifest, immutable accepted snapshots and audit commands. Run
 `dotnet run --project Tools/AIBehaviorGraph -c Release -- assembly-self-test`
 for synthetic metadata-fixture checks, separate from the graph consistency checks.
+
+For a whole-assembly member delta using the same normalizer, without selecting
+or accepting a model baseline:
+
+```powershell
+dotnet run --project Tools/AIBehaviorGraph -c Release -- assembly-diff <old-Assembly-CSharp.dll> <new-Assembly-CSharp.dll> <output.json>
+```
+
+The report includes added/removed/changed member identities and changes to direct
+referenced assembly bytes. Compiler-generated type/name changes can produce
+paired add/remove entries. This is a metadata comparison, not compatibility
+approval; inspect source, assets and actual patched execution as appropriate.

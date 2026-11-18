@@ -44,7 +44,15 @@ fallback, not an exhaustive planner or a ban on legitimate regional travel.
 
 ## Simulation policy: orbital-waiting
 
-Free, unpowered AI Hold and targetless scavenger selection waits retain gravity.
+Admission correction (2026-11-18): being outside the atmosphere was not sufficient.
+A native/production counterexample showed the former rule admitting a stationary
+ship that falls into an airless body. The policy now requires a supported bound
+two-body trajectory whose closest approach clears the body, loaded atmosphere,
+hull radius and a 1 km numerical margin. Radial rest, intersecting and escaping
+trajectories, and invalid or unknown data retain native waiting physics.
+See [the gravity-exemption findings and implemented correction](AI-GRAVITY-EXEMPTIONS.md#implemented-follow-up).
+
+Eligible free, unpowered AI Hold and targetless scavenger selection waits retain gravity.
 Position, velocity and fuel are untouched: waiting is orbital coasting, not
 station keeping or an invisible orbit lock. Existing normal and SFF orbital
 integration can then act. Custom builds include the Orbital, coasting and SFF
@@ -56,7 +64,11 @@ body/orbit locks, grounded ships, hidden or player-controlled/owned hulls,
 active navigation, thrust/lift/drag, combat and unknown body data. Atmospheric
 eligibility uses loaded layer outer bounds conservatively, without allocating a
 GasContainer. No per-frame world scan, retained hull collection or background
-controller is added. All work runs at existing command boundaries.
+controller is added. Eligibility uses native free-flight gravity selection's
+hierarchy walk, detached body position/velocity evaluation and scalar orbital
+math at existing command boundaries. It neither fits nor registers an orbit.
+This is conservative admission, not collision avoidance or a proof against
+later encounters, perturbations or changes of dominant gravity source.
 
 ## Validation and inspection
 

@@ -27,6 +27,8 @@ static partial class Program {
         return false;
     }
     static int Main(string[] args) {
+        if(args.Length>0 && args[0]=="avoidance-repair") return AvoidanceRepair();
+        if(args.Length>0 && args[0]=="departure-replay") return DepartureReplay();
         if(args.Length>0 && args[0]=="extract-hauler") {
             var fixture=JObject.Parse(File.ReadAllText(Ostrabus.Development.InstallationPaths.Fixture("Navigation/PlanetaryEvasion.json")));
             var saved=JArray.Parse(File.ReadAllText(args[1]))[0];var ships=(JArray)fixture["ships"];

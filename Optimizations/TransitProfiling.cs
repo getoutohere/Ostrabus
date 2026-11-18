@@ -38,16 +38,20 @@ internal static class TransitProfiling {
         internal string Name;
         internal string PreviousDetail;
     }
-    static void Add(Type type, string name, bool insideOnly = false, Type[] args = null) {
+    static void Add(Type type, string name, bool insideOnly = false, Type[] args = null, bool root = false) {
         var method = AccessTools.Method(type, name, args) ?? throw new MissingMethodException(type.FullName, name);
-        targets.Add(method, new Tag { Name = type.Name + "." + name, InsideOnly = insideOnly });
+        targets.Add(method, new Tag { Name = type.Name + "." + name, InsideOnly = insideOnly, Root = root });
     }
     static void Iterator(Type type, string name, params Type[] args) {
         var factory = AccessTools.Method(type, name, args);
         var iterator = factory?.GetCustomAttribute<IteratorStateMachineAttribute>()?.StateMachineType;
         var method = iterator == null ? null : AccessTools.Method(iterator, "MoveNext");
         if (method == null) throw new MissingMethodException(type.FullName, name + ".MoveNext");
-        targets.Add(method, new Tag { Name = type.Name + "." + name + ".MoveNext", Root = true, Host = AccessTools.Field(iterator, "<>4__this") ?? AccessTools.Field(iterator, "ship") });
+        // Some iterators use only static members and do not capture `this`.
+        // Missing optional host fields are normal, not Harmony lookup warnings.
+        const BindingFlags fields = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        targets.Add(method, new Tag { Name = type.Name + "." + name + ".MoveNext", Root = true,
+            Host = iterator.GetField("objShipNew", fields) ?? iterator.GetField("<>4__this", fields) ?? iterator.GetField("ship", fields) });
     }
     internal static void Start() {
         if (Active) return;
@@ -59,13 +63,37 @@ internal static class TransitProfiling {
         try {
             Add(typeof(CrewSim), "Update");
             Iterator(typeof(GUITransit), "_Go", typeof(JsonTransitConnection));
+            // PASS teleportation runs on a separate coroutine, after the boarding
+            // UI returns. Its MoveNext must establish its own loading scope.
+            Iterator(typeof(CrewSim), "_TeleportCO", typeof(CondOwner), typeof(Ship), typeof(double));
             Iterator(typeof(BarterZoneShip), "Init", typeof(int));
             // The optimized coroutine replaces the native iterator at its factory.
             // Lookup also lets the standalone profiler fixture run without this patch.
             var optimized = typeof(TransitProfiling).Assembly.GetType("Ostrabus.Optimizations.BarterInitPatch");
             if (optimized != null) Iterator(optimized, "Initialize", typeof(BarterZoneShip), typeof(int));
-            Add(typeof(CrewSim), "SaveToShallow");
-            Add(typeof(Ship), "Destroy", args: new[] { typeof(bool) });
+            // Independent lifecycle roots also cover loads/unloads initiated
+            // outside either transit iterator. Child totals remain inclusive.
+            Add(typeof(CrewSim), "SaveToShallow", root: true);
+            Add(typeof(CrewSim), "DestroyAndReload", true);
+            Add(typeof(StarSystem), "SpawnShip", args: new[] { typeof(string), typeof(Ship.Loaded) }, root: true);
+            Add(typeof(Ship), "InitShip", args: new[] { typeof(bool), typeof(Ship.Loaded), typeof(string), typeof(string) }, root: true);
+            Add(typeof(Ship), "Destroy", args: new[] { typeof(bool) }, root: true);
+            Add(typeof(Ship), "GetJSON", true, new[] { typeof(string), typeof(bool), typeof(List<CondOwner>) });
+            Add(typeof(CondOwner), "GetJSONSave", true);
+            Add(typeof(Ship), "VisitCOs", true, new[] { typeof(CondOwnerVisitor), typeof(bool), typeof(bool), typeof(bool) });
+            Add(typeof(CondOwner), "CatchUp", true);
+            Add(typeof(CrewSim), "MoveCO", true);
+            Add(typeof(Ship), "ToggleVis", true);
+            Add(typeof(Ship), "RemoveCO", true);
+            Add(typeof(CondOwner), "Destroy", true);
+            Add(typeof(Tile), "Destroy", true);
+            Add(typeof(CODicts), "RemoveCO", true);
+            Add(typeof(Condowner.Utils.Scheduler), "CancelEndTurns", true);
+            // Tile helper cleanup reuses a reverse-patched native Destroy body;
+            // timing CondOwner.Destroy alone would miss this mod-owned work.
+            // Observe its ordinary caller, leaving the reverse patch untouched.
+            var tileCleanup = typeof(TransitProfiling).Assembly.GetType("Ostrabus.MiscBugFixes.TileHelperCleanup");
+            if (tileCleanup != null) Add(tileCleanup, "Clean", true);
             Add(typeof(Ship), "CreatePart", true);
             Add(typeof(CondOwner), "PostGameLoad", true);
             Add(typeof(Container), "AddCOSimple", true);

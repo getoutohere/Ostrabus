@@ -2,8 +2,8 @@
   {
     "strName": "Ostrabus Settings",
     "strAuthor": "Jon",
-    "strGameVersion": "1.1.0.0",
-    "strModVersion": "0.6.0",
+    "strGameVersion": "1.1.0.2",
+    "strModVersion": "0.7.0",
     "strNotes": "PDA controls for the Ostrabus plugin. Requires the accompanying BepInEx plugin."
   }
 ]

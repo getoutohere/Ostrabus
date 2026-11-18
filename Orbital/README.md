@@ -1,7 +1,17 @@
 # Orbital physics and Super Fast Forward
 
+The independent [orbital velocity and coasting handoff bugfix](Velocity/README.md)
+corrects shared native velocity caches and player conic conversion. It operates
+without this module's optional gravity/coast/SFF toggle and retains native body
+positions. The scope and defaults below describe the optional simulation module.
+
 [Celestial impact forecasting](../Navigation/SFF-DECISION-GAP.md) prevents a long
 SFF coast from consuming the decision turns between native patrol legs.
+
+The same adapter bounds forecasts at native course completions and propagates
+fractional intervals to the native clock's representable endpoint. This avoids
+discarded forecast work and spurious clock-resolution fallbacks; the existing
+last-jump inspection receipt includes whole-adapter preview/world timings.
 
 Namespace/subdirectory `Ostrabus.Orbital`. Experimental; default off.
 

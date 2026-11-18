@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/39bd94bfd2cfe1334c07d96a39da590a20a100d05450132a5cfb420a5090d0bb.json.br",
+  "reason": "Reviewed avoidance route/manual handoff correction after reproducing live oscillation. Native assembly unchanged; prior sources have zero changed members. New FlyTo/FlyToPath/NavData bindings inspected; 79 continuous native/full-DLL A/B assertions, 53 focused route/offset/reference/scope checks, 886 planetary checks and full-plugin hull composition pass. Numerical geometry remains an explicit graph boundary.",
+  "acceptedUtc": "2026-11-17T04:35:13.8794674Z",
+  "previousSnapshot": "assembly-baselines/230fb55db49015b6d20ede04afee631af4c28cca2a7fb0e91f7fc80411c1c1db.json.br"
+}

@@ -74,7 +74,10 @@ static class AssemblyProfile {
             composed.ConstructorArguments.Add(new CustomAttributeArgument(assembly.MainModule.TypeSystem.String, "Ostrabus.Composed"));
             composed.ConstructorArguments.Add(new CustomAttributeArgument(assembly.MainModule.TypeSystem.String, "1"));
             assembly.CustomAttributes.Add(composed);
-            assembly.Write(temporary, new WriterParameters { WriteSymbols = symbols });
+            assembly.Write(temporary, new WriterParameters {
+                WriteSymbols = symbols,
+                SymbolWriterProvider = symbols ? new PortableSymbols() : null
+            });
         }
 
         Verify(temporary, plan);
@@ -98,12 +101,19 @@ static class AssemblyProfile {
         Files.Need(metadata.TryGetValue("Ostrabus.Composed", out string? composed) && composed == "1",
             "Assembly has not been finalized by the custom builder.");
 
-        if (symbols)
+        if (symbols) {
+            using var image = File.OpenRead(dll);
+            using var pe = new System.Reflection.PortableExecutable.PEReader(image);
+            foreach (var entry in pe.ReadDebugDirectory())
+                if (entry.Type == System.Reflection.PortableExecutable.DebugDirectoryEntryType.CodeView)
+                    Files.Need(pe.ReadCodeViewDebugDirectoryData(entry).Path == "Ostrabus.pdb",
+                        "DLL contains an absolute or temporary PDB reference; rebuild the custom profile.");
             foreach (var document in types.Values.SelectMany(type => type.Methods)
                 .SelectMany(method => method.DebugInformation.SequencePoints)
                 .Select(point => point.Document.Url).Distinct())
                 Files.Need(document.StartsWith("/_/OstrabusCustom/", StringComparison.Ordinal),
                     "PDB contains an unmapped source path: " + document);
+        }
 
         var installed = types.Values.Where(Patch).Select(Name).Order(StringComparer.Ordinal).ToArray();
         Files.Need(installed.SequenceEqual(plan.Patches.Select(hook => hook.Type).Order(StringComparer.Ordinal)),

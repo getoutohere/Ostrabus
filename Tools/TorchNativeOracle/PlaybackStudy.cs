@@ -18,6 +18,7 @@ static partial class Program {
     static bool componentThrows;
     static readonly AccessTools.FieldRef<NavData, List<NavDataPoint>> StudyPoints = AccessTools.FieldRefAccess<NavData, List<NavDataPoint>>("_navPoints");
     static bool playbackShutdown;
+    static bool nativeThrust;
     static bool candidateControls;
     static NavData candidateCourse;
     static double candidateCapacity;
@@ -73,6 +74,7 @@ static partial class Program {
     static bool ShutdownBoundary() { playbackShutdown = true; return false; }
     static bool ThrustBoundary(double __0) {
         thrustForce = __0;
+        if (nativeThrust) return true;
         if (playbackReactor != null) {
             double acceleration = Math.Max(0, __0) / Ostrabus.ShipNavigation.Towing.DockedCoursePlayback.InertialMass(ship) / 149597872 / 1000;
             ship.objSS.vAccIn.Set(-(float)acceleration * Mathf.Sin(ship.objSS.fRot), (float)acceleration * Mathf.Cos(ship.objSS.fRot));
@@ -114,7 +116,7 @@ static partial class Program {
         nav.SetFlowMultPlot(NavData.GetFLOWforCYCLE(core, cycle));
         return nav;
     }
-    static void RunPlaybackStudy(bool controlChecksOnly = false, bool transferChecksOnly = false, bool clockChecksOnly = false) {
+    static void RunPlaybackStudy(bool controlChecksOnly = false, bool transferChecksOnly = false, bool clockChecksOnly = false, string savedFuelPath = null, bool coastGravityOnly = false) {
         var harness = new Harmony("offline.torch.playback.boundaries");
         harness.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.RouteCompletionPatch)).Patch();
         foreach (var patch in new[] { typeof(Ostrabus.MiscBugFixes.TorchCoursePlaybackPatch), typeof(Ostrabus.MiscBugFixes.TorchCourseReactantsPatch), typeof(Ostrabus.MiscBugFixes.TorchCourseReactorPatch), typeof(Ostrabus.MiscBugFixes.TorchCourseFuelConsumptionPatch) }) harness.CreateClassProcessor(patch).Patch();
@@ -133,6 +135,8 @@ static partial class Program {
         var detail = new List<string> { "model,pairs,cycle,initialTemperatureFraction,schedule,seconds,phase,flow,cycleNow,temperatureFraction,fuelSeconds,he3Kg" };
         var completedResults = new Dictionary<string, double>();
         try {
+            if (savedFuelPath != null) { RunSavedFuelStudy(savedFuelPath); return; }
+            if (coastGravityOnly) { RunCoastGravityChecks(harness); return; }
             if (clockChecksOnly) { RunSffClockStudy(); return; }
             if (controlChecksOnly) { RunControlHandoffChecks(); return; }
             if (transferChecksOnly) { RunTransferPlaybackChecks(); return; }
@@ -216,12 +220,21 @@ static partial class Program {
                 if (completed) {
                     Check(posError <= 1e-15, "Native completed-course endpoint position unchanged");
                     Check(velError <= 1e-20, "Native completed-course endpoint velocity unchanged");
-                    Near(consumed, (100000 - targetFuel) * usage, "Native tank consumption matches cumulative course budget", 3e-6);
+                    var recovered = Ostrabus.MiscBugFixes.TorchCourseFuel.Find(nav,false);
+                    bool adopted = recovered?.AdoptedNative == true;
+                    if (adopted) Near(Read(he3[0],"StatSolidHe3"), Ostrabus.MiscBugFixes.TorchCourseFuel.Budget(recovered,end)*recovered.Usage,
+                        "Native course recovered after warming settles its remaining corrected budget",3e-6);
+                    else Near(consumed, (100000 - targetFuel) * usage, "Native tank consumption matches cumulative course budget", 3e-6);
                     if (candidateControls || (model == "production" && initialTemperature == 1)) Near(Read(core, "StatICCoreTemp"), TorchModel.Ideal, "Balanced controls preserve thermal operating point", 1e-5);
                     string key = model + "/" + pairs + "/" + Number(cycle) + "/" + Number(initialTemperature);
-                    if (completedResults.TryGetValue(key, out double previous)) Near(consumed, previous, "Native course fuel invariant across normal/SFF partitions", 3e-6);
-                    else completedResults[key] = consumed;
-                    if (model == "production") Near(consumed, completedResults["candidateBalanced/" + pairs + "/" + Number(cycle) + "/" + Number(initialTemperature)], "Production hooks match validated candidate/fallback budgets", 3e-6);
+                    // A cold native course can become eligible partway through.
+                    // Its earlier native thermal expenditure depends on when
+                    // that happens; past expenditure is deliberately retained.
+                    if (!adopted) {
+                        if (completedResults.TryGetValue(key, out double previous)) Near(consumed, previous, "Native course fuel invariant across normal/SFF partitions", 3e-6);
+                        else completedResults[key] = consumed;
+                        if (model == "production") Near(consumed, completedResults["candidateBalanced/" + pairs + "/" + Number(cycle) + "/" + Number(initialTemperature)], "Production hooks match validated candidate/fallback budgets", 3e-6);
+                    }
                 }
                 Check(!double.IsNaN(consumed) && !double.IsInfinity(consumed), "Finite native course fuel accounting");
                 output.Add(string.Join(",", model, pairs, Number(cycle), Number(initialTemperature), schedule, completed, completed ? "" : Number(elapsed), playbackShutdown,
@@ -240,6 +253,7 @@ static partial class Program {
             RunTowCompatibilityChecks();
             RunTransferPlaybackChecks();
             RunSffClockStudy();
+            RunCoastGravityChecks(harness);
         } finally { playbackReactor = null; candidateControls = false; candidateCourse = null; fixtureEpoch = 100; harness.UnpatchSelf(); }
     }
 }

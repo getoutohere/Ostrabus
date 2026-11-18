@@ -8,6 +8,12 @@
   ],
   "features": [
     {
+      "id": "orbital-velocity",
+      "title": "Synchronize orbital velocities and preserve RCS-to-coast handoffs",
+      "category": "bugfix",
+      "patchFiles": ["Orbital/Velocity/VelocityPatches.cs"]
+    },
+    {
       "id": "co2-scrubber-audio",
       "title": "Restore CO2 scrubber audio without the extra 1.1 air-pump loops",
       "category": "bugfix",
@@ -70,7 +76,7 @@
     },
     {
       "id": "torch-fuel-cache",
-      "title": "Keep torch autopilot fuel checks synchronized with actual tanks",
+      "title": "Synchronize torch fuel checks and repair paired tank reconciliation",
       "category": "bugfix",
       "patchFiles": [
         "MiscBugFixes/TorchFuelCachePatch.cs"
@@ -158,6 +164,12 @@
       ]
     },
     {
+      "id": "ai-rendezvous",
+      "title": "Separate NPC RCS and torch limits and reject unconverged AI rendezvous",
+      "category": "bugfix",
+      "patchFiles": ["Navigation/AiRendezvousPatch.cs"]
+    },
+    {
       "id": "ai-flight-controls",
       "title": "Release abandoned AI courses and thrust across control handoffs",
       "category": "bugfix",
@@ -207,6 +219,7 @@
         "Navigation/NavyCandidateFuelPatch.cs",
         "Navigation/LowFuelRetreatProgressPatch.cs",
         "MiscBugFixes/NavigationTargetRecovery.cs",
+        "Navigation/PlayerCourseTargetPatch.cs",
         "MiscBugFixes/ShipReplacementTargetsPatch.cs"
       ]
     },
@@ -319,7 +332,7 @@
     },
     {
       "id": "orbital-waiting",
-      "title": "Let free AI ships wait under orbital gravity",
+      "title": "Let free AI ships wait under gravity on supported clear bound trajectories",
       "category": "simulation",
       "requires": [
         "scav-assistance",
@@ -330,6 +343,12 @@
       "patchFiles": [
         "Navigation/OrbitalWaiting.cs"
       ]
+    },
+    {
+      "id": "combat-dodge-cleanup",
+      "title": "Restore gravity and clear completed dodge state when the incoming projectile disappears",
+      "category": "bugfix",
+      "patchFiles": ["Navigation/DodgeCompletionPatch.cs"]
     },
     {
       "id": "local-navigation-frames",
@@ -358,10 +377,11 @@
     },
     {
       "id": "ai-avoidance",
-      "title": "Correct past-encounter and unsafe planetary dodges",
+      "title": "Correct slow, accelerating, large-hull and unsafe planetary avoidance",
       "category": "bugfix",
       "patchFiles": [
-        "Navigation/AIShipAvoidancePatch.cs"
+        "Navigation/AIShipAvoidancePatch.cs",
+        "Navigation/AvoidanceFlightPatch.cs"
       ]
     },
     {
@@ -1293,6 +1313,12 @@
       "category": "bugfix",
       "requires": [ "navigation-targets", "ai-crew-integrity", "ai-hold-clock" ],
       "patchFiles": [ "MiscBugFixes/CivilianVisitsPatch.cs", "MiscBugFixes/CivilianVisitWaiting.cs" ]
+    },
+    {
+      "id": "civilian-no-derelict-visits",
+      "title": "Reserve random derelict visits for scavengers rather than civilians",
+      "category": "simulation",
+      "patchFiles": [ "Navigation/CivilianDerelictVisitsPatch.cs" ]
     },
     {
       "id": "civilian-asteroid-visits",

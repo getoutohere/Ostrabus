@@ -1,88 +1,62 @@
-# Public snapshot preparation
+# Public release preparation
 
-Current staging scope: [Ostrabus 0.6.0](RELEASE-0.6.0.md), targeting Ostranauts
-1.1.0.0 (`public_test`), BepInEx 5, Windows. Project, plugin, bundled native mods
-and package metadata report 0.6.0. The release notes distinguish the player's
-in-game acceptance from later offline-only additions. No commit, tag, push or
-deployment is implied by preparation.
-The [passive docking attachment repair](../Navigation/DOCKED-ORBIT-LOCK.md) is built
-and validated offline after the compatibility pass. It preserves existing locks
-through visits and paused-haul save/load, with applied-input/course release and
-native SFF/PASS continuation. It has not been deployed or live-playtested.
-The [compatibility audit](COMPATIBILITY-1.1.0.0.md) and
-[feature ledger](FEATURE-COMPATIBILITY-1.1.0.0.md) record the completed source/native
-compatibility pass; a versioned 1.1 release is not created or approved by that audit.
-The release history below describes the preserved pre-adaptation work.
-The accumulated work after 0.5.0 is now captured as the
-[preserved 1.0.1.10 baseline](BASELINE-1.0.1.10.md), before 1.1 compatibility
-changes. It retains 0.5.0 metadata and is a source checkpoint, not a new release.
-Use a preserved 1.0.1.10 installation for its builds and tests.
-Historical [Ostrabus 0.5.0](RELEASE-0.5.0.md) scope: AI control ownership,
-combat/patrol and time-skip repairs, local navigation frames, Ceres and scavenger
-behavior, docked-group micrometeoroid defense, cargo-pod market isolation, bounty
-escorts, assets-only PDA hacking, recovery APIs and their tests/reference tools.
-That snapshot's project, plugin, native mod and package metadata report 0.5.0. The bounty-escort
-repair now has a live escort confirmation and is included. Neutral ATC rescue is
-a design discussion, not an implemented feature in this snapshot.
-The earlier [0.4.0 snapshot](RELEASE-0.4.0.md) was committed as `ed83d46`.
-The earlier [0.3.1 cleanup](RELEASE-0.3.1.md) was committed as `21124d5`.
-The [0.3.0 builder](RELEASE-0.3.0.md) was committed as `e9056ea`.
-The earlier [post-0.2.2 preparation](PREPARED-CHANGES.md) was committed as
-`191d8d9`; it is historical context rather than this commit's new scope.
-`Ostrabus-5.1.0` preserves the verified pre-1.1 source checkpoint at `be8e282`.
-The local installation used for validation has BepInEx 5.4.23.6. The .NET 8 SDK
-is needed to build, not to use the installed plugin. Game and loader dependencies
-are supplied by the player's installation and are not redistributed.
+Current scope: [Ostrabus 0.7.0](RELEASE-0.7.0.md), supporting **Ostranauts
+1.1.0.2 (`public_test`)**, Windows and BepInEx 5. The project, plugin, four
+bundled native mods and main package metadata are aligned at 0.7.0; bundled
+native assets target game 1.1.0.2. Independent companions retain their own versions.
 
-## Prepared
+The top-level README groups the inventory by feature category and subject,
+retaining links to implementation and evidence. Release notes distinguish live
+observations, deterministic offline tests and unresolved PASS loading/death
+questions. No release preparation is a claim of complete campaign coverage.
 
-- Root README states the source-first omnibus purpose, support expectations,
-  tested game version and feature inventory.
-- Source/build/test paths use installation discovery or environment overrides.
-  Generated PDB paths map to `/_/Ostrabus`, not the author's workspace.
-- Packaging includes the plugin, symbols, PDA assets, installer, existing license
-  and standalone installation notes. Raw captures and game assemblies stay out.
-- Native PDA metadata targets 1.1.0.0. Project/plugin/PDA versions are aligned;
-  no Git tag or hosted release is created by packaging.
-- Legacy plugin/config/app identifiers are intentionally retained where needed
-  for installed users and saved settings. Renaming them is not cosmetic cleanup.
-- Economic SFF and API live results are recorded in `Orbital/Economy/README.md`.
-  Native binding and offline regression checks are documented with each module.
+## Review and validation
 
-## Decisions and follow-up
+1. Review tracked and untracked source since the 0.6.0 checkpoint, including
+   behavior-graph evidence, selected fixtures, companion code and documentation.
+2. Build Debug and Release against the installed 1.1.0.2 assembly, check actual
+   Harmony bindings, and run the changed modules' native regression suites.
+3. Check orbital composition with AI, docking, course playback and torch modules;
+   verify selected custom profiles and their filtered PDA settings.
+4. Run `Package-Mod.ps1 -Configuration Debug`, inspect metadata and archive
+   contents, and test installers against disposable workspace layouts.
+5. Keep packages, binaries, raw captures, complete saves and game assemblies out
+   of source control; review the staged diff before any requested commit.
 
-- `Ostrabus-0.2` marks the earlier experimental snapshot. Custom builder validation
-  produces ignored test packages under `dist/`; they are not a hosted release.
-- Earlier snapshots are documented in [0.2.2](RELEASE-0.2.2.md) and the
-  [post-0.2.2 changes](PREPARED-CHANGES.md). The current [0.6.0 scope](RELEASE-0.6.0.md)
-  is recorded separately; commit/tag creation and pushing remain separate
-  actions. Do not advertise compatibility beyond the tested game.
-- Keep known investigations distinguishable from completed fixes. In particular,
-  orphaned economic records remain an investigation, not an automatic cleanup.
-  See `Orbital/Economy/ORPHANED-MARKETS.md`.
-- Diagnostic hooks that support live captures remain opt-in and removable. Review
-  launch defaults before broadly distributing the package; do not silently change
-  the author's gameplay defaults as part of documentation cleanup.
-- Existing license text and attribution are preserved. Review its authorship and
-  intended terms before a tagged release rather than inventing replacement terms.
-- The inherited Thunderstore workflow is still template infrastructure: its
-  publisher namespace/URL and reference-assembly input are not configured for
-  this snapshot. The validated paths are the Windows full/custom builders and
-  their local package scripts; this preparation does not certify or invoke CI
-  publishing. The package version field is aligned at 0.6.0.
-- Selected native-state fixtures are useful regression inputs; exploratory tools
-  may need ignored local captures. The repository does not redistribute decompiled
-  game source, assemblies, or complete saves.
+Current receipts are under ignored `obj/Release-0.7.0/`; final check results,
+known limitations and artifact identities belong in [the release notes](RELEASE-0.7.0.md).
+Preparation does not deploy to the running game, commit, tag, push or publish.
 
-## Review workflow
+## Packaging and independent companions
 
-Build the desired configuration, run the relevant offline suites and startup
-binding audit, then run `Package-Mod.ps1 -Configuration Debug` (or `Release` after
-building that configuration). Inspect ZIP contents and test the included installers
-against a disposable installation layout before publishing.
+- `Deploy-Mod.cmd` always installs the full normal build; `CustomBuilder` creates
+  isolated variants with explicit dependencies and selected native assets.
+- The main archive includes the optional Apartment Refuel Terminal's separate
+  installer without activating it or changing its 0.1.1 version.
+- Station Kiosk Migration 0.1.2 is packaged independently for the reviewed
+  1.1.0.1 and 1.1.0.2 loaders; normal deployment never activates it.
+- The metadata-only SaveMigration110 prototype is not recommended and remains
+  outside normal packages; native content availability is documented separately.
+- Existing plugin/config/app identifiers remain stable for installed users and
+  saved settings; no identifiers are renamed for cosmetic consistency.
+- Existing license text and attribution remain unchanged.
+- The inherited Thunderstore workflow is still template infrastructure with an
+  unconfigured publisher/URL and reference-assembly input; no hosted publishing
+  is invoked or certified by local packaging.
 
-Before tagging, review the staged diff and inspect the archive's file inventory.
-Keep generated archives, binaries, local settings and live captures out of source control.
+## Historical checkpoints
+
+- [0.6.0](RELEASE-0.6.0.md), commit `fbc3e8b`, is the preserved 1.1.0.0 compatibility
+  checkpoint; its build identities and original acceptance notes stay historical.
+- [1.1.0.1](COMPATIBILITY-1.1.0.1.md) and [1.1.0.2](COMPATIBILITY-1.1.0.2.md)
+  reviews document subsequent native changes and companion adaptations.
+- [1.0.1.10 baseline](BASELINE-1.0.1.10.md), commit `be8e282`, is tagged
+  `Ostrabus-5.1.0` and retains its original 0.5.0 metadata; build it against the
+  preserved old installation rather than redirecting current integration code.
+- Earlier release scopes remain in [0.5.0](RELEASE-0.5.0.md),
+  [0.4.0](RELEASE-0.4.0.md), [0.3.1](RELEASE-0.3.1.md),
+  [0.3.0](RELEASE-0.3.0.md) and [post-0.2.2 preparation](PREPARED-CHANGES.md).
+
 
 ## Historical 0.2 source preparation, November 8, 2026
 

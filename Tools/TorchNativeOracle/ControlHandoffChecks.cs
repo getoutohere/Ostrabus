@@ -82,8 +82,9 @@ static partial class Program {
             var pair = legacy.GetCurrentNavPoints(fixtureEpoch);
             double fraction = (fixtureEpoch-pair.Item1.ArrivalTime)/(pair.Item2.ArrivalTime-pair.Item1.ArrivalTime);
             double expectedCycle = pair.Item1.TorchCycle+(pair.Item2.TorchCycle-pair.Item1.TorchCycle)*fraction;
-            Near(double.Parse(Controls["slidCycle"]),expectedCycle,"Legacy native CYCLE interpolation remains authoritative",1e-6);
-            Check(TorchCourseFuel.Find(legacy,false) == null,"Legacy playback did not acquire corrected controls");
+            Near(double.Parse(Controls["slidCycle"]),expectedCycle,"Unsupported cold legacy CYCLE remains native",1e-6);
+            Check(TorchCourseFuel.Find(legacy,false) == null,"Cold legacy course acquired corrected controls");
+            RunNativeProfileRecoveryChecks();
             ship.objSS.ResetNavData();
             Controls["slidFlow"] = ".123"; Controls["slidCycle"] = ".07";
             TorchCourseFuel.Control(playbackReactor,.27);

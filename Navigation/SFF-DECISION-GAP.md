@@ -62,6 +62,35 @@ Total skipped time remains exact. Physics,
 AI, collisions and economic work run in their normal world-update order; no
 actor runs against a temporarily rewound shared world.
 
+### Fractional deadlines and preview cost
+
+The adapter first finds the earliest native course-completion boundary, then
+previews only up to that boundary or the six-hour window. An impact inside that
+shorter horizon can still select an earlier native decision turn. This avoids
+calculating trajectories beyond a world update that must run first; it does not
+lower integration resolution or move decisions after a known danger.
+
+`SffDynamics.Propagate` uses `(start + seconds) - start` as its interval, matching
+the representable endpoint of native `StarSystem.Update(double)`. With epochs
+around 65 billion seconds, fractional deadlines such as 0.02 seconds otherwise
+leave a remainder smaller than the absolute clock's precision. The old solver
+threw `SFF step below clock resolution` and unnecessarily used native fallback.
+The correction changes no force law, authored behavior, fuel policy or save field.
+
+`lastSffAdvance` now includes whole-jump `previewWallMs`, `worldWallMs` and
+`elapsedWallMs`, plus preview count and total forecast seconds. These are bounded
+scalars in the existing last-jump receipt, require no trace toggle, and are
+overwritten by the next skip. World time includes the existing physics, AI and
+economic work. The timings exclude GUI/coroutine work outside the world adapter.
+
+The focused timing suite passes 241 checks across different epochs, fractional
+durations, coast/powered motion and intervals below clock resolution. Decision
+fixtures preserve native arrival, remaining coast, early danger handling and
+unconsumed-course protection. A first forecast bounded by a 1,800-second course
+completion uses 64 integration steps, versus 255 for the discarded 7,200-second
+forecast in the same fixture. That is a deterministic work reduction, not a
+prediction of the player's whole-SFF wall-clock improvement.
+
 The scheduler does not assign a target, velocity, fuel, faction, health or
 controller. More native decision opportunities during danger are intentional.
 Player-containing groups, hidden hulls, locks, gravity-ignore states, combat and

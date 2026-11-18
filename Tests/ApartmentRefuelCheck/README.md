@@ -1,6 +1,6 @@
 # Standalone apartment refuel checks
 
-Current target: shipped Ostranauts 1.1.0.0 assembly, hosted in the game's bundled Mono.
+Current target: shipped Ostranauts 1.1.0.2 assembly, hosted in the game's bundled Mono.
 Developer commands below run from the source checkout, not the release directory.
 
 ```powershell

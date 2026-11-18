@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/6bb1e01dcde1fe775d64490079392d7c43bd66078d92d5e8b794ea35b48f752c.json.br",
+  "reason": "Final shared FlyToPath repair review: 1454 native checks cover independent NPC RCS, rejected unconverged plots, freight destination/retry semantics, recursive waypoints, native free-hull target-model preservation and exact parent-body cache restoration. Native asset ownership and SFF/PASS/economy composition reviewed; no new controller, fuel policy or future free-hull forecasting is introduced.",
+  "acceptedUtc": "2026-11-17T00:28:16.7211657Z",
+  "previousSnapshot": "assembly-baselines/b1212f4a25341d39b7e6f1bd5f5ee9df16f0bf7d325a7055dfcad6fb89866c64.json.br"
+}

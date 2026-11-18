@@ -29,12 +29,12 @@ foreach ($packageDoc in @('README.md', 'DESIGN.md', 'IMPLEMENTATION.md')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('PdaSettings\' + $packageDoc)) -Destination (Join-Path $packageRoot 'PdaSettings')
 }
 @'
-Ostrabus 0.6.0 experimental snapshot
-Target: Ostranauts 1.1.0.0 (public_test). Other game versions are not supported by
+Ostrabus 0.7.0 experimental release
+Target: Ostranauts 1.1.0.2 (public_test). Other game versions are not supported by
 this build. Requires an existing BepInEx 5 installation; BepInEx is not bundled.
-Partially playtested: the compatibility port has in-game acceptance; later
-SFF/PASS, bounty-preservation and passive-attachment refinements have offline
-validation and remain pending live acceptance. See Build/RELEASE-0.6.0.md in source.
+Partially playtested: offline/native regressions and documented live observations
+support this release; the latest autopilot, avoidance, attachment and freight
+repairs retain offline-only acceptance. See Build/RELEASE-0.7.0.md in source.
 Source, feature inventory and module documentation:
 https://github.com/getoutohere/Ostrabus
 
@@ -48,6 +48,10 @@ Optional Apartment Refuel Terminal: separately installable under
 StandaloneMods/ApartmentRefuel. Run its own Install.cmd if wanted; the main
 Deploy-Mod.cmd does not activate this companion. See its README for pricing,
 apartment restrictions and saved-item definition retention on removal.
+
+Station Kiosk Migration 0.1.2 is a separate optional download for protecting
+existing station interiors during native 1.1 kiosk upgrades. It is not activated
+or bundled by this installer. See StandaloneMods/StationMigration in source.
 
 Saved controls persist to BepInEx config. Session controls reset on game restart.
 The existing com.ostranauts.template.cfg filename is retained for compatibility.

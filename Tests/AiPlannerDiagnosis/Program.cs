@@ -122,6 +122,7 @@ static class Program {
         throw new Exception("Market save not found");
     }
     static int Main(string[] args) {
+        if (args.Length != 0 && args[0] == "autopilot-target") { LifecycleChecks.Run(autopilotTarget: true); return 0; }
         if (args.Length != 0 && args[0] == "audit-cargo") return AuditCargo();
         if (args.Length != 0 && args[0] == "audit-saves") return AuditSaves();
         var h = new Harmony("offline.ai-planner.diagnosis");
@@ -138,6 +139,7 @@ static class Program {
         if (args.Length != 0 && args[0] == "traffic") { TrafficChecks.Run(); return 0; }
         if (args.Length != 0 && args[0] == "hidden-visits") { TrafficChecks.Run(true); return 0; }
         if (args.Length != 0 && args[0] == "civilian-visits") { TrafficChecks.Run(false, true); return 0; }
+        if (args.Length != 0 && args[0] == "civilian-derelicts") { TrafficChecks.Run(derelictVisits:true); return 0; }
         if (args.Length != 0 && args[0] == "civilian-waiting") { TrafficChecks.Waiting(); return 0; }
         if (args.Length != 0 && args[0] == "traffic-conversion") { LifecycleChecks.Run(null, true); return 0; }
         if (args.Length != 0 && args[0] == "region-cleanup") { LifecycleChecks.Run(null, false, true); return 0; }

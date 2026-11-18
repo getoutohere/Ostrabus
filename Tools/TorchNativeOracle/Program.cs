@@ -18,8 +18,10 @@ static partial class Program {
     static Ship ship;
     static double mass;
     static readonly Dictionary<CondOwner, Dictionary<string,double>> Values = new Dictionary<CondOwner,Dictionary<string,double>>();
+    static readonly Dictionary<CondOwner,Ship> TankOwners = new Dictionary<CondOwner,Ship>();
     static readonly Dictionary<string,string> Controls = new Dictionary<string,string>();
     static List<CondOwner> d2o, he3, cryogen;
+    static bool filterEmptyReactants;
     static T Empty<T>() => (T)FormatterServices.GetUninitializedObject(typeof(T));
     static void Field(object obj, string name, object value) => AccessTools.Field(obj.GetType(), name).SetValue(obj, value);
     static void Check(bool ok, string why) { checks++; if (!ok) throw new Exception(why); }
@@ -28,7 +30,7 @@ static partial class Program {
     static bool Unequal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = !ReferenceEquals(__0, __1); return false; }
     static bool Skip() => false;
     static bool Self(ref CondOwner __result) { __result = core; return false; }
-    static bool OwnerShip(ref Ship __result) { __result = ship; return false; }
+    static bool OwnerShip(CondOwner __instance, ref Ship __result) { __result = TankOwners.TryGetValue(__instance,out var owner) ? owner : ship; return false; }
     static bool Reactor(ref CondOwner __result) { __result = core; return false; }
     static bool Mass(ref double __result) { __result = mass; return false; }
     static double fixtureEpoch = 100;
@@ -41,7 +43,14 @@ static partial class Program {
     static double Read(CondOwner co, string key) => Values[co].TryGetValue(key, out double value) ? value : 0;
     static bool Gpm(string __1, ref string __result) { __result = Controls.TryGetValue(__1, out string value) ? value : "false"; return false; }
     static bool Trigger(CondTrigger __instance, ref bool __result) { __result = playbackReactor != null && ReferenceEquals(__instance, playbackReactor.CTFuse); return false; }
-    static bool Tanks(string __1, ref List<CondOwner> __result) { __result = __1 == "ItmCanisterLH02" ? d2o : __1 == "ItmCanisterLHe02" ? he3 : cryogen; return false; }
+    static bool Tanks(string __1, ref List<CondOwner> __result) {
+        __result = __1 == "ItmCanisterLH02" ? d2o : __1 == "ItmCanisterLHe02" ? he3 : cryogen;
+        if (filterEmptyReactants && (__1 == "ItmCanisterLH02" || __1 == "ItmCanisterLHe02")) {
+            string reactant = __1 == "ItmCanisterLH02" ? "StatLiqD2O" : "StatSolidHe3";
+            __result = __result.Where(tank => Read(tank, reactant) > 0).ToList();
+        }
+        return false;
+    }
     static bool NotPlaying(ref bool __result) { __result = false; return false; }
     static CondOwner Co() {
         var co = Empty<CondOwner>(); Values[co] = new Dictionary<string,double> { ["StatDamageMax"] = 6 };
@@ -53,7 +62,7 @@ static partial class Program {
         return result;
     }
     static FusionIC Make(ReactorFit fit, double temperature, double cycle, double flow) {
-        Values.Clear(); core = Co(); mass = fit.MassKg; ship = Empty<Ship>();
+        Values.Clear(); TankOwners.Clear(); core = Co(); mass = fit.MassKg; ship = Empty<Ship>();
         Field(ship, "<objSS>k__BackingField", new ShipSitu(false));
         var powered = Empty<Powered>(); powered.jsonPI = new JsonPowerInfo(); Field(core, "pwr", powered);
         Values[core]["StatICCapA"] = 1; Values[core]["StatICCoreTemp"] = temperature; Values[core]["StatICVe"] = fit.ExhaustVelocity;
@@ -106,6 +115,15 @@ static partial class Program {
         Patch(AccessTools.Method(typeof(Debug), "LogWarning", new[] { typeof(object) }), nameof(Skip));
         CrewSim.objInstance = Empty<CrewSim>(); CrewSim.objInstance.coDicts = Empty<CODicts>();
         try {
+            h.CreateClassProcessor(typeof(Ostrabus.MiscBugFixes.TorchFuelRefundRemainderPatch)).Patch();
+            if (args.Length == 1 && args[0] == "coast-gravity") {
+                h.CreateClassProcessor(typeof(Ostrabus.MiscBugFixes.TorchFuelCachePatch)).Patch();
+                RunPlaybackStudy(coastGravityOnly:true); return;
+            }
+            if (args.Length == 2 && args[0] == "saved-fuel") {
+                h.CreateClassProcessor(typeof(Ostrabus.MiscBugFixes.TorchFuelCachePatch)).Patch();
+                RunPlaybackStudy(savedFuelPath:args[1]);return;
+            }
             if (args.Length == 1 && args[0] == "transfer-playback") {
                 h.CreateClassProcessor(typeof(Ostrabus.MiscBugFixes.TorchFuelCachePatch)).Patch();
                 RunPlaybackStudy(transferChecksOnly:true); return;
@@ -210,6 +228,7 @@ static partial class Program {
                 Near(ship.fShallowFusionRemain, target, "Next Fusion refresh repairs cache", 1e-6);
             }
             h.CreateClassProcessor(typeof(Ostrabus.MiscBugFixes.TorchFuelCachePatch)).Patch();
+            RunReconciliationRepairChecks();
             foreach (int pairs in new[] { 1, 2, 4 }) foreach (double available in new[] { 0d, 4000, 30000 })
                 foreach (double target in new[] { 0d, 2000, 24000, 100000 }) foreach (double ratio in new[] { .25, 1d, 4 }) {
                 var fit = new ReactorFit { Feeders = pairs, Lasers = pairs, Capacitors = 2, Regulators = 2 };

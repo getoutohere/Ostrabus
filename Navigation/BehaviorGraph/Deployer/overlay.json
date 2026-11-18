@@ -37,13 +37,17 @@
                                        "sources":  [
                                                        "avoidance_native",
                                                        "avoidance_repair",
+                                                       "avoidance_prediction",
                                                        "avoidance_geometry",
                                                        "avoidance_ephemeris",
                                                        "avoidance_frame",
-                                                       "avoidance_motion"
-                                                   ],
+                                                       "avoidance_motion",
+                                                         "avoidance_flight",
+                                                         "avoidance_route",
+                                                         "avoidance_query"
+                                                     ],
                                        "status":  "boundary_not_transition_expanded",
-                                       "reason":  "Shared native evasion rejects past-only warnings and vets opposite dodges against bodies and moving obstacles. No target/retirement policy changes. Full flight geometry remains outside this slice; see Navigation/PLANETARY-AVOIDANCE-AUDIT.md and Tests/PlanetaryNavigationCheck."
+                                       "reason":  "AI avoidance retains numeric/admission and planetary repairs. Continuous FlyTo/route/manual handoff now checks new nearby courses and preserves lateral escape motion. The initial live oscillation is reproduced and corrected by sustained native/full-DLL A/B checks. Geometry remains outside this slice; see Navigation/PLANETARY-AVOIDANCE-AUDIT.md. Authored targets remain authoritative."
                                    },
                                    {
                                        "id":  "station_docked_traffic",
@@ -51,7 +55,8 @@
                                                        "station_collision_native",
                                                        "station_collision_policy",
                                                        "station_collision_scan",
-                                                       "avoidance_repair"
+                                                       "avoidance_repair",
+                                                       "avoidance_prediction"
                                                    ],
                                        "status":  "boundary_not_transition_expanded",
                                        "reason":  "Saved PDA policy, default on: nonstation hulls connected to stations/apartments are nonhazards while enabled; disabling immediately restores native hull treatment. Enabled hulls are nonhazards for ship contact, AI evasion and proximity scans. Free-space tows, actual stations, weapon/planet hits remain native. Shared-command fixture evidence; no geometric transition model or forced arrival."

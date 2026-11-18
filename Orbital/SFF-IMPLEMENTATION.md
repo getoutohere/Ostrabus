@@ -16,6 +16,13 @@ celestial impacts and gives working native pilots shorter world updates before
 committing an hours-long trajectory. `lastSffAdvance` reports those steps
 separately from the last physical segment.
 
+Forecasts stop at the earliest native course completion before considering
+danger-driven subdivisions. Fractional propagation intervals match the native
+absolute clock endpoint, avoiding spurious sub-resolution remainders and native
+fallback. Whole-jump preview/world timings are retained in the existing bounded
+`lastSffAdvance` receipt. See the decision-gap document for reproduction and
+performance evidence; no extra hooks or saved simulation state are added.
+
 `StarSystem.Update` prefix prepares corrected trajectories during GUI SFF or a
 tagged synchronous PASS jump. Short positive windows are accepted while the shared
 `SffAdvance` adapter owns them. The native GUI flag is not forged.

@@ -1,0 +1,12 @@
+{
+  "source": "Paused O-YKWV approach, captured 2026-11-17; numeric relative state only",
+  "centerDistanceKm": 5.360031219586988,
+  "relativePositionMetres": [4010.871297964315, -3555.678009341288],
+  "relativeVelocityMetresPerSecond": [-104.32364208063301, 142.11455079494323],
+  "accelerationAUPerSecondSquared": [-6.941799218784794e-11, 7.390094092230015e-11],
+  "rcsMaximumMetresPerSecondSquared": 15.1679322547977,
+  "movingNativeRadiusMetres": 1100,
+  "obstacleNativeRadiusMetres": 500,
+  "expectedNativeCallerHit": false,
+  "expectedNativeNarrowPredictionHit": true
+}

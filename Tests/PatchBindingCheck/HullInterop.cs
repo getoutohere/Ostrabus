@@ -55,6 +55,30 @@ static class HullInterop {
                     throw new Exception("AI composition retained live situation references.");
                 if (CollisionManager.WillCollide(a.objSS,b.objSS,30) || a.objSS.Size!=100 || b.objSS.Size!=100)
                     throw new Exception("AI composition changed the shared combat predictor or saved sizes.");
+                double oldX=a.objSS.vPosx,oldY=b.objSS.vPosy,oldVelocity=a.objSS.vVelX;
+                a.objSS.vPosx=-5000*6.684587e-12;b.objSS.vPosy=0;a.objSS.vVelX=50*6.684587e-12;
+                if (!AIShipManager.IsOnCollisionCourse(a,out _))
+                    throw new Exception("Combined hull/AI patches missed a slow enlarged-hull approach. Reverse order: "+reverse);
+                a.objSS.vVelX=0;a.objSS.vAccRCS=new UnityEngine.Vector2((float)(10*6.684587e-12),0);
+                if (!AIShipManager.IsOnCollisionCourse(a,out _))
+                    throw new Exception("Combined hull/AI patches dropped departure acceleration. Reverse order: "+reverse);
+                a.objSS.vVelX=-50*6.684587e-12;a.objSS.vAccRCS=new UnityEngine.Vector2((float)(-5*6.684587e-12),0);
+                if (AIShipManager.IsOnCollisionCourse(a,out _)) throw new Exception("Combined forecast warned about an accelerating departure away from the obstacle.");
+                a.objSS.vAccRCS=default;a.objSS.vVelX=50*6.684587e-12;
+                Set(flag,"_typedValue",false);
+                if (AIShipManager.IsOnCollisionCourse(a,out _)) throw new Exception("Disabled hull option retained enlarged AI bounds.");
+                a.objSS.vPosx=-1000*6.684587e-12;
+                if (!AIShipManager.IsOnCollisionCourse(a,out _)) throw new Exception("AI low-speed repair incorrectly depended on the hull option.");
+                b.objSS.bBOLocked=true;
+                if (AIShipManager.IsOnCollisionCourse(a,out _)) throw new Exception("AI repair changed native locked-obstacle exclusion.");
+                b.objSS.bBOLocked=false;b.objSS.bIsBO=true;
+                if (AIShipManager.IsOnCollisionCourse(a,out _)) throw new Exception("AI repair changed native station exclusion.");
+                b.objSS.bIsBO=false;a.shipScanTarget=b;
+                if (AIShipManager.IsOnCollisionCourse(a,out _)) throw new Exception("AI repair changed native selected-target docking exemption.");
+                a.shipScanTarget=null;b.shipScanTarget=a;
+                if (AIShipManager.IsOnCollisionCourse(a,out _)) throw new Exception("AI repair changed native reciprocal target docking exemption.");
+                b.shipScanTarget=null;Set(flag,"_typedValue",true);
+                a.objSS.vPosx=oldX;b.objSS.vPosy=oldY;a.objSS.vVelX=oldVelocity;
                 throwEscape=true;bool threw=false;
                 try {AIShipManager.IsOnCollisionCourse(a,out _);} catch(InvalidOperationException error) {threw=error.Message=="fixture evasion exception";}
                 finally {throwEscape=false;}
@@ -63,7 +87,7 @@ static class HullInterop {
                     throw new Exception("AI evasion exception retained actor situation references.");
                 production.UnpatchSelf();
             }
-            Console.WriteLine("Hull interop: both real full-plugin AI patch installation orders predict enlarged hulls, hand off matching escape clearance, release scope references on success/exception and preserve shared combat sizes.");
+            Console.WriteLine("Hull interop: both real full-plugin AI patch installation orders predict enlarged/slow/accelerating hulls, respect toggle and native docking/station exclusions, hand off matching escape clearance, release scope references on success/exception and preserve shared combat sizes.");
             return 0;
         } finally {production.UnpatchSelf();boundary.UnpatchSelf();flagField.SetValue(null,oldFlag);CrewSim.system=world;station=null;}
     }

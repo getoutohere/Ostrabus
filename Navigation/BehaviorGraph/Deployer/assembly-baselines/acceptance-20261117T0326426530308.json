@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/a1d958aef35b4dddda595e33f23d3306ca6b9a2f596d43a777f77ae25f9f0c88.json.br",
+  "reason": "Reviewed avoidance admission repair: hull-aware broad phase, low-speed and bounded acceleration helper. 39 departure regressions, 886 planetary checks, full-DLL hull interop and native patch binding passed. Existing documented geometry boundary retained; native assembly unchanged.",
+  "acceptedUtc": "2026-11-17T03:26:42.6509616Z",
+  "previousSnapshot": "assembly-baselines/15b9be96e901d3930fed2f8b6aa288ac0a1b9d93d3889213c5fccb70ebac09a3.json.br"
+}

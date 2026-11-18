@@ -197,6 +197,7 @@ static partial class Program {
             throwShot = false;
             GroupDefenseChecks();
             BurstSafetyChecks();
+            StationSelectionChecks();
 
             var other = Hull("B", 20, 20); var shallow = Hull("SHALLOW"); Field(shallow, "nLoadState", Ship.Loaded.Shallow);
             var dead = Hull("DEAD"); dead.bDestroyed = true;
@@ -248,6 +249,7 @@ static partial class Program {
                 Check(!(bool)beat.Invoke(null, null) && spawned == null, "Native station exclusion changed");
                 AccessTools.Field(typeof(BeatManager), exclusion).SetValue(null, false);
             }
+            StationBeatChecks(beat);
             // The explicit testing entry point must refresh native cached flags,
             // force only event selection, and restore all temporary state.
             AccessTools.Field(typeof(BeatManager), "fRoll").SetValue(null, .42f);

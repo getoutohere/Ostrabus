@@ -5,6 +5,7 @@
   <ItemGroup><Compile Include="../../Navigation/RouteCompletionPatch.cs" Link="RouteCompletionPatch.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../../MiscBugFixes/TorchCourseFuel*.cs" Link="%(Filename)%(Extension)" /></ItemGroup>
   <ItemGroup><Compile Include="../../Navigation/Towing/*.cs" Link="Towing/%(Filename)%(Extension)" /></ItemGroup>
+  <ItemGroup><Compile Include="../../Navigation/Attachments/PassiveAttachmentPatch.cs" Link="PassiveAttachmentPatch.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../../Navigation/TorchCourses/*.cs" Link="TorchCourses/%(Filename)%(Extension)" /></ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>

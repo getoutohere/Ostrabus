@@ -34,7 +34,7 @@ request bodies, or persistent connections are exposed.
 | `POST /profiling/socials/open` | Explicit diagnostic UI action: arm capture and open the native Socials app. Rejects an unavailable PDA or an already-open Socials app. Does not evict portrait caches or rerun save loading. |
 | `POST /profiling/socials/stop` | Cancel capture and remove its hooks while retaining captured detached results. Also stops on scene/system changes and API shutdown. |
 | `/events/docking?since=0&limit=25` | Recent successful dock/moor/undock/unmoor transitions observed since plugin startup. |
-| `/events/ai?since=0&limit=25&shipId=O-TXXW` | Bounded in-memory history of sampled AI command, target, combat, and docking-state changes. |
+| `/events/ai?since=0&limit=25&shipId=O-TXXW` | Bounded in-memory history of sampled AI state changes and crewed-ship destruction evidence during GUI/PASS time skips. |
 | `/events/combat?since=0&limit=25&shipId=O-TXXW` | Successful weapon-fire and ship-damage events; filters by involved ship ID. |
 | `/shipboard` | Current shallow boarding encounters, including start epoch and per-ship start crew readiness (`alive/active/ranged/other weapon/unarmed`) alongside current crew/load state, next casualty timing, ships ordered to return home, and the latest resolution's prize-capture checks. Weapon counts include detected carried weapons; read-only, captured on the Unity thread. See the [shipboard action module notes](../ShipboardAction/README.md) for the encounter and resolution rules. |
 | `/world` | Ship/CO counts, AI-region count, pause state. |
@@ -302,6 +302,24 @@ to command, scan/combat target, combat flag/lists, and dock links. The first sam
 seeds comparison state without emitting a baseline event. It observes at most
 512 AI ships per sample. This is bounded memory only; it writes no history to disk
 and may miss state changes shorter than the sampling interval.
+
+During an active GUI/PASS world jump, the existing Unity log listener also records
+`aiShipDestroyingDuringJump` when native `Ship.Destroy` logs a crewed hull's
+destruction. Capture occurs synchronously before registry removal, so a ship
+created and destroyed inside one substep is observable without enabling a trace.
+The record contains the caller stack, source, epoch, owner, classification, raw
+motion/control/route state and up to 32 crew identities. It also retains the three
+closest stored body surfaces and their calculation epochs without advancing any
+ephemeris. Stored surface distances are evidence, not a collision verdict.
+
+This reuses the 512-entry AI/combat ring and existing listener; no additional
+Harmony hook, sampling loop, disk journal, saved field or ship reference is added.
+Worker-thread logs do not inspect game objects. Replacement/unloading can also
+destroy an old instance, so the event is explicitly not a claim that its crew died.
+No movement, damage, retirement or cleanup behavior is changed. Validation:
+14 offline checks in `Tests/ShipDestructionEvidenceCheck`, including actors born
+and removed between frames, caller retention, worker-thread exclusion, detached
+records and ring/crew bounds. Records from before deployment are not recoverable.
 
 `/events/combat` records the game's successful weapon-fire event (shooter,
 weapon, and current combat target) and ship-damage event (damaged ship). The game

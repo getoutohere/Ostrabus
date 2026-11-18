@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/8e0a18e00b026fb90a943c50ad40a2539766619094bf56e47f5d221d5790b4b7.json.br",
+  "reason": "Reviewed civilian/scavenger selectors and authored civilian hull pools; optional simulation policy excludes new random civilian derelict targets with native A/B scope controls.",
+  "acceptedUtc": "2026-11-17T04:06:10.3009521Z",
+  "previousSnapshot": "assembly-baselines/044752440315a741deff265aba87ee5ca944fe9dd6e28fbf33215050d80619db.json.br"
+}

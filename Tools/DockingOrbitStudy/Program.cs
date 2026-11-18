@@ -16,6 +16,7 @@ static partial class Program
     static int checks;
     static CondOwner selected;
     static readonly List<string> transitions = new List<string>();
+    static BodyOrbit nearestOverride;
     static T Empty<T>() => (T)FormatterServices.GetUninitializedObject(typeof(T));
     static void Field(object target, string name, object value) => AccessTools.Field(target.GetType(), name).SetValue(target, value);
     static void Check(bool valid, string message)
@@ -48,7 +49,7 @@ static partial class Program
     static bool Gravity() => false;
     static bool Nearest(ref BodyOrbit __result)
     {
-        __result = CrewSim.system.aBOs["Phobos"];
+        __result = nearestOverride ?? CrewSim.system.aBOs["Phobos"];
         return false;
     }
     static bool NoPilot(ref bool __result)
@@ -98,6 +99,7 @@ static partial class Program
     }
     static void World()
     {
+        nearestOverride = null;
         selected = null;
         CrewSim.system = Empty<StarSystem>();
         CrewSim.coPlayer = null;
@@ -200,6 +202,7 @@ static partial class Program
     {
         var candidate = new Harmony("offline.docking-orbit.candidate");
         candidate.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.ShipNavigation.PassiveDockAttachmentPatch", true)).Patch();
+        candidate.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.ShipNavigation.PassiveUndockAttachmentPatch", true)).Patch();
         try
         {
             foreach (bool reverse in new[] { false, true })
@@ -476,7 +479,7 @@ static partial class Program
         }
         finally { production.UnpatchSelf(); }
     }
-    static int Main()
+    static int Main(string[] args)
     {
         var engine = new Harmony("offline.docking-orbit.environment");
         var oldWorld = CrewSim.system;
@@ -503,11 +506,16 @@ static partial class Program
             engine.Patch(AccessTools.Method(typeof(BodyOrbit), nameof(BodyOrbit.UpdateTime)), prefix: new HarmonyMethod(typeof(Program), nameof(Skip)));
             var dock = AccessTools.Method(typeof(Ship), nameof(Ship.Dock), new[] { typeof(Ship), typeof(bool), typeof(string), typeof(string) });
             engine.Patch(dock, prefix: new HarmonyMethod(typeof(Program), nameof(DockEnter)), postfix: new HarmonyMethod(typeof(Program), nameof(DockExit)));
+            if (args.Length == 1 && args[0] == "gravity-modes") {
+                GravityModeChecks(engine);
+                return 0;
+            }
             Baseline();
             GravityInheritance();
             GravityPhysics(engine);
             HoldSafety(engine);
             AttachmentPhysics(engine);
+            UndockReferenceChecks();
             Candidate(engine);
             LifecycleChecks(engine);
             CollateralChecks(engine);

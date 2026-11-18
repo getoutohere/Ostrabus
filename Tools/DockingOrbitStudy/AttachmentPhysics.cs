@@ -17,6 +17,7 @@ static partial class Program
         var update = AccessTools.Method(typeof(BodyOrbit), nameof(BodyOrbit.UpdateTime));
         engine.Unpatch(update, HarmonyPatchType.Prefix, engine.Id);
         candidate.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.ShipNavigation.PassiveDockAttachmentPatch", true)).Patch();
+        candidate.CreateClassProcessor(typeof(Ostrabus.OstrabusPlugin).Assembly.GetType("Ostrabus.ShipNavigation.PassiveUndockAttachmentPatch", true)).Patch();
         try
         {
             var saved = JObject.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "PhobosBodies.json")));

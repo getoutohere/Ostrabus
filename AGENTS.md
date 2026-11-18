@@ -19,3 +19,11 @@ interactions.
 Do not substitute symptom correction, forced outcomes or a parallel C# behavior
 controller for a repair to the existing mechanism. Distinguish bug repairs from
 new behavioral policy, and document any intentional policy changes separately.
+
+# World-model invariants for navigation and simulation work
+
+The game models natural celestial bodies AND manufactured orbital stations,
+regional station references, substations and ground stations. A `BodyOrbit`
+reference is not necessarily a natural celestial body, and a `Ship` is not
+necessarily a mobile vessel. Do not collapse these categories when reasoning
+about motion, docking, attachment, reference selection or lifecycle cleanup.

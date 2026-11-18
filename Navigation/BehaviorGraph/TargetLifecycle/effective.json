@@ -209,7 +209,7 @@
         "internal static void Removed(",
         "internal static void Restored("
       ],
-      "sha256": "cf8a11dea22b28ee4775da43c3abff2e03a3680024b57e5fbb0a95dd25c87ae3"
+      "sha256": "fad1ca49e22dae616ae753bb1c10c90b1a5083a5e9af6fc235728f86806cfd57"
     },
     "clear_saved": {
       "origin": "repo",

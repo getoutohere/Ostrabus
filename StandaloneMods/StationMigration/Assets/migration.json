@@ -1,0 +1,4222 @@
+{
+  "sourceVersions": "1.1.0.0 -> 1.1.0.1",
+  "templates": [
+    {
+      "station": "BCER",
+      "template": "Port Mojave",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "TraderFurnishingsKioskBCER",
+          "fX": -26.0,
+          "fY": -17.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": 10.0,
+          "fY": -9.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmBartop03",
+          "fX": 8.5,
+          "fY": -18.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmDoor01ClosedOnLocked",
+          "fX": 12.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmStorageBin2x104",
+          "fX": 5.5,
+          "fY": -28.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskTransit03b",
+          "fX": -10.5,
+          "fY": 4.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDockSys02Closed",
+          "fX": 37.5,
+          "fY": -2.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorLabelEagle",
+          "fX": 8.5,
+          "fY": 16.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskSupplies01BCER",
+          "fX": 1.0,
+          "fY": 15.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster01",
+          "fX": 4.0,
+          "fY": 20.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDecorPoster11",
+          "fX": 10.0,
+          "fY": 20.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDecorPoster10",
+          "fX": 11.0,
+          "fY": 20.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDecorPoster09",
+          "fX": 9.0,
+          "fY": 11.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmVendingMachineCoffee",
+          "fX": 3.5,
+          "fY": 19.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmAlarmN2OnG",
+          "fX": -27.0,
+          "fY": -1.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmFloorLabelStarsAndStripes",
+          "fX": 8.5,
+          "fY": 14.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskCargo01BCER",
+          "fX": 16.0,
+          "fY": 17.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmPlanter2x202",
+          "fX": 5.5,
+          "fY": -14.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmPlanter3x101",
+          "fX": -25.0,
+          "fY": -12.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmReactorIC02IgnitionMini",
+          "fX": -3.0,
+          "fY": -19.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskTestudo01BCER",
+          "fX": -21.0,
+          "fY": -22.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmLitWall1x0VibrantRedCustom",
+          "fX": -23.0,
+          "fY": 5.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart02",
+          "fX": -14.0,
+          "fY": -7.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmTV01",
+          "fX": 8.0,
+          "fY": 3.0,
+          "fRotation": 0.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskBCERScrap01",
+        "fX": -8.0,
+        "fY": 22.0,
+        "fRotation": 180.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmBCERScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapBCER",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapBCER",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskBCER",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskBCER"
+            ]
+          }
+        ]
+      },
+      "replace": [],
+      "remove": [
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -10.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -9.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        }
+      ],
+      "support": [
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -11.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -11.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -10.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -9.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -8.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -7.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -6.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -5.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -11.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -11.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -10.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -10.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -9.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -9.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -9.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -8.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -8.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -8.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -7.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -7.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -7.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -6.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -6.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -6.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -5.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -5.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -5.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "BCER",
+      "template": "Port Mojave Xin",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "TraderFurnishingsKioskBCER",
+          "fX": -26.0,
+          "fY": -17.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": 10.0,
+          "fY": -9.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmBartop03",
+          "fX": 8.5,
+          "fY": -18.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmDoor01ClosedOnLocked",
+          "fX": 12.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmStorageBin2x104",
+          "fX": 5.5,
+          "fY": -28.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskTransit03b",
+          "fX": -10.5,
+          "fY": 4.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDockSys02Closed",
+          "fX": 37.5,
+          "fY": -2.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorLabelBloom",
+          "fX": 8.5,
+          "fY": 16.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskSupplies01BCER",
+          "fX": 1.0,
+          "fY": 15.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster01",
+          "fX": 4.0,
+          "fY": 20.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDecorPoster11",
+          "fX": 10.0,
+          "fY": 20.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDecorPoster10",
+          "fX": 11.0,
+          "fY": 20.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDecorPoster09",
+          "fX": 9.0,
+          "fY": 11.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmVendingMachineCoffee",
+          "fX": 3.5,
+          "fY": 19.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmAlarmN2OnG",
+          "fX": -27.0,
+          "fY": -1.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmFloorLabelDynastyCoin",
+          "fX": 8.5,
+          "fY": 14.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskCargo01BCER",
+          "fX": 16.0,
+          "fY": 17.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmPlanter2x202",
+          "fX": 5.5,
+          "fY": -14.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmPlanter3x101",
+          "fX": -25.0,
+          "fY": -12.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmReactorIC02IgnitionMini",
+          "fX": -3.0,
+          "fY": -19.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskTestudo01BCER",
+          "fX": -21.0,
+          "fY": -22.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmLitWall1x0VibrantRedCustom",
+          "fX": -23.0,
+          "fY": 5.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart02",
+          "fX": -14.0,
+          "fY": -7.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmTV01",
+          "fX": 8.0,
+          "fY": 3.0,
+          "fRotation": 0.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskBCERScrap01",
+        "fX": -8.0,
+        "fY": 22.0,
+        "fRotation": 180.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmBCERScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapBCER",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapBCER",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskBCER",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskBCER"
+            ]
+          }
+        ]
+      },
+      "replace": [],
+      "remove": [
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -10.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -9.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        }
+      ],
+      "support": [
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -11.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -11.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -10.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -9.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -8.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -7.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -6.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -5.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -11.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -11.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -10.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -10.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -9.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -9.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -9.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -8.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -8.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -8.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -7.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -7.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -7.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -6.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -6.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -6.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -5.0,
+          "fY": 21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -5.0,
+          "fY": 22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -5.0,
+          "fY": 23.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "BCRS",
+      "template": "Station_BCRS",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "ItmChair01",
+          "fX": 22.0,
+          "fY": 17.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart01",
+          "fX": 20.5,
+          "fY": 19.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskSupplies01BCRS",
+          "fX": 46.0,
+          "fY": 21.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmCargoPodClimate02",
+          "fX": -11.0,
+          "fY": 28.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmCargoPod07",
+          "fX": -19.0,
+          "fY": 28.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskCargo01BCRS",
+          "fX": 26.0,
+          "fY": 17.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmDockSys02Closed",
+          "fX": 27.0,
+          "fY": 38.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmChairCube03b",
+          "fX": 26.5,
+          "fY": 4.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKiosk01",
+          "fX": 31.5,
+          "fY": 13.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskFerry01",
+          "fX": 28.5,
+          "fY": 13.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmChairCube03c",
+          "fX": 20.5,
+          "fY": 0.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmBartop03",
+          "fX": -32.5,
+          "fY": -6.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmChargerBattEVA",
+          "fX": 33.5,
+          "fY": 23.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDockSys03Closed",
+          "fX": 9.0,
+          "fY": -25.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": 15.0,
+          "fY": 15.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmLitWall1x0VibrantRedOff",
+          "fX": 66.0,
+          "fY": 2.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmAlarmCO2OnG",
+          "fX": 68.0,
+          "fY": 0.9999999,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmAlarmTempOnW",
+          "fX": 68.0,
+          "fY": -1.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmAlarmN2OnG",
+          "fX": 59.0,
+          "fY": 3.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmAlarmO2OnG",
+          "fX": 59.0,
+          "fY": 11.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskTransit03b",
+          "fX": 8.5,
+          "fY": 7.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskTransit02",
+          "fX": 66.5,
+          "fY": 16.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDecorPoster10",
+          "fX": -50.0,
+          "fY": 6.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster01",
+          "fX": -14.0,
+          "fY": -9.0,
+          "fRotation": 180.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskBCRSScrap01",
+        "fX": 1.0,
+        "fY": 16.0,
+        "fRotation": 90.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmBCRSScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapBCRS",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapBCRS",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskBCRS",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskBCRS"
+            ]
+          }
+        ]
+      },
+      "replace": [],
+      "remove": [],
+      "support": [
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 19.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 18.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 17.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 16.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 15.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 14.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 13.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 17.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 16.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 18.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 15.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 17.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 16.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 15.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 15.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 16.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 17.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 18.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 19.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 13.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 14.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 13.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 14.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 14.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 13.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 19.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 18.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 19.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "BCRS",
+      "template": "Station_BCRS_Titan",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "ItmChair01",
+          "fX": 22.0,
+          "fY": 17.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart01",
+          "fX": 20.5,
+          "fY": 19.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskSupplies01",
+          "fX": 46.0,
+          "fY": 21.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmCargoPodClimate02",
+          "fX": -11.0,
+          "fY": 28.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmCargoPod07",
+          "fX": -19.0,
+          "fY": 28.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskCargo01BCRS",
+          "fX": 26.0,
+          "fY": 17.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmDockSys02Closed",
+          "fX": 27.0,
+          "fY": 38.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmChairCube03b",
+          "fX": 26.5,
+          "fY": 4.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKiosk01",
+          "fX": 31.5,
+          "fY": 13.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskFerry01",
+          "fX": 28.5,
+          "fY": 13.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmChairCube03c",
+          "fX": 20.5,
+          "fY": 0.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmBartop03",
+          "fX": -32.5,
+          "fY": -6.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmChargerBattEVA",
+          "fX": 33.5,
+          "fY": 23.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDockSys03Closed",
+          "fX": 9.0,
+          "fY": -25.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": 15.0,
+          "fY": 15.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmLitWall1x0VibrantRedOff",
+          "fX": 66.0,
+          "fY": 2.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmAlarmCO2OnG",
+          "fX": 68.0,
+          "fY": 0.9999999,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmAlarmTempOnW",
+          "fX": 68.0,
+          "fY": -1.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmAlarmN2OnG",
+          "fX": 59.0,
+          "fY": 3.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmAlarmO2OnG",
+          "fX": 59.0,
+          "fY": 11.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskTransit03b",
+          "fX": 8.5,
+          "fY": 7.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskTransit02",
+          "fX": 66.5,
+          "fY": 16.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDecorPoster10",
+          "fX": -50.0,
+          "fY": 6.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster01",
+          "fX": -14.0,
+          "fY": -9.0,
+          "fRotation": 180.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskBCRSScrap01",
+        "fX": 1.0,
+        "fY": 16.0,
+        "fRotation": 90.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmBCRSScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapBCRS",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapBCRS",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskBCRS",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskBCRS"
+            ]
+          }
+        ]
+      },
+      "replace": [],
+      "remove": [],
+      "support": [
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 19.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 18.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 17.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 16.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 15.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 14.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 2.0,
+          "fY": 13.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 17.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 16.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 18.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 15.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 17.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 16.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 15.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 15.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 16.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 17.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 18.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 19.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 13.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 14.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 13.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 14.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 14.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 0.0,
+          "fY": 13.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 19.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorCross04",
+          "fX": 0.0,
+          "fY": 18.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG09A",
+          "fX": 1.0,
+          "fY": 19.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "EJDR",
+      "template": "Station_EJDR",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "ItmAlarmContaminantsOnG",
+          "fX": 22.0,
+          "fY": -6.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmAlarmTempOnW",
+          "fX": 30.0,
+          "fY": -7.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmAtmoScrubber02",
+          "fX": 23.0,
+          "fY": -8.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmArcadeGame01",
+          "fX": 37.5,
+          "fY": -23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDoor05ClosedOn",
+          "fX": 26.0,
+          "fY": -35.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmTV01",
+          "fX": 32.0,
+          "fY": -30.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01VENC",
+          "fX": 40.5,
+          "fY": -28.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01VNCA",
+          "fX": 40.5,
+          "fY": -25.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01OKLG",
+          "fX": 40.5,
+          "fY": -22.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart01",
+          "fX": 56.0,
+          "fY": -28.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": 46.0,
+          "fY": -30.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmPlanter1x101",
+          "fX": 46.0,
+          "fY": -34.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskCargo01EJDR",
+          "fX": 55.0,
+          "fY": -33.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskFerry01",
+          "fX": 58.5,
+          "fY": -33.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskSupplies01EJDR",
+          "fX": 50.0,
+          "fY": -35.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskGenericScrap01",
+          "fX": 58.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmVendingMachineCoffee",
+          "fX": 61.5,
+          "fY": -33.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskEJDRShipBroker01",
+          "fX": 63.0,
+          "fY": -28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmPlanter2x101",
+          "fX": 65.5,
+          "fY": -30.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskTransit03b",
+          "fX": 76.5,
+          "fY": -24.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskTestudo01EJDR",
+          "fX": 75.0,
+          "fY": -31.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "TraderFurnishingsKioskEJDR",
+          "fX": 52.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDockSys02Closed",
+          "fX": 66.0,
+          "fY": -88.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmDecorPoster11",
+          "fX": 44.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskEJDRScrap01",
+        "fX": 58.0,
+        "fY": -22.0,
+        "fRotation": 0.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmEJDRScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapEJDR",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapEJDR",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskEJDR",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskEJDR"
+            ]
+          }
+        ]
+      },
+      "replace": [
+        {
+          "strName": "ItmKioskGenericScrap01",
+          "fX": 58.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        }
+      ],
+      "remove": [],
+      "support": [
+        {
+          "strName": "ItmFloorRYOF01",
+          "fX": 61.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRYOF01",
+          "fX": 59.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRYOF01",
+          "fX": 57.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRYOF01",
+          "fX": 55.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 58.0,
+          "fY": -23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRYOF01",
+          "fX": 60.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 57.0,
+          "fY": -23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRYOF01",
+          "fX": 58.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 56.0,
+          "fY": -23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRYOF01",
+          "fX": 56.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 59.0,
+          "fY": -23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 55.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 55.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 61.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 60.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 59.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 58.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 57.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 56.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 61.0,
+          "fY": -21.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 57.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 56.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 61.0,
+          "fY": -23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 60.0,
+          "fY": -23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 61.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 60.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 58.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 59.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 55.0,
+          "fY": -23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": 55.0,
+          "fY": -22.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "HQCH",
+      "template": "Station_HQCH",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "ItmBattery02c",
+          "fX": 6.0,
+          "fY": -17.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmAirPump01Off",
+          "fX": -2.0,
+          "fY": 26.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmCargoPodClimate03",
+          "fX": 13.0,
+          "fY": 78.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmHatch01Closed",
+          "fX": -8.0,
+          "fY": 44.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmLitWall1x0OrangeOff",
+          "fX": -9.0,
+          "fY": 45.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmDoor04ClosedLocked",
+          "fX": 10.0,
+          "fY": 38.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmDecorPoster09",
+          "fX": 5.0,
+          "fY": 5.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmHeater01",
+          "fX": -10.5,
+          "fY": -14.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskFerry01",
+          "fX": -4.5,
+          "fY": -9.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmDockSys02Closed",
+          "fX": 1.0,
+          "fY": -42.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmRack1x101Dorm",
+          "fX": -5.0,
+          "fY": -15.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmStorageBin3x101",
+          "fX": -2.5,
+          "fY": 2.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": -2.0,
+          "fY": 8.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster10",
+          "fX": 13.0,
+          "fY": -1.192093E-07,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmDecorPoster11",
+          "fX": 13.0,
+          "fY": -10.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskHQCHMed01",
+          "fX": 10.0,
+          "fY": 5.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDecorPoster03",
+          "fX": -2.0,
+          "fY": -12.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmCargoPodRad04",
+          "fX": -7.0,
+          "fY": 65.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmCargoPodRad08",
+          "fX": -3.0,
+          "fY": 84.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmCargoPodClimate06",
+          "fX": -11.0,
+          "fY": 84.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmSensorEM01",
+          "fX": 10.0,
+          "fY": 101.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmSensorRadar01",
+          "fX": 1.0,
+          "fY": 105.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmSensorLidar02",
+          "fX": -2.5,
+          "fY": 105.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmTable02",
+          "fX": -12.5,
+          "fY": 96.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFridge01",
+          "fX": -5.5,
+          "fY": 103.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmSensorIR01",
+          "fX": 10.0,
+          "fY": 99.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskSupplies01HQCH",
+          "fX": 4.0,
+          "fY": 8.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskCargo01HQCH",
+          "fX": -4.5,
+          "fY": -5.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmCargoPod01",
+          "fX": -11.0,
+          "fY": 78.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmCargoPod05",
+          "fX": 5.0,
+          "fY": 71.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmAlarmContaminantsOnG",
+          "fX": 9.0,
+          "fY": -15.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmAtmoScrubber02",
+          "fX": 13.0,
+          "fY": 4.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster04",
+          "fX": -2.0,
+          "fY": -31.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster02",
+          "fX": -8.0,
+          "fY": -25.0,
+          "fRotation": 180.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskHQCHScrap01",
+        "fX": -11.0,
+        "fY": -4.0,
+        "fRotation": 90.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmHQCHScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapHQCH",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapHQCH",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskHQCH",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskHQCH"
+            ]
+          }
+        ]
+      },
+      "replace": [
+        {
+          "strName": "ItmKiosk01",
+          "fX": -10.5,
+          "fY": -3.5,
+          "fRotation": 90.0
+        }
+      ],
+      "remove": [],
+      "support": [
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -12.0,
+          "fY": -1.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -12.0,
+          "fY": -2.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": -12.0,
+          "fY": -1.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -12.0,
+          "fY": -3.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -12.0,
+          "fY": -4.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -12.0,
+          "fY": -5.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -12.0,
+          "fY": -6.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -12.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": -12.0,
+          "fY": -2.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": -12.0,
+          "fY": -3.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": -12.0,
+          "fY": -4.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG02",
+          "fX": -12.0,
+          "fY": -5.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": -12.0,
+          "fY": -6.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": -12.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -10.0,
+          "fY": -3.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -10.0,
+          "fY": -4.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -10.0,
+          "fY": -5.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -10.0,
+          "fY": -6.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -10.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -11.0,
+          "fY": -3.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -11.0,
+          "fY": -4.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -11.0,
+          "fY": -5.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -11.0,
+          "fY": -6.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -11.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -11.0,
+          "fY": -2.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -11.0,
+          "fY": -1.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -10.0,
+          "fY": -2.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG03",
+          "fX": -10.0,
+          "fY": -1.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "JATL_SUB",
+      "template": "Station_JATL",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "ItmDoor01ClosedOn",
+          "fX": 5.0,
+          "fY": -3.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmReactorIC02Ignition",
+          "fX": 15.0,
+          "fY": -39.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskHealth01",
+          "fX": -9.0,
+          "fY": -38.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskSupplies01JATL",
+          "fX": -3.0,
+          "fY": -39.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmLitWall1x0Off",
+          "fX": 5.0,
+          "fY": -54.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmBartop03",
+          "fX": -7.5,
+          "fY": -49.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart02",
+          "fX": 17.0,
+          "fY": -44.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": 13.0,
+          "fY": -48.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmFridge01",
+          "fX": -3.5,
+          "fY": -49.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskTransit03b",
+          "fX": 10.5,
+          "fY": -39.5,
+          "fRotation": 90.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskJATLScrap01",
+        "fX": 52.0,
+        "fY": -50.0,
+        "fRotation": 180.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmJATLScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapJATL",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapJATL",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskJATL",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskJATL"
+            ]
+          }
+        ]
+      },
+      "replace": [],
+      "remove": [],
+      "support": [
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 55.0,
+          "fY": -51.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 54.0,
+          "fY": -51.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 53.0,
+          "fY": -51.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 52.0,
+          "fY": -51.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 51.0,
+          "fY": -51.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 50.0,
+          "fY": -51.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 50.0,
+          "fY": -50.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 53.0,
+          "fY": -49.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 50.0,
+          "fY": -51.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 49.0,
+          "fY": -50.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 49.0,
+          "fY": -49.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmWallAERO01",
+          "fX": 49.0,
+          "fY": -51.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 49.0,
+          "fY": -51.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 52.0,
+          "fY": -49.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 51.0,
+          "fY": -49.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 51.0,
+          "fY": -50.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 50.0,
+          "fY": -49.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 52.0,
+          "fY": -50.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 54.0,
+          "fY": -49.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 53.0,
+          "fY": -50.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 55.0,
+          "fY": -49.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 54.0,
+          "fY": -50.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": 55.0,
+          "fY": -50.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 55.0,
+          "fY": -51.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 54.0,
+          "fY": -51.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 53.0,
+          "fY": -51.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 52.0,
+          "fY": -51.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRYOB02",
+          "fX": 51.0,
+          "fY": -51.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "JFTS",
+      "template": "Station_JFTS",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "ItmFloorMSSLFWhite05",
+          "fX": -3.0,
+          "fY": 16.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFridge01",
+          "fX": -2.5,
+          "fY": -12.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskTransit02",
+          "fX": -27.5,
+          "fY": -8.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmDockSys02Closed",
+          "fX": 11.5,
+          "fY": 39.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmDoor03Transit",
+          "fX": -28.0,
+          "fY": -13.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmBartop03",
+          "fX": 1.5,
+          "fY": -8.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmJukebox01",
+          "fX": -4.5,
+          "fY": -2.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": -4.0,
+          "fY": 10.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskCargo01JFTS",
+          "fX": -5.0,
+          "fY": 17.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart02",
+          "fX": -57.0,
+          "fY": 46.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart01",
+          "fX": 6.0,
+          "fY": 57.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "TraderFurnishingsKioskJFTS",
+          "fX": -57.0,
+          "fY": -8.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskJFTSMed01",
+          "fX": -63.0,
+          "fY": -8.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskTestudo01JFTS",
+          "fX": -67.0,
+          "fY": 2.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskSupplies01JFTS",
+          "fX": -67.0,
+          "fY": -4.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskJFTSShipBroker01",
+          "fX": 6.0,
+          "fY": 51.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01BCER",
+          "fX": -40.5,
+          "fY": -7.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01VNCA",
+          "fX": -43.5,
+          "fY": -7.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01OKLG",
+          "fX": -46.5,
+          "fY": -7.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01SVIR",
+          "fX": -43.5,
+          "fY": -1.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskFerry01",
+          "fX": 0.5000002,
+          "fY": 52.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmStorageBin2x2C04",
+          "fX": -6.5,
+          "fY": 13.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorLabelStarsAndStripes",
+          "fX": -49.5,
+          "fY": 56.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmChargerBattEVA",
+          "fX": -31.5,
+          "fY": 51.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster01",
+          "fX": -31.0,
+          "fY": -10.0,
+          "fRotation": 90.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskJFTSScrap01",
+        "fX": -15.0,
+        "fY": -6.0,
+        "fRotation": 180.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmVORBScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapVORB",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapVORB",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskVORB",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskVORB"
+            ]
+          }
+        ]
+      },
+      "replace": [],
+      "remove": [],
+      "support": [
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -12.0,
+          "fY": -5.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite04",
+          "fX": -12.0,
+          "fY": -6.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -12.0,
+          "fY": -7.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -13.0,
+          "fY": -5.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite04",
+          "fX": -13.0,
+          "fY": -6.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -13.0,
+          "fY": -7.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -14.0,
+          "fY": -5.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite04",
+          "fX": -14.0,
+          "fY": -6.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -14.0,
+          "fY": -7.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -15.0,
+          "fY": -5.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite04",
+          "fX": -15.0,
+          "fY": -6.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -15.0,
+          "fY": -7.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -16.0,
+          "fY": -5.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite04",
+          "fX": -16.0,
+          "fY": -6.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -16.0,
+          "fY": -7.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -17.0,
+          "fY": -5.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite04",
+          "fX": -17.0,
+          "fY": -6.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -17.0,
+          "fY": -7.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -18.0,
+          "fY": -5.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite04",
+          "fX": -18.0,
+          "fY": -6.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorMSSLFWhite01",
+          "fX": -18.0,
+          "fY": -7.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmWallMSSLFWhite",
+          "fX": -12.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSSLFWhite",
+          "fX": -13.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSSLFWhite",
+          "fX": -14.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSSLFWhite",
+          "fX": -15.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSSLFWhite",
+          "fX": -16.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSSLFWhite",
+          "fX": -17.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSSLFWhite",
+          "fX": -18.0,
+          "fY": -7.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "MLAB",
+      "template": "Station_MLAB",
+      "gridRotation": 180,
+      "anchors": [
+        {
+          "strName": "ItmKioskTransit02",
+          "fX": -4.5,
+          "fY": 14.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDockSys02Closed",
+          "fX": -79.5,
+          "fY": -4.768372E-07,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmLitCeiling1x1OrangeOff",
+          "fX": 0.0,
+          "fY": -25.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskFerry01",
+          "fX": -1.5,
+          "fY": -16.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": -20.0,
+          "fY": -20.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmPlanter3x101",
+          "fX": 2.384186E-07,
+          "fY": -17.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmChairCube02b",
+          "fX": -3.5,
+          "fY": -16.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmPlanter2x101",
+          "fX": -16.0,
+          "fY": -16.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorGrateMSHGTile01",
+          "fX": -18.5,
+          "fY": -29.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmChairCube02bDmg",
+          "fX": 2.5,
+          "fY": -34.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmChair02",
+          "fX": -3.5,
+          "fY": -43.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart01",
+          "fX": -10.0,
+          "fY": -32.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart02",
+          "fX": 7.5,
+          "fY": -26.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskCargo01MLAB",
+          "fX": -11.0,
+          "fY": -16.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmJukebox01",
+          "fX": 1.788139E-07,
+          "fY": -25.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmStorageBin2x2C03",
+          "fX": -20.5,
+          "fY": -31.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmStorageBin2x101",
+          "fX": -29.5,
+          "fY": -20.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmStorageBin2x103",
+          "fX": 16.5,
+          "fY": 2.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskGenericScrap01",
+          "fX": -17.0,
+          "fY": -35.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster10",
+          "fX": -17.0,
+          "fY": -28.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmDecorPoster01",
+          "fX": -35.0,
+          "fY": -19.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDecorPoster00",
+          "fX": -11.0,
+          "fY": -37.0,
+          "fRotation": 180.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskMLABScrap01",
+        "fX": -17.0,
+        "fY": -35.0,
+        "fRotation": 90.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmMLABScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapMLAB",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapMLAB",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskMLAB",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskMLAB"
+            ]
+          }
+        ]
+      },
+      "replace": [
+        {
+          "strName": "ItmKioskGenericScrap01",
+          "fX": -17.0,
+          "fY": -35.0,
+          "fRotation": 90.0
+        }
+      ],
+      "remove": [],
+      "support": [
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -18.0,
+          "fY": -33.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -16.0,
+          "fY": -33.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -18.0,
+          "fY": -32.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO01",
+          "fX": -18.0,
+          "fY": -32.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -16.0,
+          "fY": -34.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -16.0,
+          "fY": -35.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -16.0,
+          "fY": -36.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -16.0,
+          "fY": -37.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -17.0,
+          "fY": -33.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -17.0,
+          "fY": -34.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -17.0,
+          "fY": -35.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -17.0,
+          "fY": -36.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -17.0,
+          "fY": -37.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -18.0,
+          "fY": -33.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -18.0,
+          "fY": -34.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -18.0,
+          "fY": -35.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -18.0,
+          "fY": -36.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -18.0,
+          "fY": -37.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -18.0,
+          "fY": -38.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -18.0,
+          "fY": -37.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -18.0,
+          "fY": -36.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -18.0,
+          "fY": -35.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -18.0,
+          "fY": -34.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -17.0,
+          "fY": -38.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallRock011x1",
+          "fX": -16.0,
+          "fY": -38.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": -17.0,
+          "fY": -32.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorTSDO02",
+          "fX": -16.0,
+          "fY": -32.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -18.0,
+          "fY": -38.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -17.0,
+          "fY": -38.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorRock021x1",
+          "fX": -16.0,
+          "fY": -38.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "MSUZ_RB",
+      "template": "Station_MSUZ_RB",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "ItmSignNeon01Off",
+          "fX": 11.0,
+          "fY": -32.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmLitWall1x0Custom",
+          "fX": 4.0,
+          "fY": -39.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": -5.0,
+          "fY": -28.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFridge01",
+          "fX": 6.5,
+          "fY": -38.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmDoor03TransitExpress",
+          "fX": -26.5,
+          "fY": -22.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskMSUZShipBroker01",
+          "fX": -35.0,
+          "fY": -36.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmFloorMSHG01",
+          "fX": -4.0,
+          "fY": -4.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01BCRS",
+          "fX": -59.5,
+          "fY": -32.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01VENC",
+          "fX": -51.5,
+          "fY": -13.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorLabelEagle",
+          "fX": -55.5,
+          "fY": -13.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart01",
+          "fX": 17.5,
+          "fY": -12.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01BCER",
+          "fX": -51.5,
+          "fY": -29.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01OKLG",
+          "fX": -51.5,
+          "fY": -32.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01MTRS",
+          "fX": -59.5,
+          "fY": -24.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01VNCA",
+          "fX": -59.5,
+          "fY": -12.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01MVOL",
+          "fX": -59.5,
+          "fY": -28.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01MSUZ",
+          "fX": -59.5,
+          "fY": -20.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmLitCeiling1x1",
+          "fX": 11.0,
+          "fY": -23.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskTestudo01MSUZ",
+          "fX": -33.0,
+          "fY": -32.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskResBroker01MSUZ",
+          "fX": -68.0,
+          "fY": -22.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01SVIR",
+          "fX": -59.5,
+          "fY": -16.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmStorageBin1x101",
+          "fX": -20.5,
+          "fY": -11.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "TraderFurnishingsKioskMSUZ",
+          "fX": -41.0,
+          "fY": -37.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskMSUZMed01",
+          "fX": -43.0,
+          "fY": -32.0,
+          "fRotation": 90.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskMSUZScrap01",
+        "fX": 9.0,
+        "fY": -28.0,
+        "fRotation": 180.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmMSUZScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapMSUZ",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapMSUZ",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskMSUZ",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskMSUZ"
+            ]
+          }
+        ]
+      },
+      "replace": [],
+      "remove": [],
+      "support": [
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": 7.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": 10.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": 8.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallWindow1x1Sq",
+          "fX": 9.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 11.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG04",
+          "fX": 12.0,
+          "fY": -27.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG04",
+          "fX": 12.0,
+          "fY": -28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG04",
+          "fX": 11.0,
+          "fY": -27.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG04",
+          "fX": 11.0,
+          "fY": -28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG04",
+          "fX": 10.0,
+          "fY": -27.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG04",
+          "fX": 10.0,
+          "fY": -28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 6.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorVHF04",
+          "fX": 6.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorVHF04",
+          "fX": 7.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorVHF04",
+          "fX": 8.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorVHF04",
+          "fX": 9.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorVHF04",
+          "fX": 10.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorVHF04",
+          "fX": 11.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorVHF04",
+          "fX": 6.0,
+          "fY": -27.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorVHF04",
+          "fX": 8.0,
+          "fY": -27.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorVHF04",
+          "fX": 7.0,
+          "fY": -27.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSWindow02",
+          "fX": 9.0,
+          "fY": -27.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSWindow02",
+          "fX": 9.0,
+          "fY": -28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSWindow02",
+          "fX": 8.0,
+          "fY": -28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSWindow02",
+          "fX": 7.0,
+          "fY": -28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSSWindow02",
+          "fX": 6.0,
+          "fY": -28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorMSHG04",
+          "fX": 12.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallMSHG04",
+          "fX": 12.0,
+          "fY": -29.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "SVIR",
+      "template": "Station_SVIR",
+      "gridRotation": 0,
+      "anchors": [
+        {
+          "strName": "ItmDockSys02Closed",
+          "fX": -8.0,
+          "fY": -54.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmReactorIC02IgnitionMini",
+          "fX": -28.0,
+          "fY": 12.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskOKLGFoodCart02",
+          "fX": 42.0,
+          "fY": 26.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmHeater02",
+          "fX": 8.5,
+          "fY": 15.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmAtmoScrubber02Off",
+          "fX": -23.0,
+          "fY": 17.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmAtmoScrubber02",
+          "fX": -25.0,
+          "fY": 13.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKiosk01",
+          "fX": -23.5,
+          "fY": -51.5,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskTestudo01SVIR",
+          "fX": -13.0,
+          "fY": 29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01SVIR",
+          "fX": -26.5,
+          "fY": 38.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskResBroker01SVIR",
+          "fX": -26.0,
+          "fY": 34.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskSVIRShipBroker01",
+          "fX": -20.0,
+          "fY": 37.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmChairCube03b",
+          "fX": -9.5,
+          "fY": 38.5,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskJobs03",
+          "fX": -3.0,
+          "fY": 29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmTable01",
+          "fX": 59.5,
+          "fY": -4.0,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmFloorLabelEagleLarge",
+          "fX": -8.0,
+          "fY": 15.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskCargo01SVIR",
+          "fX": -23.5,
+          "fY": -49.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "TraderFurnishingsKioskSVIR",
+          "fX": -3.0,
+          "fY": -50.0,
+          "fRotation": 90.0
+        },
+        {
+          "strName": "ItmKioskSupplies01SVIR",
+          "fX": 0.0,
+          "fY": -52.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskSVIRMed01",
+          "fX": 6.0,
+          "fY": -52.0,
+          "fRotation": 180.0
+        },
+        {
+          "strName": "ItmKioskFerry01",
+          "fX": 7.5,
+          "fY": -48.5,
+          "fRotation": 270.0
+        },
+        {
+          "strName": "ItmKioskTransit03",
+          "fX": -14.5,
+          "fY": -50.5,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmKioskEmbassy01BCER",
+          "fX": -12.5,
+          "fY": 31.5,
+          "fRotation": 180.0
+        }
+      ],
+      "kiosk": {
+        "strName": "ItmKioskSVIRScrap01",
+        "fX": -24.0,
+        "fY": 29.0,
+        "fRotation": 0.0,
+        "aGPMSettings": [
+          {
+            "strName": "Panel A",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trade",
+            "dictGUIPropMap": [
+              "strGUIPrefab",
+              "GUITrade/GUITrade",
+              "strFriendlyName",
+              "Trading Interface",
+              "strGUIPrefabRight",
+              null,
+              "strGUIPrefabLeft",
+              "Panel Left",
+              "strGUIPrefabUp",
+              null,
+              "strGUIPrefabDown",
+              null
+            ]
+          },
+          {
+            "strName": "Trader",
+            "dictGUIPropMap": [
+              "strLoot",
+              "ItmSVIRScrapKioskInv",
+              "strRestockCond",
+              "IsReadyRestock",
+              "strTicker",
+              "RestockSupplyKiosk",
+              "strLootBuyDiscount",
+              "CONDTraderDiscountBuyKioskScrapSVIR",
+              "strLootSellDiscount",
+              "CONDTraderDiscountSellKioskScrapSVIR",
+              "strLootCTsBuy",
+              "TraderCTsBuyScrapKioskSVIR",
+              "strLootCTsSell",
+              "TraderCTsSellScrapKioskSVIR"
+            ]
+          }
+        ]
+      },
+      "replace": [],
+      "remove": [],
+      "support": [
+        {
+          "strName": "ItmWallLDPH01",
+          "fX": -25.0,
+          "fY": 30.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallLDPH01",
+          "fX": -26.0,
+          "fY": 30.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallLDPH01",
+          "fX": -27.0,
+          "fY": 30.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallLDPH01",
+          "fX": -24.0,
+          "fY": 30.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallLDPH01",
+          "fX": -22.0,
+          "fY": 30.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmWallLDPH01",
+          "fX": -23.0,
+          "fY": 30.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmDoor01ClosedOn",
+          "fX": -19.0,
+          "fY": 30.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO46_04",
+          "fX": -27.0,
+          "fY": 28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -27.0,
+          "fY": 29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO46_04",
+          "fX": -26.0,
+          "fY": 28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -26.0,
+          "fY": 29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO46_04",
+          "fX": -25.0,
+          "fY": 28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -25.0,
+          "fY": 29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO46_04",
+          "fX": -24.0,
+          "fY": 28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -24.0,
+          "fY": 29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO46_04",
+          "fX": -23.0,
+          "fY": 28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -23.0,
+          "fY": 29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO46_04",
+          "fX": -22.0,
+          "fY": 28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -22.0,
+          "fY": 29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorTSDO46_04",
+          "fX": -21.0,
+          "fY": 28.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -21.0,
+          "fY": 29.0,
+          "fRotation": 0.0
+        },
+        {
+          "strName": "ItmFloorLDPH03A",
+          "fX": -21.0,
+          "fY": 30.0,
+          "fRotation": 0.0
+        }
+      ]
+    },
+    {
+      "station": "JATL",
+      "template": "Station_JATL_LZ",
+      "kiosk": null,
+      "reason": "Native regeneration targets this parent, but the kiosk is authored in its separate substation. Preserve the parent and mark regeneration handled."
+    },
+    {
+      "station": "MSUZ",
+      "template": "Station_MSUZ",
+      "kiosk": null,
+      "reason": "Native regeneration targets this parent, but the kiosk is authored in its separate substation. Preserve the parent and mark regeneration handled."
+    }
+  ]
+}

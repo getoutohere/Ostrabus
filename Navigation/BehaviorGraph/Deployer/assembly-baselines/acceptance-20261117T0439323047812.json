@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "snapshot": "assembly-baselines/eaa94a9c17f9d92146d689ffaec2d4f4f62817d511b24d1635fef7388b9f67d6.json.br",
+  "reason": "Reviewed final avoidance handoff including explicit priority before the existing reset-site rewriter. Native assembly and prior native members unchanged. 93 continuous native/full-DLL A/B assertions include fuel/thrust-release/rendezvous hooks in both installation orders; 53 focused checks and 886 planetary checks pass. Native target policy retained; numerical geometry remains an explicit boundary.",
+  "acceptedUtc": "2026-11-17T04:39:32.3031440Z",
+  "previousSnapshot": "assembly-baselines/2aa2ae9d7ce5e94dc1b902ab5f7997cd8109765d1ca5757f63b6b00f565db9ef.json.br"
+}

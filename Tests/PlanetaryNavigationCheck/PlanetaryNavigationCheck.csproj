@@ -3,6 +3,10 @@
   <ItemGroup>
     <Reference Include="BepInEx"><HintPath>$(GameDir)/BepInEx/core/BepInEx.dll</HintPath></Reference>
     <Compile Include="../../Navigation/AIShipAvoidancePatch.cs" Link="AIShipAvoidancePatch.cs" />
+    <Compile Include="../../Navigation/AvoidancePrediction.cs" Link="AvoidancePrediction.cs" />
+    <Compile Include="../../Navigation/AvoidanceQuery.cs" Link="AvoidanceQuery.cs" />
+    <Compile Include="../../Navigation/AvoidanceRouteForecast.cs" Link="AvoidanceRouteForecast.cs" />
+    <Compile Include="../../Navigation/AvoidanceFlightPatch.cs" Link="AvoidanceFlightPatch.cs" />
     <Compile Include="../../Navigation/ConstantAccelerationApproach.cs" Link="ConstantAccelerationApproach.cs" />
     <Compile Include="../../Navigation/StationDockedCollisions.cs" Link="StationDockedCollisions.cs" />
     <Compile Include="../../NavConsole/ProximityCollisionPatch.cs" Link="ProximityCollisionPatch.cs" />

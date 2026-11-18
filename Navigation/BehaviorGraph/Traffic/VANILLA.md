@@ -177,4 +177,10 @@ flowchart TD
   n_p_wait -->|"restore"| n_p_wait
   n_p_wait -->|"unmoor"| n_p_wait
   n_p_motion -->|"depart"| n_p_end
+  n_t_fly -->|"plot_rcs_approach"| n_t_fly
+  n_t_fly -->|"plot_rcs_approach"| n_t_fly
+  n_t_fly -->|"plot_rcs_approach"| n_t_fly
+  n_t_fly -->|"plot_rcs_approach"| n_t_fly
+  n_p_motion -->|"depart"| n_p_end
+  n_t_ship -->|"sample_ship"| n_t_fly
 ```

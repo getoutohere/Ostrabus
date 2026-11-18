@@ -104,7 +104,7 @@ $allow=Clone ((Read-Rows 'interactions\interactions.json') | Where-Object strNam
 $allow.strName='GUI'+$prefix+'Allow'; $allow.CTTestUs="T${prefix}Working"
 $interactions+=@($allow)
 $loots+=@([ordered]@{strName=$id+'Stock';strType='item';aCOs=@("${id}Loose=1.0x1");aLoots=@()})
-Save-Rows 'mod_info.json' @([ordered]@{strName='Apartment Refuel Terminal';strAuthor='Jon';strGameVersion='1.1.0.0';strModVersion='0.1.1';strNotes='Requires the standalone ApartmentRefuel BepInEx plugin. Item definitions should remain installed for saves containing terminals.'})
+Save-Rows 'mod_info.json' @([ordered]@{strName='Apartment Refuel Terminal';strAuthor='Jon';strGameVersion='1.1.0.2';strModVersion='0.1.1';strNotes='Requires the standalone ApartmentRefuel BepInEx plugin. Item definitions should remain installed for saves containing terminals.'})
 Save-Rows 'data/condowners/apartment_refuel.json' $owners
 Save-Rows 'data/items/apartment_refuel.json' $items
 Save-Rows 'data/conditions_simple/apartment_refuel.json' @([ordered]@{strName='Apartment Refuel Conditions';aValues=@('IsOstrabusApartmentRefuel','Private Refuel Terminal','Residential station service terminal.','0','0','Neutral','false')})

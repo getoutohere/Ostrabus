@@ -155,6 +155,7 @@ static partial class Program
             Prefix(typeof(StarSystem), nameof(StarSystem.Update), nameof(LifecycleWorldStep), Priority.Last);
             enabled.SetValue(null, true);
             foreach (string type in new[] { "Ostrabus.ShipNavigation.PassiveDockAttachmentPatch",
+                "Ostrabus.ShipNavigation.PassiveUndockAttachmentPatch",
                 "Ostrabus.ShipNavigation.PassiveAttachmentInputPatch", "Ostrabus.ShipNavigation.HaulAttachmentReleasePatch",
                 "Ostrabus.MiscBugFixes.AiHoldRunClockPatch",
                 "Ostrabus.MiscBugFixes.AiHoldEligibilityClockPatch", "Ostrabus.Orbital.OrbitalStepObservationPatch",

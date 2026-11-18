@@ -76,7 +76,7 @@ static partial class LifecycleChecks {
         AccessTools.Field(singleton, "_instance").SetValue(null, FormatterServices.GetUninitializedObject(type));
         Patch(h, type, endpoint, nameof(Quiet));
     }
-    internal static int Run(string capturedLayout = null, bool trafficConversion = false, bool regionCleanup = false) {
+    internal static int Run(string capturedLayout = null, bool trafficConversion = false, bool regionCleanup = false, bool autopilotTarget = false) {
         var h = new Harmony("offline.ai-target.lifecycle");
         try {
             go = Empty<GameObject>(); transform = Empty<Transform>();
@@ -111,6 +111,11 @@ static partial class LifecycleChecks {
             var player = Empty<CondOwner>(); Field(player, "_strID", "fixture-player"); CrewSim.coPlayer = player;
             DataHandler.mapCOs[player.strID] = player;
             var crewSim = Empty<CrewSim>();
+            if (autopilotTarget) {
+                AutopilotTargetChecks(system, h);
+                Console.WriteLine(checks + " player course target checks passed.");
+                return checks;
+            }
 
             foreach (string id in new[] { "OKLG", "VORB", "cargo-destination" }) {
                 var live = new ShipSitu(false) { bIsBO = true, bGrounded = true, strBOPORShip = id,
