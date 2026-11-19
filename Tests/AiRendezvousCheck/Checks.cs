@@ -8,6 +8,41 @@ using Ostranauts.Ships;
 using Ostranauts.Ships.Commands;
 
 static partial class Program {
+    static void ManualHandoffChecks() {
+        World(); var ship = Vessel(); var fly = new FlyTo(Controller(ship));
+        var running = new CommandStatus(CommandCode.Running, fly);
+        var scope = AvoidanceQuery.BeginFlight(ship);
+        try {
+            Check(!AiRendezvous.ManualFallback(fly, running), "Non-rejected flight was routed into manual steering");
+            AvoidanceQuery.Reject(ship);
+            Check(AiRendezvous.ManualFallback(fly, running), "Rejected freight plot cannot use native manual steering");
+            Check(!AiRendezvous.ManualFallback(fly, new CommandStatus(CommandCode.Finished, fly)) &&
+                !AiRendezvous.ManualFallback(fly, new CommandStatus(CommandCode.Failure, fly)), "Terminal path status was overridden");
+            playerManned = true;
+            Check(!AiRendezvous.ManualFallback(fly, running), "Manual fallback took player controls"); playerManned = false;
+            pilotPresent = false;
+            Check(!AiRendezvous.ManualFallback(fly, running), "Absent pilot acquired manual steering"); pilotPresent = true;
+            ship.shipSituTarget = null;
+            Check(!AiRendezvous.ManualFallback(fly, running), "Manual fallback invented a destination"); ship.shipSituTarget = station.objSS;
+            Set(ship, "nLoadState", Ship.Loaded.Full);
+            Check(!AiRendezvous.ManualFallback(fly, running), "Fully loaded fuel exhaustion bypassed native failure");
+            Set(ship, "nLoadState", Ship.Loaded.Shallow); ship.fShallowRCSRemass = 0;
+            Check(AiRendezvous.ManualFallback(fly, running), "Existing shallow empty-tank steering abstraction was removed");
+            ship.RCSCount = 0;
+            Check(!AiRendezvous.ManualFallback(fly, running), "No propulsion acquired manual steering");
+        } finally { AvoidanceQuery.EndFlight(scope); }
+        Check(!AvoidanceQuery.Rejected(ship), "Rejected-plan scope leaked into another command");
+        foreach (var classification in new[] { Ship.TypeClassification.OrbitalStation, Ship.TypeClassification.GroundStation,
+            Ship.TypeClassification.GroundStationUnfinished, Ship.TypeClassification.Skyscraper, Ship.TypeClassification.Projectile }) {
+            ship.Classification = classification;
+            Check(!AiRendezvous.Applies(ship), "Station or projectile entered mobile AI route repair: " + classification);
+        }
+        ship.Classification = Ship.TypeClassification.Default;
+        Set(ship, "_subStation", true);
+        Check(!AiRendezvous.Applies(ship), "Permanent substation entered mobile AI route repair");
+        Set(ship, "_subStation", false); ship.bDestroyed = true;
+        Check(!AiRendezvous.Applies(ship), "Destroyed hull acquired route replanning");
+    }
     static void PlanningChecks() {
         World();
         var ship = Vessel();
@@ -57,7 +92,11 @@ static partial class Program {
         ship.fShallowFusionRemain = 1000000;
         route = Plan(ship);
         Check(route != null && route.IsUsingTorchDrive(), "Valid interplanetary NPC torch leg was rejected");
-        Check(AiRendezvous.Arrives(route, Target()), "Interplanetary torch leg failed arrival validation");
+        // This old control's direct trajectory crosses Venus. A valid native
+        // detour leg must not be mistaken for final station arrival. Whole-voyage
+        // tests separately require progress through the subsequent legs.
+        Check(CelestialRoutes.Clear(route, ship.objSS.GetRadiusAU(), StarSystem.fEpoch, out _),
+            "Interplanetary torch leg has unsafe planetary clearance");
 
         int accepted = 0, rejected = 0;
         foreach (double phase in new[] { 0d, 3600d, 7200d })
@@ -128,6 +167,19 @@ static partial class Program {
         var nativeFree = Plan(ship, 1);
         ship.IsAIShip = true;
         Check(nativeFree != null && AiRendezvous.Arrives(nativeFree, Target()), "Validator rejected native free-hull target semantics");
+        Check(!CelestialRoutes.Clear(nativeFree, ship.objSS.GetRadiusAU(), StarSystem.fEpoch, out _),
+            "The former stationary free-hull fixture no longer crosses moving Venus");
+        var guardedVisit = Plan(ship, 1);
+        Check(guardedVisit == null || CelestialRoutes.Clear(guardedVisit, ship.objSS.GetRadiusAU(), StarSystem.fEpoch, out _),
+            "A free-hull visit was allowed to cross Venus");
+        // Test target semantics in clear space. The previous control froze both
+        // ships in Venus's path and mislabeled that geometry as a valid visit.
+        var separation = ship.objSS.vPos - station.objSS.vPos;
+        station.objSS.vPosx = -1.5; station.objSS.vPosy = -1.5;
+        ship.objSS.vPosx = station.objSS.vPosx + separation.X;
+        ship.objSS.vPosy = station.objSS.vPosy + separation.Y;
+        ship.IsAIShip = false; nativeFree = Plan(ship, 1); ship.IsAIShip = true;
+        Check(nativeFree != null && AiRendezvous.Arrives(nativeFree, Target()), "Clear-space free-hull control did not arrive");
         Check(Plan(ship, 1) != null, "Production repair blocked a free-hull visit route");
         nativeFree.Destination.ObjSS.vPosx += 10000d / 149597872000d;
         Check(!AiRendezvous.Arrives(nativeFree, Target()), "Validator accepted a miss against the native free-hull target");

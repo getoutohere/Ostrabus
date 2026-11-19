@@ -115,6 +115,7 @@ static class Program {
         h.CreateClassProcessor(typeof(ProximityDialRefreshPatch)).Patch();
         Check(Harmony.GetPatchInfo(target).Transpilers.Count == 1, "Native collision hook not installed");
         ScrollbackChecks.Run(h);
+        TutorialNoteChecks.Run();
         h.UnpatchSelf();
         System.Console.WriteLine(checks + " nav-console range/save/native-IL checks passed. Native scene layout remains a live check.");
         return 0;

@@ -1,6 +1,9 @@
 # Station Kiosk Migration
 
-Standalone BepInEx 5 plugin for **Ostranauts 1.1.0.1 and 1.1.0.2**. Ostrabus is optional.
+Standalone BepInEx 5 plugin for **Ostranauts 1.1.0.1, 1.1.0.2 and 1.1.0.3**. Ostrabus is optional.
+
+Version **0.1.3** also admits the reviewed 1.1.0.3 assembly. Its native loader and
+station assets match 1.1.0.2; the migration behavior and payload are unchanged.
 Prevents the native scrap-kiosk migration from replacing entire stations and
 discarding their saved interiors. Applies the kiosk changes to existing item
 data before station construction instead. No installed vanilla assets are edited.

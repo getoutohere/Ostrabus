@@ -23,9 +23,10 @@ if ($Uninstall) {
 $native = Join-Path $gamePath 'Ostranauts_Data\Managed\Assembly-CSharp.dll'
 if ((Get-FileHash -LiteralPath $native).Hash -notin @(
     '967927E609D93E5233FE16260D61DE3CB4AA5D753B738ED8A6BA1DBA4CF9FDE0',
-    '133A9CC94AD4F4D5DB951B65249B6CDF78F53063419D836B8871B92960EC3C37'
+    '133A9CC94AD4F4D5DB951B65249B6CDF78F53063419D836B8871B92960EC3C37',
+    'E9E7B8796423701C157EA5718CB407E6517AC0435EF947062C9A27464F4BC82F'
 )) {
-    throw 'This package supports only the reviewed Ostranauts 1.1.0.1 and 1.1.0.2 assemblies.'
+    throw 'This package supports only the reviewed Ostranauts 1.1.0.1, 1.1.0.2 and 1.1.0.3 assemblies.'
 }
 $source = Join-Path $PSScriptRoot 'Plugin\Ostrabus.StationMigration.dll'
 if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {

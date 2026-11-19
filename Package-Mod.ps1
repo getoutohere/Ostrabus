@@ -29,12 +29,12 @@ foreach ($packageDoc in @('README.md', 'DESIGN.md', 'IMPLEMENTATION.md')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('PdaSettings\' + $packageDoc)) -Destination (Join-Path $packageRoot 'PdaSettings')
 }
 @'
-Ostrabus 0.7.0 experimental release
-Target: Ostranauts 1.1.0.2 (public_test). Other game versions are not supported by
+Ostrabus 0.7.1 experimental release
+Target: Ostranauts 1.1.0.3 (public_test). Other game versions are not supported by
 this build. Requires an existing BepInEx 5 installation; BepInEx is not bundled.
 Partially playtested: offline/native regressions and documented live observations
 support this release; the latest autopilot, avoidance, attachment and freight
-repairs retain offline-only acceptance. See Build/RELEASE-0.7.0.md in source.
+repairs retain offline-only acceptance. See Build/RELEASE-0.7.1.md in source.
 Source, feature inventory and module documentation:
 https://github.com/getoutohere/Ostrabus
 
@@ -49,7 +49,7 @@ StandaloneMods/ApartmentRefuel. Run its own Install.cmd if wanted; the main
 Deploy-Mod.cmd does not activate this companion. See its README for pricing,
 apartment restrictions and saved-item definition retention on removal.
 
-Station Kiosk Migration 0.1.2 is a separate optional download for protecting
+Station Kiosk Migration 0.1.3 is a separate optional download for protecting
 existing station interiors during native 1.1 kiosk upgrades. It is not activated
 or bundled by this installer. See StandaloneMods/StationMigration in source.
 

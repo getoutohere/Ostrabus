@@ -26,10 +26,12 @@ static class Program {
             completion.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.AiRcsAccelerationPatch)).Patch();
             completion.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.AiRendezvousValidationPatch)).Patch();
             completion.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.FreightRendezvousFailurePatch)).Patch();
+            completion.CreateClassProcessor(typeof(Ostrabus.ShipNavigation.AiCoursePlaybackPatch)).Patch();
             return Run(args);
         } finally { completion.UnpatchSelf(); }
     }
     static int Run(string[] args) {
+        if (args.Length > 2 && args[0] == "freight-native") { FreightNativeChecks.Run(args[1], args[2], args.Length > 3 ? args[3] : "sff"); return 0; }
         if (args.Length != 0 && args[0] == "timing") { SffTimingChecks.Run(Check); Console.WriteLine(checks + " SFF timing checks passed."); return 0; }
         if (args.Length != 0 && args[0] == "pass-handoff-study") { Enable(true); SffDecisionChecks.Run(Check, true); Console.WriteLine(checks + " PASS handoff study checks passed."); return 0; }
         if (args.Length != 0 && args[0] == "decisions") { Enable(true); SffDecisionChecks.Run(Check); Console.WriteLine(checks + " SFF decision checks passed."); return 0; }

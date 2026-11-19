@@ -1,9 +1,9 @@
 # Public release preparation
 
-Current scope: [Ostrabus 0.7.0](RELEASE-0.7.0.md), supporting **Ostranauts
-1.1.0.2 (`public_test`)**, Windows and BepInEx 5. The project, plugin, four
-bundled native mods and main package metadata are aligned at 0.7.0; bundled
-native assets target game 1.1.0.2. Independent companions retain their own versions.
+Current scope: [Ostrabus 0.7.1](RELEASE-0.7.1.md), supporting **Ostranauts
+1.1.0.3 (`public_test`)**, Windows and BepInEx 5. The project, plugin, four
+bundled native mods and main package metadata are aligned at 0.7.1; bundled
+native assets target game 1.1.0.3. Independent companions retain their own versions.
 
 The top-level README groups the inventory by feature category and subject,
 retaining links to implementation and evidence. Release notes distinguish live
@@ -12,9 +12,9 @@ questions. No release preparation is a claim of complete campaign coverage.
 
 ## Review and validation
 
-1. Review tracked and untracked source since the 0.6.0 checkpoint, including
+1. Review tracked and untracked source since the 0.7.0 checkpoint, including
    behavior-graph evidence, selected fixtures, companion code and documentation.
-2. Build Debug and Release against the installed 1.1.0.2 assembly, check actual
+2. Build Debug and Release against the installed 1.1.0.3 assembly, check actual
    Harmony bindings, and run the changed modules' native regression suites.
 3. Check orbital composition with AI, docking, course playback and torch modules;
    verify selected custom profiles and their filtered PDA settings.
@@ -23,8 +23,8 @@ questions. No release preparation is a claim of complete campaign coverage.
 5. Keep packages, binaries, raw captures, complete saves and game assemblies out
    of source control; review the staged diff before any requested commit.
 
-Current receipts are under ignored `obj/Release-0.7.0/`; final check results,
-known limitations and artifact identities belong in [the release notes](RELEASE-0.7.0.md).
+Current receipts are under ignored `obj/Release-0.7.1/`; final check results,
+known limitations and artifact identities belong in [the release notes](RELEASE-0.7.1.md).
 Preparation does not deploy to the running game, commit, tag, push or publish.
 
 ## Packaging and independent companions
@@ -33,8 +33,10 @@ Preparation does not deploy to the running game, commit, tag, push or publish.
   isolated variants with explicit dependencies and selected native assets.
 - The main archive includes the optional Apartment Refuel Terminal's separate
   installer without activating it or changing its 0.1.1 version.
-- Station Kiosk Migration 0.1.2 is packaged independently for the reviewed
-  1.1.0.1 and 1.1.0.2 loaders; normal deployment never activates it.
+- Station Kiosk Migration 0.1.3 is packaged independently for the reviewed
+  1.1.0.1/1.1.0.2/1.1.0.3 loaders; normal deployment never activates it.
+- Boneyard Turnover 0.1.4 is an independently packaged simulation feature for
+  1.1.0.2/1.1.0.3; full and custom deployments never activate it.
 - The metadata-only SaveMigration110 prototype is not recommended and remains
   outside normal packages; native content availability is documented separately.
 - Existing plugin/config/app identifiers remain stable for installed users and
@@ -46,6 +48,8 @@ Preparation does not deploy to the running game, commit, tag, push or publish.
 
 ## Historical checkpoints
 
+- [0.7.0](RELEASE-0.7.0.md), commit `a148ec2`, preserves the preceding
+  1.1.0.2 release before this incremental compatibility and feature checkpoint.
 - [0.6.0](RELEASE-0.6.0.md), commit `fbc3e8b`, is the preserved 1.1.0.0 compatibility
   checkpoint; its build identities and original acceptance notes stay historical.
 - [1.1.0.1](COMPATIBILITY-1.1.0.1.md) and [1.1.0.2](COMPATIBILITY-1.1.0.2.md)

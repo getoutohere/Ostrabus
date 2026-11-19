@@ -12,7 +12,9 @@ internal static class DockingGridPrecision {
     internal static void Exit(int previous) { depth = previous; }
     internal static float Snap(float value) {
         double nearest = Math.Round((double)value * 2) * 0.5;
-        return Math.Abs(value - nearest) < 0.0001 ? (float)nearest : value;
+        // Repeated dock/undock translations can accumulate several 1e-4 tiles
+        // of float error. Keep the correction below 0.001 tile (0.32 mm).
+        return Math.Abs(value - nearest) < 0.001 ? (float)nearest : value;
     }
 }
 

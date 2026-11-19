@@ -15,7 +15,13 @@ Each feature has its own subdirectory and namespace.
 
 - [Course-plot fine controls](CoursePlot/README.md): hover-wheel adjustment of
   ACCEL LIMIT in 0.01 G steps and DRIFT PHASE in 0.01 control-value steps, with
-  immediate G readout and suppression of unrelated log-scroll sound. Always on.
+  immediate G readout and native Shift-drag precision support. Always on.
+
+- [Single-port docking](Docking/README.md): skip the target-port selection when
+  comms offers exactly one eligible choice, with a saved Mod Settings toggle.
+
+- [Wreck damage severity](WreckSeverity/README.md): soften initial derelict damage
+  with a configurable curve and optional console reports of native damage rolls.
 
 - [Kang auto-vents](AutoVents/README.md): short tolerance for marginal oxygen
   dips, with immediate emergency closure. BepInEx tuning and a PDA feature toggle;

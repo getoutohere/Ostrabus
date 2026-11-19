@@ -137,6 +137,7 @@ internal sealed class InspectionApi : IDisposable {
                      !ParseSince(http.QueryString["since"], out long since) ||
                      !ParseShipFilter(http.QueryString["shipId"], out string shipFilter)) { reply = Error(400, "offset: 0..10000; limit: 1..50; radiusKm: finite 0..100000; since: nonnegative integer; shipId: URL-encoded ID up to 64 characters."); }
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/logs") { reply = new Reply(200, InspectionLog.Read(since, limit)); }
+            else if (http.Url.AbsolutePath.TrimEnd('/') == "/obituaries" || http.Url.AbsolutePath.TrimEnd('/') == "/obituaries/events") { reply = ObituaryInspection.Read(http); }
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/memory") { reply = new Reply(200, MemoryDiagnostics.Read(since, limit)); }
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/profiling/load") { reply = new Reply(200, global::Ostrabus.Optimizations.LoadProfiling.Snapshot()); }
             else if (http.Url.AbsolutePath.TrimEnd('/') == "/profiling/transit") { reply = new Reply(200, global::Ostrabus.Optimizations.TransitProfiling.Snapshot()); }

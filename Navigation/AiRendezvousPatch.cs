@@ -6,12 +6,27 @@ using Ostranauts.Ships;
 using Ostranauts.Ships.AIPilots.Interfaces;
 using Ostranauts.Ships.Commands;
 using Ostranauts.ShipGUIs.Utilities;
+using Ostranauts.Ships.AIPilots;
 
 namespace Ostrabus.ShipNavigation;
 
 internal static class AiRendezvous {
     static readonly AccessTools.FieldRef<FlyToPath, IAICharacter> Pilot =
         AccessTools.FieldRefAccess<FlyToPath, IAICharacter>("_ai");
+    static readonly AccessTools.FieldRef<FlyTo, ICommand> Path = AccessTools.FieldRefAccess<FlyTo, ICommand>("_flyToPath");
+    static readonly AccessTools.FieldRef<FlyToPath, int> Rejections = AccessTools.FieldRefAccess<FlyToPath, int>("_rejectedAIPathCounter");
+
+    internal static bool ManualFallback(FlyTo command, CommandStatus status) {
+        var ship = command.ShipUs;
+        if (status.Status != CommandCode.Running || !Applies(ship) || ship.objSS.NavData != null ||
+            !ship.NavAIManned || ship.shipSituTarget == null || !(ship.RCSAccelMax > 0) ||
+            ship.LoadState == Ship.Loaded.Full && ship.GetRCSRemain() <= 0 ||
+            !AvoidanceQuery.Rejected(ship) || !(Path(command) is FlyToPath planner) || Pilot(planner) == null) return false;
+        // The existing FlyTo manual branch owns steering and fuel accounting.
+        // A functioning alternative must not accumulate five failed-plot retries.
+        Rejections(planner) = 0;
+        return true;
+    }
 
     internal struct Attempt {
         internal FlyToPath Planner;
@@ -37,10 +52,51 @@ internal static class AiRendezvous {
     }
 
     internal static bool Applies(FlyToPath planner) {
-        Ship ship = planner?.ShipUs;
-        return ship != null && ship.IsAIShip && !ship.NavPlayerManned &&
+        return Applies(planner?.ShipUs);
+    }
+    internal static bool Applies(Ship ship) {
+        return ship != null && !ship.bDestroyed && !ship.bRemove && ship.IsAIShip && !ship.NavPlayerManned &&
+            !ship.IsSubStation() && !ship.IsGroundStation() && ship.Classification != Ship.TypeClassification.OrbitalStation &&
+            ship.objSS != null && !ship.objSS.bIsBO && ship.Classification != Ship.TypeClassification.Projectile &&
             !ReferenceEquals(ship, CrewSim.coPlayer?.ship);
     }
+
+    internal static bool RestoreCourse(Ship ship, IAICharacter pilot) {
+        var course = ship?.objSS?.NavData;
+        if (course == null || !Applies(ship) || pilot == null ||
+            CelestialRoutes.Clear(course, CelestialRoutes.Radius(ship), StarSystem.fEpoch, out _)) return true;
+        var planner = new FlyToPath(pilot);
+        NavData replacement = null;
+        if (ship.shipSituTarget != null && ship.NavAIManned && ship.fAIPauseTimer <= StarSystem.fEpoch &&
+            (!ship.IsDocked() || ship.TowBracesSecured()) &&
+            (!ship.HasDockGroup || ship.DockGroup.Anchor == null ||
+                !(ship.DockGroup.Anchor.bIsBO || ship.DockGroup.Anchor.bBOLocked))) {
+            var origin = planner.CreateNavPointStatic(ship.objSS, StarSystem.fEpoch, bLockToBO: false);
+            var destination = planner.CreateNavPointStatic(ship.shipSituTarget, StarSystem.fEpoch);
+            var sliders = planner.GetNavSliderValues();
+            replacement = planner.PlanTrip4(origin, destination, sliders.Limit, sliders.Coast);
+            if (replacement != null && !CelestialRoutes.Clear(replacement, CelestialRoutes.Radius(ship), StarSystem.fEpoch, out _)) replacement = null;
+        }
+        // Release only the abandoned command. Momentum, cargo, mission target
+        // and native failed-path/retry/behavior-tree handling remain unchanged.
+        NavigationRoute.Stop(ship);
+        ship.objSS.NavData = replacement;
+        if (replacement == null) {
+            AvoidanceQuery.Reject(ship);
+            if (ReferenceEquals(current.Planner?.ShipUs, ship)) current.Rejected = true;
+        }
+        pilot.Blackboard?.Remove("TripFuelPrediction");
+        return replacement != null;
+    }
+    internal static void RestoreCourses() {
+        if (AIShipManager.dictAIs == null) return;
+        foreach (var list in AIShipManager.dictAIs.Values) {
+            if (list == null) continue;
+            foreach (var ai in list) if (ai?.Ship?.objSS?.NavData != null)
+                RestoreCourse(ai.Ship, ai.AICharacter);
+        }
+    }
+    internal static void RestoreCourse(FlyToPath planner) => RestoreCourse(planner.ShipUs, Pilot(planner));
 
     internal static Attempt Enter(FlyToPath planner) {
         Attempt previous = current;
@@ -113,12 +169,23 @@ internal static class AiRendezvous {
         }
     }
 
-    internal static void Validate(FlyToPath planner, NavDataPoint destination, int recursionBefore, ref NavData result) {
-        if (result == null || !Applies(planner) || planner.nRecursion != recursionBefore + 1) return;
+    internal static void Validate(FlyToPath planner, NavDataPoint origin, NavDataPoint destination, float limiter, float coast, int recursionBefore, ref NavData result) {
+        if (!Applies(planner)) return;
+        if (result == null) {
+            if (!(planner.ShipUs.RCSAccelMax > 0)) return;
+            if (ReferenceEquals(current.Planner, planner)) current.Rejected = true;
+            AvoidanceQuery.Reject(planner.ShipUs);
+            return;
+        }
+        if (planner.nRecursion != recursionBefore + 1) return;
         // A recursive no-wake/obstruction call owns its actual intermediate
         // destination. The outer call must not compare that leg with the final port.
-        if (Arrives(result, destination)) return;
+        if (Arrives(result, destination)) {
+            if (CelestialRoutes.Clear(result, CelestialRoutes.Radius(planner.ShipUs), origin.ArrivalTime, out var obstruction)) return;
+            if (CelestialRoutes.TryDetour(planner, origin, limiter, coast, obstruction, out var detour)) { result = detour; return; }
+        }
         result = null;
+        AvoidanceQuery.Reject(planner.ShipUs);
         if (ReferenceEquals(current.Planner, planner)) current.Rejected = true;
     }
 
@@ -151,13 +218,16 @@ internal static class AiRcsAccelerationPatch {
 internal static class AiRendezvousValidationPatch {
     static void Prefix(FlyToPath __instance, out int __state) => __state = __instance.nRecursion;
 
-    static void Postfix(FlyToPath __instance, NavDataPoint navDestination, int __state, ref NavData __result) =>
-        AiRendezvous.Validate(__instance, navDestination, __state, ref __result);
+    static void Postfix(FlyToPath __instance, NavDataPoint navOrigin, NavDataPoint navDestination, float fLimiter, float fCoast, int __state, ref NavData __result) =>
+        AiRendezvous.Validate(__instance, navOrigin, navDestination, fLimiter, fCoast, __state, ref __result);
 }
 
 [HarmonyPatch(typeof(FlyToPath), nameof(FlyToPath.RunCommand))]
 internal static class FreightRendezvousFailurePatch {
-    static void Prefix(FlyToPath __instance, out AiRendezvous.Attempt __state) => __state = AiRendezvous.Enter(__instance);
+    static void Prefix(FlyToPath __instance, out AiRendezvous.Attempt __state) {
+        __state = AiRendezvous.Enter(__instance);
+        AiRendezvous.RestoreCourse(__instance);
+    }
 
     static void Finalizer(AiRendezvous.Attempt __state) => AiRendezvous.Leave(__state);
 
@@ -175,5 +245,41 @@ internal static class FreightRendezvousFailurePatch {
             } else yield return instruction;
         }
         if (count != 1) throw new InvalidOperationException("AI rejected-path target cleanup changed.");
+    }
+}
+
+// Restored courses are checked before first physics playback as well as their
+// next AI turn. Replanning stays at the native pilot/planner boundary.
+[HarmonyPatch(typeof(ShipSitu), nameof(ShipSitu.TimeAdvance))]
+internal static class AiCoursePlaybackPatch {
+    static readonly AccessTools.FieldRef<NavData, Ship> Owner = AccessTools.FieldRefAccess<NavData, Ship>("_shipUs");
+    [HarmonyPriority(Priority.First)]
+    static void Prefix(ShipSitu __instance, double fTime) {
+        var course = __instance.NavData;
+        if (course == null || !(fTime > 0)) return;
+        var ship = Owner(course);
+        if (ship?.objSS == null || !ReferenceEquals(ship.objSS, __instance) || !AiRendezvous.Applies(ship) ||
+            CelestialRoutes.Clear(course, CelestialRoutes.Radius(ship), StarSystem.fEpoch - fTime, out _)) return;
+        NavigationRoute.Stop(ship);
+    }
+}
+
+[HarmonyPatch(typeof(FlyToManual), nameof(FlyToManual.RunCommand))]
+internal static class AiManualCelestialPatch {
+    static bool DockingPoint(ShipSitu situ, BodyOrbit body, ref double x, ref double y) =>
+        AiRendezvous.Applies(AvoidanceQuery.Flying)
+            ? CelestialRoutes.DockingPoint(situ, body, ref x, ref y)
+            : FlightCPU.GetDockingNavPoint(situ, body, ref x, ref y);
+
+    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+        var native = AccessTools.Method(typeof(FlightCPU), nameof(FlightCPU.GetDockingNavPoint),
+            new[] { typeof(ShipSitu), typeof(BodyOrbit), typeof(double).MakeByRefType(), typeof(double).MakeByRefType() });
+        var replacement = AccessTools.Method(typeof(AiManualCelestialPatch), nameof(DockingPoint));
+        int count = 0;
+        foreach (var instruction in instructions) {
+            if (instruction.Calls(native)) { instruction.operand = replacement; count++; }
+            yield return instruction;
+        }
+        if (count != 1) throw new InvalidOperationException("Native manual celestial detour changed.");
     }
 }

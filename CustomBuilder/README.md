@@ -19,6 +19,24 @@ Shift-drag precision controls. Existing profiles retain that feature ID.
 The separate `nav-module-placement` bugfix corrects native dragging under
 non-centered parent pivots; it remains independently selectable.
 
+`single-port-docking` skips the target-port menu only when native comms offers
+one eligible option; selecting `pda-settings` adds its saved toggle.
+`wreck-severity` supplies its own BepInEx curve and logging controls without
+requiring PDA assets. Both are QoL features, outside bugfix-only presets.
+
+`ai-crew-recruitment` repairs the shared recruitment-source list; the separate
+simulation feature `ai-crew-retirement` allows compatible full stations to
+receive retiring pilots. Neither requires the other or bounty persistence.
+`ai-rendezvous` includes shared avoidance, flight-control and route-completion
+repairs; `cargo-loading` includes logical ship-target lifetime observers.
+
+`obituaries` is an independent developer feature with automatic bounded file
+logging and no per-frame callback. `inspection` adds its optional API endpoints.
+Developer presets include it; consumer Full/Recommended presets exclude developer
+diagnostics, while the maintainer's full `Deploy-Mod.cmd` includes the recorder.
+Station Kiosk Migration and Boneyard Turnover remain independent standalone
+plugins outside this feature menu.
+
 Custom DLLs reference the adjacent `Ostrabus.pdb`, and symbol documents use virtual
 source paths; final verification rejects machine-specific or temporary PDB paths.
 

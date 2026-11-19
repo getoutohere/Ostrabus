@@ -122,12 +122,17 @@ static class Program {
         throw new Exception("Market save not found");
     }
     static int Main(string[] args) {
+        if (args.Length != 0 && args[0] == "freight-destruction") { LifecycleChecks.Run(freightDestruction: true); return 0; }
         if (args.Length != 0 && args[0] == "autopilot-target") { LifecycleChecks.Run(autopilotTarget: true); return 0; }
         if (args.Length != 0 && args[0] == "audit-cargo") return AuditCargo();
         if (args.Length != 0 && args[0] == "audit-saves") return AuditSaves();
         var h = new Harmony("offline.ai-planner.diagnosis");
         h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Equality"), prefix: new HarmonyMethod(typeof(Program), nameof(Equal)));
         h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality"), prefix: new HarmonyMethod(typeof(Program), nameof(Unequal)));
+        if (args.Length != 0 && args[0] == "freight-rendezvous") { FreightRouteDiagnosis.Run(args[1], args[2]); return 0; }
+        if (args.Length != 0 && args[0] == "freight-planner") { FreightCourseChecks.Run(args[1], args[2], args.Length > 3); return 0; }
+        if (args.Length != 0 && args[0] == "freight-safety") { FreightSafetyChecks.Run(); return 0; }
+        if (args.Length != 0 && args[0] == "freight-journey") { FreightJourneyChecks.Run(args[1], args[2], args.Length > 3 && args[3] == "departure"); return 0; }
         if (args.Length != 0 && args[0] == "rcs-1.1") { NativeRcsCompatibility.Run(); return 0; }
         if (args.Length != 0 && args[0] == "ceres") { CeresAuditChecks.Run(); return 0; }
         if (args.Length != 0 && args[0] == "patrol-queue") { PatrolQueueChecks.Run(args); return 0; }
@@ -143,6 +148,8 @@ static class Program {
         if (args.Length != 0 && args[0] == "civilian-waiting") { TrafficChecks.Waiting(); return 0; }
         if (args.Length != 0 && args[0] == "traffic-conversion") { LifecycleChecks.Run(null, true); return 0; }
         if (args.Length != 0 && args[0] == "region-cleanup") { LifecycleChecks.Run(null, false, true); return 0; }
+        if (args.Length != 0 && args[0] != "retired-target" && args[0] != "recovery")
+            throw new ArgumentException("Unknown diagnosis mode: " + args[0]);
         h.Patch(AccessTools.PropertyGetter(typeof(Ship), "RCSAccelMax"), prefix: new HarmonyMethod(typeof(Program), nameof(Acceleration)));
         foreach (var method in AccessTools.GetDeclaredMethods(typeof(Ship))) if (method.Name == "CalculateRCSFuelConsumption") h.Patch(method, prefix: new HarmonyMethod(typeof(Program), nameof(Fuel)));
         h.Patch(AccessTools.Method(typeof(StarSystem), "GetGreatestGravBO"), prefix: new HarmonyMethod(typeof(Program), nameof(Gravity)));

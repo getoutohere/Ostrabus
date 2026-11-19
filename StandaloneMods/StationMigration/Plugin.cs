@@ -13,13 +13,14 @@ using Newtonsoft.Json.Linq;
 
 namespace Ostrabus.StationMigration;
 
-[BepInPlugin(Id, "Station Kiosk Migration", "0.1.2")]
+[BepInPlugin(Id, "Station Kiosk Migration", "0.1.3")]
 public sealed class Plugin : BaseUnityPlugin
 {
     public const string Id = "com.ostrabus.stationmigration";
     internal const string NativeHash1101 = "967927e609d93e5233fe16260d61de3cb4aa5d753b738ed8a6ba1dba4cf9fde0";
     internal const string NativeHash1102 = "133a9cc94ad4f4d5db951b65249b6cdf78f53063419d836b8871b92960ec3c37";
-    internal static int RespawnSitesFor(string hash) => hash == NativeHash1101 ? 1 : hash == NativeHash1102 ? 2 : 0;
+    internal const string NativeHash1103 = "e9e7b8796423701c157ea5718cb407e6517ac0435ef947062c9a27464f4bc82f";
+    internal static int RespawnSitesFor(string hash) => hash == NativeHash1101 ? 1 : hash == NativeHash1102 || hash == NativeHash1103 ? 2 : 0;
     internal static readonly int NativeRespawnSites = RespawnSitesFor(AssemblyHash());
     static string AssemblyHash()
     {
@@ -35,7 +36,7 @@ public sealed class Plugin : BaseUnityPlugin
         Log = Logger;
         if (NativeRespawnSites == 0)
         {
-            Logger.LogError("Unsupported game assembly. Station protection is NOT active. This package requires a reviewed Ostranauts 1.1.0.1 or 1.1.0.2 assembly.");
+            Logger.LogError("Unsupported game assembly. Station protection is NOT active. This package requires a reviewed Ostranauts 1.1.0.1, 1.1.0.2 or 1.1.0.3 assembly.");
             return;
         }
         harmony = new Harmony(Id);

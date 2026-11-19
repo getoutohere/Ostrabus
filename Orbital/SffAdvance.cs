@@ -49,6 +49,8 @@ internal static class SffAdvance {
         }
         using var boundary = new JumpBoundary(source);
         if (Active || !OrbitalSimulation.Enabled || !SffSimulation.Enabled) { system.Update(seconds); return; }
+        // Legacy courses must be repaired against the START of this skip.
+        Ostrabus.ShipNavigation.AiRendezvous.RestoreCourses();
         double start = StarSystem.fEpoch, end = start + seconds;
         int steps = 0, decisionSteps = 0, courseSteps = 0;
         int previews = 0;

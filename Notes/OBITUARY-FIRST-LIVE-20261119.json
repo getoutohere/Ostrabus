@@ -1,0 +1,267 @@
+{
+    "review":  "2026-11-19 first live obituary validation",
+    "nativeMvid":  "5b1ee244-539d-4902-8d62-97490deee9d7",
+    "loadedPluginMvid":  "74a76bb0-f603-4926-a981-10197e2a82f8",
+    "session":  "42deffb5990942c2949b7ab406be0c41",
+    "sff":  {
+                "source":  "gui-sff",
+                "startEpoch":  65635072106.076935,
+                "requestedSeconds":  21600,
+                "endEpoch":  65635093706.076935,
+                "worldSteps":  12,
+                "decisionSteps":  0,
+                "courseCompletionSteps":  11,
+                "roleCallbacksAdmitted":  31,
+                "previews":  12,
+                "previewSeconds":  21600,
+                "previewWallMs":  107.0966,
+                "worldWallMs":  1743.4302,
+                "elapsedWallMs":  1854.3488,
+                "affectedShips":  [
+
+                                  ],
+                "budgetFallback":  false
+            },
+    "findings":  [
+                     "Three real alive-to-dead transitions were recorded after the GUI SFF ended.",
+                     "Native StarSystem.Update processes bRemove by attempting TryRecycleCrew, ignoring its return value, and then calling Ship.Destroy(false).",
+                     "The captured deaths occurred in that cleanup path, without active fatal conditions.",
+                     "Why each ship acquired its stale timer and why the crew was not transferred remain upstream investigation questions."
+                 ],
+    "cases":  [
+                  {
+                      "npcId":  "Addison Jocelyn Calhoun",
+                      "shipId":  "O-DWL",
+                      "shipName":  "The Star",
+                      "epoch":  65635093734.084953,
+                      "utc":  "2026-11-19T17:14:07.7137742Z",
+                      "factions":  [
+                                       "EJDR",
+                                       "EJDRCiv",
+                                       "Addison Jocelyn Calhoun"
+                                   ],
+                      "aliveBefore":  true,
+                      "aliveAfter":  false,
+                      "fatalConditions":  [
+
+                                          ],
+                      "hidden":  true,
+                      "removeFlag":  true,
+                      "loadState":  "Shallow",
+                      "rcsKgCached":  1873.41173678813,
+                      "motion":  {
+                                     "xAU":  0.6319723759101703,
+                                     "yAU":  -0.75795335620435778,
+                                     "vxAUPerSecond":  1.1649215113788479E-07,
+                                     "vyAUPerSecond":  1.0294710828654433E-07,
+                                     "bodyReference":  "Earth",
+                                     "bodyLocked":  false,
+                                     "orbitLocked":  false,
+                                     "isBody":  false,
+                                     "inputAcceleration":  {
+                                                               "x":  0.0,
+                                                               "y":  0.0
+                                                           },
+                                     "rcsAcceleration":  {
+                                                             "x":  0.0,
+                                                             "y":  0.0
+                                                         },
+                                     "externalAcceleration":  {
+                                                                  "x":  0.0,
+                                                                  "y":  0.0
+                                                              },
+                                     "dragAcceleration":  {
+                                                              "x":  0.0,
+                                                              "y":  0.0
+                                                          },
+                                     "liftAcceleration":  {
+                                                              "x":  0.0,
+                                                              "y":  0.0
+                                                          },
+                                     "lastOrbitUpdateEpoch":  0.0,
+                                     "rotationRad":  5.622246,
+                                     "rotationRadPerSecond":  0.0,
+                                     "routeEndEpoch":  null
+                                 },
+                      "reference":  {
+                                        "id":  "Earth",
+                                        "type":  "BodyOrbit",
+                                        "cachedEpoch":  65635093734.084953,
+                                        "xAU":  0.63200436680441252,
+                                        "yAU":  -0.75799716141523343,
+                                        "radiusAU":  4.25875041858884E-05,
+                                        "note":  "Native BodyOrbit reference; not assumed to be a natural celestial surface."
+                                    },
+                      "callerStack":  "  at Ostrabus.Diagnostics.Obituaries.ObituaryDeathPatch.Prefix (CondOwner __instance, System.Boolean value, Ostrabus.Diagnostics.Obituaries.ObituaryRecorder+Observation\u0026 __state) [0x00000] in \u003c74a76bb0f6034926a98110197e2a82f8\u003e:0 \r\n  at CondOwner.DMD\u003cCondOwner::set_Kill\u003e (CondOwner , System.Boolean ) [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 \r\n  at Ship.DMD\u003cShip::Destroy\u003e (Ship , System.Boolean ) [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 \r\n  at StarSystem.DMD\u003cStarSystem::Update\u003e (StarSystem , System.Double ) [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 \r\n  at CrewSim.Update () [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 ",
+                      "captureErrorsSoFar":  0,
+                      "droppedSoFar":  0
+                  },
+                  {
+                      "npcId":  "Miracle Strong",
+                      "shipId":  "O-ZLHA",
+                      "shipName":  "Acid Insight",
+                      "epoch":  65635093734.084953,
+                      "utc":  "2026-11-19T17:14:07.7232765Z",
+                      "factions":  [
+                                       "Miracle Strong",
+                                       "EJDR",
+                                       "EJDRCiv"
+                                   ],
+                      "aliveBefore":  true,
+                      "aliveAfter":  false,
+                      "fatalConditions":  [
+
+                                          ],
+                      "hidden":  true,
+                      "removeFlag":  true,
+                      "loadState":  "Shallow",
+                      "rcsKgCached":  1201.640247584807,
+                      "motion":  {
+                                     "xAU":  0.63205031227808484,
+                                     "yAU":  -0.75796930093100034,
+                                     "vxAUPerSecond":  1.2875921933112024E-07,
+                                     "vyAUPerSecond":  1.7068029056443214E-07,
+                                     "bodyReference":  "Earth",
+                                     "bodyLocked":  false,
+                                     "orbitLocked":  false,
+                                     "isBody":  false,
+                                     "inputAcceleration":  {
+                                                               "x":  0.0,
+                                                               "y":  0.0
+                                                           },
+                                     "rcsAcceleration":  {
+                                                             "x":  0.0,
+                                                             "y":  0.0
+                                                         },
+                                     "externalAcceleration":  {
+                                                                  "x":  0.0,
+                                                                  "y":  0.0
+                                                              },
+                                     "dragAcceleration":  {
+                                                              "x":  0.0,
+                                                              "y":  0.0
+                                                          },
+                                     "liftAcceleration":  {
+                                                              "x":  0.0,
+                                                              "y":  0.0
+                                                          },
+                                     "lastOrbitUpdateEpoch":  0.0,
+                                     "rotationRad":  0.006841335,
+                                     "rotationRadPerSecond":  0.0,
+                                     "routeEndEpoch":  null
+                                 },
+                      "reference":  {
+                                        "id":  "Earth",
+                                        "type":  "BodyOrbit",
+                                        "cachedEpoch":  65635093734.084953,
+                                        "xAU":  0.63200436680441252,
+                                        "yAU":  -0.75799716141523343,
+                                        "radiusAU":  4.25875041858884E-05,
+                                        "note":  "Native BodyOrbit reference; not assumed to be a natural celestial surface."
+                                    },
+                      "callerStack":  "  at Ostrabus.Diagnostics.Obituaries.ObituaryDeathPatch.Prefix (CondOwner __instance, System.Boolean value, Ostrabus.Diagnostics.Obituaries.ObituaryRecorder+Observation\u0026 __state) [0x00000] in \u003c74a76bb0f6034926a98110197e2a82f8\u003e:0 \r\n  at CondOwner.DMD\u003cCondOwner::set_Kill\u003e (CondOwner , System.Boolean ) [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 \r\n  at Ship.DMD\u003cShip::Destroy\u003e (Ship , System.Boolean ) [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 \r\n  at StarSystem.DMD\u003cStarSystem::Update\u003e (StarSystem , System.Double ) [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 \r\n  at CrewSim.Update () [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 ",
+                      "captureErrorsSoFar":  0,
+                      "droppedSoFar":  0
+                  },
+                  {
+                      "npcId":  "Ivan Singh",
+                      "shipId":  "O-5ZH",
+                      "shipName":  "Approximations Of Desire",
+                      "epoch":  65635093822.671295,
+                      "utc":  "2026-11-19T17:16:07.7178206Z",
+                      "factions":  [
+                                       "Ivan Singh",
+                                       "EJDR",
+                                       "EJDRCiv"
+                                   ],
+                      "aliveBefore":  true,
+                      "aliveAfter":  false,
+                      "fatalConditions":  [
+
+                                          ],
+                      "hidden":  true,
+                      "removeFlag":  true,
+                      "loadState":  "Shallow",
+                      "rcsKgCached":  1498.72938943051,
+                      "motion":  {
+                                     "xAU":  0.63200356672432478,
+                                     "yAU":  -0.75803698211420545,
+                                     "vxAUPerSecond":  1.9905298498010349E-07,
+                                     "vyAUPerSecond":  1.181649900709897E-07,
+                                     "bodyReference":  "Earth",
+                                     "bodyLocked":  false,
+                                     "orbitLocked":  false,
+                                     "isBody":  false,
+                                     "inputAcceleration":  {
+                                                               "x":  0.0,
+                                                               "y":  0.0
+                                                           },
+                                     "rcsAcceleration":  {
+                                                             "x":  0.0,
+                                                             "y":  0.0
+                                                         },
+                                     "externalAcceleration":  {
+                                                                  "x":  0.0,
+                                                                  "y":  0.0
+                                                              },
+                                     "dragAcceleration":  {
+                                                              "x":  0.0,
+                                                              "y":  0.0
+                                                          },
+                                     "liftAcceleration":  {
+                                                              "x":  0.0,
+                                                              "y":  0.0
+                                                          },
+                                     "lastOrbitUpdateEpoch":  0.0,
+                                     "rotationRad":  0.780046463,
+                                     "rotationRadPerSecond":  0.0,
+                                     "routeEndEpoch":  null
+                                 },
+                      "reference":  {
+                                        "id":  "Earth",
+                                        "type":  "BodyOrbit",
+                                        "cachedEpoch":  65635093822.671295,
+                                        "xAU":  0.63201797282020433,
+                                        "yAU":  -0.75798557547903689,
+                                        "radiusAU":  4.25875041858884E-05,
+                                        "note":  "Native BodyOrbit reference; not assumed to be a natural celestial surface."
+                                    },
+                      "callerStack":  "  at Ostrabus.Diagnostics.Obituaries.ObituaryDeathPatch.Prefix (CondOwner __instance, System.Boolean value, Ostrabus.Diagnostics.Obituaries.ObituaryRecorder+Observation\u0026 __state) [0x00000] in \u003c74a76bb0f6034926a98110197e2a82f8\u003e:0 \r\n  at CondOwner.DMD\u003cCondOwner::set_Kill\u003e (CondOwner , System.Boolean ) [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 \r\n  at Ship.DMD\u003cShip::Destroy\u003e (Ship , System.Boolean ) [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 \r\n  at StarSystem.DMD\u003cStarSystem::Update\u003e (StarSystem , System.Double ) [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 \r\n  at CrewSim.Update () [0x00000] in \u003c5b1ee244539d49028d6297490deee9d7\u003e:0 ",
+                      "captureErrorsSoFar":  0,
+                      "droppedSoFar":  0
+                  }
+              ],
+    "apiRepair":  "Live file recording worked; the two HTTP endpoints required primitive response maps and conversion of Newtonsoft DOM nodes for SnapshotJson.Encode. Wire-encoder regression tests added.",
+    "retirementInvestigation":  {
+                                    "source":  "Native TargetNewIfNone.RunCommand -\u003e BaseCommand.TryInstantCleanup -\u003e CleanupStaleShips -\u003e StarSystem.Update -\u003e Ship.Destroy(false)",
+                                    "fastRetirement":  "Target failure unregisters non-scav civilians; TryInstantCleanup backdates IsStale by 10800 seconds for distant/unseen, never-player-visited hulls.",
+                                    "recycleRules":  "TryRecycleCrew requires a station below StationMaxPopulation and exact shared ship faction; StarSystem.Update ignores its false result.",
+                                    "beforeSkipStations":  [
+                                                               {
+                                                                   "id":  "EJDR",
+                                                                   "savedCrewCount":  9,
+                                                                   "maxPopulation":  8
+                                                               },
+                                                               {
+                                                                   "id":  "EJDR_GEO",
+                                                                   "savedCrewCount":  9,
+                                                                   "maxPopulation":  4
+                                                               }
+                                                           ],
+                                    "laterLiveStationCounts":  [
+                                                                   {
+                                                                       "id":  "EJDR",
+                                                                       "profileCount":  9,
+                                                                       "maxPopulationFromSavedAndAsset":  8
+                                                                   },
+                                                                   {
+                                                                       "id":  "EJDR_GEO",
+                                                                       "profileCount":  4,
+                                                                       "maxPopulationFromSavedAndAsset":  4
+                                                                   }
+                                                               ],
+                                    "substations":  "EJDR-FRD2 is owned by EJDR but has no runtime ship factions; its saved ShipCO has no StationMaxPopulation assignment. Ownership is not the predicate used by TryRecycleCrew.",
+                                    "legacyTimerPatchScope":  "ActiveShipRetirement clears a stale marker on successful crewed reactivation; it does not change native deliberate retirement/backdating on later target failure.",
+                                    "remaining":  "Exact rejected navigation candidates were not captured. This is unnecessary to establish the unconditional lethal cleanup after unsuccessful crew recycling, but matters before changing target-selection policy."
+                                }
+}

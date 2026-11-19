@@ -55,6 +55,20 @@ hook; one additional transpiler handles the final stale mark, with no per-frame
 scan or retained game objects. Included with `ai-crew-integrity` in custom builds.
 See [evidence and validation](ACTIVE-SHIP-STALE-CLEANUP.md).
 
+## AI crew recruitment sources
+
+`AiCrewRecruitmentPatch.cs` gives native `AIShip.AddCrew` a local copy of its
+regional recruitment sources before it adds `OKLG_UNK` and filters temporarily
+underpopulated stations. Later searches retain the authored regional registry;
+profile matching, minimum-resident protection and fresh-identity allocation are
+unchanged. One guarded transpiler, no polling or saved state; independently
+selectable as bugfix `ai-crew-recruitment`. The
+[population audit](../Notes/NPC-POPULATION-BALANCE-20261119.md) records the native
+reproduction, and the [identity harness](../Tests/NpcIdentityCheck/README.md)
+checks the corrected search alongside identity repair. The separate
+[retirement simulation feature](../Navigation/CREW-RETIREMENT.md) permits compatible
+offscreen stations to accept retired pilots when full.
+
 ## AI controller identity
 
 `AIControllerIdentity.cs` makes unsaved reuse-or-create registration find the
@@ -351,7 +365,10 @@ classification and integer truncation otherwise produce phantom occupied tiles.
 The patch scopes native `Ship.GetAvailableDockingPorts` with a thread-local
 nesting counter. Within that operation only, `JsonItem.fX/fY` and
 `Transform.position` reads normalize X/Y to the nearest half tile when within
-0.0001. Loaded and shallow grids therefore use consistent coordinates without
+0.001 tile (less than 0.32 mm). Repeated docking translations in the RES1
+reproduction accumulated about 0.0002 tile of error, beyond the original
+0.0001 bound; partially corrected geometry allowed floor pieces to overwrite
+the docking port in the temporary grid. Loaded and shallow grids use consistent coordinates without
 changing saved items, transforms, flight positions, Z, rotations, or overlap
 rules. Exceptions restore the previous scope; there is no retained ship state.
 

@@ -520,6 +520,10 @@ static partial class Program
             LifecycleChecks(engine);
             CollateralChecks(engine);
             CompletionDependencyChecks();
+            if (args.Length == 3 && args[0] == "saved-mercury")
+                SavedMercuryChecks(engine, args[1], args[2]);
+            else if (args.Length != 0)
+                throw new ArgumentException("Expected no arguments, gravity-modes, or saved-mercury <patch-world-audit.json> <current-world-audit.json>.");
             Console.WriteLine("Docking orbit study: " + checks + " checks passed.");
             return 0;
         }

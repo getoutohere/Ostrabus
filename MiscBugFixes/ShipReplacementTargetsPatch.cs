@@ -217,18 +217,30 @@ internal static class EnvironmentConversionTargetsPatch {
 
 [HarmonyPatch(typeof(Ship), nameof(Ship.Destroy))]
 internal static class ShipDestroyedTargetsPatch {
+    internal struct Destruction {
+        internal ShipReplacementTargetsPatch.Replacement Lifetime;
+        internal Ostranauts.Trading.ShipMarket Cargo;
+    }
     [HarmonyPrefix]
-    internal static void Prefix(Ship __instance, out ShipReplacementTargetsPatch.Replacement __state) {
+    internal static void Prefix(Ship __instance, bool isDespawning, out Destruction __state) {
         __state = default;
         // Projectile teardown is a hot combat path. Its native targeting remains
         // authoritative; this repair concerns vessel navigation lifetimes.
         if (__instance.bDestroyed || __instance.Classification == Ship.TypeClassification.Projectile ||
             ReferenceEquals(ShipReplacementTargetsPatch.Replacing, __instance) || !ShipTargetLifetime.IsCurrentWorld(CrewSim.system)) return;
         if (!ReferenceEquals(CrewSim.system.GetShipByRegID(__instance.strRegID), __instance)) return;
-        __state = new ShipReplacementTargetsPatch.Replacement(__instance);
+        __state.Lifetime = new ShipReplacementTargetsPatch.Replacement(__instance);
+        if (!isDespawning && __instance.objSS != null && !__instance.objSS.bIsBO &&
+            !__instance.IsSubStation() && !__instance.IsGroundStation() && __instance.Classification != Ship.TypeClassification.OrbitalStation)
+            __state.Cargo = Ostrabus.Orbital.Economy.CargoMarketLifetime.Capture(__instance);
     }
     [HarmonyFinalizer]
-    internal static void Finalizer(ShipReplacementTargetsPatch.Replacement __state) => ShipReplacementTargetsPatch.Complete(__state);
+    internal static void Finalizer(Destruction __state) {
+        try { ShipReplacementTargetsPatch.Complete(__state.Lifetime); }
+        finally {
+            Ostrabus.Orbital.Economy.CargoMarketLifetime.Finish(__state.Lifetime.System, __state.Lifetime.Previous, __state.Lifetime.Id, __state.Cargo);
+        }
+    }
 }
 
 [HarmonyPatch(typeof(Ship), nameof(Ship.CheckTargets))]

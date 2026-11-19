@@ -1,5 +1,9 @@
 # Economic activity during Super Fast Forward
 
+The [planetary route and cargo lifetime repairs](../../Navigation/FREIGHT-CELESTIAL-SAFETY.md)
+keep native planned final RCS legs during catch-up and unregister cargo markets
+after physical destruction, while preserving despawn and replacement lifetimes.
+
 Part of `Ostrabus.Orbital`. Requires Orbital and its SFF correction to be enabled.
 The [shared PASS adapter](../PASS-TIME-SKIPS.md) now enters the same timeline for
 shuttle time skips, including short windows and six-hour partitions of long trips.

@@ -19,6 +19,21 @@ static class SelfTest {
         Plan Make(params string[] ids) => Inventory.Plan(catalog, new Profile { Features = ids }, declarations);
         string Read(string file) => File.ReadAllText(Path.Combine(root, file));
         var pdaHack = Make("quick-pda-hack");
+        var wreckSeverity = Make("wreck-severity");
+        var singlePort = Make("single-port-docking");
+        var obituaries = Make("obituaries");
+        Check(obituaries.Included.Length == 1 && obituaries.Patches.Length == 8 && obituaries.TickCalls == 0 &&
+            !obituaries.Included.Contains("inspection"), "obituaries have independent optional hooks without polling or an API dependency");
+        Check(singlePort.Included.Length == 1 && singlePort.Patches.Length == 1 && singlePort.TickCalls == 0 &&
+            singlePort.Settings.SequenceEqual(new[] { "single_docking_port" }) && singlePort.NativeMods.Length == 0,
+            "single-port docking is an independent QoL shortcut with its own saved PDA setting");
+        Check(wreckSeverity.Included.Length == 1 && wreckSeverity.Patches.Length == 2 &&
+            wreckSeverity.TickCalls == 0 && !wreckSeverity.PdaAssets && wreckSeverity.NativeMods.Length == 0,
+            "wreck severity and its optional roll observer are independent QoL hooks without polling, native asset overrides or PDA dependencies");
+        Check(Presets.Create(catalog, "bugfixes-qol").Features.Contains("wreck-severity") &&
+            Presets.Create(catalog, "recommended").Features.Contains("wreck-severity") &&
+            !Presets.Create(catalog, "bugfixes").Features.Contains("wreck-severity"),
+            "wreck severity belongs to QoL presets, not bugfix-only profiles");
         var velocity = Make("orbital-velocity");
         Check(velocity.Included.Length == 1 && velocity.Patches.Length == 2 && velocity.TickCalls == 0,
             "orbital velocity and coasting handoffs are independent bugfixes without polling");
@@ -57,6 +72,11 @@ static class SelfTest {
         Check(flightControls.Patches.Length == 8 && flightControls.Patches.Any(patch => patch.Type == "Ostrabus.ShipNavigation.FlightPilotAvailabilityPatch") && flightControls.TickCalls == 0,
             "flight control handoffs include native pilot-refusal repair without a polling callback");
         var crewIdentities = Make("ai-crew-identities");
+        foreach (var feature in new[] { "ai-crew-recruitment", "ai-crew-retirement" }) {
+            var crew = Make(feature);
+            Check(crew.Included.Length == 1 && crew.Patches.Length == 1 && crew.TickCalls == 0,
+                feature + " is independently selectable without frame polling or identity/bounty prerequisites");
+        }
         var consoleBuffer = Make("console-buffer");
         Check(consoleBuffer.Included.Length == 1 && consoleBuffer.Patches.Length == 1 && consoleBuffer.TickCalls == 0 &&
             consoleBuffer.Patches[0].Type == "Ostrabus.MiscBugFixes.ConsoleBufferPatch",
@@ -210,6 +230,16 @@ static class SelfTest {
         }
 
         string Prune(string file, params string[] ids) => SourcePruner.Apply(file, Read(file), Make(ids).Included);
+        Check(Make("cargo-loading").Included.Contains("navigation-targets"), "cargo retirement reuses logical hull lifetime observers");
+        Check(Make("ai-rendezvous").Included.Contains("ai-avoidance") && Make("sff").Included.Contains("ai-rendezvous"),
+            "safe AI navigation includes its native manual handoff and restored-course admission");
+        Check(Make("ai-rendezvous").Included.Contains("ai-flight-controls") && Make("ai-rendezvous").Included.Contains("route-completion"),
+            "safe route replacement includes abandoned-thrust release and completed-course handoff");
+        Check(!Prune("MiscBugFixes/ShipReplacementTargetsPatch.cs", "navigation-targets").Contains("CargoMarketLifetime.Capture(") &&
+            !Prune("MiscBugFixes/ShipReplacementTargetsPatch.cs", "navigation-targets").Contains("CargoMarketLifetime.Finish("),
+            "target lifetimes alone do not retire cargo markets");
+        Check(!Prune("Navigation/AvoidanceFlightPatch.cs", "ai-avoidance").Contains("AiRendezvous.ManualFallback("),
+            "ship avoidance alone does not introduce failed planetary-plot policy");
 
         string proximity = "NavConsole/ProximityCollisionPatch.cs";
         Check(!Prune(proximity, "proximity-range").Contains("IgnoreAsObstacle"),

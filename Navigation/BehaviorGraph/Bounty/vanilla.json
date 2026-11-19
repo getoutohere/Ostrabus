@@ -172,7 +172,7 @@
                                                               "static void Regional(",
                                                               "static void Stale("
                                                           ],
-                                              "sha256":  "fd4f1db096e7161020d3bcc2847cb964f46f9842c4b51903a0c017e9242939aa"
+                                              "sha256":  "d77a8f147f198948cb019448e07023410c64331d1a352a8acf4694bd28c90e74"
                                           },
                     "stale_cleanup":  {
                                           "origin":  "game",

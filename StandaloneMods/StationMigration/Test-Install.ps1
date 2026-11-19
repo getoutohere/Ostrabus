@@ -1,6 +1,7 @@
 [CmdletBinding()]
-param([string]$PackageDirectory = $PSScriptRoot)
+param([string]$PackageDirectory)
 $ErrorActionPreference = 'Stop'
+if (-not $PackageDirectory) { $PackageDirectory = $PSScriptRoot }
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 . (Join-Path $repo 'Build\Find-Game.ps1')
 $real = Find-Ostranauts

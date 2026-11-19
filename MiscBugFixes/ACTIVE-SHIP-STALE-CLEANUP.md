@@ -72,6 +72,12 @@ active voyage should never have reached retired-hull disposal in the first place
 Broadly teleporting crews or disabling all retirement would change native policy
 and would not repair the lifecycle transition.
 
+The later, separately selectable [retirement handoff policy](../Navigation/CREW-RETIREMENT.md)
+allows compatible offscreen stations to accept ordinary retiring crews when full.
+It retains exact hull-faction matching, so it does not change the empty-faction
+failure described in this historical case. Active-voyage timer repair remains
+necessary and independent.
+
 ## Implemented correction
 
 `ActiveShipRetirement` extends the existing crew-validated AddAIToDict hook.

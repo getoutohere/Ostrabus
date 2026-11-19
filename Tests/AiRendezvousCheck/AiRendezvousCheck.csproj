@@ -6,6 +6,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../../Navigation/AiRendezvousPatch.cs" Link="AiRendezvousPatch.cs" />
+    <Compile Include="../../Navigation/AvoidanceQuery.cs" Link="AvoidanceQuery.cs" />
+    <Compile Include="../../Navigation/CelestialRoutes.cs" Link="CelestialRoutes.cs" />
+    <Compile Include="../../Navigation/NavigationRoute.cs" Link="NavigationRoute.cs" />
+    <Compile Include="../../Orbital/NativeEphemeris.cs" Link="NativeEphemeris.cs" />
+    <Compile Include="../../Orbital/OrbitalMotion.cs" Link="OrbitalMotion.cs" />
+    <Compile Include="../../Orbital/OrbitAcceleration.cs" Link="OrbitAcceleration.cs" />
     <None Include="../Fixtures/Navigation/RcsStationApproach.json" Link="RcsStationApproach.json" CopyToOutputDirectory="PreserveNewest" />
     <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>

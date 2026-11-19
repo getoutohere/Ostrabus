@@ -4,6 +4,13 @@ Default: `http://127.0.0.1:18764`. Enabled when this plugin starts. Configure
 `[InspectionApi] Enabled` and `Port` in the plugin's BepInEx config; restart to
 apply. Install the rebuilt DLL and restart the game to load this version.
 
+Implementation contract: every response body must contain only primitive values,
+`Dictionary<string, object>` maps and lists accepted by `SnapshotJson.Encode`.
+Anonymous objects and Newtonsoft `JToken` nodes must be converted at the owning
+endpoint boundary. Endpoint tests must encode the actual `Reply.Body` with
+`SnapshotJson.Encode` and parse that wire output, including nested data and error
+responses; testing through `JObject.FromObject` alone does not validate transport.
+
 Inspection reads do not change game state. Explicit maintenance routes can prune
 eligible ships or derelicts; they require `POST` and confirmation. Personnel
 trace controls also require `POST`; they enable diagnostics without changing
@@ -36,6 +43,8 @@ request bodies, or persistent connections are exposed.
 | `/events/docking?since=0&limit=25` | Recent successful dock/moor/undock/unmoor transitions observed since plugin startup. |
 | `/events/ai?since=0&limit=25&shipId=O-TXXW` | Bounded in-memory history of sampled AI state changes and crewed-ship destruction evidence during GUI/PASS time skips. |
 | `/events/combat?since=0&limit=25&shipId=O-TXXW` | Successful weapon-fire and ship-damage events; filters by involved ship ID. |
+| `/obituaries` | Automatic NPC death/removal recorder status, session/load branch, capture failures and bounded writer/drop counters; readable while loading. |
+| `/obituaries/events?coId=NPC_ID&limit=25` | Latest retained death/removal evidence from rotating files; optional `shipId`, `kind`, `session`, `afterEpoch`, `beforeEpoch`; a nonzero `since` requires `session`. See [obituary evidence](../Diagnostics/Obituaries/README.md). |
 | `/shipboard` | Current shallow boarding encounters, including start epoch and per-ship start crew readiness (`alive/active/ranged/other weapon/unarmed`) alongside current crew/load state, next casualty timing, ships ordered to return home, and the latest resolution's prize-capture checks. Weapon counts include detected carried weapons; read-only, captured on the Unity thread. See the [shipboard action module notes](../ShipboardAction/README.md) for the encounter and resolution rules. |
 | `/world` | Ship/CO counts, AI-region count, pause state. |
 | `/ui/scrollbacks` | Current map and docking/comms display bindings, visibility, scroll bounds/positions, follow state and pointer mapping. Read on demand; no recorder or additional hooks. |

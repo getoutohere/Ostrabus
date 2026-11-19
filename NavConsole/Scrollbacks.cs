@@ -142,9 +142,8 @@ internal static class Scrollbacks {
     }
     internal static bool NavInput(GUIOrbitDraw owner) {
         if (owner == null || Editing(owner) || !panels.TryGetValue(owner, out var binding)) return true;
-        // NoteShowing can remain true when our Hide nav tutorial note option
-        // makes that object inactive. Vanilla
-        // wheel input does not gate on it; neither should log input.
+        // Log input is independent of the tutorial-paper state, as it is in
+        // vanilla. The hide option closes the paper through its native setter.
         return !binding.Input(null); // Fail open if the rendered surface is unavailable.
     }
     internal static void LegacyNavWheel(GUIOrbitDraw owner, float amount) {

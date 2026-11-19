@@ -151,7 +151,7 @@ internal sealed class SffFlight {
         var center = body.At(epoch).Position * (1 / OrbitalMotion.KmPerAU);
         shadowBody.dXReal = center.X; shadowBody.dYReal = center.Y; shadowBody.fRadius = body.Radius / OrbitalMotion.KmPerAU;
         double x = target.Position.X / OrbitalMotion.KmPerAU, y = target.Position.Y / OrbitalMotion.KmPerAU;
-        if (!FlightCPU.GetDockingNavPoint(shadowOrigin, shadowBody, ref x, ref y)) UsedDetour = true;
+        if (!Ostrabus.ShipNavigation.CelestialRoutes.DockingPoint(shadowOrigin, shadowBody, ref x, ref y)) UsedDetour = true;
         return new MotionState(new DVector(x, y) * OrbitalMotion.KmPerAU, target.Velocity);
     }
     internal static DVector Steering(MotionState state, MotionState target, DVector targetAcceleration, DVector freeAcceleration, double thrust, double speed, double handoff) {

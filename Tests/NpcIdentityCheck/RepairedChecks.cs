@@ -107,6 +107,46 @@ static partial class Program {
             Check(existing.OwnsShip(recruited.strRegID), "Native recruitment no longer records the new ship claim.");
             Check(nameRolls == beforeRecruitment, "Intentional recruitment drew a new name.");
 
+            // Separate native population defect: recruitment filters the actual
+            // regional source registry returned by GetAllATCRecycleStations.
+            var pools = AccessTools.Field(typeof(AIShipManager), "dictPilotSrcRegIDs");
+            object previousPools = pools.GetValue(null);
+            var sharedPool = new List<string> { "BCRS" };
+            try {
+                pools.SetValue(null, new Dictionary<string, List<string>> { ["BCRS"] = sharedPool });
+                eligibleVolunteer = null;
+                nextNames = new Queue<(string, string)>(new[] { ("Source", "Probe") });
+                bool reachedFactory = false;
+                try { AIShip.AddCrew(spec.strName, recruited, "BCRS", true); }
+                catch (FreshCreationBoundary) { reachedFactory = true; }
+                Check(reachedFactory && sharedPool.Count == 0,
+                    "Native regional recruitment no longer removes underpopulated sources from the shared registry; re-audit the population defect.");
+
+                production.CreateClassProcessor(typeof(AiCrewRecruitmentPatch)).Patch();
+                sharedPool.Add("BCRS");
+                for (int attempt = 0; attempt < 2; attempt++) {
+                    nextNames = new Queue<(string, string)>(new[] { ("Source", "Probe") });
+                    reachedFactory = false;
+                    try { AIShip.AddCrew(spec.strName, recruited, "BCRS", true); }
+                    catch (FreshCreationBoundary) { reachedFactory = true; }
+                    Check(reachedFactory && sharedPool.SequenceEqual(new[] { "BCRS" }),
+                        "Recruitment changed its shared sources or bypassed native fallback.");
+                }
+                // A recovering station remains available on the NEXT search.
+                eligibleVolunteer = oldProfile;
+                station.People.Add(oldProfile); recruited.People.Remove(oldProfile); Field(existing, "_objShip", station);
+                beforeRecruitment = nameRolls;
+                hired = AIShip.AddCrew(spec.strName, recruited, "BCRS", true);
+                Check(ReferenceEquals(hired, existing) && ReferenceEquals(existing.ship, recruited) && nameRolls == beforeRecruitment,
+                    "Recovered regional source failed native volunteer reuse.");
+                Check(sharedPool.SequenceEqual(new[] { "BCRS" }), "Adding OKLG_UNK leaked into the shared registry.");
+                var local = AiCrewRecruitment.Sources("BCRS"); local.Clear();
+                Check(sharedPool.Count == 1, "Recruitment returned the registry list by reference.");
+                eligibleVolunteer = null;
+                try { AiCrewRecruitmentPatch.Transpiler(Array.Empty<CodeInstruction>()).ToArray(); throw new Exception("Accepted changed recruiter IL"); }
+                catch (InvalidOperationException) { checks++; }
+            } finally { pools.SetValue(null, previousPools); }
+
             RoleTemplates();
             ValidateInstructionScope();
             Console.WriteLine((checks - baseline) + " identity repair checks passed: live/saved collisions, repeated native name draws, gender, native reuse/restoration and IL scope.");

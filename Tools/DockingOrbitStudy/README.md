@@ -116,3 +116,13 @@ fixtures. Controlled body cache changes isolate the relative-motion invariant.
 The SFF checks execute capture/exclusion and shared adapters with native role
 continuation; they are not a full GUI/PASS scene playthrough. See the investigation
 for production checks and live-validation limits.
+
+Optional `saved-mercury <patch-world-audit.json> <current-world-audit.json>`
+arguments append a read-only regression using all twelve original Mercury
+placements and the later saved body hierarchy. This adds 578 assertions for
+both docking directions, both departure actors, two-hour group following,
+native situation serialization and deliberate movement release, bringing the
+suite to 1,412. Actual production attachment patches execute; nearest-body
+selection is explicitly supplied as Mercury and the existing scene/crew/fee
+boundaries remain. Reports are private inputs; no save writer or live API is
+used. See the [field-model review](../../StandaloneMods/BoneyardTurnover/FIELD-MODEL-REVIEW.md).

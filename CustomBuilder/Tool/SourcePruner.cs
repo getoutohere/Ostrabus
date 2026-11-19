@@ -19,6 +19,7 @@ sealed class SourcePruner(string file, IEnumerable<string> included) : CSharpSyn
     static BlockSyntax Body(string text) => (BlockSyntax)SyntaxFactory.ParseStatement("{" + text + "}");
 
     public override SyntaxNode? VisitExpressionStatement(ExpressionStatementSyntax node) {
+        if (!Has("cargo-loading") && Call(node.Expression, "CargoMarketLifetime.Finish")) return null;
         if (!Has("venus-navigation") &&
             (Call(node.Expression, "VorbNavPlanGuard.TargetChanged") ||
              Call(node.Expression, "VorbNavPlanGuard.RecordFuelAdded"))) return null;
@@ -32,6 +33,10 @@ sealed class SourcePruner(string file, IEnumerable<string> included) : CSharpSyn
     }
 
     public override SyntaxNode? VisitIfStatement(IfStatementSyntax node) {
+        if (!Has("ai-rendezvous") && file == "Navigation/AvoidanceFlightPatch.cs" &&
+            node.Condition.ToString().Contains("AiRendezvous.ManualFallback", StringComparison.Ordinal)) return null;
+        if (!Has("cargo-loading") && file == "MiscBugFixes/ShipReplacementTargetsPatch.cs" &&
+            node.Statement.ToString().Contains("CargoMarketLifetime.Capture", StringComparison.Ordinal)) return null;
         if (file == "Navigation/RcsReplenishment.cs" && !Has("venus-navigation") &&
             node.Statement is ExpressionStatementSyntax statement &&
             Call(statement.Expression, "VorbNavPlanGuard.RecordFuelAdded"))

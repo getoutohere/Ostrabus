@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <LangVersion>latest</LangVersion>
+    <DefineConstants>$(DefineConstants);IMPLEMENTATION_CHECKS</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="LunaGeometry.json" CopyToOutputDirectory="PreserveNewest" />
+    <ProjectReference Include="../../StandaloneMods/BoneyardTurnover/BoneyardTurnover.csproj" />
+    <Compile Include="../../Tools/BoneyardTurnoverStudy/*.cs" Link="Study/%(Filename)%(Extension)" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(Managed)/UnityEngine.dll</HintPath></Reference>
+    <Reference Include="BepInEx"><HintPath>$(Game)/BepInEx/core/BepInEx.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(Game)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
+    <Reference Include="Ionic.Zip.Unity"><HintPath>$(Managed)/Ionic.Zip.Unity.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,250 @@
+{
+    "epoch":  65635224058.9765,
+    "anchorOrbit":  {
+                        "strName":  "EJDR_GEO",
+                        "fPerh":  0.000596758473113409,
+                        "fAph":  0.000596758473113409,
+                        "fAxis1":  0.00119351694622682,
+                        "fEcc":  0.0,
+                        "fAxis2":  0.00119351694622682,
+                        "fAngle":  0.0,
+                        "fPeriod":  2394819.94824886,
+                        "fRadius":  6.68458706417963E-09,
+                        "fMass":  100000.0,
+                        "fRotationPeriod":  209925426376.092,
+                        "nDrawFlagsTrack":  1,
+                        "nDrawFlagsBody":  1,
+                        "fParallaxRadius":  6.68E-09,
+                        "fGravParallaxRadius":  6.68E-09,
+                        "fPeriodShift":  0.0,
+                        "nOrbitDirection":  1,
+                        "fVisibilityRangeMod":  1.0,
+                        "fVisibilityRangeModGrav":  1.0,
+                        "nEnvironmentMapID":  0
+                    },
+    "centerOffset":  [
+                         2.19851012736028E-05,
+                         -8.00192014815959E-06
+                     ],
+    "wrecks":  [
+                   {
+                       "offset":  [
+                                      2.11313338876473E-05,
+                                      -7.51301572088359E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.17710339996402E-05,
+                                      -7.36613043772483E-06
+                                  ],
+                       "spawnMarkers":  2,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.20913300499337E-05,
+                                      -8.85460181365705E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.14456475753355E-05,
+                                      -8.77031018087226E-06
+                                  ],
+                       "spawnMarkers":  2,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.15924472773965E-05,
+                                      -7.38305308956022E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.17014989454811E-05,
+                                      -7.38721873705384E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.18990239334027E-05,
+                                      -8.66647499975226E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.16082086627045E-05,
+                                      -8.56203994625826E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.20953629693765E-05,
+                                      -8.71506289568114E-06
+                                  ],
+                       "spawnMarkers":  2,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.16444731683252E-05,
+                                      -8.57713148538775E-06
+                                  ],
+                       "spawnMarkers":  2,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.27193202210207E-05,
+                                      -8.07063988739198E-06
+                                  ],
+                       "spawnMarkers":  2,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawnerNotBoarding"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.17729476403861E-05,
+                                      -8.69202597830743E-06
+                                  ],
+                       "spawnMarkers":  2,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.17925272075759E-05,
+                                      -8.64655188104191E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.15906162549517E-05,
+                                      -7.46041114529916E-06
+                                  ],
+                       "spawnMarkers":  2,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.27422392366505E-05,
+                                      -8.34165764751482E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.26095272500837E-05,
+                                      -8.34389895754128E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.18838699346802E-05,
+                                      -7.07113669640158E-06
+                                  ],
+                       "spawnMarkers":  2,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.12882892655086E-05,
+                                      -7.90016543827932E-06
+                                  ],
+                       "spawnMarkers":  3,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   },
+                   {
+                       "offset":  [
+                                      2.13537843513634E-05,
+                                      -8.23527965942983E-06
+                                  ],
+                       "spawnMarkers":  2,
+                       "spawnDefinitions":  [
+                                                "SysLootSpawner",
+                                                "SysLootSpawner"
+                                            ]
+                   }
+               ]
+}

@@ -6,11 +6,14 @@ namespace Ostrabus.ShipNavigation;
 // Stack scopes only: no actor registry, retained maneuver, timer or save state.
 internal static class AvoidanceQuery
 {
-    internal struct State { internal Ship Owner; internal NavData Route; internal bool Admission; }
+    internal struct State { internal Ship Owner; internal NavData Route; internal bool Admission, Rejected; }
     [ThreadStatic] static State flight, query;
     internal static NavData Route => query.Route;
     internal static Ship Owner => query.Owner;
     internal static bool Admission => query.Admission;
+    internal static Ship Flying => flight.Owner;
+    internal static void Reject(Ship ship) { if (ReferenceEquals(flight.Owner, ship)) flight.Rejected = true; }
+    internal static bool Rejected(Ship ship) => ReferenceEquals(flight.Owner, ship) && flight.Rejected;
     internal static State BeginFlight(Ship ship)
     {
         var previous = flight; flight = new State { Owner = ship, Route = ship?.objSS?.NavData }; return previous;

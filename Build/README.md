@@ -2,8 +2,13 @@
 
 Run these commands from the repository root.
 
-The [0.7.0 release](RELEASE-0.7.0.md) targets **Ostranauts 1.1.0.2**, Windows
+The current build also passes the [1.1.0.3 review](COMPATIBILITY-1.1.0.3.md).
+Its main DLL requires no runtime adaptation; the separately packaged station
+migration and boneyard turnover plugins have updated exact-assembly guards.
+
+The [0.7.1 release](RELEASE-0.7.1.md) targets **Ostranauts 1.1.0.3**, Windows
 and BepInEx 5, with partial in-game acceptance and documented offline-only repairs.
+The [0.7.0 checkpoint](RELEASE-0.7.0.md) preserves the preceding 1.1.0.2 build.
 The [0.6.0 snapshot](RELEASE-0.6.0.md) remains the historical 1.1.0.0 checkpoint. Read the
 [compatibility audit](COMPATIBILITY-1.1.0.0.md) and
 [feature ledger](FEATURE-COMPATIBILITY-1.1.0.0.md) for validation evidence and boundaries.
@@ -120,6 +125,12 @@ checked-in fixtures. Build the named project in Release, then pass its
 | `VorbRetrievalCheck` | none | Native retrieval assignments, ownership, exclusions and saved controllers. |
 | `ScavFuelDiagnosis` | none; `fuel`; `fuel-patched`; `refuel`; `sos` | Native scav Hold/sequence, mixed-mode fuel baseline/fix, capped refueling API and authored SOS entry/eligibility diagnosis. |
 | `PdaSettingsCheck` | none | Settings registry, native assets and toggles. |
+| `NpcIdentityCheck` | none | Native identity collisions, intentional reuse and independent recruitment-source repair. |
+| `BountyPreservationCheck` | none | Bounty cleanup protections, station departure and routine crew retirement with native population controls. |
+| `ObituaryCheck` | none | Native death/removal observations, restoration/disposal exclusions, crewless teardown fast path, bounded external storage and API wire format. |
+| `WreckSeverityCheck` | none | Severity curve, native initialization/roll contracts, diagnostic scope and unchanged random draws. |
+| `SinglePortDockingCheck` | none | Native comms option construction/selection, forced docking, duplicate delivery, asset contracts and the saved toggle. |
+| `BoneyardTurnoverCheck` | none | Independently compiled turnover policy, protection guards, saved geometry, field centres, native persistence and loader boundaries. |
 | `PortraitCompositionCheck` | none | Native portrait cold/warm paths, pixel equivalence, raw channel layouts, fallback handling, buffer allocation and guarded transpiler binding. |
 | `SocialsProfilingCheck` | none | Temporary profiling registration, nested timing, deferred UI capture, native exceptions, timeout and removal of all diagnostic hooks. |
 | `RotationModuleCheck` | none | RCS PID, native fuel/translation, dock-group anchor rotation, command save/load, SFF queue, hardware and cancellation boundaries. Native asset install fixtures: `Tests/RotationModuleCheck/InstallCheck.ps1`. |
@@ -131,6 +142,10 @@ checked-in fixtures. Build the named project in Release, then pass its
 
 Build `Ostrabus.csproj -c Debug` before suites that reference the plugin DLL.
 Run native suites sequentially; the Mono host shares a runtime staging directory.
+For the saved docking-port reproduction, run
+`powershell -NoProfile -ExecutionPolicy Bypass -File Tests/DockingDiagnosis/Run-Res1.ps1`.
+For the complete freight/navigation normal-flight, SFF and PASS comparison, run
+`powershell -NoProfile -ExecutionPolicy Bypass -File Tests/AiPlannerDiagnosis/Run-Freight.ps1`.
 For the sensor model and vanilla comparison report, run
 `powershell -NoProfile -ExecutionPolicy Bypass -File Tools/SensorComparison/Run.ps1`.
 Generated reports stay under ignored `obj/`.

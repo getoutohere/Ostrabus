@@ -16,7 +16,7 @@ using Ostranauts.Ships.Commands;
 
 static partial class Program {
     static int checks, stops;
-    static bool playerManned, detour, throwFuture;
+    static bool playerManned, detour, throwFuture, pilotPresent = true;
     static JObject fixture;
     static Ship station;
     static readonly MethodInfo Acceleration = AccessTools.Method(typeof(FlyToPath), "GetAcceleration");
@@ -27,7 +27,7 @@ static partial class Program {
     static bool Equal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = ReferenceEquals(__0, __1); return false; }
     static bool Unequal(UnityEngine.Object __0, UnityEngine.Object __1, ref bool __result) { __result = !ReferenceEquals(__0, __1); return false; }
     static bool Player(ref bool __result) { __result = playerManned; return false; }
-    static bool PilotPresent(ref bool __result) { __result = true; return false; }
+    static bool PilotPresent(ref bool __result) { __result = pilotPresent; return false; }
     static bool Cargo(ref double __result) { __result = 0; return false; }
     static bool Stop() { stops++; return false; }
     static bool Gpm(ref string __result) { __result = "0"; return false; }
@@ -51,6 +51,7 @@ static partial class Program {
     }
     static void World() {
         playerManned = detour = throwFuture = false;
+        pilotPresent = true;
         CrewSim.coPlayer = null;
         var world = Empty<StarSystem>();
         world.aBOs = new Dictionary<string, BodyOrbit>();
@@ -135,7 +136,8 @@ static partial class Program {
             production.CreateClassProcessor(typeof(AiRcsAccelerationPatch)).Patch();
             production.CreateClassProcessor(typeof(AiRendezvousValidationPatch)).Patch();
             production.CreateClassProcessor(typeof(FreightRendezvousFailurePatch)).Patch();
-            PlanningChecks(); ValidationChecks(); FailureChecks();
+            production.CreateClassProcessor(typeof(AiCoursePlaybackPatch)).Patch();
+            PlanningChecks(); ValidationChecks(); FailureChecks(); ManualHandoffChecks();
             Console.WriteLine(checks + " native AI RCS/rendezvous/freight-destination checks passed.");
             return 0;
         } finally { production.UnpatchSelf(); engine.UnpatchSelf(); CrewSim.system = null; CrewSim.coPlayer = null; }

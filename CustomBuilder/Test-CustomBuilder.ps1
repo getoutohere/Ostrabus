@@ -35,11 +35,17 @@ try {
         'ai-avoidance'=@('ai-avoidance');
         'avoidance-collisions'=@('ai-avoidance','hull-collisions');
         'ai-rendezvous'=@('ai-rendezvous');
+        'cargo-loading'=@('cargo-loading');
         'ai-rendezvous-navigation'=@('ai-rendezvous','ai-flight-controls','departure-waypoints','economy-sff');
         'mm-fairness'=@('mm-fairness');
         'mm-fairness-defense'=@('mm-fairness','pdc-defense');
         'nav-module-placement'=@('nav-module-placement');
         'course-controls'=@('course-controls');
+        'wreck-severity'=@('wreck-severity');
+        'single-port-docking'=@('single-port-docking');
+        'single-port-docking-settings'=@('single-port-docking','pda-settings');
+        'obituaries'=@('obituaries');
+        'obituaries-inspection'=@('obituaries','inspection');
         'save-forward-compatibility'=@('save-forward-compatibility');
         'rotation-module'=@('rotation-module');
         'bounty-departure-fuel'=@('bounty-departure-fuel');
@@ -50,6 +56,8 @@ try {
         'faction-encounters'=@('faction-encounters');
         'ai-flight-controls'=@('ai-flight-controls');
         'ai-crew-identities'=@('ai-crew-identities');
+        'ai-crew-recruitment'=@('ai-crew-recruitment');
+        'ai-crew-retirement'=@('ai-crew-retirement');
         'route-completion'=@('route-completion');
         'console-buffer'=@('console-buffer');
         'population-gender'=@('population-gender');

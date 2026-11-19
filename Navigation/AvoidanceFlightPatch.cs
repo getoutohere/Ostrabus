@@ -11,9 +11,10 @@ internal static class AvoidanceFlightPatch
 {
     static void Prefix(FlyTo __instance, out AvoidanceQuery.State __state) => __state = AvoidanceQuery.BeginFlight(__instance.ShipUs);
     static Exception Finalizer(Exception __exception, AvoidanceQuery.State __state) { AvoidanceQuery.EndFlight(__state); return __exception; }
-    internal static bool RejectCourse(FlyTo command)
+    internal static bool RejectCourse(CommandStatus status, FlyTo command)
     {
         var ship = command.ShipUs;
+        if (AiRendezvous.ManualFallback(command, status)) return true;
         if (ship == null || !ship.IsAIShip || ship.NavPlayerManned || ship.IsUsingTorchDrive ||
             !AvoidanceQuery.Candidate(ship, ship.objSS?.NavData)) return false;
         // Keep this candidate as the forecast through the native reset/manual
@@ -53,6 +54,7 @@ internal static class AvoidanceFlightPatch
         {
             yield return code[i];
             if (i != call) continue;
+            yield return new CodeInstruction(OpCodes.Dup);
             yield return new CodeInstruction(OpCodes.Ldarg_0);
             yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AvoidanceFlightPatch), nameof(RejectCourse)));
             yield return new CodeInstruction(OpCodes.Brfalse, accepted);

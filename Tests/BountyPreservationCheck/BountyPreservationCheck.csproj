@@ -3,6 +3,7 @@
   <ItemGroup>
     <Compile Include="../../Navigation/BountyPreservationPatch.cs" Link="BountyPreservationPatch.cs" />
     <Compile Include="../../Navigation/BountyDepartureFuelPatch.cs" Link="BountyDepartureFuelPatch.cs" />
+    <Compile Include="../../Navigation/CrewRetirementPatch.cs" Link="CrewRetirementPatch.cs" />
     <Reference Include="Assembly-CSharp"><HintPath>$(Managed)/Assembly-CSharp.dll</HintPath></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
     <Reference Include="0Harmony"><HintPath>$(GameDir)/BepInEx/core/0Harmony.dll</HintPath></Reference>

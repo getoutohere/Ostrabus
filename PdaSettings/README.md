@@ -8,6 +8,10 @@ to config or apply only to the current session.
 **Station-docked hull exemption** controls visiting-hull collisions, avoidance
 and proximity warnings across station-docked chains. Saved, default on.
 
+**Single-port docking shortcut** automatically submits the sole eligible target
+port in the comms docking conversation. Multiple choices retain the menu. Saved,
+default on; see [docking shortcut](../QoL/Docking/README.md).
+
 **Hull-shaped collisions** uses the displayed exterior for ordinary free-ship
 impacts, while weapon hits and planetary/station handling remain native. Saved,
 default on; off immediately restores native circles. See the

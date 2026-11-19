@@ -19,6 +19,7 @@
     <Compile Include="../../Orbital/OrbitAcceleration.cs" Link="OrbitAcceleration.cs" />
     <Compile Include="../../Haulers/*.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../Inspection/SnapshotJson.cs" Link="SnapshotJson.cs" />
+    <Compile Include="../../Orbital/Economy/CargoMarketLifetime.cs" Link="CargoMarketLifetime.cs" />
     <Reference Include="Assembly-CSharp"><HintPath>$(Game)/Ostranauts_Data/Managed/Assembly-CSharp.dll</HintPath></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Game)/Ostranauts_Data/Managed/UnityEngine.CoreModule.dll</HintPath></Reference>
     <Reference Include="Newtonsoft.Json"><HintPath>$(Game)/Ostranauts_Data/Managed/Newtonsoft.Json.dll</HintPath></Reference>

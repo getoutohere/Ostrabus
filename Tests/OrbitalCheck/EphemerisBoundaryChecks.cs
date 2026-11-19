@@ -19,10 +19,11 @@ static class EphemerisBoundaryChecks {
         check(error < .000002, "SFF body position disagrees with native coordinates: " + error + " km");
         var solve = typeof(BodyOrbit).GetMethod("SolveBigE", BindingFlags.Static | BindingFlags.NonPublic);
         foreach (double eccentricity in new[] { 0, .0068, .45, .9, .99 }) {
+            foreach (int periodSign in new[] { -1, 1 }) {
             foreach (int direction in new[] { -1, 1 }) {
                 var body = new BodyOrbit(new JsonBodyOrbitSave { strName = "probe", fAxis1 = 2,
                     fAxis2 = 2 * Math.Sqrt(1 - eccentricity * eccentricity), fPerh = 1 - eccentricity,
-                    fAph = 1 + eccentricity, fPeriod = 31556926, fPeriodShift = 12345,
+                    fAph = 1 + eccentricity, fPeriod = periodSign * 31556926d, fPeriodShift = 12345,
                     fEcc = eccentricity, fAngle = 37, nOrbitDirection = direction }) { boParent = planet };
                 foreach (double time in new[] { -31569272.0, -100.0, 0, 1, 31544581, 31544582, epoch, epoch + 21600 }) {
                     body.UpdateTime(time - 1, bCalcV: false); body.UpdateTime(time, bCalcV: false);
@@ -49,6 +50,7 @@ static class EphemerisBoundaryChecks {
                         body.dVelX == 123 && body.dVelY == -456, "Prediction reads or overwrites cached native velocity");
                     body.dVelX = cacheVx; body.dVelY = cacheVy;
                 }
+            }
             }
         }
         var fixedBody = new BodyOrbit(new JsonBodyOrbitSave { strName = "fixed", fPeriod = 1, fPerh = .01 }) { boParent = planet };

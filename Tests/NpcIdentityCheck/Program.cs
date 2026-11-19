@@ -50,7 +50,8 @@ static partial class Program {
         Field(ship, "aPeople", new List<PersonSpec>());
         return ship;
     }
-    static int Main() {
+    static int Main(string[] args) {
+        if (args.Length == 2 && args[0] == "population") return PopulationRun(args[1]);
         var h = new Harmony("offline.native.npc-identity");
         try {
             h.Patch(AccessTools.Method(typeof(UnityEngine.Object), "op_Equality"), prefix: new HarmonyMethod(typeof(Program), nameof(Equal)));

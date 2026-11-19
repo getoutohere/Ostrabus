@@ -119,7 +119,6 @@ internal static class AvoidanceRouteForecast
         position = velocity = default;
         if (CrewSim.system?.aBOs == null || s.strBOPORShip == null || !CrewSim.system.aBOs.TryGetValue(s.strBOPORShip, out var body) ||
             !NativeEphemeris.State(body, epoch, out var p, out var v)) return false;
-        if (s.bIsBO) { position = p; velocity = v; return true; }
         var state = new BodyLockedOffset(s).At(new MotionState(p * OrbitalMotion.KmPerAU, v * OrbitalMotion.KmPerAU), epoch);
         position = state.Position * (1 / OrbitalMotion.KmPerAU); velocity = state.Velocity * (1 / OrbitalMotion.KmPerAU); return position.Finite && velocity.Finite;
     }

@@ -35,6 +35,7 @@ internal static class Program
             string oldData = args[0], data = args[1];
             Check(Plugin.RespawnSitesFor(Plugin.NativeHash1101) == 1, "1.1.0.1 native migration contract changed");
             Check(Plugin.RespawnSitesFor(Plugin.NativeHash1102) == 2, "1.1.0.2 native migration contract changed");
+            Check(Plugin.RespawnSitesFor(Plugin.NativeHash1103) == 2, "1.1.0.3 native migration contract changed");
             Check(Plugin.RespawnSitesFor("unreviewed") == 0, "Unknown native assembly was admitted");
             Dictionary<string, T> Load<T>(string directory) => AssetFiles.Load(data, directory)
                 .ToDictionary(pair => pair.Key, pair => pair.Value.ToObject<T>());

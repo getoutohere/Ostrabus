@@ -65,10 +65,15 @@ static class Program {
         AccessTools.Field(Type("Sensors.SensorContacts"), "Flag").SetValue(null, sensorPositions);
         var wreckPercent = Config(50);
         AccessTools.Field(Type("Venus.VenusDerelicts"), "WreckPercentConfig").SetValue(null, wreckPercent);
+        var singlePort = Config(true);
+        AccessTools.Field(Type("QoL.Docking.SinglePortDocking"), "Flag").SetValue(null, singlePort);
         var all = (Array)AccessTools.Field(Type("PdaSettings.SettingsRegistry"), "All").GetValue(null);
         var settings = new Dictionary<string, object>();
         foreach (var setting in all) Check(settings.TryAdd((string)Field(setting, "Id"), setting), "Duplicate setting ID");
-        Check(settings.Count == 16, "Settings missing");
+        Check(settings.Count == 17, "Settings missing");
+        Check((int)Get(settings["single_docking_port"]) == 1 && (string)Field(settings["single_docking_port"], "Lifetime") == "Saved", "Docking shortcut default/lifetime incorrect");
+        Set(settings["single_docking_port"], 0); Check(!singlePort.Value, "Docking shortcut PDA toggle did not disable");
+        Set(settings["single_docking_port"], 1); Check(singlePort.Value, "Docking shortcut PDA toggle did not enable");
         Check((int)Get(settings["torchtrace"]) == 0 && (string)Field(settings["torchtrace"], "Lifetime") == "This session", "Torch trace must default off and remain session-only");
         var traceType = Type("Diagnostics.TorchTrace");
         harmony.Patch(AccessTools.Method(traceType,"Start"),prefix:new HarmonyMethod(typeof(Program),nameof(TracePath)));

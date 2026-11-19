@@ -1,5 +1,11 @@
 # Freight lifecycle audit, 2026-11-14
 
+The [November 18 implementation and native saved-voyage regressions](../../Navigation/FREIGHT-CELESTIAL-SAFETY.md)
+add whole-course planetary clearance, normal/SFF/PASS final-leg consistency and
+market cleanup for actual registered cargo-hull destruction. The historical
+evidence below remains qualified; those repairs do not prove the cause of every
+old shipless manifest and do not automatically credit lost cargo.
+
 Status: confirmed accounting and handoff repairs implemented and offline tested.
 Reviewed native 1.0.1.10 C#, the installed market/loot/interaction JSON, and our
 loading and SFF economy paths. The preceding [loading repair](CARGO-LOADING-AUDIT.md)
@@ -98,6 +104,13 @@ command-owned status objects is consequently **not** the suspected identity bug.
 These source checks eliminate two tempting but incorrect explanations.
 
 ## Disappearance evidence is still narrower than the mechanism inventory
+
+A later [saved-trajectory investigation](../../Notes/FREIGHT-STRANDED-CARGO-20261118.md)
+identifies four other carriers with deep planetary penetrations in their saved
+torch courses, unchanged surviving cargo, and missing pilots. It also reproduces
+the native destruction/market leak and the current rendezvous validator's
+acceptance of those unsafe courses. That new evidence does not establish the
+historical removal caller for the three ships discussed in this section.
 
 The three historical cargo hulls/controllers disappear between saves while their
 markets survive. Neither successful native cargo arrival nor StarSystem's normal

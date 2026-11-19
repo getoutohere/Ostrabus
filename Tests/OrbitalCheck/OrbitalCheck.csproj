@@ -3,6 +3,13 @@
   <ItemGroup>
     <Compile Include="../../Navigation/RouteCompletionPatch.cs" Link="RouteCompletionPatch.cs" />
     <Compile Include="../../Navigation/AiRendezvousPatch.cs" Link="AiRendezvousPatch.cs" />
+    <Compile Include="../../Navigation/AvoidanceQuery.cs" Link="AvoidanceQuery.cs" />
+    <Compile Include="../../Navigation/CelestialRoutes.cs" Link="CelestialRoutes.cs" />
+    <Compile Include="../../Navigation/NavigationRoute.cs" Link="NavigationRoute.cs" />
+    <Compile Include="../../Navigation/DepartureWaypointPatch.cs" Link="DepartureWaypointPatch.cs" />
+    <Compile Include="../../Navigation/LocalNavigationFrame.cs" Link="LocalNavigationFrame.cs" />
+    <Compile Include="../AiPlannerDiagnosis/FreightCourseChecks.cs" Link="FreightCourseChecks.cs" />
+    <Compile Include="../AiPlannerDiagnosis/NativeCourseGeometry.cs" Link="NativeCourseGeometry.cs" />
     <Compile Include="../../Orbital/*.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../Orbital/Economy/*.cs" Link="Economy/%(Filename)%(Extension)" />
     <Compile Include="../../Haulers/*.cs" Link="%(Filename)%(Extension)" />

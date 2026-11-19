@@ -91,6 +91,12 @@ static partial class EconomyChecks {
     static Ship Hull(string id) {
         var ship = Empty<Ship>(); ship.strRegID = id; ship.IsAIShip = true;
         Field(ship, "nLoadState", Ship.Loaded.Shallow); Field(ship, "<objSS>k__BackingField", new ShipSitu(false));
+        Field(ship, "aCores", new List<CondOwner>());
+        Field(ship, "aDockingPorts", new List<string>());
+        Field(ship, "CachedAllDockedShips", new List<Ship>());
+        Field(ship, "fShallowMass", 1000d);
+        Field(ship, "fFuelEfficiencyMod", 1d);
+        ship.RCSCount = 8;
         ship.objSS.strBOPORShip = "Sol";
         Field(ship, "aDocked", new Dictionary<string, Ship>());
         hulls[id] = ship; CrewSim.system.dictShips[id] = ship;

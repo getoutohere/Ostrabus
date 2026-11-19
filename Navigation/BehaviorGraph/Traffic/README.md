@@ -1,5 +1,13 @@
 # Cargo and civilian traffic
 
+The [planetary freight investigation](../../FREIGHT-CELESTIAL-SAFETY.md) adds
+numerical route-clearance and destruction/market evidence outside this lifecycle
+graph. A valid destination and a converged final waypoint do not prove a safe
+flight. The graph's symbolic arrival transitions are conditional on that external
+geometry; the full saved-world voyage matrix supplies the numerical comparison.
+Physical loss unregisters the carrier's market without crediting its buyer;
+despawn and same-ID representation replacement have different lifetime contracts.
+
 The [passive docking/orbit-lock investigation](../../DOCKED-ORBIT-LOCK.md)
 reproduces and now models a native physical side effect:
 reciprocal docking clears a wreck's body attachment, and a later tether removal

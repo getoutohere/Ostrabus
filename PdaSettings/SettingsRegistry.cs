@@ -49,6 +49,7 @@ internal static class SettingsRegistry {
             FunctionalHotkeys.Flag.Value = value != 0;
         }),
         new Setting("equipment_shortcut", "Helmet and EVA battery shortcut", "Equip or stow carried gear. Click the shortcut to rebind; Esc cancels.", () => EquipmentShortcut.Value, EquipmentShortcut.Set),
+        new Setting("single_docking_port", "Single-port docking shortcut", "Choose the sole available target port automatically in comms.", "Saved", () => QoL.Docking.SinglePortDocking.Enabled ? 1 : 0, value => QoL.Docking.SinglePortDocking.SetEnabled(value != 0)),
         new Setting("station_docked_collisions", "Station-docked hull exemption", "Parked visiting hulls do not obstruct traffic or trigger proximity alarms.", "Saved", () => ShipNavigation.StationDockedCollisions.Enabled ? 1 : 0, value => ShipNavigation.StationDockedCollisions.SetEnabled(value != 0)),
         new Setting("hull_collisions", "Hull-shaped collisions", "Match ship impacts to hull outlines; weapon accuracy stays unchanged.", "Saved", () => ShipNavigation.Collisions.PhysicalCollisions.Enabled ? 1 : 0, value => ShipNavigation.Collisions.PhysicalCollisions.SetEnabled(value != 0)),
         new Setting("orbital", "Orbital correction", "Correct gravity around moving bodies.", "This session", () => OrbitalSimulation.Enabled ? 1 : 0, value => OrbitalSimulation.SetEnabled(value != 0)),

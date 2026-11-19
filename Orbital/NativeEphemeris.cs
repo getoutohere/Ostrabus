@@ -20,7 +20,9 @@ internal static class NativeEphemeris {
             double e = 0, rate = 0;
             if (a != 0 || b != 0) {
                 double period = current.fPeriod;
-                if (!(period > 0) || !OrbitAcceleration.Finite(period) || !OrbitAcceleration.Finite(current.fPeriodShift)) return false;
+                // Native assets also encode retrograde orbits with a negative
+                // period (for example Pasiphae), independently of direction.
+                if (period == 0 || !OrbitAcceleration.Finite(period) || !OrbitAcceleration.Finite(current.fPeriodShift)) return false;
                 double mean = Math.PI * 2 * ((epoch + current.fPeriodShift) % period) / period;
                 if (!OrbitAcceleration.Finite(mean)) return false;
                 e = ecc < .8 ? mean : Math.PI;

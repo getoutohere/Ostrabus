@@ -10,8 +10,8 @@ dotnet build Tests/AiRendezvousCheck -c Release --nologo -v quiet
 dotnet Tests/SaveJsonCompatibility/Host/bin/Release/net8.0/MonoHost.dll Tests/AiRendezvousCheck/bin/Release/netstandard2.1/AiRendezvousCheck.dll
 ```
 
-The 1,454 checks first reproduce a native unconverged route, then install all
-three production patch classes. They cover a converged repair, six AI roles,
+The checks first reproduce a native unconverged route, then install the production
+acceleration, validation, rejection and playback patch classes. They cover a converged repair, six AI roles,
 27 phase/mass/range combinations, weak RCS rejection, native safety caps,
 player/torch/atmospheric-rotor boundaries, recursive waypoints, finite and
 chronological points, moving-target sampling and exact restoration of historical
@@ -28,3 +28,9 @@ sampling and route calculations execute native code. This is not a full scene,
 an exact historical call replay or evidence that all weak-RCS transfers converge.
 The separate OrbitalCheck suite composes these hooks with SFF/PASS and economy
 execution; the custom-builder matrix verifies standalone/combined binding.
+
+This suite's detour double isolates convergence; it does not establish safe
+planetary navigation. The [full native saved-world voyage matrix](../../Navigation/FREIGHT-CELESTIAL-SAFETY.md)
+executes the real obstruction planner and an independent native clearance oracle.
+Manual-handoff controls separately preserve terminal status, player control,
+pilot absence, missing destinations, propulsion loss and loaded fuel exhaustion.

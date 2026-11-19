@@ -6,17 +6,19 @@ I'm making it public as inspiration, reference material, or a source of code to 
 
 There is no guarantee it will be maintained for new game patches. Issues and pull requests are welcome, but will most likely be ignored. Your best bet is to hit me up on Discord.
 
-**Ostrabus 0.7.0 supports Ostranauts 1.1.0.2 (`public_test`), Windows and BepInEx 5.**
-It is experimental and partially playtested; the [release notes](Build/RELEASE-0.7.0.md) separate live observations from offline/native tests and list known limitations.
-The [1.1 compatibility audit](Build/COMPATIBILITY-1.1.0.0.md), [feature review](Build/FEATURE-COMPATIBILITY-1.1.0.0.md) and incremental [1.1.0.1](Build/COMPATIBILITY-1.1.0.1.md) / [1.1.0.2](Build/COMPATIBILITY-1.1.0.2.md) reviews document the port.
+**Ostrabus 0.7.1 supports Ostranauts 1.1.0.3 (`public_test`), Windows and BepInEx 5.**
+It is experimental and partially playtested; the [release notes](Build/RELEASE-0.7.1.md) separate live observations from offline/native tests and list known limitations.
+The [1.1 compatibility audit](Build/COMPATIBILITY-1.1.0.0.md), [feature review](Build/FEATURE-COMPATIBILITY-1.1.0.0.md) and incremental [1.1.0.1](Build/COMPATIBILITY-1.1.0.1.md) / [1.1.0.2](Build/COMPATIBILITY-1.1.0.2.md) / [1.1.0.3](Build/COMPATIBILITY-1.1.0.3.md) reviews document support.
 
 Use the [build/install instructions](Build/README.md) for the full package or the [custom plugin builder](CustomBuilder/README.md) for selected features.
 Normal deployment continues to install the full package.
 
-The optional [Station Kiosk Migration plugin 0.1.2](StandaloneMods/StationMigration/README.md) preserves station interiors during the game's kiosk upgrades; install it separately before loading an affected older save, then remove it after saving.
+The optional [Station Kiosk Migration plugin 0.1.3](StandaloneMods/StationMigration/README.md) preserves station interiors during the game's kiosk upgrades; install it separately before loading an affected older save, then remove it after saving.
 It is not a general content migration: the [content audit](Build/CONTENT-AVAILABILITY-1.1.0.0.md) explains what 1.1 already adds to continuing saves and why the earlier metadata-only migration prototype is unnecessary.
 
-For the old game, use the [preserved 1.0.1.10 baseline](Build/BASELINE-1.0.1.10.md), commit `be8e282`, tagged `Ostrabus-5.1.0`; this 0.7.0 build does not declare support for other game versions.
+The separately installed [Boneyard Turnover plugin 0.1.4](StandaloneMods/BoneyardTurnover/README.md) refreshes static regional salvage fields during absences, with configurable turnover rates; Earth and active hauler-serviced yards are excluded. It passes offline native checks and awaits live playtesting.
+
+For the old game, use the [preserved 1.0.1.10 baseline](Build/BASELINE-1.0.1.10.md), commit `be8e282`, tagged `Ostrabus-5.1.0`; this 0.7.1 build does not declare support for other game versions.
 
 ## Inventory of changes
 
@@ -31,7 +33,7 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 - [Planetary gravity](Orbital/README.md): include the parent body's acceleration when integrating free objects near an orbiting planet.
 - [AI collision avoidance](Navigation/PLANETARY-AVOIDANCE-AUDIT.md): detect slow and accelerating collision approaches, reject unsafe course resumption, and prevent repeated evasive reversals while retaining the game's steering.
 - [AI departure waypoints](Navigation/DEPARTURE-WAYPOINTS.md): place station departure points relative to the station's own orbit and continue intermediate freight legs during fast-forward.
-- [AI rendezvous planning](Navigation/FREIGHT-RCS-APPROACH-INVESTIGATION.md): give NPC RCS its own acceleration limit, reject approach routes that fail to converge, and preserve freight destinations when planning fails.
+- [AI rendezvous planning](Navigation/FREIGHT-CELESTIAL-SAFETY.md): separate NPC RCS limits, reject unconverged or planet-crossing courses, and retain native steering and freight destinations when replanning.
 - [Local AI navigation frames](Navigation/LOCAL-NAVIGATION-FRAMES.md): keep patrol, ambush and encounter locations near their regional stations instead of inheriting a distant celestial body's motion.
 - [AI navigation targets](MiscBugFixes/ShipReplacementTargetsPatch.cs): retain destinations through ship reconstruction and asteroid representation changes, and discard obsolete routes when the actual destination disappears.
 - [Civilian SFF station selection](MiscBugFixes/CivilianSffCoordinatesPatch.cs): use both position coordinates when choosing a regional station during fast-forward instead of passing X twice.
@@ -62,6 +64,7 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 - [Civilian visit completion](MiscBugFixes/CIVILIAN-VISIT-WAITS.md): allow background civilians to finish visits with empty fuel tanks and retain their departure timing through fast-forward and reload.
 - [AI crew lifecycle](Navigation/CREWLESS-AI.md): prevent premature ship cleanup, reuse and crewless acceleration while preserving player-connected faction ships through changes of ATC region.
 - [AI retirement](MiscBugFixes/ACTIVE-SHIP-STALE-CLEANUP.md): clear obsolete disposal timers when a ship becomes active again so cleanup cannot delete an active hull and its living crew.
+- [Crew recruitment sources](MiscBugFixes/README.md#ai-crew-recruitment-sources): filter temporary station shortages on a local list so later searches can recruit there again when residents become available.
 - [AI return orders](Navigation/RETURN-PRIORITY.md): preserve return stages through reload, retry failed return approaches and docking, and discard stale fuel predictions when the destination changes.
 - [AI escape destinations](Navigation/ESCAPE-RETARGET.md): discard the old course and fuel prediction when a retreat selects a different station.
 - [Hauler returns](Haulers/README.md): restore the home destination after releasing a wreck, stop abandoned thrust, and preserve the return stage after fast-forward pickups.
@@ -84,7 +87,7 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 
 #### Freight, markets and remote trading
 
-- [SFF economy and freight accounting](Orbital/Economy/README.md): preserve production and dispatch order during time skips, conserve cargo and shared market stock, and deliver freight before retiring its hauler.
+- [SFF economy and freight accounting](Orbital/Economy/README.md): preserve production and dispatch order, retain planned final approaches, deliver cargo before hauler retirement, and remove cargo markets after genuine hull destruction.
 - [AI controller identity](MiscBugFixes/FREIGHT-CONTROLLER-IDENTITY.md): prevent station collisions from assigning a second local controller to an active freighter and stranding its cargo when that controller deletes the ship.
 - [Remote barter](MiscBugFixes/BarterRemovalPatch.cs): remove sold items from an unloaded ship's saved inventory instead of paying for them while leaving them available to sell again.
 - [Remote repurchases](MiscBugFixes/MULTI-SHIP-BARTER-AUDIT.md): preserve delivered items when remote inventories are saved and restore temporary coordinates even if saving fails.
@@ -128,6 +131,7 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 - [Scavenger returns](Navigation/SCAVENGER-WAITING.md): try a feasible station return after random scavenging-job selection fails while preserving successful jobs and normal navigation.
 - [Orbital waiting](Navigation/SCAVENGER-WAITING.md): let free, unpowered AI ships coast under gravity on supported bound trajectories that clear the body and atmosphere, preserving other native waits.
 - [Bounty persistence](Navigation/BOUNTY-PRESERVATION.md): protect active bounty targets and their original ships from administrative cleanup while retaining station stays, later departures and physical death.
+- [Retiring pilots](Navigation/CREW-RETIREMENT.md): return stale-ship crews to compatible offscreen stations even when full, keeping them available for recruitment and normal population management.
 - [NPC gender distribution](Population/README.md): generate random NPCs with 49.5% male, 49.5% female and 1% non-binary probabilities without changing authored characters.
 - [Ceres navigation](CeresNavigation/README.md): reserve fuel for the trip home when choosing patrols and deciding when to end a chase.
 
@@ -178,11 +182,13 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 - [Station-docked hull exemption](Navigation/STATION-DOCKED-COLLISIONS.md): choose in the PDA app whether station-connected ships cause collisions, AI avoidance and proximity warnings.
 - [Proximity alarm dial](NavConsole/README.md): select a ship's warning range of 5, 10, 15 or 20 km from the nav console.
 - [Nav/comms scrollbacks](NavConsole/README.md#comms-and-diagnostic-scrollbacks): support draggable scrollbars and reliable mouse-wheel scrolling, with comms auto-follow suspended while reading older messages.
+- [Single-port docking](QoL/Docking/README.md): skip the target-port menu when comms offers one eligible choice, with a saved PDA toggle and the native clearance process preserved.
 - [Course-plot fine controls](QoL/CoursePlot/README.md): adjust ACCEL LIMIT in 0.01 G steps or DRIFT PHASE in 0.01 steps with the mouse wheel while retaining the game's Shift-drag precision control.
-- [Hide nav tutorial note](NavConsole/README.md): hide the clickable "Don't crash!" paper through a saved PDA setting so it no longer obscures console controls.
+- [Hide nav tutorial note](NavConsole/README.md): fold and hide the clickable "Don't crash!" paper through a saved PDA setting without blocking map contact selection on new or restored consoles.
 
 #### Crew and shipboard conveniences
 
+- [Wreck damage severity](QoL/WreckSeverity/README.md): soften initial derelict damage with a configurable curve that favors salvageable wrecks while preserving native damage rolls and regional loot restrictions.
 - [Quick PDA hacking](QoL/PdaHacking/README.md): offer PDA unlocking directly in the quick-action menu for characters with Hacking while retaining the game's requirements and effects.
 - [Venus dolly handling](Venus/DOLLY-ENCUMBRANCE.md): reduce dolly-and-payload encumbrance by 90% on Venus aerostats and docked ships to approximate wheeled handling.
 - [Alternative autotask](AlternativeWork/README.md): favor nearby, reachable work with available supplies and avoid reserving jobs on ships the worker is forbidden to enter.
@@ -200,6 +206,8 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 - [Bounty indicators](QoL/BOUNTY-INDICATORS.md): mark missing targets, including those moved to the offscreen holding pool, as MIA in bounty lists and details.
 
 #### Diagnostics and maintenance
+
+- [NPC obituary evidence](Diagnostics/Obituaries/README.md): automatically retain bounded external records of NPC deaths and living removals, with caller stacks and pre-destruction ship state for investigating simulation defects.
 
 - [Maintenance commands](MiscBugFixes/README.md): repair item and character masses with `massfix`, recover damaged navigation references with `navfix`, and inspect phantom cargo pods with `cargopodfix`.
 - [Console noise](MiscBugFixes/README.md): hide routine electrical-audit, missing-glyph and recovered gas-buffer messages from the player console while retaining diagnostic logs.

@@ -29,6 +29,8 @@ namespace Ostrabus {
             global::Ostrabus.Venus.VenusDerelicts.Initialize(Config);
             global::Ostrabus.NavConsole.TutorialNote.HideFlag = Config.Bind("NavConsole", "HideTutorialNote", false, "Hide the clickable Don't crash! tutorial paper on nav consoles. Change live in the PDA Mod Settings app.");
             global::Ostrabus.QoL.AutoVents.AutoVentControl.Initialize(Config);
+            global::Ostrabus.QoL.WreckSeverity.WreckSeverity.Initialize(Config);
+            global::Ostrabus.QoL.Docking.SinglePortDocking.Initialize(Config);
             SceneManager.sceneUnloaded += global::Ostrabus.QoL.AutoVents.AutoVentControl.SceneUnloaded;
             global::Ostrabus.Hotkeys.FunctionalHotkeys.Flag = Config.Bind("Hotkeys", "Enabled", true, "Enable functional crew hotkeys in normal crew view. Shift+R toggles Open Airlock; Shift+T toggles Disembark for the selected controllable crew member.");
             global::Ostrabus.Hotkeys.EquipmentShortcut.Binding = Config.Bind("Hotkeys", "EquipmentShortcut", "Shift+F", "Toggle the selected crew member's helmet and worn EVA suit battery. Rebind in the PDA Mod Settings app.");
@@ -49,6 +51,7 @@ namespace Ostrabus {
             global::Ostrabus.Optimizations.SystemInitBatchPatch.BudgetMs = Config.Bind("Optimizations", "SystemInitBudgetMs", 4d, "Cooperative work budget per frame for cheap saved-system restoration; clamped to 0.5-8 ms. Restart to apply.").Value;
 
             // Apply Harmony patches
+            global::Ostrabus.Diagnostics.Obituaries.ObituaryRecorder.Initialize(Config);
             _harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             _harmony.PatchAll(typeof(OstrabusPlugin).Assembly);
             SceneManager.sceneUnloaded += global::Ostrabus.Diagnostics.WorkTrace.SceneUnloaded;
@@ -72,6 +75,7 @@ namespace Ostrabus {
         }
 
         private void OnDestroy() {
+            global::Ostrabus.Diagnostics.Obituaries.ObituaryRecorder.Stop();
             CrewSim.OnGameFinishedLoading.RemoveListener(global::Ostrabus.Optimizations.CommsHistory.Loaded);
             CrewSim.OnGameFinishedLoading.RemoveListener(global::Ostrabus.NavConsole.Outlines.HullDisplay.Loaded);
             SceneManager.sceneUnloaded -= global::Ostrabus.NavConsole.Outlines.HullDisplay.SceneUnloaded;
@@ -114,7 +118,7 @@ namespace Ostrabus {
         // Harmony ownership. The project, assembly and displayed name are Ostrabus.
         public const string PLUGIN_GUID = "com.ostranauts.template";
         public const string PLUGIN_NAME = "Ostrabus";
-        public const string PLUGIN_VERSION = "0.7.0";
+        public const string PLUGIN_VERSION = "0.7.1";
     }
 }
 

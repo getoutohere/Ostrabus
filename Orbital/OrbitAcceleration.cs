@@ -30,7 +30,7 @@ internal static class OrbitAcceleration {
         // A stationary placeholder still inherits the acceleration of its parents.
         if (a == 0 && b == 0) return true;
         double ecc = body.fEcc, period = body.fPeriod, phase = body.fPeriodShift, angle = body.fAngle;
-        if (a < 0 || b < 0 || !Finite(ecc) || ecc < 0 || ecc >= 1 || !Finite(period) || period <= 0 || !Finite(phase) || !Finite(angle)) return false;
+        if (a < 0 || b < 0 || !Finite(ecc) || ecc < 0 || ecc >= 1 || !Finite(period) || period == 0 || !Finite(phase) || !Finite(angle)) return false;
         double mean = 2 * Math.PI * (((epoch + phase) % period) / period);
         if (!Finite(mean)) return false;
         if (mean < 0) mean += 2 * Math.PI;

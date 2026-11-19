@@ -2,8 +2,8 @@
   {
     "strName": "Ostrabus CO2 Scrubber Audio",
     "strAuthor": "Jon",
-    "strGameVersion": "1.1.0.2",
-    "strModVersion": "0.7.0",
+    "strGameVersion": "1.1.0.3",
+    "strModVersion": "0.7.1",
     "strNotes": "Restore the CO2 scrubber's device sound without the extra generic air-pump loops introduced by 1.1."
   }
 ]

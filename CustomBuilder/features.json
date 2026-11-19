@@ -165,8 +165,9 @@
     },
     {
       "id": "ai-rendezvous",
-      "title": "Separate NPC RCS and torch limits and reject unconverged AI rendezvous",
+      "title": "Correct NPC RCS limits, rendezvous convergence and planetary route clearance",
       "category": "bugfix",
+      "requires": ["ai-avoidance", "ai-flight-controls", "route-completion"],
       "patchFiles": ["Navigation/AiRendezvousPatch.cs"]
     },
     {
@@ -230,6 +231,18 @@
       "patchFiles": [
         "MiscBugFixes/AiCrewIdentityPatch.cs"
       ]
+    },
+    {
+      "id": "ai-crew-recruitment",
+      "title": "Keep regional crew recruitment sources intact between searches",
+      "category": "bugfix",
+      "patchFiles": ["MiscBugFixes/AiCrewRecruitmentPatch.cs"]
+    },
+    {
+      "id": "ai-crew-retirement",
+      "title": "Return retiring pilots to compatible offscreen stations even when full",
+      "category": "simulation",
+      "patchFiles": ["Navigation/CrewRetirementPatch.cs"]
     },
     {
       "id": "population-gender",
@@ -815,6 +828,31 @@
       ]
     },
     {
+      "id": "single-port-docking",
+      "title": "Skip the target-port menu when docking offers only one choice",
+      "category": "qol",
+      "patchFiles": [
+        "QoL/Docking/SinglePortDocking.cs"
+      ],
+      "before": [
+        "global::Ostrabus.QoL.Docking.SinglePortDocking.Initialize(Config);"
+      ],
+      "settings": [
+        "single_docking_port"
+      ]
+    },
+    {
+      "id": "wreck-severity",
+      "title": "Soften initial wreck damage with a configurable severity curve",
+      "category": "qol",
+      "patchFiles": [
+        "QoL/WreckSeverity/WreckSeverityPatch.cs"
+      ],
+      "before": [
+        "global::Ostrabus.QoL.WreckSeverity.WreckSeverity.Initialize(Config);"
+      ]
+    },
+    {
       "id": "proximity-range",
       "title": "Add a proximity warning range dial",
       "category": "qol",
@@ -1016,6 +1054,7 @@
       "category": "simulation",
       "requires": [
         "orbital",
+        "ai-rendezvous",
         "route-completion",
         "sff-navigation-destination"
       ],
@@ -1063,6 +1102,7 @@
       "id": "cargo-loading",
       "title": "Correct freight loading, market accounting and arrival handoffs",
       "category": "bugfix",
+      "requires": ["navigation-targets"],
       "patchFiles": [
         "Orbital/Economy/CargoLoadingPatch.cs",
         "Orbital/Economy/MarketStockPatches.cs",
@@ -1255,6 +1295,14 @@
       "settings": [
         "worktrace"
       ]
+    },
+    {
+      "id": "obituaries",
+      "title": "Bounded automatic NPC death and lifecycle evidence log",
+      "category": "developer",
+      "patchFiles": [ "Diagnostics/Obituaries/ObituaryHooks.cs" ],
+      "before": [ "global::Ostrabus.Diagnostics.Obituaries.ObituaryRecorder.Initialize(Config);" ],
+      "stop": [ "global::Ostrabus.Diagnostics.Obituaries.ObituaryRecorder.Stop();" ]
     },
     {
       "id": "torchtrace",

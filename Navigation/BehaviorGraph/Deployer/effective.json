@@ -246,7 +246,7 @@
       "anchors": [
         "internal static bool RejectCourse("
       ],
-      "sha256": "d8f07c881345ed815ce280f99ab61550b6dc9442a82ec0c30dbf807fa0b4f4ac"
+      "sha256": "4e1d17d322198bbeacbfb848695d2ab9549023f730073a8868cf6160a122fb57"
     },
     "avoidance_route": {
       "origin": "repo",
@@ -255,7 +255,7 @@
       "anchors": [
         "internal static bool TryCollision("
       ],
-      "sha256": "7f11ece29eb4fea47887de732cda2f0c537404d3122f2d322b6472ceb20a49a1"
+      "sha256": "a52c7bcfdf88dcb6c6b902465030bc39bfe6ff9137fb0a28b172df24e4bdb280"
     },
     "avoidance_query": {
       "origin": "repo",
@@ -264,7 +264,7 @@
       "anchors": [
         "internal static State BeginFlight("
       ],
-      "sha256": "27e0de71024928a55d9f01b7a90948c5b2317da75080585adf5d6a7404874e00"
+      "sha256": "b7f5773492f89cb1b9447c8b2de33211e0537553692b4ed9affb9e76084c424b"
     },
     "avoidance_geometry": {
       "origin": "repo",
@@ -282,7 +282,7 @@
       "anchors": [
         "internal static class NativeEphemeris"
       ],
-      "sha256": "602b2c8fd83fd5d3f62fb194c91b347747f1bd2b973755124da347d5a300775e"
+      "sha256": "378f1d4aee11121e2c79952b18399b9a33288b06b43df95ea58a5be37253208c"
     },
     "avoidance_frame": {
       "origin": "repo",
@@ -291,7 +291,7 @@
       "anchors": [
         "internal static class OrbitAcceleration"
       ],
-      "sha256": "3f21742d25891cccb06ebdbe9586a8aeb622c525748058fc060aa715b8bf17c7"
+      "sha256": "1767bb9d10d9e16e380b8296857e6a98993942ae4a6c615425b0154fab9d6d62"
     },
     "avoidance_motion": {
       "origin": "repo",
@@ -341,7 +341,7 @@
         "internal static void Removed(",
         "internal static void Restored("
       ],
-      "sha256": "fad1ca49e22dae616ae753bb1c10c90b1a5083a5e9af6fc235728f86806cfd57"
+      "sha256": "3988152bd9d0c3cee640777997113c6ad19204c39604d1d50bab924935f67fa3"
     },
     "local_frame_navy": {
       "origin": "game",

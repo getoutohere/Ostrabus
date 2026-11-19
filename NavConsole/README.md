@@ -47,8 +47,7 @@ native (newest first); it does not acquire comms-style bottom following.
 Bindings are discovered independently during native map and docking/comms UI
 initialization: their RawImages belong to separate `GUIOrbitDraw` and
 `GUIDockSys` prefabs. Comms following does not depend on the map being active,
-its editing mode, or the tutorial-paper flag (which can remain true while the
-paper is hidden). Scroll distances use native ScrollRect content/view bounds
+its editing mode, or the tutorial-paper flag. Scroll distances use native ScrollRect content/view bounds
 in viewport units, without a world-scale cutoff for offscreen canvases.
 Input runs in
 the existing UI callbacks with no extra Update component, timer or background
@@ -79,8 +78,13 @@ The PDA Mod Settings app also offers **Hide nav tutorial note**. This hides the
 entire clickable "Don't crash!" paper, including its click target. The setting
 persists in BepInEx config (`NavConsole.HideTutorialNote`, default false), applies
 immediately to existing consoles and is applied when new nav UIs initialize.
-There is no per-frame polling or save data change; turning it off restores the
-native note. Removing the mod restores vanilla behavior.
+Hiding also folds the paper through `GUIOrbitDraw.SetNoteInitial(false)` so
+`MouseHandler` does not block contact selection behind an invisible open note.
+This is reapplied after `GUIOrbitDraw.Init` restores a new or saved console's
+state; disabling the option preserves the native note behavior. There is no
+per-frame polling or additional save data. Removing the mod restores vanilla
+behavior. `Tests/NavConsoleCheck` covers the native open flag and initialization
+hook for fresh consoles and saved open/closed notes.
 
 ## Proximity range dial
 

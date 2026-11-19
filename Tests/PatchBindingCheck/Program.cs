@@ -35,6 +35,10 @@ static class Program {
         engine.Patch(AccessTools.Method(typeof(UnityEngine.Shader), nameof(UnityEngine.Shader.PropertyToID), new[] { typeof(string) }),
             prefix: new HarmonyMethod(typeof(Program), nameof(ShaderId)));
         var assembly = typeof(Ostrabus.OstrabusPlugin).Assembly;
+        // The full build enables obituaries at startup. Bind those observers
+        // alongside existing lifecycle patches without opening files or a scene.
+        assembly.GetType("Ostrabus.Diagnostics.Obituaries.ObituaryRecorder", throwOnError: false)?
+            .GetField("Enabled", BindingFlags.Static | BindingFlags.NonPublic)?.SetValue(null, true);
         var source = new ManualLogSource("CompatibilityCheck");
         int warnings = 0, failures = 0, classes = 0, skipped = 0;
         var report = new List<object>();

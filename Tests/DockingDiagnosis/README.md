@@ -35,3 +35,25 @@ obstruction remains. Controlled loaded-object fixtures test the native Full
 branch with stand-ins for Unity position reads, plus scope nesting/exception
 cleanup and unchanged source data. Engine icall warnings are expected outside
 Unity; no live scene or save is modified.
+
+## RES1 accumulated-coordinate reproduction (2026-11-19)
+
+Run `Tests/DockingDiagnosis/Run-Res1.ps1` from PowerShell. The compressed,
+geometry-only fixtures under `Tests/Fixtures/Docking/Res1` reproduce the player's
+two ports, OKLG, RES1 and RES1's complete connected docking group. The script
+expands them under `obj`, then runs separate vanilla and production-patched
+processes through the game's bundled Mono and installed asset footprints.
+
+RES1's sole free port is at Y=-107.4998; nearby floor pieces also accumulated
+translation error exceeding the original 0.0001 bound. The temporary native
+grid loses that port. Partial normalization also loses two OKLG ports, explaining
+the native `GridUtils.CreateFullGrid` error about its connection to O-GXD.
+The revised bound is below 0.001 tile (0.32 mm), confined to docking-fit reads.
+No transforms, saved coordinates, rotations or native overlap rules change.
+
+The vanilla replay must reproduce RES1's missing primary port; the corrected
+native fit must accept both player ports at RES1's free primary port and keep
+OKLG's genuine third-port obstruction. Connected ships remain in the fit grid.
+The replay also checks unchanged saved geometry and scope cleanup, and runs
+numerical bounds plus loaded-object grid tests including +/-0.0002 tile errors.
+Unity transform reads in those loaded-object tests remain controlled fixtures.

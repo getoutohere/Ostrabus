@@ -57,11 +57,15 @@ static class PrecisionChecks {
         Check(!DockingGridPrecision.Active,"Exception leaked scope");
         state=DockingGridPrecision.Enter();int nested=DockingGridPrecision.Enter();DockingGridPrecision.Exit(nested);
         Check(DockingGridPrecision.Active,"Nested scope cleared parent");DockingGridPrecision.Exit(state);
+        RunGeometryChecks();
+        Console.WriteLine($"Passed {checks} docking precision checks. Primary fits all three; Secondary's real obstruction remains.");
+    }
+    internal static void RunGeometryChecks() {
         for(int n=-2000;n<=2000;n++) {
             float exact=n*.5f;
             Check(DockingGridPrecision.Snap(exact)==exact,"Exact coordinate changed");
-            foreach(float error in new[]{-.00004f,.00004f})Check(DockingGridPrecision.Snap(exact+error)==exact,"Near-grid coordinate not corrected");
-            foreach(float error in new[]{-.0002f,.0002f})Check(DockingGridPrecision.Snap(exact+error)==exact+error,"Off-grid coordinate changed");
+            foreach(float error in new[]{-.00004f,.00004f,-.0002f,.0002f,-.0008f,.0008f})Check(DockingGridPrecision.Snap(exact+error)==exact,"Near-grid coordinate not corrected");
+            foreach(float error in new[]{-.002f,.002f})Check(DockingGridPrecision.Snap(exact+error)==exact+error,"Off-grid coordinate changed");
         }
         Check(float.IsNaN(DockingGridPrecision.Snap(float.NaN)),"NaN changed");
         Check(float.IsPositiveInfinity(DockingGridPrecision.Snap(float.PositiveInfinity)),"Infinity changed");
@@ -76,13 +80,13 @@ static class PrecisionChecks {
         AccessTools.Field(typeof(CondOwner),"_strID").SetValue(co,"brace");
         var map=new DictionaryArray<string,CondOwner>();map["brace"]=co;AccessTools.Field(typeof(Ship),"mapICOs").SetValue(full,map);
         fakePosition=new Vector3(10,8.5f,0);string exactFull=Signature(GridUtils.CreateFullGrid(full));
-        state=DockingGridPrecision.Enter();
+        int state=DockingGridPrecision.Enter();
         try {
-            foreach(float y in new[]{8.499999f,8.500001f}) {fakePosition=new Vector3(10,y,0);Check(Signature(GridUtils.CreateFullGrid(full))==exactFull,"Loaded half-tile correction failed");}
-            foreach(float y in new[]{8.999999f,9.000001f}) {fakePosition=new Vector3(10,9,0);string integerFull=Signature(GridUtils.CreateFullGrid(full));fakePosition=new Vector3(10,y,0);Check(Signature(GridUtils.CreateFullGrid(full))==integerFull,"Loaded whole-tile correction failed");}
+            foreach(float y in new[]{8.499999f,8.500001f,8.4998f,8.5002f}) {fakePosition=new Vector3(10,y,0);Check(Signature(GridUtils.CreateFullGrid(full))==exactFull,"Loaded half-tile correction failed");}
+            foreach(float y in new[]{8.9998f,9.0002f,8.999999f,9.000001f}) {fakePosition=new Vector3(10,9,0);string integerFull=Signature(GridUtils.CreateFullGrid(full));fakePosition=new Vector3(10,y,0);Check(Signature(GridUtils.CreateFullGrid(full))==integerFull,"Loaded whole-tile correction failed");}
         } finally {DockingGridPrecision.Exit(state);}
         Check(fakePosition.y==9.000001f,"Live transform position mutated");
         Check(!DockingGridPrecision.Active,"Final scope leak");
-        Console.WriteLine($"Passed {checks} docking precision checks. Primary fits all three; Secondary's real obstruction remains.");
+        Console.WriteLine($"Passed {checks} docking numerical/loaded-grid checks.");
     }
 }

@@ -17,7 +17,7 @@ using Ostranauts.Systems;
 // Actual native retirement, region recycling, stale worker, trigger evaluation
 // and bounty reactivation. Unity rendering, physical CO movement, destructive
 // teardown and controller construction are instrumented test boundaries.
-static class Program {
+static partial class Program {
     static int checks, caughtUp, activations, shipDestroys, personDestroys;
     static float reputation;
     static bool throwMove;
@@ -40,6 +40,7 @@ static class Program {
     static bool Log(string __0) { logs.Add(__0); return false; }
     static bool DestroyPerson(CondOwner __instance) {
         personDestroys++; __instance.bDestroyed = true;
+        if (populationFixture && __instance.ship != null) People(__instance.ship).Remove(__instance.pspec);
         DataHandler.mapCOs.Remove(__instance.strID); return false;
     }
     static bool DestroyShip(Ship __instance) { shipDestroys++; __instance.bDestroyed = true; return false; }
@@ -313,6 +314,7 @@ static class Program {
             Dock(true, "condition", true); Regional(true, true);
             PolicyControls(); CustodyAndHandIn(); ExceptionsAndGuards();
             Console.WriteLine("Bounty preservation: " + checks + " checks passed.");
+            RetirementCases(boundary, policy);
         } finally { policy.UnpatchSelf(); boundary.UnpatchSelf(); BountyManager.Bounties.Clear(); CrewSim.system = null; CrewSim.coPlayer = null; }
     }
 }

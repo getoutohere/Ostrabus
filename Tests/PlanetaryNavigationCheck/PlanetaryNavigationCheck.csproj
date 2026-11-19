@@ -7,6 +7,9 @@
     <Compile Include="../../Navigation/AvoidanceQuery.cs" Link="AvoidanceQuery.cs" />
     <Compile Include="../../Navigation/AvoidanceRouteForecast.cs" Link="AvoidanceRouteForecast.cs" />
     <Compile Include="../../Navigation/AvoidanceFlightPatch.cs" Link="AvoidanceFlightPatch.cs" />
+    <Compile Include="../../Navigation/AiRendezvousPatch.cs" Link="AiRendezvousPatch.cs" />
+    <Compile Include="../../Navigation/CelestialRoutes.cs" Link="CelestialRoutes.cs" />
+    <Compile Include="../../Navigation/NavigationRoute.cs" Link="NavigationRoute.cs" />
     <Compile Include="../../Navigation/ConstantAccelerationApproach.cs" Link="ConstantAccelerationApproach.cs" />
     <Compile Include="../../Navigation/StationDockedCollisions.cs" Link="StationDockedCollisions.cs" />
     <Compile Include="../../NavConsole/ProximityCollisionPatch.cs" Link="ProximityCollisionPatch.cs" />

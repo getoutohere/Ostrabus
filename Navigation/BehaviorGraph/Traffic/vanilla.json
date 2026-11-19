@@ -416,7 +416,7 @@
       "anchors": [
         "class ShipTargetLifetime"
       ],
-      "sha256": "fad1ca49e22dae616ae753bb1c10c90b1a5083a5e9af6fc235728f86806cfd57"
+      "sha256": "3988152bd9d0c3cee640777997113c6ad19204c39604d1d50bab924935f67fa3"
     },
     "patch_fuel": {
       "origin": "repo",
@@ -445,7 +445,7 @@
         "class PassPendingEndTurnsPatch",
         "CompletePendingEndTurns"
       ],
-      "sha256": "0e171ca69705de51050f24de886d644a613ae00ea10c90976da1cbee563b7aad"
+      "sha256": "3cf06f1a44cacd78ef9112f2468352db49f4d6e0593bbc8560a12015f896310c"
     },
     "jump_discontinuity": {
       "origin": "repo",
@@ -921,7 +921,7 @@
         "class AiRendezvousValidationPatch",
         "class FreightRendezvousFailurePatch"
       ],
-      "sha256": "5e2aa519ef6d9e22df3e51e55b3fc63774fbb157d7d953d3c6219f263cddbbb1"
+      "sha256": "bf731ac0fd6beabab4a64e2bb0bd507849d84de94674259440bdaa321af68378"
     },
     "rendezvous_limiter": {
       "origin": "game",
@@ -940,7 +940,7 @@
         "PlanningChecks",
         "FailureChecks"
       ],
-      "sha256": "0adf10c5f94fba19fa455afdb05f5aa901d5be3137beea702c5d339985e07db3"
+      "sha256": "5dab66eb74fb12f6fb6410d0c12cb99082e9a8688c75b41effbb23d6a25c4b98"
     },
     "sff_dynamics": {
       "origin": "repo",
@@ -950,7 +950,7 @@
         "class SffDynamics",
         "seconds = (start + seconds) - start"
       ],
-      "sha256": "87e4f04de7b34a76fed1ddee2101047ca40a2a335b915130de6d7bde849f1ed2"
+      "sha256": "5c3cac1c3d22ab5655028cfe8a095d66e03942cc6dae79e5d585b75066f574c6"
     },
     "sff_timing_checks": {
       "origin": "repo",

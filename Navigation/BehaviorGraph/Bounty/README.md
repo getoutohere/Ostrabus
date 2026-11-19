@@ -13,6 +13,12 @@ Compare [vanilla](VANILLA.md), [effective](EFFECTIVE.md), and the
 [BountyDepartureCheck](../../../Tests/BountyDepartureCheck/README.md).
 The slice passes 126 conditional scenario expectations and model safety checks.
 
+The 0.7.1 review refreshed the preservation harness fingerprint after it began
+calling the separate routine-retirement suite. All 174 bounty preservation
+checks still pass. The added 26 retirement/population checks validate
+`CrewRetirementPatch` separately; they do not expand this graph into a general
+NPC retirement model or change its bounty-policy outcomes.
+
 The model distinguishes:
 
 - A native due `MoveTargets` selection, including custody/load eligibility, from

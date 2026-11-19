@@ -36,6 +36,8 @@ static int Run(string[] args) {
     Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Object::GetOffsetOfInstanceIDInCPlusPlusObject", Marshal.GetFunctionPointerForDelegate(objectOffset));
     RandomValue unscaledTime = () => 0f;
     RandomValue deltaTime = () => 1f / 60;
+    RandomValue timeScale = () => 1f;
+    Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_timeScale", Marshal.GetFunctionPointerForDelegate(timeScale));
     Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_deltaTime", Marshal.GetFunctionPointerForDelegate(deltaTime));
     Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_unscaledTime", Marshal.GetFunctionPointerForDelegate(unscaledTime));
     Export<AddInternalCall>("mono_add_internal_call")("UnityEngine.Time::get_frameCount", Marshal.GetFunctionPointerForDelegate(frameValue));
@@ -56,6 +58,7 @@ static int Run(string[] args) {
     GC.KeepAlive(floatRange); GC.KeepAlive(intRange); GC.KeepAlive(randomValue); GC.KeepAlive(frameValue);
     GC.KeepAlive(unscaledTime);
     GC.KeepAlive(deltaTime);
+    GC.KeepAlive(timeScale);
     GC.KeepAlive(objectOffset);
     Marshal.FreeHGlobal(argv);
     foreach (IntPtr text in strings) Marshal.FreeCoTaskMem(text);

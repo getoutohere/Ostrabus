@@ -78,6 +78,20 @@ static partial class EconomyChecks {
         stagedPlan=(planner,a,b)=>Leg(p.Ship,a.ArrivalTime,3600,0,.01*OrbitalMotion.KmPerAU,a.FuelLevel,a.TorchFuelLevel);
         var absent=new FreightRoute(p,hulls["DEST"],start,start+21600,new SffEnvironment(),null);
         check(absent.Prepare() && absent.StagesPlanned==1 && absent.Arrival==start+3600,"Torch-capable freight with no stored course plans rather than using interplanetary RCS");
+        Setup(); p=StagePilot();
+        hulls["DEST"].objSS.vBOOffsetx = hulls["DEST"].objSS.vPosx = 0;
+        first=Leg(p.Ship,start,600,30,20,100,100);
+        stagedPlan=(planner,a,b)=>null;
+        // Accounting control in clear space: do not put a zero-radius synthetic
+        // gravity source at the receiver's exact center and count it as a hull hit.
+        var environment=new SffEnvironment();environment.Bodies.Add(new SffBody(new BodyOrbit(new JsonBodyOrbitSave {
+            strName="distant-control",fAxis1=2,fAxis2=2,fPerh=1,fAph=1,fPeriod=1e20,nOrbitDirection=1 })));
+        var manual=new FreightRoute(p,hulls["DEST"],start,start+7200,environment,first);
+        bool prepared=manual.Prepare();
+        check(prepared && manual.Arrival<start+7200,"Close rejected final plot can finish through existing numerical steering: prepared="+prepared+", speed="+p.AICharacter.MaxSpeed(false)+", accel="+p.Ship.RCSAccelMax+", steps="+manual.Approach.Steps+", impact="+manual.Approach.Impact?.Native.strName);
+        manual.Apply();
+        check(p.Ship.fShallowRCSRemass==90 && p.Ship.fShallowFusionRemain==95,"Manual fallback does not refund the preceding completed leg");
+        check(p.Ship.objSS.NavData==null,"Manual fallback does not reinstall the rejected final course");
         Setup();
     }
 }

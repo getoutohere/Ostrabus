@@ -32,7 +32,7 @@ class Program {
             var il=((IEnumerable<CodeInstruction>)reader.Invoke(null,new object[]{AccessTools.Method(typeof(GridUtils),"CreateDockingPortGrid"),null})).ToList();
             for(int i=0;i<il.Count;i++) if(il[i].opcode==System.Reflection.Emit.OpCodes.Add) { Console.WriteLine("ADD "+i); foreach(var line in il.Skip(Math.Max(0,i-6)).Take(9))Console.WriteLine(line); } return;
         }
-        if(Environment.GetEnvironmentVariable("DOCK_TEST")=="1") PrecisionChecks.Install();
+        if(Environment.GetEnvironmentVariable("DOCK_TEST")=="1" || Environment.GetEnvironmentVariable("DOCK_STUDY_PATCH")=="1") PrecisionChecks.Install();
         DataHandler.dictCOs=Load<JsonCondOwner>("condowners",j=>j.strName);
         DataHandler.dictCOOverlays=Load<JsonCOOverlay>("cooverlays",j=>j.strName);
         DataHandler.dictItemDefs=Load<JsonItemDef>("items",j=>j.strName);
@@ -42,6 +42,7 @@ class Program {
             var d=new DataCO(j); DataHandler.dictItemDefs.TryGetValue(j.strItemDef??"",out d.JItmDef); DataHandler.dictDataCOs[j.strName]=d;
         }
         foreach(var j in DataHandler.dictCOOverlays.Values) if(DataHandler.dictDataCOs.TryGetValue(j.strCOBase,out var d)) DataHandler.dictDataCOs[j.strName]=d;
+        if(Environment.GetEnvironmentVariable("DOCK_STUDY") is string study) { SavedFitStudy.Run(study);return; }
         var incoming=Make("O-GXD");var station=Make("OKLG");
         if(Environment.GetEnvironmentVariable("DOCK_TEST")=="1") { PrecisionChecks.Run(station,incoming);return; }
         foreach(var s in new[]{incoming,station}) {
