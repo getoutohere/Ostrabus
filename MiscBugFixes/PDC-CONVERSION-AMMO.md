@@ -1,6 +1,33 @@
 # PDC ammunition regenerated during conversion
 
-Always enabled by `PdcConversionAmmoPatch`.
+Retired from the production plugin for Ostranauts 1.1.0.4. The historical
+prefix is preserved only in `Tests/PdcAmmoCheck/HistoricalPdcConversionAmmoPatch.cs`.
+
+## Native resolution in 1.1.0.4
+
+The update changes 50 install/uninstall and 20 repair recipes from `aLootCOs`
+to `strLootOut`, including all 21 PDC conversion recipes. Native
+`global::Installables.Create(JsonInstallable)` now uses the existing loot
+definitions in `loot_self_reference.json`, whose `bSuppress=true` flag reaches
+`global::Interaction.ApplyEffects()` as `bLoot=!objLootModeSwitch.bSuppress`.
+`global::DataHandler.GetCondOwner(...)` consequently does not generate a new
+starting magazine. Its normal inventory transfer still preserves existing rounds.
+
+The remaining PDC power/damage mode outputs already select suppressed loot.
+The other native same-ID factory callers either explicitly disable starting
+loot, operate only on locks, or require Open/Closed names absent from every PDC
+variant. The factory call inventory can be regenerated with
+`Tools/NavigationOwnershipAudit`'s `factory` command. Ordinary new spawns keep
+their authored starting ammunition.
+
+The native recipe/factory comparison passes for all 21 PDC recipes without
+our historical hook: old assets produce 75 extra rounds with the deterministic
+midpoint roll; 1.1.0.4 assets produce zero. The full suite passes 368 checks.
+Unity object construction and the engine-heavy `SetData` leaf remain stubbed;
+this is not a full scene-level `ModeSwitch` execution. Old custom-builder
+profiles may retain `pdc-ammo`; that hidden compatibility ID adds no hooks.
+
+The sections below describe the original defect and retired repair.
 
 ## Root cause
 
@@ -24,7 +51,7 @@ drop rounds nearby. Repeating conversion can repeatedly create ammunition,
 including refilling a previously empty gun. The same mechanism can affect
 other PDC mode conversions if their caller enables loot.
 
-## Patch boundary
+## Historical patch boundary
 
 The prefix changes only the factory's bLoot argument when all are true:
 

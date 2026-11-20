@@ -1,5 +1,114 @@
 # Planetary avoidance: O-ENB / Ganymed
 
+## Astern approach follow-up, 2026-11-19
+
+Heavy Dragon (V-HZ0GD, civilian Jacob Andrade) retreated toward OKLG after
+detecting the player as a threat. Its ATC log repeatedly records
+`SHIPCorrectingCourse`, emitted by native `FlyToManual.RunCommand` on its
+collision-evasion branch. Its recorded 14.2245 m/s2 lateral acceleration matches
+the native `AIShipManager.AIIntercept2` half-cap, 1.45 g. This is not evidence
+that Ostrabus increased available thrust or added a dedicated anti-boarding AI.
+
+However, the geometry integration preserves the native doubling of the moving
+ship's collision-prediction circle and enlarges circles to enclose the corrected
+exteriors. That combination can trigger a full dodge during a physically clear
+pass. The pre-encounter save's production hull reconstruction gives exterior
+radii of 1,046.52 m for Heavy Dragon and 1,145.43 m for Stellar Magnificence;
+their native radii were 920 m and 500 m. The resulting AI warning radius is
+about 3,239 m, versus 2,340 m under native sizing and a 2,192 m sum of actual
+exterior enclosing radii.
+
+Using the same-epoch captured positions and velocities with both ships coasting,
+the minimum centre separation during 30 seconds is 2,673.86 m. This is clear
+even under the exterior enclosing circles, regardless of hull orientation.
+The actual native `CollisionManager.WillCollide` reports false; the production
+predictor with current padded bounds reports true; unpadded exterior bounds
+report false. A genuine rear-end collision still reports true. The four-check
+`Tests/PlanetaryNavigationCheck` diagnostic mode `astern-replay` records this
+A/B control. Its private input directory is
+`obj/DockingTarget-20261119-V-HZ0GD`.
+
+The live captures were already evasive, and the geometry comes from the
+pre-encounter save, so this control does not reconstruct each historical dodge
+or prove every warning was false. It does establish that enlarged circular
+clearance can produce unnecessary evasions. The native doubling is deliberate
+clearance policy, not an arithmetic error; simply ignoring every pursuer behind
+the ship would also hide real rear-end threats.
+
+`HullAvoidance` now retains those circles as the cheap candidate filter, then
+uses `HullApproach` to confirm a projected conflict against the cached exterior
+rectangle covers. This applies when both AI avoidance and hull-shaped collisions
+are included and enabled. It follows native route positions and rotations, or
+the existing short acceleration forecast, without issuing steering commands.
+Forced docking still uses native clearance, port and alignment checks; the
+shipped `SHIPForceDockAllow` / `SHIPForceDockAllowLEO` interactions already grant
+`TXTDockingClearance`, so no asset change is required.
+
+The read-only saved-hull replay now runs that production path: the padded test
+warns, while exterior confirmation accepts the clear pass. Native-method tests
+also accept a clamp-ready approach, retain real rear-end/crossing/rotating-hull
+warnings and cover both patch installation orders. Planetary avoidance, the
+RES1 docking replay, normal/SFF/PASS freight regressions and four custom-build
+profiles pass. These results establish the geometry correction, not the complete
+moving forced-docking interaction. The live follow-up below exposed that gap.
+
+The confirmation adds no hooks, item scans or saved state. It reuses the hull
+solver with bounded work and a 0.25 m trajectory approximation allowance plus
+0.01 m numeric margin. Missing geometry, exhausted budgets, unresolved angular
+acceleration inside actual enclosing circles, routed multi-hull groups and
+unsampled route tails retain conservative warnings. Stations, station-connected
+groups and solid-body escape checks keep their existing handling. This removes
+false ship-clearance warnings; it does not guarantee docking against a fleeing
+pilot or exempt genuinely dangerous approaches from behind.
+
+### Live pursuit: limits of the geometry repair
+
+The player deployed the candidate (loaded plugin MVID
+`4607460c-9dd8-42d9-ad0e-16a7511a9eea`) and repeated the Heavy Dragon pursuit.
+The pilot first replaced its buoy trip with a return to OKLG, burned at roughly
+2.9 g along a new native route, then coasted. At epoch `65635286150.259247` it
+announced `SHIPCorrectingCourse`, cancelled that route and applied about 1.45 g
+of lateral evasion. It subsequently generated further return routes and made
+another evasion announcement at `65635286245.321114`. The player observed the
+same disruptive turns. Claiming that the original pursuit problem was fixed
+from the earlier offline checks was incorrect.
+
+The last unsteered sample, epoch `65635286147.885857`, has 6,556.36 m centre
+range and 156.124 m/s closing speed. Both recorded RCS/torch inputs are zero.
+The saved installed hulls, captured orientations and atomic relative velocity
+produce no physical contact in the next 30 seconds at that sample. Extrapolating
+that coast by 2.37339 seconds to the first announcement gives 6,185.82 m range:
+the physical hull sweep and exterior avoidance both then report contact within
+30 seconds. This is a bounded coasting reconstruction, not the exact internal
+warning call or a replay of all subsequent steering. It shows why removing
+inflated-circle warnings alone does not solve a closing docking approach.
+
+The comms capture records `SHIPForceDock` and its `SHIPForceDockAllow` reply
+around the first evasion. `Comms` creates native clearance from the reply's
+authored `TXTDockingClearance` effect. Nevertheless, the player's manual
+crosshair selection leaves `Ship.shipScanTarget` null. Native
+`AIShipManager.IsOnCollisionCourse` excludes the other ship when that field
+targets the querying ship, but does not use docking clearance or the manual
+crosshair for that exclusion. A declared manual docking participant can therefore
+remain an obstacle. Extending that exclusion to manual docking clearance would
+change how a resisting ship reacts to the boarding vessel; it is a separate
+behavioral choice, not another geometry correction.
+
+The native docking event confirms O-GXD ultimately clamped to V-HZ0GD at epoch
+`65635286267.307762`; this does not make the preceding control behavior acceptable.
+Private captures are under
+`obj/ForcedDockAvoidance-20261119/pursuit-20261119-185321`.
+`Tests/HullOutlinesCheck` mode `pursuit-replay` reconstructs the two coasting
+controls read-only and checks the source archive hash. Its fixture does not
+claim to run the entire comms/pursuit/steering lifecycle.
+
+Decision after playtesting: retain the deployed geometry correction and genuine
+evasive resistance. The player found the contested approach and risky clamp
+enjoyable. Do not add the proposed manual-clearance exemption, freeze the target,
+or otherwise guarantee a cooperative approach. No further gameplay change is
+requested for this encounter. This decision does not prove every later steering
+choice optimal or erase the earlier overstatement of what the tests established.
+
 ## Initial accelerating-departure repair (historical)
 
 The first candidate was built/tested offline, then deployed. It failed live on

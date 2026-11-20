@@ -2,6 +2,7 @@
 
 Status: implemented inside Ostrabus as a QoL feature; no standalone plugin.
 Reviewed native versions: 1.0.1.10 and 1.1.0.2; diagnostic call sites reviewed on 1.1.0.3.
+Bonus-source diagnostics are additionally reviewed/tested on 1.1.0.4.
 This is an optional gameplay adjustment, not a vanilla bug repair.
 
 ## Accepted curve
@@ -129,6 +130,42 @@ initialization; aggregate counts/budgets include further rays. Finalization rest
 any enclosing scope even on native exceptions and never suppresses those failures.
 Reports use `ConsoleToGUI.LogInfo` to reach the player regardless of the ordinary
 Unity-log visibility setting, and are also written to BepInEx's log.
+
+With that same flag enabled, two additional conditional Harmony classes observe
+the reviewed bonus award paths. `BeatManager.GenerateRelease` wrappers call its
+original private `Plot`, `SpawnVideotape` and `BonusDerelict` methods exactly once,
+retaining their return values and roll mutations. A temporary thread-local value
+records the preceding decisions; a finalizer restores it on success or exception.
+Only an actual increase of the player's bonus condition emits an award event.
+The message includes the actual bonus roll/threshold and any negative-roll
+fallback, rather than claiming its configured event weight is an independent
+probability in every context.
+
+`Interaction.ApplyLootCT` passes its actual loot and interaction identity to an
+observing wrapper around its existing `CondTrigger.ApplyChanceID` call. Native
+loot selection, trigger eligibility, grant and memory bookkeeping stay in place.
+Only an actual increase of `IsDueBonusDerelict` emits a message. The shipped
+assets identify `CTACTPlayToyDinoBoth` / `TUpIsDueBonusDerelict` as the other
+reviewed grant source. There is no global `CondOwner.AddCondAmount` hook, condition
+scan, persistent history or per-frame callback. Unrecognized native call-site
+layouts retain the original instructions and report the observer unavailable.
+
+The existing `Ship.BreakIn` scope also records the player bonus count before and
+after initialization. A pending bonus is observed even when the ship is outside
+the curve's Derelict/prefill eligibility, because native Used/Damaged initialization
+and developer re-damage can consume it. Those cases do not collect wreck ray
+details or receive the curve. Temporary actor references clear in finalization;
+logging failures cannot replace a native return value or exception.
+
+The native A/B harness executes release selection (including the negative-roll
+fallback), the shipped dinosaur loot through native `GetCTLoot` and interaction
+trigger application, and native bonus grant requests. Unity equality, random
+values, available story plots, condition storage and social-memory effects are
+explicit scene fixtures. Baseline/observed random draw and write counts match;
+normal/repeated/rejected awards, cooldown, exception cleanup, unavailable-layout
+fallback and logging-sink failures are checked. Bonus consumption checks exercise
+the production scope around a fixture native mutation; they do not execute full
+Unity wreck construction. Full-plugin binding also runs with `--wreck-logging`.
 
 ## Implementation acceptance checks
 

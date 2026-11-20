@@ -43,7 +43,7 @@ internal static partial class Program
 
     private static void ImplementationChecks(string work)
     {
-        Check(Plugin.Supports(Plugin.NativeHash) && Plugin.Supports(Plugin.NativeHash1103), "Reviewed 1.1.0.2/1.1.0.3 builds rejected");
+        Check(Plugin.Supports(Plugin.NativeHash) && Plugin.Supports(Plugin.NativeHash1103) && Plugin.Supports(Plugin.NativeHash1104), "Reviewed 1.1.0.2/1.1.0.3/1.1.0.4 builds rejected");
         Check(!Plugin.Supports("unreviewed"), "Unreviewed turnover assembly admitted");
         var h = new Harmony("offline.boneyard-implementation");
         try

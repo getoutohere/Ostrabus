@@ -1,0 +1,230 @@
+[
+    {
+        "strName":  "ItmOstrabusBottleRefiller",
+        "strNameShort":  "Bottle Refiller",
+        "strNameFriendly":  "Wall-mounted Bottle Refiller",
+        "strDesc":  "A wall-mounted four-bottle filling unit. Calibrated for Bingham EVA suit bottle pressure specifications. Owners are advised this unit has NO filtration features. Use of other bottle makes and models voids warranty.",
+        "strItemDef":  "ItmOstrabusBottleRefiller",
+        "strType":  "Item",
+        "aInteractions":  [
+                              "Inventory",
+                              "GUIOstrabusBottleRefiller",
+                              "ACTOstrabusBottleRefillerRepack"
+                          ],
+        "aStartingConds":  [
+                               "IsInstalled=1.0x1",
+                               "IsSalvageValueHigh=1x1",
+                               "IsShipSpecialItem=1.0x1.0",
+                               "IsSolid=1.0x1.0",
+                               "StatBasePrice=1.0x5050.0",
+                               "StatDismantleProgressMax=1.0x140",
+                               "StatInstallProgressMax=1.0x500",
+                               "StatUninstallProgressMax=1.0x500",
+                               "StatMass=1.0x11",
+                               "StatDamageMax=1.0x4",
+                               "IsMechanical=1.0x1",
+                               "IsCategoryHVAC=1.0x1",
+                               "IsOstrabusBottleRefiller=1.0x1",
+                               "IsOverrideOff=1.0x1",
+                               "IsHiddenInv=1.0x1"
+                           ],
+        "mapCondTolerance":  [
+
+                             ],
+        "aUpdateCommands":  [
+                                "OstrabusBottleRefiller",
+                                "Destructable,StatDamage,MSOstrabusBottleRefillerDamage,StatDamageMax,1.0"
+                            ],
+        "mapPoints":  [
+                          "use,0,0",
+                          "GasInput,0,16",
+                          "PowerA,0,0"
+                      ],
+        "mapGUIPropMaps":  [
+                               "Panel A",
+                               "OstrabusBottleRefiller"
+                           ],
+        "mapSlotEffects":  [
+                               "drag",
+                               "Blank"
+                           ],
+        "strPortraitImg":  "ItmOstrabusBottleRefiller",
+        "strContainerCT":  "TIsFitContainerEVABottleNotDamaged",
+        "nContainerWidth":  2,
+        "nContainerHeight":  2,
+        "strLoot":  null,
+        "strAudioEmitter":  null,
+        "aTickers":  [
+                         "Power"
+                     ],
+        "jsonPI":  "OstrabusBottleRefiller"
+    },
+    {
+        "strName":  "ItmOstrabusBottleRefillerLoose",
+        "strNameShort":  "Bottle Refiller",
+        "strNameFriendly":  "Wall-mounted Bottle Refiller (Loose)",
+        "strDesc":  "A wall-mounted four-bottle filling unit. Calibrated for Bingham EVA suit bottle pressure specifications. Owners are advised this unit has NO filtration features. Use of other bottle makes and models voids warranty.",
+        "strItemDef":  "ItmOstrabusBottleRefillerLoose",
+        "strType":  "Item",
+        "aInteractions":  [
+                              "Inventory",
+                              "DropItem",
+                              "PickupItem"
+                          ],
+        "aStartingConds":  [
+                               "IsSalvageValueHigh=1x1",
+                               "IsShipSpecialItem=1.0x1.0",
+                               "IsSolid=1.0x1.0",
+                               "IsCumbersome=1.0x1.0",
+                               "StatBasePrice=1.0x2050.0",
+                               "StatDismantleProgressMax=1.0x140",
+                               "StatInstallProgressMax=1.0x500",
+                               "StatUninstallProgressMax=1.0x500",
+                               "StatMass=1.0x11",
+                               "StatDamageMax=1.0x4",
+                               "IsMechanical=1.0x1",
+                               "IsCategoryHVAC=1.0x1",
+                               "IsOstrabusBottleRefiller=1.0x1",
+                               "IsOverrideOff=1.0x1"
+                           ],
+        "aUpdateCommands":  [
+                                "OstrabusBottleRefiller",
+                                "Destructable,StatDamage,MSOstrabusBottleRefillerLooseDamage,StatDamageMax,1.0"
+                            ],
+        "mapPoints":  [
+                          "use,0,0",
+                          "GasInput,0,16"
+                      ],
+        "mapGUIPropMaps":  [
+
+                           ],
+        "mapSlotEffects":  [
+                               "drag",
+                               "Blank"
+                           ],
+        "strPortraitImg":  "ItmOstrabusBottleRefillerLoose",
+        "strContainerCT":  "TIsFitContainerEVABottleNotDamaged",
+        "nContainerWidth":  2,
+        "nContainerHeight":  2,
+        "strLoot":  null,
+        "strAudioEmitter":  null,
+        "aTickers":  [
+
+                     ],
+        "jsonPI":  null
+    },
+    {
+        "strName":  "ItmOstrabusBottleRefillerDmg",
+        "strNameShort":  "Bottle Refiller",
+        "strNameFriendly":  "Wall-mounted Bottle Refiller (Damaged)",
+        "strDesc":  "A wall-mounted four-bottle filling unit. Calibrated for Bingham EVA suit bottle pressure specifications. Owners are advised this unit has NO filtration features. Use of other bottle makes and models voids warranty.",
+        "strItemDef":  "ItmOstrabusBottleRefillerDmg",
+        "strType":  "Item",
+        "aInteractions":  [
+                              "Inventory",
+                              "ACTOstrabusBottleRefillerDmgRepack"
+                          ],
+        "aStartingConds":  [
+                               "IsDamaged=1.0x1",
+                               "IsInstalled=1.0x1",
+                               "IsShipSpecialItem=1.0x1.0",
+                               "IsSolid=1.0x1.0",
+                               "StatBasePrice=1.0x510.0",
+                               "StatDismantleProgressMax=1.0x40",
+                               "StatInstallProgressMax=1.0x500",
+                               "StatUninstallProgressMax=1.0x500",
+                               "StatRepairProgressMax=1.0x1500",
+                               "StatMass=1.0x11",
+                               "StatDamageMax=1.0x11",
+                               "IsMechanical=1.0x1",
+                               "IsCategoryHVAC=1.0x1",
+                               "IsOstrabusBottleRefiller=1.0x1",
+                               "IsOverrideOff=1.0x1",
+                               "IsHiddenInv=1.0x1"
+                           ],
+        "mapCondTolerance":  [
+
+                             ],
+        "mapPoints":  [
+                          "use,0,0",
+                          "GasInput,0,16",
+                          "PowerA,0,0"
+                      ],
+        "mapGUIPropMaps":  [
+
+                           ],
+        "mapSlotEffects":  [
+                               "drag",
+                               "Blank"
+                           ],
+        "aUpdateCommands":  [
+                                "OstrabusBottleRefiller",
+                                "Destructable,StatDamage,MSOstrabusBottleRefillerDmgDamage,StatDamageMax,1.0"
+                            ],
+        "strPortraitImg":  "ItmOstrabusBottleRefillerDmg",
+        "strContainerCT":  "TIsFitContainerEVABottleNotDamaged",
+        "nContainerWidth":  2,
+        "nContainerHeight":  2,
+        "strLoot":  null,
+        "strAudioEmitter":  null,
+        "aTickers":  [
+
+                     ],
+        "jsonPI":  null
+    },
+    {
+        "strName":  "ItmOstrabusBottleRefillerDmgLoose",
+        "strNameShort":  "Bottle Refiller",
+        "strNameFriendly":  "Wall-mounted Bottle Refiller (Damaged)",
+        "strDesc":  "A wall-mounted four-bottle filling unit. Calibrated for Bingham EVA suit bottle pressure specifications. Owners are advised this unit has NO filtration features. Use of other bottle makes and models voids warranty.",
+        "strItemDef":  "ItmOstrabusBottleRefillerDmgLoose",
+        "strType":  "Item",
+        "aInteractions":  [
+                              "Inventory",
+                              "DropItem",
+                              "PickupItem"
+                          ],
+        "aStartingConds":  [
+                               "IsDamaged=1.0x1",
+                               "IsShipSpecialItem=1.0x1.0",
+                               "IsSolid=1.0x1.0",
+                               "IsCumbersome=1.0x1.0",
+                               "StatBasePrice=1.0x510.0",
+                               "StatDismantleProgressMax=1.0x40",
+                               "StatInstallProgressMax=1.0x500",
+                               "StatUninstallProgressMax=1.0x500",
+                               "StatRepairProgressMax=1.0x1500",
+                               "StatMass=1.0x11",
+                               "StatDamageMax=1.0x11",
+                               "IsMechanical=1.0x1",
+                               "IsCategoryHVAC=1.0x1",
+                               "IsOstrabusBottleRefiller=1.0x1",
+                               "IsOverrideOff=1.0x1"
+                           ],
+        "mapPoints":  [
+                          "use,0,0",
+                          "GasInput,0,16"
+                      ],
+        "mapGUIPropMaps":  [
+
+                           ],
+        "mapSlotEffects":  [
+                               "drag",
+                               "Blank"
+                           ],
+        "aUpdateCommands":  [
+                                "OstrabusBottleRefiller",
+                                "Destructable,StatDamage,MSOstrabusBottleRefillerDmgLooseDamage,StatDamageMax,1.0"
+                            ],
+        "strPortraitImg":  "ItmOstrabusBottleRefillerDmgLoose",
+        "strContainerCT":  "TIsFitContainerEVABottleNotDamaged",
+        "nContainerWidth":  2,
+        "nContainerHeight":  2,
+        "strLoot":  null,
+        "strAudioEmitter":  null,
+        "aTickers":  [
+
+                     ],
+        "jsonPI":  null
+    }
+]

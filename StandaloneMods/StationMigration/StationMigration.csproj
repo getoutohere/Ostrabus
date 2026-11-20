@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Ostrabus.StationMigration</AssemblyName>
     <RootNamespace>Ostrabus.StationMigration</RootNamespace>
-    <Version>0.1.3</Version>
+    <Version>0.1.4</Version>
     <LangVersion>latest</LangVersion>
     <PathMap>$(MSBuildProjectDirectory)=/_/StationMigration</PathMap>
   </PropertyGroup>

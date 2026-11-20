@@ -16,6 +16,7 @@ internal static class AvoidanceRouteForecast
         internal readonly ShipSitu Situation;
         internal readonly List<NavDataPoint> Points;
         internal readonly DVector Offset;
+        readonly double originAngle;
         internal int Index;
         internal Motion(ShipSitu situation, NavData route, ShipSitu origin)
         {
@@ -23,6 +24,7 @@ internal static class AvoidanceRouteForecast
             // A native route belongs to the controlling hull; the collision
             // circle may instead be centred on its docking-group anchor.
             Offset = origin == null ? default : new DVector(situation.vPosx - origin.vPosx, situation.vPosy - origin.vPosy);
+            originAngle = (origin ?? situation).fRot;
             if (Points == null || Points.Count < 2) Points = null;
         }
         internal double Next(double epoch, double end)
@@ -31,6 +33,20 @@ internal static class AvoidanceRouteForecast
             while (Index + 1 < Points.Count && Points[Index + 1].ArrivalTime <= epoch) Index++;
             if (epoch < Points[0].ArrivalTime) return Math.Min(end, Points[0].ArrivalTime);
             return Index + 1 < Points.Count ? Math.Min(end, Points[Index + 1].ArrivalTime) : end;
+        }
+        internal double Rotation(double epoch, double elapsed) {
+            if (Points == null) return Situation.fW * elapsed;
+            var first = Points[Index]; var last = Index + 1 < Points.Count ? Points[Index + 1] : first;
+            if (first?.ObjSS == null || last?.ObjSS == null) return double.NaN;
+            if (ReferenceEquals(first, last)) return first.ObjSS.fRot - originAngle;
+            double duration = last.ArrivalTime - first.ArrivalTime;
+            if (!(duration > 0)) return double.NaN;
+            float t = Math.Max(0, Math.Min(1, (float)(epoch - first.ArrivalTime) / (float)duration));
+            // Native NavData.LerpAngle unwraps one turn before float lerping.
+            float from = first.ObjSS.fRot, to = last.ObjSS.fRot, delta = to - from;
+            if (delta < -(float)Math.PI) to += (float)(2 * Math.PI);
+            else if (delta > (float)Math.PI) to -= (float)(2 * Math.PI);
+            return from + (to - from) * t - originAngle;
         }
         internal bool At(double epoch, double elapsed, out DVector p, out DVector v)
         {
@@ -57,7 +73,7 @@ internal static class AvoidanceRouteForecast
         }
     }
     internal static bool TryCollision(ShipSitu us, ShipSitu them, double seconds, NavData ours, NavData theirs, out bool hit,
-        ShipSitu ourOrigin = null, ShipSitu theirOrigin = null)
+        ShipSitu ourOrigin = null, ShipSitu theirOrigin = null, IApproachProbe probe = null)
     {
         hit = false; var a = new Motion(us, ours, ourOrigin); var b = new Motion(them, theirs, theirOrigin);
         if (a.Points == null && b.Points == null) return false;
@@ -65,35 +81,54 @@ internal static class AvoidanceRouteForecast
         // Inspect a newly generated course before admitting it. Ordinary flight
         // checks retain bounded local lookahead; they do not rescan a whole trip.
         double radius = (double)CollisionManager.GetCollisionDistanceAU(us, them) * MetresPerAU;
-        if (!OrbitAcceleration.Finite(radius) || radius < 0) return false;
+        if (!OrbitAcceleration.Finite(radius) || radius < 0) return Unresolved(probe, out hit);
         if (AvoidanceQuery.Admission && a.Points != null && LocalEncounter(us, them, seconds, radius))
             window = Math.Max(window, a.Points[a.Points.Count - 1].ArrivalTime - now);
         double end = now + window, step = Math.Max(1, window / 256);
         double squared = radius * radius;
-        if (!a.At(now, 0, out var ap, out _) || !b.At(now, 0, out var bp, out _)) return false;
+        if (!a.At(now, 0, out var ap, out _) || !b.At(now, 0, out var bp, out _)) return Unresolved(probe, out hit);
         double t = now;
         // Retain every route breakpoint and subdivide long intervals for locked
         // endpoint curvature, without advancing live situation/body caches.
         int limit = 512 + (a.Points?.Count ?? 0) + (b.Points?.Count ?? 0);
         for (int count = 0; t < end && count < limit; count++)
         {
+            double a0 = probe == null ? 0 : a.Rotation(t, t - now);
+            double b0 = probe == null ? 0 : b.Rotation(t, t - now);
             double next = Math.Min(end, t + step); next = a.Next(t, next); next = b.Next(t, next);
             if (t < now + AvoidancePrediction.AccelerationSeconds) next = Math.Min(next, now + AvoidancePrediction.AccelerationSeconds);
-            if (!(next > t)) return false;
-            if (!a.At(next, next - now, out var aq, out var av) || !b.At(next, next - now, out var bq, out var bv)) return false;
+            if (!(next > t)) return Unresolved(probe, out hit);
+            if (!a.At(next, next - now, out var aq, out var av) || !b.At(next, next - now, out var bq, out var bv)) return Unresolved(probe, out hit);
             double dt = next - t; var p = (ap - bp) * MetresPerAU; var q = (aq - bq) * MetresPerAU;
             var acc = (t < now + AvoidancePrediction.AccelerationSeconds ? ((a.Points == null ? Acceleration(us) : default) - (b.Points == null ? Acceleration(them) : default)) : default) * MetresPerAU;
             var v = (q - p) * (1 / dt) - acc * (.5 * dt);
-            if (ConstantAccelerationApproach.MinimumSquared(p, v, acc, dt) <= squared) { hit = true; return true; }
+            if (ConstantAccelerationApproach.MinimumSquared(p, v, acc, dt) <= squared &&
+                (probe == null || probe.Collides(p, v, acc, t - now, dt,
+                    a0, Unwrap(a0, a.Rotation(next, next - now), a.Points != null),
+                    b0, Unwrap(b0, b.Rotation(next, next - now), b.Points != null)))) { hit = true; return true; }
             t = next; ap = aq; bp = bq;
             if (t >= end && seconds > window)
             {
                 var velocity = (av - bv) * MetresPerAU; double speed = velocity.Dot(velocity), rest = seconds - window;
                 double closest = speed > 0 ? Math.Max(0, Math.Min(rest, -q.Dot(velocity) / speed)) : 0;
+                // Beyond sampled route playback this model uses a straight
+                // continuation, with no verified future orientation. Retain
+                // its conservative result rather than prove clearance from it.
                 var point = q + velocity * closest; hit = point.Dot(point) <= squared; return true;
             }
         }
-        return t >= end;
+        return t >= end || Unresolved(probe, out hit);
+    }
+    // A second-stage exterior proof may not turn an earlier broad warning
+    // into a miss when route sampling fails. The original caller still falls
+    // back to its ordinary kinematic forecast when no probe was requested.
+    static bool Unresolved(IApproachProbe probe, out bool hit) { hit = probe != null; return hit; }
+    static double Unwrap(double start, double end, bool route) {
+        if (!route) return end;
+        double turn = (end - start) % (2 * Math.PI);
+        if (turn > (float)Math.PI) turn -= 2 * Math.PI;
+        else if (turn < -(float)Math.PI) turn += 2 * Math.PI;
+        return start + turn;
     }
     static bool LocalEncounter(ShipSitu us, ShipSitu them, double seconds, double radius) {
         // Whole-course admission is for the nearby encounter being negotiated,

@@ -5,6 +5,7 @@
     <Compile Include="../../NavConsole/Outlines/*.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../Navigation/Collisions/*.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../Navigation/AvoidancePrediction.cs" Link="AvoidancePrediction.cs" />
+    <Compile Include="../../Navigation/AIShipAvoidancePatch.cs" Link="AIShipAvoidancePatch.cs" />
     <Compile Include="../../Navigation/AvoidanceQuery.cs" Link="AvoidanceQuery.cs" />
     <Compile Include="../../Navigation/AvoidanceRouteForecast.cs" Link="AvoidanceRouteForecast.cs" />
     <Compile Include="../../Navigation/ConstantAccelerationApproach.cs" Link="ConstantAccelerationApproach.cs" />

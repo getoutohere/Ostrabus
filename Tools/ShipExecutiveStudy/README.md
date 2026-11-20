@@ -1,5 +1,9 @@
 # Ship mission executive feasibility study
 
+Status: **abandoned on 2026-11-19**. See the
+[postmortem](../../Navigation/Architecture/POSTMORTEM.md). Tools and instructions
+remain for historical reproduction; runtime adoption is closed.
+
 Offline tools for the [architecture evaluation](../../Navigation/Architecture/README.md).
 `Scan` and `Native` characterize the original mechanisms. `Prototype` tests both
 the original tree-scheduling experiment and the explicit replacement lifecycle.

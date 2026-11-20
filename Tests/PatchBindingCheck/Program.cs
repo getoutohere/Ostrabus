@@ -35,6 +35,9 @@ static class Program {
         engine.Patch(AccessTools.Method(typeof(UnityEngine.Shader), nameof(UnityEngine.Shader.PropertyToID), new[] { typeof(string) }),
             prefix: new HarmonyMethod(typeof(Program), nameof(ShaderId)));
         var assembly = typeof(Ostrabus.OstrabusPlugin).Assembly;
+        if (args.Contains("--wreck-logging"))
+            assembly.GetType("Ostrabus.QoL.WreckSeverity.WreckDamageLog", throwOnError: true)
+                .GetField("Enabled", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, true);
         // The full build enables obituaries at startup. Bind those observers
         // alongside existing lifecycle patches without opening files or a scene.
         assembly.GetType("Ostrabus.Diagnostics.Obituaries.ObituaryRecorder", throwOnError: false)?

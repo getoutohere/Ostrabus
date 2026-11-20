@@ -1,0 +1,13 @@
+[
+    {
+        "strName":  "OstrabusBottleRefiller",
+        "dictGUIPropMap":  [
+                               "strGUIPrefab",
+                               "GUIOnOff",
+                               "strFriendlyName",
+                               "Bottle Refiller",
+                               "strTitle",
+                               "Bottle Refiller"
+                           ]
+    }
+]

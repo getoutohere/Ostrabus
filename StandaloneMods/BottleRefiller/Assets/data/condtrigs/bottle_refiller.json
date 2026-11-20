@@ -1,0 +1,134 @@
+[
+    {
+        "strName":  "TOstrabusBottleRefiller",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusBottleRefiller",
+                      "IsInstalled"
+                  ],
+        "aForbids":  [
+                         "IsDamaged"
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusBottleRefillerCarried",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusBottleRefiller",
+                      "IsInstalled"
+                  ],
+        "aForbids":  [
+                         "IsDamaged"
+                     ],
+        "aTriggers":  [
+                          "TIsCarried"
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusBottleRefillerLoose",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusBottleRefiller"
+                  ],
+        "aForbids":  [
+                         "IsInstalled",
+                         "IsDamaged"
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusBottleRefillerDmg",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusBottleRefiller",
+                      "IsInstalled",
+                      "IsDamaged"
+                  ],
+        "aForbids":  [
+
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusBottleRefillerDmgCarried",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusBottleRefiller",
+                      "IsInstalled",
+                      "IsDamaged"
+                  ],
+        "aForbids":  [
+
+                     ],
+        "aTriggers":  [
+                          "TIsCarried"
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusBottleRefillerDmgLoose",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusBottleRefiller",
+                      "IsDamaged"
+                  ],
+        "aForbids":  [
+                         "IsInstalled"
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusBottleRefillerUsePower",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusBottleRefiller",
+                      "IsInstalled",
+                      "IsOverrideOn"
+                  ],
+        "aForbids":  [
+                         "IsDamaged",
+                         "IsOverrideOff"
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    },
+    {
+        "strName":  "TOstrabusBottleRefillerPanel",
+        "fChance":  1,
+        "fCount":  1,
+        "aReqs":  [
+                      "IsOstrabusBottleRefiller",
+                      "IsInstalled"
+                  ],
+        "aForbids":  [
+                         "IsDamaged"
+                     ],
+        "aTriggers":  [
+
+                      ],
+        "bAND":  true
+    }
+]

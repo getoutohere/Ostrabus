@@ -1,5 +1,8 @@
 # Executive prototype: Ostranauts 1.1 rework
 
+Study disposition: **abandoned on 2026-11-19**. See the [postmortem](../POSTMORTEM.md).
+This document preserves historical qualification, not an active adoption plan.
+
 Status: offline rework qualified against **1.1.0.0**, 2026-11-16. The combined
 runner passes **529 assertions across 101 scenarios**, exercising all 27 declared
 model transitions. No production patch, asset, configuration or deployment was

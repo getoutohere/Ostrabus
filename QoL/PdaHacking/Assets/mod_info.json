@@ -2,8 +2,8 @@
   {
     "strName": "Ostrabus Quick PDA Hacking",
     "strAuthor": "Jon",
-    "strGameVersion": "1.1.0.3",
-    "strModVersion": "0.7.1",
+    "strGameVersion": "1.1.0.4",
+    "strModVersion": "0.7.2",
     "strNotes": "Use Hacking to unlock PDAs directly from the quick-action menu. Native assets only; no plugin required."
   }
 ]

@@ -8,6 +8,18 @@
   ],
   "features": [
     {
+      "id": "derelict-names",
+      "title": "Preserve generated names when deferred derelicts become ships",
+      "category": "bugfix",
+      "patchFiles": ["MiscBugFixes/DerelictNamePatch.cs"]
+    },
+    {
+      "id": "ship-registration-ids",
+      "title": "Keep new ship registrations unique across loaded and deferred objects",
+      "category": "bugfix",
+      "patchFiles": ["MiscBugFixes/ShipRegistrationPatch.cs"]
+    },
+    {
       "id": "orbital-velocity",
       "title": "Synchronize orbital velocities and preserve RCS-to-coast handoffs",
       "category": "bugfix",
@@ -427,11 +439,10 @@
     },
     {
       "id": "pdc-ammo",
-      "title": "Preserve PDC ammunition across installation changes",
+      "title": "PDC conversion ammunition (fixed natively in 1.1.0.4)",
+      "description": "Retired feature ID retained for existing profiles; the native recipes now suppress replacement starting loot.",
       "category": "bugfix",
-      "patchFiles": [
-        "MiscBugFixes/PdcConversionAmmoPatch.cs"
-      ]
+      "hidden": true
     },
     {
       "id": "ship-rotation",

@@ -1,0 +1,161 @@
+[
+    {
+        "strName":  "ACTOstrabusBottleRefillerRepack",
+        "strTitle":  "Repack carried refiller",
+        "strDesc":  "[us] [repackages] [them].",
+        "strTooltip":  "Recover a refiller incorrectly carried while installed by version 0.1.0.",
+        "strThemType":  "Other",
+        "strActionGroup":  "Use",
+        "strTargetPoint":  "use",
+        "fTargetPointRange":  1,
+        "fDuration":  2.7E-05,
+        "bNoWalk":  true,
+        "bOpener":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "TIsHuman",
+        "CTTestThem":  "TOstrabusBottleRefillerCarried",
+        "aInverse":  [
+                         "ACTOstrabusBottleRefillerRepackAllow"
+                     ]
+    },
+    {
+        "strName":  "ACTOstrabusBottleRefillerRepackAllow",
+        "strThemType":  "Other",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "TOstrabusBottleRefillerCarried",
+        "CTTestThem":  "TIsHuman",
+        "objLootModeSwitch":  "OutputACTOstrabusBottleRefillerRepack"
+    },
+    {
+        "strName":  "MSOstrabusBottleRefillerDamage",
+        "strThemType":  "Self",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "Blank",
+        "CTTestThem":  "Blank",
+        "objLootModeSwitch":  "OutputMSOstrabusBottleRefillerDamage"
+    },
+    {
+        "strName":  "MSOstrabusBottleRefillerLooseDamage",
+        "strThemType":  "Self",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "Blank",
+        "CTTestThem":  "Blank",
+        "objLootModeSwitch":  "OutputMSOstrabusBottleRefillerLooseDamage"
+    },
+    {
+        "strName":  "ACTOstrabusBottleRefillerDmgRepack",
+        "strTitle":  "Repack carried refiller",
+        "strDesc":  "[us] [repackages] [them].",
+        "strTooltip":  "Recover a refiller incorrectly carried while installed by version 0.1.0.",
+        "strThemType":  "Other",
+        "strActionGroup":  "Use",
+        "strTargetPoint":  "use",
+        "fTargetPointRange":  1,
+        "fDuration":  2.7E-05,
+        "bNoWalk":  true,
+        "bOpener":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "TIsHuman",
+        "CTTestThem":  "TOstrabusBottleRefillerDmgCarried",
+        "aInverse":  [
+                         "ACTOstrabusBottleRefillerDmgRepackAllow"
+                     ]
+    },
+    {
+        "strName":  "ACTOstrabusBottleRefillerDmgRepackAllow",
+        "strThemType":  "Other",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "TOstrabusBottleRefillerDmgCarried",
+        "CTTestThem":  "TIsHuman",
+        "objLootModeSwitch":  "OutputACTOstrabusBottleRefillerDmgRepack"
+    },
+    {
+        "strName":  "MSOstrabusBottleRefillerDmgDamage",
+        "strThemType":  "Self",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "Blank",
+        "CTTestThem":  "Blank",
+        "objLootModeSwitch":  "ItmAirPumpDismantle"
+    },
+    {
+        "strName":  "MSOstrabusBottleRefillerDmgLooseDamage",
+        "strThemType":  "Self",
+        "fDuration":  1E-06,
+        "bNoWalk":  true,
+        "bIgnoreFeelings":  true,
+        "CTTestUs":  "Blank",
+        "CTTestThem":  "Blank",
+        "objLootModeSwitch":  "ItmAirPumpDismantle"
+    },
+    {
+        "strName":  "GUIOstrabusBottleRefiller",
+        "strTitle":  "Control Panel",
+        "strDesc":  "[us] [accesses] [them]\u0027s panel.",
+        "strTooltip":  "Switch automatic bottle filling OFF or ON.",
+        "strActionGroup":  "Use",
+        "strTargetPoint":  "use",
+        "fTargetPointRange":  1,
+        "strAnim":  "Use",
+        "strBubble":  "BblTouch",
+        "aInverse":  [
+                         "GUIOstrabusBottleRefillerAllow"
+                     ],
+        "fDuration":  0.00027,
+        "strThemType":  "Other",
+        "strRaiseUI":  null,
+        "nLogging":  1,
+        "bOpener":  true,
+        "bHumanOnly":  true,
+        "bIgnoreFeelings":  true,
+        "LootCTsUs":  null,
+        "LootCTsThem":  null,
+        "CTTestUs":  "TIsHuman",
+        "CTTestThem":  "TOstrabusBottleRefillerPanel",
+        "aLootItms":  [
+
+                      ],
+        "objLootModeSwitch":  null
+    },
+    {
+        "strName":  "GUIOstrabusBottleRefillerAllow",
+        "strTitle":  "",
+        "strDesc":  "[them] [checks] the wiring.",
+        "strActionGroup":  "Use",
+        "strTargetPoint":  null,
+        "fTargetPointRange":  0,
+        "strAnim":  null,
+        "strBubble":  "BblTouch",
+        "aInverse":  [
+
+                     ],
+        "fDuration":  1.0,
+        "strThemType":  "Other",
+        "strRaiseUI":  "Panel A",
+        "LootCTsUs":  null,
+        "LootCTsThem":  null,
+        "CTTestUs":  "TOstrabusBottleRefillerPanel",
+        "CTTestThem":  null,
+        "aLootItms":  [
+
+                      ],
+        "objLootModeSwitch":  null
+    },
+    {
+        "strName":  "OstrabusBottleRefillerPowerChanged",
+        "strThemType":  "Self",
+        "CTTestUs":  "TNever",
+        "CTTestThem":  "TNever",
+        "bNoWalk":  true,
+        "fDuration":  1E-06
+    }
+]

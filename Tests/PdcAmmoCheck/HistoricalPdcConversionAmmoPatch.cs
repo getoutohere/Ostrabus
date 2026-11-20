@@ -1,14 +1,15 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace Ostrabus.MiscBugFixes;
+namespace Ostrabus.Tests;
 
 // A replacement PDC inherits its existing contents in ModeSwitchInternal.
 // Its creation must not roll another starting magazine before that transfer.
 [HarmonyPatch(typeof(DataHandler), nameof(DataHandler.GetCondOwner), new[] {
     typeof(string), typeof(string), typeof(string), typeof(bool), typeof(string), typeof(JsonCondOwnerSave), typeof(string), typeof(Transform)
 })]
-internal static class PdcConversionAmmoPatch {
+// Preserved only for the pre-1.1.0.4 reproduction; never compiled into Ostrabus.
+internal static class HistoricalPdcConversionAmmoPatch {
     static void Prefix(string strCO, ref bool bLoot, JsonCondOwnerSave jcos, string strIDOld) {
         if (!bLoot || jcos != null || strIDOld == null || strCO == null ||
             !strCO.StartsWith("ItmShipWeaponPDC", System.StringComparison.Ordinal)) return;

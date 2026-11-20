@@ -1,6 +1,8 @@
 {
   "schemaVersion": 1,
-  "status": "offline_prototype_not_installed",
+  "status": "abandoned_offline_prototype_not_installed",
+  "abandonedOn": "2026-11-19",
+  "postmortem": "POSTMORTEM.md",
   "prototypeReport": "PROTOTYPE.md",
   "replacementModel": "Replacement/mission-model.json",
   "replacementContracts": "Replacement/ability-contracts.json",

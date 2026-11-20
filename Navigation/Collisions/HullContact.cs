@@ -36,10 +36,10 @@ internal sealed class HullContact {
     readonly struct Rect {
         internal readonly Vec Center,U,V;
         internal readonly double X,Y;
-        internal Rect(CollisionShape.Box box,Vec position,double radians,double radius) {
+        internal Rect(CollisionShape.Box box,Vec position,double radians,double radius,double padding=0) {
             double c=Math.Cos(radians),s=Math.Sin(radians),x=(box.MinX+box.MaxX)*.5*radius,y=(box.MinY+box.MaxY)*.5*radius;
             Center=new Vec(position.X+c*x-s*y,position.Y+s*x+c*y);U=new Vec(c,s);V=new Vec(-s,c);
-            X=(box.MaxX-box.MinX)*.5*radius;Y=(box.MaxY-box.MinY)*.5*radius;
+            X=(box.MaxX-box.MinX)*.5*radius+padding;Y=(box.MaxY-box.MinY)*.5*radius+padding;
         }
         internal double Support(Vec n)=>X*Math.Abs(U.Dot(n))+Y*Math.Abs(V.Dot(n));
     }
@@ -57,6 +57,9 @@ internal sealed class HullContact {
     Motion motion;
     int mode; // 0: current overlap, 1: earliest swept hit, 2: separation intervals.
     bool hit;
+    bool anyHit;
+    double extra;
+    int visitLimit=MaxVisits,pairLimit=MaxPairs;
     Vec normal;
     double depth,time,distance;
     internal int Visits {get;private set;}
@@ -105,41 +108,47 @@ internal sealed class HullContact {
     }
     static bool Intersects(CollisionShape.Box x,CollisionShape.Box y)=>x.MinX<=y.MaxX+Skin&&x.MaxX+Skin>=y.MinX&&x.MinY<=y.MaxY+Skin&&x.MaxY+Skin>=y.MinY;
     void Visit(int x,int y) {
-        if(++Visits>MaxVisits)throw new Budget();
+        if(++Visits>visitLimit)throw new Budget();
         var na=a.Tree[x];var nb=b.Tree[y];
-        if(!Intersects(Bounds(na.Bounds,true),Bounds(nb.Bounds,false)))return;
+        if(anyHit&&hit)return;
+        var ab=Bounds(na.Bounds,true);var bb=Bounds(nb.Bounds,false);
+        if(extra>0) {
+            ab=new CollisionShape.Box(ab.MinX-extra,ab.MinY-extra,ab.MaxX+extra,ab.MaxY+extra);
+            bb=new CollisionShape.Box(bb.MinX-extra,bb.MinY-extra,bb.MaxX+extra,bb.MaxY+extra);
+        }
+        if(!Intersects(ab,bb))return;
         if(na.Piece>=0&&nb.Piece>=0){Leaf(a.Pieces[na.Piece],b.Pieces[nb.Piece]);return;}
         if(nb.Piece>=0||(na.Piece<0&&(na.Bounds.MaxX-na.Bounds.MinX+na.Bounds.MaxY-na.Bounds.MinY)*motion.RA>=(nb.Bounds.MaxX-nb.Bounds.MinX+nb.Bounds.MaxY-nb.Bounds.MinY)*motion.RB)) {
             Visit(na.Left,y);Visit(na.Right,y);
         } else {Visit(x,nb.Left);Visit(x,nb.Right);}
     }
     void Leaf(CollisionShape.Box aa,CollisionShape.Box bb) {
-        if(++Pairs>MaxPairs)throw new Budget();
+        if(++Pairs>pairLimit)throw new Budget();
         var velocity=motion.End-motion.Start;
-        var endA=new Rect(aa,motion.End,motion.A1,motion.RA);var endB=new Rect(bb,default,motion.B1,motion.RB);
+        var endA=new Rect(aa,motion.End,motion.A1,motion.RA,extra*.5);var endB=new Rect(bb,default,motion.B1,motion.RB,extra*.5);
         if(mode==0) {
             double gap=Gap(endA,endB,velocity,out var n);
             if(gap<=Skin&&(!hit||-gap>depth)){hit=true;depth=-gap;normal=n;}
             return;
         }
-        var startA=new Rect(aa,motion.Start,motion.A0,motion.RA);var startB=new Rect(bb,default,motion.B0,motion.RB);
+        var startA=new Rect(aa,motion.Start,motion.A0,motion.RA,extra*.5);var startB=new Rect(bb,default,motion.B0,motion.RB,extra*.5);
         if(!motion.Rotating) {
             if(!IntervalFor(startA,startB,velocity,out double enter,out double exit)||exit<0||enter>1)return;
             if(mode==2){intervals.Add(new Interval(Math.Max(0,enter)*distance,Math.Min(1,exit)*distance));return;}
             double t=Math.Max(0,enter);if(t>=time)return;
-            var at=new Rect(aa,motion.Start+velocity*t,motion.A0,motion.RA);
+            var at=new Rect(aa,motion.Start+velocity*t,motion.A0,motion.RA,extra*.5);
             Gap(at,startB,velocity,out var n);hit=true;time=t;normal=n;return;
         }
         // Conservative advancement: separating-axis gap is a lower bound on
         // distance. Relative translation plus angular corner speed is an upper
         // bound on closing speed. Thus no interval that could hide a hit is skipped.
-        double speed=velocity.Length+Math.Abs(motion.A1-motion.A0)*motion.RA+Math.Abs(motion.B1-motion.B0)*motion.RB;
+        double speed=velocity.Length+Math.Abs(motion.A1-motion.A0)*(motion.RA+extra)+Math.Abs(motion.B1-motion.B0)*(motion.RB+extra);
         if(!(speed>0))return;
         double tick=0;
         for(int i=0;i<256;i++) {
             if(tick>=time||tick>1)return;
-            var pa=new Rect(aa,motion.Start+velocity*tick,motion.A0+(motion.A1-motion.A0)*tick,motion.RA);
-            var pb=new Rect(bb,default,motion.B0+(motion.B1-motion.B0)*tick,motion.RB);
+            var pa=new Rect(aa,motion.Start+velocity*tick,motion.A0+(motion.A1-motion.A0)*tick,motion.RA,extra*.5);
+            var pb=new Rect(bb,default,motion.B0+(motion.B1-motion.B0)*tick,motion.RB,extra*.5);
             double gap=Gap(pa,pb,velocity,out var n);
             if(gap<=Skin){hit=true;time=tick;normal=n;return;}
             tick+=Math.Max(1e-12,gap/speed);
@@ -147,7 +156,7 @@ internal sealed class HullContact {
         throw new Budget(); // Unknown is conservative native fallback, never a fabricated miss.
     }
     internal bool TrySolve(CollisionShape first,CollisionShape second,Motion path,out Contact contact) {
-        contact=default;Visits=Pairs=0;a=first;b=second;motion=path;intervals.Clear();
+        contact=default;Visits=Pairs=0;a=first;b=second;motion=path;intervals.Clear();extra=0;anyHit=false;visitLimit=MaxVisits;pairLimit=MaxPairs;
         try {
             if(a==null||b==null||!(path.RA>0)||!(path.RB>0)||!Finite(path.RA+path.RB+path.End.X+path.End.Y+path.Start.X+path.Start.Y+path.A0+path.A1+path.B0+path.B1))return false;
             mode=0;hit=false;depth=0;time=1;Visit(0,0);
@@ -168,5 +177,19 @@ internal sealed class HullContact {
             return true;
         } catch(Budget){return false;}
         finally {a=b=null;intervals.Clear();}
+    }
+    // Future-path query only: stop at any hit and skip penetration/separation
+    // work. Padding bounds the chord error of an accelerated centre trajectory;
+    // physical collision response always uses TrySolve with its original skin.
+    internal bool TryHit(CollisionShape first,CollisionShape second,Motion path,double padding,out bool intersects,
+        int nodeBudget=MaxVisits,int pairBudget=MaxPairs) {
+        intersects=false;Visits=Pairs=0;a=first;b=second;motion=path;extra=padding;anyHit=true;hit=false;time=double.PositiveInfinity;
+        visitLimit=Math.Min(MaxVisits,nodeBudget);pairLimit=Math.Min(MaxPairs,pairBudget);
+        try {
+            if(a==null||b==null||visitLimit<=0||pairLimit<=0||!(path.RA>0)||!(path.RB>0)||padding<0||
+                !Finite(padding+path.RA+path.RB+path.Start.X+path.Start.Y+path.End.X+path.End.Y+path.A0+path.A1+path.B0+path.B1))return false;
+            mode=1;Visit(0,0);intersects=hit;return true;
+        } catch(Budget){return false;}
+        finally {a=b=null;extra=0;anyHit=false;visitLimit=MaxVisits;pairLimit=MaxPairs;}
     }
 }

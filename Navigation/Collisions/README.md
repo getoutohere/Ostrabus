@@ -57,6 +57,14 @@ interior-grid port alignment with a second layout system. The existing 10-percen
 clamp margin, clearance, port availability, alignment, crime and fees remain
 native. Large hulls retain a positive docking-ring interpolation window.
 
+With the AI avoidance correction installed, enlarged prediction circles screen
+candidates before a bounded sweep confirms danger against the same cached hull
+exteriors. Clear approaches no longer provoke a full sidestep merely because
+the doubled prediction circle overlaps. Native forced-docking clearance and clamp
+eligibility remain effective; real closing, crossing and rotating-hull hazards
+still warn. See the [astern-approach reproduction](../PLANETARY-AVOIDANCE-AUDIT.md).
+The hull-only build retains its native prediction fallback.
+
 `BaseCommand.GetHandOffDistance` receives the same corrected bounds for ordinary
 free-ship targets, preserving native multipliers and behavior. This keeps AI
 flight/docking handoffs outside the enlarged collision envelope. Shared radius
@@ -159,6 +167,15 @@ members after anchor relocation; scratch capacity is reused and actor keys are
 cleared afterward. AI prediction uses numeric scratch situations with the same
 bounds and the native predictor; existing planet-safe evasion receives matching
 clearance within that query. See the audit for exclusions and test boundaries.
+A confirmed warning uses the existing steering and planet-safe escape selection.
+The extra exterior sweep reads immutable rectangle covers, subdivides curved
+motion with a 0.25 m chord bound plus 0.01 m numeric margin, and stops at any hit.
+It limits each confirmation to 32 members per side, 512 sweeps, 32,768 tree visits
+and 8,192 piece pairs. Missing geometry or exhausted work retains the original
+warning. Routed multi-hull groups retain the original warning because their
+rotating route offsets are not verified; unresolved angular acceleration uses
+actual enclosing circles, and unsampled route tails stay conservative. No extra
+frame callback, hull rebuild or actor history is introduced.
 A published radius remains readable during native
 shallow/full reconstruction; cold queries use the two-dimensional grid bound.
 

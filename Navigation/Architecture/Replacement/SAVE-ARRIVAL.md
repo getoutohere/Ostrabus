@@ -1,5 +1,8 @@
 # Native save, arrival and handback integration
 
+Study disposition: **abandoned on 2026-11-19**. See the [postmortem](../POSTMORTEM.md).
+This document preserves historical qualification, not an active adoption plan.
+
 Status: offline integration prototype, requalified for 1.1.0.0. No installed patch, game
 asset or descriptive behavior graph is changed. This milestone executes more
 of the native boundary; it does not certify a production replacement executive.

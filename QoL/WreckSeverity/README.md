@@ -29,6 +29,22 @@ initialized wreck in the player's debug console and the BepInEx log. They show:
   incoming environmental/blunt/cutting damage budgets.
 - Each ray's strength and its three actual randomized damage budgets.
 
+The same flag also prints `[WreckBonus]` events when native code awards the
+bonus, including game epoch, actor, ship and bonus count before/after. Beat
+Manager awards identify `BeatManager.BonusDerelict`, its roll and threshold,
+whether the roll is negative, and the preceding plot/videotape results and roll
+changes. Interaction awards identify the actual interaction, loot table and
+condition trigger, including playing with both dinosaur toys. The logger does
+not evaluate another trigger or draw another random number to find the cause.
+
+When `Ship.BreakIn` starts with a pending bonus, a separate initialization line
+reports the bonus count and severity before/after native handling. This also
+covers Used/Damaged ships and developer re-damage calls which can consume the
+native bonus, without applying our severity curve to those excluded cases.
+`count-cleared` and `condition-present-after` distinguish clearing the count
+from actually removing the native condition. Awards before this DLL was loaded
+cannot be reconstructed.
+
 Ray budgets are measured before intersections and absorption, so they are not
 final hull damage or a percentage destroyed. Wear values are native maxima,
 not measured cumulative wear. Selection counts describe objects selected for
@@ -39,7 +55,7 @@ for one initialization; totals still include all fully observed rays.
 
 The diagnostic makes no extra random draws. Its context is released when the
 initialization finishes or throws; there is no per-ship history, polling or new
-save data. With the flag off, no ray-roll observer or initialization call-site
+save data. With the flag off, no ray-roll, bonus-source or initialization call-site
 instrumentation is installed. Restart after changing this flag.
 
 For original severity `s` and setting `r`:
@@ -84,17 +100,21 @@ forcibly recalculated.
 
 The custom builder offers `wreck-severity` in the QoL category. It patches wreck
 initialization, with one additional read-only damage-roll observer only when
-logging is enabled. It has no frame callbacks, native asset overrides or feature dependencies.
+logging is enabled, plus two optional native bonus-source observers. It has no
+frame callbacks, native asset overrides or feature dependencies.
 It works with the separately installed Boneyard Turnover mod: replacements still
 roll and spawn normally, then receive this curve when first initialized.
 
 ## Validation
 
-The full plugin builds against Ostranauts 1.1.0.3. Offline checks cover the agreed
+The full plugin builds against Ostranauts 1.1.0.4. Offline checks cover the agreed
 curve anchors, monotonicity and positive-roll preservation across the setting
 range, invalid settings, initialization scope, native field/caller contracts and
 Harmony binding, enabled/disabled diagnostic installation, unchanged native random
 draws/results, channel budget arithmetic, formatting and nested/failed scope cleanup.
+Bonus-source A/B checks also cover native release selection, negative-roll
+fallback, the shipped dinosaur loot, repeated/rejected awards, cooldown,
+logging failures and consumption reporting outside the curve's eligibility.
 The ray fixture replaces Unity ray geometry while calling native damage rolls;
 the native channel order is independently checked in the assembly. These checks
 do not generate a rendered wreck or measure final salvage

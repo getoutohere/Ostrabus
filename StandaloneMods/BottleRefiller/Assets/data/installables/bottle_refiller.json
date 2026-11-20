@@ -1,0 +1,324 @@
+[
+    {
+        "strName":  "OstrabusBottleRefillerInstall",
+        "strActionCO":  "ItmOstrabusBottleRefillerLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Installs item.",
+        "strInteractionTemplate":  "ACTInstallTEMP",
+        "CTThem":  "TOstrabusBottleRefillerLoose",
+        "aInputs":  [
+                        "TOstrabusBottleRefillerLoose=1.0x1"
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusBottleRefiller"
+                     ],
+        "strStartInstall":  "ItmOstrabusBottleRefiller",
+        "strBuildType":  "HVAC",
+        "strJobType":  "install",
+        "bNoJobMenu":  true,
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDInstallProgressx25",
+        "strProgressStat":  "StatInstallProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerUninstall",
+        "strActionCO":  "ItmOstrabusBottleRefiller",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Uninstalls item.",
+        "strInteractionTemplate":  "ACTUninstallTEMP",
+        "CTThem":  "TOstrabusBottleRefiller",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusBottleRefillerLoose"
+                     ],
+        "strJobType":  "uninstall",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDUninstallProgressx25",
+        "strProgressStat":  "StatUninstallProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerDmgInstall",
+        "strActionCO":  "ItmOstrabusBottleRefillerDmgLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Installs item.",
+        "strInteractionTemplate":  "ACTInstallTEMP",
+        "CTThem":  "TOstrabusBottleRefillerDmgLoose",
+        "aInputs":  [
+                        "TOstrabusBottleRefillerDmgLoose=1.0x1"
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusBottleRefillerDmg"
+                     ],
+        "strStartInstall":  "ItmOstrabusBottleRefillerDmg",
+        "strBuildType":  "",
+        "strJobType":  "install",
+        "bNoJobMenu":  true,
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDInstallProgressx25",
+        "strProgressStat":  "StatInstallProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerDmgUninstall",
+        "strActionCO":  "ItmOstrabusBottleRefillerDmg",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Uninstalls item.",
+        "strInteractionTemplate":  "ACTUninstallTEMP",
+        "CTThem":  "TOstrabusBottleRefillerDmg",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusBottleRefillerDmgLoose"
+                     ],
+        "strJobType":  "uninstall",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDUninstallProgressx25",
+        "strProgressStat":  "StatUninstallProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerDmgRepair",
+        "strActionCO":  "ItmOstrabusBottleRefillerDmg",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Repairs item to a functional state.",
+        "strInteractionTemplate":  "ACTRepairTEMP",
+        "CTThem":  "TOstrabusBottleRefillerDmg",
+        "aInputs":  [
+                        "TIsMotor=1.0x1",
+                        "TIsScrapSteel=1.0x1",
+                        "TIsPartsMechSmall=1.0x3"
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolSoldering"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusBottleRefiller"
+                     ],
+        "strJobType":  "repair",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDRepairProgressx25",
+        "strProgressStat":  "StatRepairProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerUndamage",
+        "strActionCO":  "ItmOstrabusBottleRefiller",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Reduces item\u0027s wear and tear to prevent damage.",
+        "strInteractionTemplate":  "ACTUndamageTEMP",
+        "CTThem":  "TIsUndamageableNotContained",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolWelding"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusBottleRefiller"
+                     ],
+        "strJobType":  "repair",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDUndamageProgressx5",
+        "strProgressStat":  "StatDamage",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerDmgLooseRepair",
+        "strActionCO":  "ItmOstrabusBottleRefillerDmgLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Repairs item to a functional state.",
+        "strInteractionTemplate":  "ACTRepairTEMP",
+        "CTThem":  "TOstrabusBottleRefillerDmgLoose",
+        "aInputs":  [
+                        "TIsMotor=1.0x1",
+                        "TIsScrapSteel=1.0x1",
+                        "TIsPartsMechSmall=1.0x3"
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolWelding"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusBottleRefillerLoose"
+                     ],
+        "strJobType":  "repair",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDRepairProgressx25",
+        "strProgressStat":  "StatRepairProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerLooseUndamage",
+        "strActionCO":  "ItmOstrabusBottleRefillerLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Reduces item\u0027s wear and tear to prevent damage.",
+        "strInteractionTemplate":  "ACTUndamageTEMP",
+        "CTThem":  "TIsUndamageableNotContained",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolWelding"
+                        ],
+        "aLootCOs":  [
+                         "ItmOstrabusBottleRefillerLoose"
+                     ],
+        "strJobType":  "repair",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDUndamageProgressx5",
+        "strProgressStat":  "StatDamage",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerDismantle",
+        "strActionCO":  "ItmOstrabusBottleRefiller",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Carefully deconstructs item into component parts (Non-reversible).",
+        "strInteractionTemplate":  "ACTDismantleTEMP",
+        "CTThem":  "TCanBeDismantled",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolWelding"
+                        ],
+        "strLootOut":  "ItmAirPumpDismantle",
+        "strJobType":  "dismantle",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDDismantleProgressx5",
+        "strProgressStat":  "StatDismantleProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerLooseDismantle",
+        "strActionCO":  "ItmOstrabusBottleRefillerLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Carefully deconstructs item into component parts (Non-reversible).",
+        "strInteractionTemplate":  "ACTDismantleTEMP",
+        "CTThem":  "TCanBeDismantled",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolWelding"
+                        ],
+        "strLootOut":  "ItmAirPumpDismantle",
+        "strJobType":  "dismantle",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDDismantleProgressx5",
+        "strProgressStat":  "StatDismantleProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerDmgDismantle",
+        "strActionCO":  "ItmOstrabusBottleRefillerDmg",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Carefully deconstructs item into component parts (Non-reversible).",
+        "strInteractionTemplate":  "ACTDismantleTEMP",
+        "CTThem":  "TCanBeDismantled",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolWelding"
+                        ],
+        "strLootOut":  "ItmAirPumpDismantle",
+        "strJobType":  "dismantle",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDDismantleProgressx5",
+        "strProgressStat":  "StatDismantleProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    },
+    {
+        "strName":  "OstrabusBottleRefillerDmgLooseDismantle",
+        "strActionCO":  "ItmOstrabusBottleRefillerDmgLoose",
+        "strActionGroup":  "Work",
+        "strTooltip":  "Carefully deconstructs item into component parts (Non-reversible).",
+        "strInteractionTemplate":  "ACTDismantleTEMP",
+        "CTThem":  "TCanBeDismantled",
+        "aInputs":  [
+
+                    ],
+        "fTargetPointRange":  2.0,
+        "fDuration":  0.001,
+        "bSparks":  true,
+        "aToolCTsUse":  [
+                            "TIsToolMortorq",
+                            "TIsToolWelding"
+                        ],
+        "strLootOut":  "ItmAirPumpDismantle",
+        "strJobType":  "dismantle",
+        "strAllowLootCTsUs":  "CTWorkProgressHVAC",
+        "strAllowLootCTsThem":  "CONDDismantleProgressx5",
+        "strProgressStat":  "StatDismantleProgress",
+        "strCTThemMultCondTools":  "IsToolMortorq",
+        "strCTThemMultCondUs":  "StatInstallRateHVAC"
+    }
+]

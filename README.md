@@ -6,19 +6,21 @@ I'm making it public as inspiration, reference material, or a source of code to 
 
 There is no guarantee it will be maintained for new game patches. Issues and pull requests are welcome, but will most likely be ignored. Your best bet is to hit me up on Discord.
 
-**Ostrabus 0.7.1 supports Ostranauts 1.1.0.3 (`public_test`), Windows and BepInEx 5.**
-It is experimental and partially playtested; the [release notes](Build/RELEASE-0.7.1.md) separate live observations from offline/native tests and list known limitations.
-The [1.1 compatibility audit](Build/COMPATIBILITY-1.1.0.0.md), [feature review](Build/FEATURE-COMPATIBILITY-1.1.0.0.md) and incremental [1.1.0.1](Build/COMPATIBILITY-1.1.0.1.md) / [1.1.0.2](Build/COMPATIBILITY-1.1.0.2.md) / [1.1.0.3](Build/COMPATIBILITY-1.1.0.3.md) reviews document support.
+**The current source supports Ostranauts 1.1.0.4 (`public_test`), Windows and BepInEx 5.**
+Version **0.7.2** is experimental and partially playtested; the [release notes](Build/RELEASE-0.7.2.md) separate live observations from offline/native tests and list known limitations.
+The [1.1 compatibility audit](Build/COMPATIBILITY-1.1.0.0.md), [feature review](Build/FEATURE-COMPATIBILITY-1.1.0.0.md) and incremental [1.1.0.1](Build/COMPATIBILITY-1.1.0.1.md) / [1.1.0.2](Build/COMPATIBILITY-1.1.0.2.md) / [1.1.0.3](Build/COMPATIBILITY-1.1.0.3.md) / [1.1.0.4](Build/COMPATIBILITY-1.1.0.4.md) reviews document support. The [0.7.1 checkpoint](Build/RELEASE-0.7.1.md) targets game 1.1.0.3.
 
 Use the [build/install instructions](Build/README.md) for the full package or the [custom plugin builder](CustomBuilder/README.md) for selected features.
 Normal deployment continues to install the full package.
 
-The optional [Station Kiosk Migration plugin 0.1.3](StandaloneMods/StationMigration/README.md) preserves station interiors during the game's kiosk upgrades; install it separately before loading an affected older save, then remove it after saving.
+The optional [Station Kiosk Migration plugin 0.1.4](StandaloneMods/StationMigration/README.md) preserves station interiors during the game's kiosk upgrades; install it separately before loading an affected older save, then remove it after saving.
 It is not a general content migration: the [content audit](Build/CONTENT-AVAILABILITY-1.1.0.0.md) explains what 1.1 already adds to continuing saves and why the earlier metadata-only migration prototype is unnecessary.
 
-The separately installed [Boneyard Turnover plugin 0.1.4](StandaloneMods/BoneyardTurnover/README.md) refreshes static regional salvage fields during absences, with configurable turnover rates; Earth and active hauler-serviced yards are excluded. It passes offline native checks and awaits live playtesting.
+The separately installed [Boneyard Turnover plugin 0.1.5](StandaloneMods/BoneyardTurnover/README.md) refreshes static regional salvage fields during absences, with configurable turnover rates; Earth and active hauler-serviced yards are excluded. It passes offline native checks and has limited live playtesting; the 1.1.0.4 update is checked offline.
 
-For the old game, use the [preserved 1.0.1.10 baseline](Build/BASELINE-1.0.1.10.md), commit `be8e282`, tagged `Ostrabus-5.1.0`; this 0.7.1 build does not declare support for other game versions.
+The independent [Bottle Refiller plugin 0.1.7](StandaloneMods/BottleRefiller/README.md) adds powered wall equipment for filling up to four handheld O2 bottles from a tank or compartment; it transfers the source gas mixture without filtering it and has its own installer.
+
+For the old game, use the [preserved 1.0.1.10 baseline](Build/BASELINE-1.0.1.10.md), commit `be8e282`, tagged `Ostrabus-5.1.0`; this source targets the reviewed 1.1.0.4 game.
 
 ## Inventory of changes
 
@@ -57,6 +59,8 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 
 #### AI activity, recovery and ship lifetimes
 
+- [Derelict names](MiscBugFixes/DERELICT-NAMES-AND-IDS-AUDIT.md#implemented-prevention): preserve generated names when deferred boneyard wrecks become ships instead of replacing them with their callsigns.
+- [Ship registrations](MiscBugFixes/DERELICT-NAMES-AND-IDS-AUDIT.md#implemented-prevention): reject new IDs already used by loaded ships or deferred space objects, preventing a wreck from silently replacing another registry entry.
 - [AI flight control handoffs](Navigation/FLIGHT-CONTROL-HANDOFF.md): release abandoned courses and thrust, wait for incapacitated pilots, and prevent retired controllers from continuing to steer.
 - [Scav emergency recovery](MiscBugFixes/SCAV-EMERGENCY-RECOVERY.md): end empty scavenging visits and retry failed destination selection so stranded scavengers can reach the game's emergency-assistance behavior.
 - [AI wait clocks](Navigation/SCAVENGER-WAITING.md): preserve absolute waiting deadlines and let background ships' saved emergency-call cooldowns expire correctly.
@@ -83,7 +87,6 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 - [Bounty escorts](MiscBugFixes/BOUNTY-ESCORT.md): allow temporarily arrested bounty targets to follow manual airlock orders without granting them unrestricted autonomous movement.
 - [Bounty departures](Navigation/BOUNTY-DEPARTURES.md): restore station refueling when bounty targets relaunch in their existing ships, preventing immediate returns for lack of fuel.
 - [Ranged self-hits](MiscBugFixes/RangedShooterExclusionPatch.cs): exclude the shooter from character hit checks while preserving damage to intended targets and objects farther along the shot.
-- [PDC ammunition](MiscBugFixes/PDC-CONVERSION-AMMO.md): preserve existing ammunition during PDC installation and conversion without generating another starting magazine.
 
 #### Freight, markets and remote trading
 
@@ -143,7 +146,7 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 - [Micrometeoroid detection and defense](Micrometeoroids/README.md): share sensors and PDC defense across a docking group, block shots that threaten connected hulls, and consume ammunition even when a burst misses.
 - [Micrometeoroid target fairness](Micrometeoroids/README.md): select exposed loaded ships in proportion to hull area while excluding stations and every ship connected to them.
 - [Station docking traffic](Navigation/STATION-DOCKED-COLLISIONS.md): exempt ships connected to a station from ship collisions, AI avoidance and proximity warnings while keeping free-space towing groups as obstacles.
-- [Hull-shaped collisions](Navigation/Collisions/README.md): optionally use cached hull geometry for ship impacts, AI clearance, docking ranges and proximity alarms while preserving weapon hits and impact-damage rules.
+- [Hull-shaped collisions](Navigation/Collisions/README.md): optionally use cached hull geometry for impacts, docking ranges, proximity alarms and confirmation of broad AI collision warnings, while preserving weapon hits and impact damage.
 - [Free coasting](Orbital/README.md): reduce time-step-dependent orbital drift using velocity-Verlet integration and consistent orbital coordinates.
 - [Super Fast Forward and PASS](Orbital/SFF-IMPLEMENTATION.md): advance orbital motion, AI decisions, freight and collision checks through time skips without changing the game's passenger-transfer rules.
 
@@ -188,6 +191,7 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 
 #### Crew and shipboard conveniences
 
+- [Wall-mounted bottle refiller](StandaloneMods/BottleRefiller/README.md): add separately installed powered equipment that fills four handheld O2 bottles from a tank or compartment, preserving gas composition and stopping when full or out of supply.
 - [Wreck damage severity](QoL/WreckSeverity/README.md): soften initial derelict damage with a configurable curve that favors salvageable wrecks while preserving native damage rolls and regional loot restrictions.
 - [Quick PDA hacking](QoL/PdaHacking/README.md): offer PDA unlocking directly in the quick-action menu for characters with Hacking while retaining the game's requirements and effects.
 - [Venus dolly handling](Venus/DOLLY-ENCUMBRANCE.md): reduce dolly-and-payload encumbrance by 90% on Venus aerostats and docked ships to approximate wheeled handling.
@@ -207,6 +211,7 @@ SFF means Super Fast Forward; PASS shuttle trips also advance the simulation whi
 
 #### Diagnostics and maintenance
 
+- [Wreck generation diagnostics](QoL/WreckSeverity/README.md): optionally report original and adjusted severity, incoming damage rays, native bonus awards and their causes through the existing wreck-log setting.
 - [NPC obituary evidence](Diagnostics/Obituaries/README.md): automatically retain bounded external records of NPC deaths and living removals, with caller stacks and pre-destruction ship state for investigating simulation defects.
 
 - [Maintenance commands](MiscBugFixes/README.md): repair item and character masses with `massfix`, recover damaged navigation references with `navfix`, and inspect phantom cargo pods with `cargopodfix`.

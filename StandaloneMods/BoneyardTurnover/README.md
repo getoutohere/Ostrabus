@@ -1,10 +1,12 @@
-# Boneyard Turnover 0.1.4
+# Boneyard Turnover 0.1.5
 
-An optional standalone simulation mod for **Ostranauts 1.1.0.2/1.1.0.3 and BepInEx 5**.
+An optional standalone simulation mod for **Ostranauts 1.1.0.2/1.1.0.3/1.1.0.4 and BepInEx 5**.
 It gradually replaces abandoned wrecks in the static regional boneyards while
 the player is away. This is new gameplay policy, not a vanilla bug repair.
-The implementation builds and passes offline native regression checks; live
-playtesting is pending.
+The implementation passes offline native regression checks and has limited live
+playtesting. Version 0.1.5 admits the reviewed 1.1.0.4 assembly without changing
+turnover policy; newly generated wrecks also use the game's new small-wreck
+damage cap. This compatibility update is validated offline.
 
 ## Behavior
 

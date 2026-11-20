@@ -30,6 +30,9 @@ try {
     $run=Join-Path $repo ('obj\CustomBuilder\tests-'+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $run -Force | Out-Null
     $cases=[ordered]@{
+        'derelict-names'=@('derelict-names');
+        'ship-registration-ids'=@('ship-registration-ids');
+        'ship-identity'=@('derelict-names','ship-registration-ids');
         'orbital-velocity'=@('orbital-velocity');
         'orbital-velocity-simulation'=@('orbital-velocity','economy-sff','coast','passive-docking-attachment');
         'ai-avoidance'=@('ai-avoidance');
@@ -39,6 +42,7 @@ try {
         'ai-rendezvous-navigation'=@('ai-rendezvous','ai-flight-controls','departure-waypoints','economy-sff');
         'mm-fairness'=@('mm-fairness');
         'mm-fairness-defense'=@('mm-fairness','pdc-defense');
+        'pdc-ammo'=@('pdc-ammo');
         'nav-module-placement'=@('nav-module-placement');
         'course-controls'=@('course-controls');
         'wreck-severity'=@('wreck-severity');

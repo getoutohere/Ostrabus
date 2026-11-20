@@ -12,7 +12,7 @@ internal static class WreckSeverity {
         Reduction = config.Bind("QoL.WreckSeverity", "SeverityReduction", DefaultReduction,
             "Soften initial derelict damage with a smooth severity curve. Default 0.25 maps severity 1 to 0.75 and 0.4 to 0.3. Zero preserves vanilla; use a finite value below 1. Existing damaged wrecks are not repaired. Invalid values disable the adjustment.");
         LogDamageRolls = config.Bind("QoL.WreckSeverity", "LogDamageRolls", false,
-            "Print initial wreck severity before/after the curve and native bonus, hole/cull/wear passes, and actual randomized incoming damage budgets per ray to the player console. Diagnostic only; false installs no ray-roll observer. Restart to apply.");
+            "Print wreck damage, native bonus awards with their Beat Manager/interaction causes, and bonus consumption to the player console. Includes release rolls and ray damage budgets. Diagnostic only; false installs no extra diagnostic hooks. Restart to apply.");
         WreckDamageLog.Enabled = LogDamageRolls.Value;
         Reduction.SettingChanged += Validate;
         Validate(null, EventArgs.Empty);

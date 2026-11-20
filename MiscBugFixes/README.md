@@ -13,6 +13,17 @@ ghosts and missing registrations on player-owned ships while preserving cargo.
 
 Always enabled through the plugin's normal Harmony lifecycle. No update loop or saved state.
 
+## Derelict names and ship registrations
+
+`DerelictNamePatch.cs` retains the name selected by native ship initialization
+when an environment wreck becomes a physical ship, preserving asteroid and
+authored station conversion. `ShipRegistrationPatch.cs` checks both live
+registries during fresh ID generation and retains explicit prefixes on retries;
+save restoration and conversion keep their existing IDs. Each intervention emits
+a warning through the player's native console. The independent custom features
+are `derelict-names` and `ship-registration-ids`; neither polls or adds saved
+state. See [source, save evidence and validation](DERELICT-NAMES-AND-IDS-AUDIT.md).
+
 ## Radio surrender
 
 [Isolate radio surrender effects](SHIP-SURRENDER-WORK-STALL.md) from the on-foot
@@ -154,10 +165,11 @@ controller. See [design and native tests](../Navigation/BehaviorGraph/Traffic/HI
 
 ## PDC conversion ammunition
 
-`PdcConversionAmmoPatch` suppresses starting loot when a vanilla PDC replaces
-an existing PDC. This prevents another 50-100 rounds being generated before
-native inventory transfer during installation/uninstallation, while new spawns
-retain their normal starting ammunition. See [PDC-CONVERSION-AMMO.md](PDC-CONVERSION-AMMO.md).
+Retired for game 1.1.0.4: the native installation/repair recipes now select
+loot-suppressed outputs, preventing extra starting ammunition before inventory
+transfer. The production factory hook was removed; its historical reproduction
+and old/new asset comparison remain in `Tests/PdcAmmoCheck`. See
+[PDC-CONVERSION-AMMO.md](PDC-CONVERSION-AMMO.md).
 
 ## Tile helper memory leak
 

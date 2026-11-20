@@ -1,0 +1,14 @@
+[
+    {
+        "strName":  "Bottle Refiller Conditions",
+        "aValues":  [
+                        "IsOstrabusBottleRefiller",
+                        "Bottle Refiller",
+                        "Wall-mounted bottle filling unit.",
+                        "0",
+                        "0",
+                        "Neutral",
+                        "false"
+                    ]
+    }
+]

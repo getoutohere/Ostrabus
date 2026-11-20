@@ -1,6 +1,8 @@
 # Decision: replace the command runtime behind native role behavior
 
-Status: selected direction with an [offline prototype](PROTOTYPE.md). No production changes.
+Status: **abandoned on 2026-11-19**. See the [postmortem](POSTMORTEM.md).
+The decision and implementation plan below are historical. The
+[offline prototype](PROTOTYPE.md) was never installed.
 The current [normative replacement model](Replacement/README.md) is separate
 from the descriptive game/patch behavior graph. Its first explicit ability
 profile replaces the nested return lifecycle; full Navy adoption remains gated.

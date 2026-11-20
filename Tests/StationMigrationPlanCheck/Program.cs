@@ -100,10 +100,39 @@ var preserved = ((JArray)blockedPlan.Updated["aItems"]).OfType<JObject>().Single
 Check(Migration.Name(preserved) == "ItmWall1x1Loose" && !assets.Installed(Migration.Name(preserved), blockedStates["PLAYER-BLOCKER"]), "Blocking wall not made loose");
 Check(Catalog.Strings(blockedStates["PLAYER-BLOCKER"]["aConds"]).Contains("StatDamage=1.0x7"), "Conversion lost damage");
 
+// Named output tables introduced for weapons in 1.1.0.4 must remain usable
+// when migration preserves a player's obstructing installed gun as a loose item.
+foreach (var recipe in installables.Values.Where(row => (string)row["strJobType"] == "uninstall" &&
+    ((string)row["strActionCO"]).StartsWith("ItmShipWeapon", StringComparison.Ordinal) &&
+    row["strLootOut"]?.Type == JTokenType.String))
+{
+    string installed = (string)recipe["strActionCO"];
+    Check(assets.LooseDefinition(installed) == assets.RecipeOutputs(recipe).Single(),
+        "Named native uninstall output was not resolved: " + installed);
+}
+Check(assets.RecipeOutputs(new JObject { ["strLootOut"] = "ItmTransponder01LooseChance" }).Length == 0,
+    "Migration guessed a deterministic replacement from a random transponder recipe");
+var armed = Read(args[0], (string)bcrsManifest["template"]);
+armed["strRegID"] = "BCRS";
+var gun = Migration.Clone(blocker);
+gun["strName"] = "ItmShipWeaponPDC01Off";
+gun["strID"] = "PLAYER-PDC";
+((JArray)armed["aItems"]).Add(gun);
+var gunStates = Records(armed);
+gunStates["PLAYER-PDC"]["aConds"] = new JArray("DEFAULT", "StatDamage=1.0x7");
+gunStates["PLAYER-PDC"]["aLot"] = new JArray("RETAINED-AMMO");
+var armedPlan = Run(armed, bcrsManifest, gunStates);
+Check(armedPlan.Uninstalled == 1 &&
+    ((JArray)armedPlan.Updated["aItems"]).OfType<JObject>().Single(part => Migration.Id(part) == "PLAYER-PDC")["strName"].Value<string>() == "ItmShipWeaponPDC01Loose",
+    "Blocking PDC did not preserve the authored loose form");
+Check(Catalog.Strings(gunStates["PLAYER-PDC"]["aLot"]).SequenceEqual(new[] { "RETAINED-AMMO" }) &&
+    Catalog.Strings(gunStates["PLAYER-PDC"]["aConds"]).Contains("StatDamage=1.0x7"),
+    "Named-output conversion changed ammunition identity or damage");
+
 // Use a real native container recipe to test nested inventory and saved GUI
 // connection/settings preservation through an administrative uninstallation.
 string containerName = installables.Values.Where(row => (string)row["strJobType"] == "uninstall" &&
-        Catalog.Strings(row["aLootCOs"]).Length == 1)
+        assets.RecipeOutputs(row).Length == 1)
     .Select(row => (string)row["strActionCO"])
     .First(name => definitions.TryGetValue(name, out var definition) &&
         (int?)definition["nContainerWidth"] > 0 && assets.Installed(name, null));

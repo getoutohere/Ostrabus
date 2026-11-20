@@ -36,6 +36,7 @@ internal static class Program
             Check(Plugin.RespawnSitesFor(Plugin.NativeHash1101) == 1, "1.1.0.1 native migration contract changed");
             Check(Plugin.RespawnSitesFor(Plugin.NativeHash1102) == 2, "1.1.0.2 native migration contract changed");
             Check(Plugin.RespawnSitesFor(Plugin.NativeHash1103) == 2, "1.1.0.3 native migration contract changed");
+            Check(Plugin.RespawnSitesFor(Plugin.NativeHash1104) == 2, "1.1.0.4 native migration contract changed");
             Check(Plugin.RespawnSitesFor("unreviewed") == 0, "Unknown native assembly was admitted");
             Dictionary<string, T> Load<T>(string directory) => AssetFiles.Load(data, directory)
                 .ToDictionary(pair => pair.Key, pair => pair.Value.ToObject<T>());
@@ -49,6 +50,8 @@ internal static class Program
             DataHandler.dictStarSystems = Load<JsonStarSystemSave>("star_systems");
             DataHandler.dictCOSaves = new Dictionary<string, JsonCondOwnerSave>();
             DataHandler.mapCOs = new Dictionary<string, CondOwner>();
+            Check(NativeAdapter.Assets().LooseDefinition("ItmShipWeaponPDC01Off") == "ItmShipWeaponPDC01Loose",
+                "Native recipe adapter cannot preserve an obstructing PDC as its authored loose form");
             foreach (int width in new[] { 1, 3, 5, 7 })
             {
                 var samples = Enumerable.Range(0, width * 3).Select(index => index.ToString()).ToArray();

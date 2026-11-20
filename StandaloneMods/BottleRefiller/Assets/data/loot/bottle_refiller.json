@@ -1,0 +1,184 @@
+[
+    {
+        "strName":  "OutputACTOstrabusBottleRefillerRepack",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputMSOstrabusBottleRefillerDamage",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerDmg=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "MSOstrabusBottleRefillerDamage",
+        "strType":  "interaction",
+        "aCOs":  [
+                     "MSOstrabusBottleRefillerDamage=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputMSOstrabusBottleRefillerLooseDamage",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerDmgLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "MSOstrabusBottleRefillerLooseDamage",
+        "strType":  "interaction",
+        "aCOs":  [
+                     "MSOstrabusBottleRefillerLooseDamage=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputACTOstrabusBottleRefillerDmgRepack",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerDmgLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "MSOstrabusBottleRefillerDmgDamage",
+        "strType":  "interaction",
+        "aCOs":  [
+                     "MSOstrabusBottleRefillerDmgDamage=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "MSOstrabusBottleRefillerDmgLooseDamage",
+        "strType":  "interaction",
+        "aCOs":  [
+                     "MSOstrabusBottleRefillerDmgLooseDamage=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputOstrabusBottleRefillerInstall",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefiller=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputOstrabusBottleRefillerUninstall",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputOstrabusBottleRefillerDmgInstall",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerDmg=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputOstrabusBottleRefillerDmgUninstall",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerDmgLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputOstrabusBottleRefillerDmgRepair",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefiller=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputOstrabusBottleRefillerUndamage",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefiller=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputOstrabusBottleRefillerDmgLooseRepair",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "OutputOstrabusBottleRefillerLooseUndamage",
+        "strType":  "item",
+        "bSuppress":  true,
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    },
+    {
+        "strName":  "ItmOstrabusBottleRefillerStock",
+        "strType":  "item",
+        "aCOs":  [
+                     "ItmOstrabusBottleRefillerLoose=1.0x1"
+                 ],
+        "aLoots":  [
+
+                   ]
+    }
+]

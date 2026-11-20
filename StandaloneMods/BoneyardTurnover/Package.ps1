@@ -5,7 +5,7 @@ $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 & dotnet build (Join-Path $PSScriptRoot 'BoneyardTurnover.csproj') -c Release --nologo -v quiet
 if ($LASTEXITCODE -ne 0) { throw 'Boneyard Turnover build failed.' }
 if (-not $Destination) {
-    $Destination = Join-Path $repo ('dist\BoneyardTurnover-0.1.4-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
+    $Destination = Join-Path $repo ('dist\BoneyardTurnover-0.1.5-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
 }
 if (Test-Path -LiteralPath $Destination) { throw 'Package destination already exists.' }
 New-Item -ItemType Directory -Path (Join-Path $Destination 'Plugin'),(Join-Path $Destination 'Support') -Force | Out-Null

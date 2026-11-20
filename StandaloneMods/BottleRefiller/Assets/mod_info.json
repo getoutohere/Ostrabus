@@ -1,0 +1,9 @@
+[
+    {
+        "strName":  "Bottle Refiller",
+        "strAuthor":  "Jon",
+        "strGameVersion":  "1.1.0.4",
+        "strModVersion":  "0.1.7",
+        "strNotes":  "Requires the standalone Bottle Refiller BepInEx plugin. Retain item definitions for existing saves."
+    }
+]

@@ -12,6 +12,7 @@ dotnet run --project Tools/NavigationOwnershipAudit -c Release
 dotnet run --project Tools/NavigationOwnershipAudit -c Release -- --check-review
 dotnet run --project Tools/NavigationOwnershipAudit -c Release -- method Ostranauts.ShipGUIs.NavStation.NavModCoursePlot EngageTrip
 dotnet run --project Tools/NavigationOwnershipAudit -c Release -- destruction
+dotnet run --project Tools/NavigationOwnershipAudit -c Release -- factory
 dotnet run --project Tools/NavigationOwnershipAudit -c Release -- personnel
 ~~~
 

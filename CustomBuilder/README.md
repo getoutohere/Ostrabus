@@ -9,6 +9,10 @@ features, then press **b** to build. Dependencies are added automatically and
 shown with `+` and a reason. Remove their dependents first to exclude them.
 Profiles can be saved and loaded from the menu.
 
+Game 1.1.0.4 fixes conversion-generated PDC ammunition in its own recipes.
+Existing profiles containing `pdc-ammo` still load; that retired ID installs
+no hook and is omitted from the menu and new presets.
+
 `orbital-velocity` independently repairs shared orbital velocity caches and
 RCS-to-coast conversion. It is included in bugfix presets and needs no optional
 `orbital`, `coast` or `sff` feature. It adds two hooks and no frame callback or
@@ -23,6 +27,10 @@ non-centered parent pivots; it remains independently selectable.
 one eligible option; selecting `pda-settings` adds its saved toggle.
 `wreck-severity` supplies its own BepInEx curve and logging controls without
 requiring PDA assets. Both are QoL features, outside bugfix-only presets.
+
+`derelict-names` and `ship-registration-ids` are independent bugfixes that preserve
+wreck names and prevent fresh IDs colliding with deferred objects. Both report
+interventions in the native console, with no PDA dependency or polling.
 
 `ai-crew-recruitment` repairs the shared recruitment-source list; the separate
 simulation feature `ai-crew-retirement` allows compatible full stations to

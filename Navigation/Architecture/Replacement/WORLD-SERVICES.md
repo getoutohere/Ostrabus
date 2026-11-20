@@ -1,5 +1,8 @@
 # Retained world-service integration
 
+Study disposition: **abandoned on 2026-11-19**. See the [postmortem](../POSTMORTEM.md).
+This document preserves historical qualification, not an active adoption plan.
+
 Status: offline integration experiment, requalified for 1.1.0.0. No production patches, native assets,
 persisted configuration or deployed behavior were changed. The separate descriptive AI
 behavior graph was not edited. Results are part of [test-results.json](test-results.json).

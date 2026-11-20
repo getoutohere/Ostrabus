@@ -27,6 +27,9 @@ internal static class WreckDamageLog {
         internal int Rays, RaysWithRolls;
         internal double Env, Blunt, Cut;
         internal RayRoll Pending;
+        internal bool DamageReport, BonusPresent;
+        internal CondOwner BonusActor;
+        internal double BonusBefore, Epoch;
         internal readonly List<RayRoll> Details = new List<RayRoll>();
     }
     internal sealed class RayRoll {
@@ -37,11 +40,13 @@ internal static class WreckDamageLog {
         internal bool Completed;
     }
 
-    internal static Capture Begin(Ship ship, float original) {
+    internal static Capture Begin(Ship ship, float original, bool damageReport = true) {
         var capture = new Capture { Parent = Current, Id = ship.strRegID, Region = CollisionManager.strATCClosest,
             Name = ship.publicName, Columns = ship.nCols, Rows = ship.nRows,
-            Original = original, Adjusted = ship.fBreakInMultiplier, Reduction = WreckSeverity.Reduction?.Value ?? 0 };
-        Current = capture;
+            Original = original, Adjusted = ship.fBreakInMultiplier, Reduction = WreckSeverity.Reduction?.Value ?? 0,
+            DamageReport = damageReport, BonusActor = CrewSim.coPlayer, BonusBefore = WreckBonusLog.Count(CrewSim.coPlayer),
+            BonusPresent = WreckBonusLog.Pending(CrewSim.coPlayer), Epoch = StarSystem.fEpoch };
+        Current = damageReport ? capture : null;
         return capture;
     }
 
@@ -49,15 +54,19 @@ internal static class WreckDamageLog {
         if (capture == null) return;
         Current = capture.Parent;
         try {
-            foreach (string line in Format(capture, ship?.fBreakInMultiplier ?? capture.Adjusted, failure)) {
+            if (capture.BonusPresent) WreckBonusLog.Write(WreckBonusLog.Consumption(ship, capture.Epoch,
+                capture.BonusBefore, WreckBonusLog.Count(capture.BonusActor), capture.Adjusted, ship?.fBreakInMultiplier ?? capture.Adjusted,
+                failure, WreckBonusLog.Pending(capture.BonusActor)));
+            if (capture.DamageReport) foreach (string line in Format(capture, ship?.fBreakInMultiplier ?? capture.Adjusted, failure)) {
                 ConsoleToGUI.instance?.LogInfo(line);
                 OstrabusPlugin.Logger?.LogInfo(line);
             }
         } catch (Exception error) {
             // A diagnostic formatting/console failure must not replace a native
             // exception or turn otherwise successful wreck generation into one.
-            OstrabusPlugin.Logger?.LogWarning("Wreck damage report unavailable: " + error.GetType().Name);
-        }
+            try { OstrabusPlugin.Logger?.LogWarning("Wreck damage report unavailable: " + error.GetType().Name); }
+            catch (Exception) { }
+        } finally { capture.BonusActor = null; }
     }
 
     static int OnShip(List<CondOwner> objects, Ship ship) {

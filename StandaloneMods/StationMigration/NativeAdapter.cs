@@ -26,10 +26,12 @@ internal static class NativeAdapter
         } : null, name => DataHandler.dictLoot.TryGetValue(name, out var value) ? new JObject
         {
             ["strName"] = value.strName, ["aCOs"] = new JArray(value.aCOs ?? Array.Empty<string>()),
+            ["strType"] = value.strType,
             ["aLoots"] = new JArray(value.aLoots ?? Array.Empty<string>())
         } : null, DataHandler.dictInstallables.Values.Select(value => new JObject
         {
             ["strActionCO"] = value.strActionCO, ["strJobType"] = value.strJobType,
+            ["strLootOut"] = value.strLootOut,
             ["aLootCOs"] = new JArray(value.aLootCOs ?? Array.Empty<string>())
         }), Destroyed);
     }

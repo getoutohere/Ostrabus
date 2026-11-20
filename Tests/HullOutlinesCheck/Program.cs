@@ -259,8 +259,10 @@ static partial class Program {
             foreach(var patch in new[]{typeof(HullIconPatch),typeof(HullDrawPatch),typeof(HullMutationPatch),typeof(HullRetirePatch),typeof(HullNavClosePatch),typeof(HullScalePatch)})harmony.CreateClassProcessor(patch).Patch();
             foreach(var method in new[]{AccessTools.Method(typeof(ShipDraw),nameof(ShipDraw.ToggleSilhouetteDrawMode)),AccessTools.Method(typeof(Ship),"UpdateTiles"),AccessTools.Method(typeof(Ship),nameof(Ship.Destroy)),AccessTools.Method(typeof(GUIOrbitDraw),"OnDestroy")})
                 harmony.Patch(method,prefix:new HarmonyMethod(typeof(Program),nameof(Skip)){priority=Priority.Last});
-            SnapshotCases();RotationCases(harmony);PresentationCases();AssetCases();RuntimeCollisionCases(harmony);DockingCases();ConsumerCases();RangeCases();DockingPermissionCases();
-            if(args.Length==6&&args[0]=="docking-pair")SavedDockingPair(args[1],args[2],args[3],args[4],args[5]);
+            SnapshotCases();RotationCases(harmony);PresentationCases();AssetCases();RuntimeCollisionCases(harmony);DockingCases();ConsumerCases();RangeCases();DockingPermissionCases();ApproachCases();
+            if(args.Length==3&&args[0]=="pursuit-replay")PursuitReplay(args[1],args[2]);
+            else if(args.Length==3&&args[0]=="astern-avoidance")SavedAsternApproach(args[1],args[2]);
+            else if(args.Length==6&&args[0]=="docking-pair")SavedDockingPair(args[1],args[2],args[3],args[4],args[5]);
             else if(args.Length>2)SavedSizes(args[0],args[1],args[2]);
             else if(args.Length>0)SavedPreview(args[0],args.Length>1?args[1]:"O-GXD");
             Console.WriteLine(checks+" hull snapshot/asset/native-coordinate/render-copy checks passed. Unity mesh upload remains a live-scene check.");

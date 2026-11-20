@@ -22,13 +22,18 @@ if (args.Length == 3 && args[0] == "method") {
     }
     return;
 }
-if (args.Length == 1 && args[0] == "destruction") {
+if (args.Length == 1 && (args[0] == "destruction" || args[0] == "factory")) {
     foreach (var method in Types(assembly.MainModule.Types).SelectMany(type => type.Methods).Where(method => method.HasBody)) {
         var code = method.Body.Instructions;
         for (int i = 0; i < code.Count; i++) {
-            if (code[i].Operand is not MethodReference target || target.DeclaringType.FullName != "Ship" || target.Name != "Destroy") continue;
+            if (code[i].Operand is not MethodReference target) continue;
+            if (args[0] == "factory") {
+                if (target.DeclaringType.FullName != "DataHandler" || target.Name != "GetCondOwner" ||
+                    target.Parameters.Count != 2 && target.Parameters.Count != 8) continue;
+            } else if (target.DeclaringType.FullName != "Ship" || target.Name != "Destroy") continue;
             Console.WriteLine(method.FullName);
-            foreach (var instruction in code.Skip(Math.Max(0, i - 3)).Take(5)) Console.WriteLine("  " + instruction);
+            int preceding=args[0] == "factory" ? 14 : 3;
+            foreach (var instruction in code.Skip(Math.Max(0, i - preceding)).Take(preceding+2)) Console.WriteLine("  " + instruction);
         }
     }
     return;

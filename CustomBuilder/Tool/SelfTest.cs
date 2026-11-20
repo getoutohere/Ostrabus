@@ -18,6 +18,21 @@ static class SelfTest {
 
         Plan Make(params string[] ids) => Inventory.Plan(catalog, new Profile { Features = ids }, declarations);
         string Read(string file) => File.ReadAllText(Path.Combine(root, file));
+        foreach (string identity in new[] { "derelict-names", "ship-registration-ids" }) {
+            var feature = Make(identity);
+            Check(feature.Included.Length == 1 && feature.Patches.Length == 1 && feature.TickCalls == 0 &&
+                feature.NativeMods.Length == 0 && feature.Settings.Length == 0,
+                identity + " is an independent creation-only bugfix without polling, settings or asset overrides");
+            Check(Presets.Create(catalog, "bugfixes").Features.Contains(identity) &&
+                Presets.Create(catalog, "recommended").Features.Contains(identity), identity + " belongs to consumer bugfix presets");
+        }
+        var retiredAmmo = Make("pdc-ammo");
+        Check(retiredAmmo.Included.SequenceEqual(new[] { "pdc-ammo" }) && retiredAmmo.Patches.Length == 0 &&
+            retiredAmmo.TickCalls == 0 && retiredAmmo.NativeMods.Length == 0 && retiredAmmo.Settings.Length == 0,
+            "old pdc-ammo profiles remain valid without reinstating the native-fixed hook");
+        Check(catalog.Features.Single(feature => feature.Id == "pdc-ammo").Hidden &&
+            !Presets.Create(catalog, "recommended").Features.Contains("pdc-ammo"),
+            "retired PDC feature is hidden from the menu and new presets");
         var pdaHack = Make("quick-pda-hack");
         var wreckSeverity = Make("wreck-severity");
         var singlePort = Make("single-port-docking");
@@ -27,9 +42,9 @@ static class SelfTest {
         Check(singlePort.Included.Length == 1 && singlePort.Patches.Length == 1 && singlePort.TickCalls == 0 &&
             singlePort.Settings.SequenceEqual(new[] { "single_docking_port" }) && singlePort.NativeMods.Length == 0,
             "single-port docking is an independent QoL shortcut with its own saved PDA setting");
-        Check(wreckSeverity.Included.Length == 1 && wreckSeverity.Patches.Length == 2 &&
+        Check(wreckSeverity.Included.Length == 1 && wreckSeverity.Patches.Length == 4 &&
             wreckSeverity.TickCalls == 0 && !wreckSeverity.PdaAssets && wreckSeverity.NativeMods.Length == 0,
-            "wreck severity and its optional roll observer are independent QoL hooks without polling, native asset overrides or PDA dependencies");
+            "wreck severity and its optional roll/bonus observers are independent QoL hooks without polling, native asset overrides or PDA dependencies");
         Check(Presets.Create(catalog, "bugfixes-qol").Features.Contains("wreck-severity") &&
             Presets.Create(catalog, "recommended").Features.Contains("wreck-severity") &&
             !Presets.Create(catalog, "bugfixes").Features.Contains("wreck-severity"),

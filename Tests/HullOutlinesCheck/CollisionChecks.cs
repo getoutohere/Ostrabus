@@ -51,6 +51,8 @@ static class CollisionChecks {
             bool expected=Oracle(Corners(longHull,motion.RA,aa,motion.End),Corners(square,motion.RB,ba,default));
             Check(solver.TrySolve(longHull.Collision,square.Collision,motion,out var contact),"Rectangle contact exhausted the query budget");
             Check(contact.Hit==expected,"Native-oriented rectangle result differs from independent corner-projection oracle");
+            Check(solver.TryHit(longHull.Collision,square.Collision,motion,0,out bool predicted)&&predicted==expected,
+                "Future any-hit query disagrees with independent corner-projection oracle");
             if(contact.Hit) {
                 var separated=motion.End+contact.Normal*contact.Depth;
                 Check(solver.TrySolve(longHull.Collision,square.Collision,Still(separated.X,separated.Y,aa,ba,motion.RA,motion.RB),out var after)&&!after.Hit,"Returned contact displacement leaves hulls overlapping");
@@ -87,6 +89,15 @@ static class CollisionChecks {
         Check(!solver.TrySolve(null,square.Collision,path,out _),"Missing geometry was treated as a verified miss");
         var invalid=new HullContact.Motion(default,new HullContact.Vec(double.NaN,0),0,0,0,0,1,1,false);
         Check(!solver.TrySolve(square.Collision,square.Collision,invalid,out _),"Invalid numeric input was treated as a verified miss");
+        Check(solver.TryHit(square.Collision,square.Collision,path,0,out bool direct)&&direct,"Future query missed a straight crossing");
+        Check(solver.TryHit(beam.Collision,square.Collision,rotation,0,out bool turning)&&turning,"Future query missed a rotating crossing");
+        var gap=Still(3,0);
+        Check(solver.TryHit(square.Collision,square.Collision,gap,0,out bool clear)&&!clear,"Unpadded future query filled a real gap");
+        Check(solver.TryHit(square.Collision,square.Collision,gap,1.1,out bool padded)&&padded,"Future curve-error padding was omitted");
+        Check(solver.TrySolve(square.Collision,square.Collision,gap,out var unchanged)&&!unchanged.Hit,"Future padding leaked into physical response");
+        Check(!solver.TryHit(square.Collision,square.Collision,path,0,out _,0,1),"An exhausted future budget became a verified miss");
+        Check(!solver.TryHit(null,square.Collision,path,0,out _),"Missing future geometry became a verified miss");
+        Check(solver.TrySolve(square.Collision,square.Collision,path,out var recovered)&&recovered.Hit,"Future failure damaged the following physical query");
     }
     static void WarmQueries() {
         var shape=Build(Box(-4,-.5,8,1));var solver=new HullContact();var hit=Still(1,.5,0,0,4.031128874149275,4.031128874149275);

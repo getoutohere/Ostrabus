@@ -110,12 +110,12 @@ internal sealed class Catalog
         string baseName = (string)Definition(name)["strName"];
         var outputs = installables.Where(row => (string)row["strActionCO"] == baseName &&
                 (string)row["strJobType"] == "uninstall")
-            .SelectMany(row => Strings(row["aLootCOs"])).Distinct().ToArray();
+            .SelectMany(RecipeOutputs).Distinct().ToArray();
         // Some floors supply only the inverse install recipe. It still defines
         // the native loose/installed pair; do not invent a name suffix.
         if (outputs.Length == 0)
             outputs = installables.Where(row => (string)row["strJobType"] == "install" &&
-                Strings(row["aLootCOs"]).SequenceEqual(new[] { baseName }))
+                RecipeOutputs(row).SequenceEqual(new[] { baseName }))
                 .Select(row => (string)row["strActionCO"]).Distinct().ToArray();
         if (outputs.Length != 1)
             throw new InvalidOperationException("No unambiguous native loose form for blocking construction: " + name);
@@ -124,6 +124,29 @@ internal sealed class Catalog
         for (int i = 0; i + 1 < swaps.Length; i += 2)
             if (swaps[i] == target) return swaps[i + 1];
         return target;
+    }
+
+    // Native Installables.Create prefers a named output table when present.
+    // 1.1.0.4 weapon recipes use this form to suppress fresh starting ammo.
+    // Accept only a deterministic item mapping; never roll loot to guess a pair.
+    internal string[] RecipeOutputs(JObject recipe)
+    {
+        string named = (string)recipe["strLootOut"];
+        if (named == null) return Strings(recipe["aLootCOs"]);
+        var table = loot(named) ?? throw new InvalidOperationException("Missing conversion output: " + named);
+        if ((string)table["strType"] != "item" || Strings(table["aLoots"]).Length != 0)
+            return Array.Empty<string>();
+        var result = new List<string>();
+        foreach (string value in Strings(table["aCOs"]))
+        {
+            try
+            {
+                if (value.Contains("=") && Amount(value) != 1) return Array.Empty<string>();
+            }
+            catch (InvalidOperationException) { return Array.Empty<string>(); }
+            result.Add(value.Split('=')[0]);
+        }
+        return result.ToArray();
     }
 
     // Change structural defaults while retaining damage, charge, inventory,

@@ -1,8 +1,9 @@
 # Replacement mission execution model
 
-Status: **offline architecture and executable contracts; not an installed feature**.
-This directory is normative: it defines how the proposed replacement executes
-missions. `Navigation/BehaviorGraph/` remains the separate description of native
+Status: **abandoned on 2026-11-19; retained offline research**. See the
+[postmortem](../POSTMORTEM.md). The contracts below are the abandoned proposal,
+not an active implementation plan or an installed feature.
+`Navigation/BehaviorGraph/` remains the separate description of native
 behavior and deployed patches. No experimental overlay was added to that graph.
 
 The current receipts bind **1.1.0.0**. See the

@@ -23,9 +23,10 @@ if ($Uninstall) {
 $native = Join-Path $gamePath 'Ostranauts_Data\Managed\Assembly-CSharp.dll'
 if ((Get-FileHash -LiteralPath $native).Hash -notin @(
     '133A9CC94AD4F4D5DB951B65249B6CDF78F53063419D836B8871B92960EC3C37',
-    'E9E7B8796423701C157EA5718CB407E6517AC0435EF947062C9A27464F4BC82F'
+    'E9E7B8796423701C157EA5718CB407E6517AC0435EF947062C9A27464F4BC82F',
+    '904C72870F55124BBE3F9EE924A4A650279C362541B5795174D0CF940B97C474'
 )) {
-    throw 'This package supports only the reviewed Ostranauts 1.1.0.2 and 1.1.0.3 assemblies.'
+    throw 'This package supports only the reviewed Ostranauts 1.1.0.2, 1.1.0.3 and 1.1.0.4 assemblies.'
 }
 $source = Join-Path $PSScriptRoot 'Plugin\Ostrabus.BoneyardTurnover.dll'
 if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
@@ -48,5 +49,5 @@ try {
     elseif (Test-Path -LiteralPath $target -PathType Leaf) { Remove-Item -LiteralPath $target }
     throw
 }
-Write-Host 'Installed Boneyard Turnover 0.1.4. Ostrabus and vanilla assets were not changed.'
+Write-Host 'Installed Boneyard Turnover 0.1.5. Ostrabus and vanilla assets were not changed.'
 Write-Host 'The first game launch creates BepInEx\config\com.ostrabus.boneyardturnover.cfg. Tracking begins on future departures; loading a save does not refresh its field.'

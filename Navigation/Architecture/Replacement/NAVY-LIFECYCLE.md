@@ -1,5 +1,8 @@
 # Navy lifecycle prototype qualification
 
+Study disposition: **abandoned on 2026-11-19**. See the [postmortem](../POSTMORTEM.md).
+This document preserves historical qualification, not an active adoption plan.
+
 This is an offline replacement experiment, requalified for game 1.1.0.0. Nothing here is
 installed, enabled by a module flag, or connected to a running save. The native
 behavior graph remains descriptive and unchanged by this experiment.

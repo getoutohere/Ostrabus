@@ -24,6 +24,7 @@ internal static class Program {
         InitialDamageChecks();
         NativeContractChecks();
         DamageLogChecks.Run(Check);
+        BonusLogChecks.Run(Check);
         Console.WriteLine("Wreck severity: " + checks + " curve, scope, native contract and configuration assertions passed.");
         return 0;
     }

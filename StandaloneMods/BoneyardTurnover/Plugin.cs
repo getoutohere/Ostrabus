@@ -12,10 +12,11 @@ namespace Ostrabus.BoneyardTurnover
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "com.ostrabus.boneyardturnover";
-        public const string Version = "0.1.4";
+        public const string Version = "0.1.5";
         internal const string NativeHash = "133A9CC94AD4F4D5DB951B65249B6CDF78F53063419D836B8871B92960EC3C37";
         internal const string NativeHash1103 = "E9E7B8796423701C157EA5718CB407E6517AC0435EF947062C9A27464F4BC82F";
-        internal static bool Supports(string hash) => hash == NativeHash || hash == NativeHash1103;
+        internal const string NativeHash1104 = "904C72870F55124BBE3F9EE924A4A650279C362541B5795174D0CF940B97C474";
+        internal static bool Supports(string hash) => hash == NativeHash || hash == NativeHash1103 || hash == NativeHash1104;
         internal static ManualLogSource Log;
         internal static ConfigEntry<bool> EnableSetting;
         internal static ConfigEntry<double> HalfLifeSetting, ShapeSetting;
@@ -35,7 +36,7 @@ namespace Ostrabus.BoneyardTurnover
             using var hash = SHA256.Create();
             if (!Supports(BitConverter.ToString(hash.ComputeHash(file)).Replace("-", "")))
             {
-                Logger.LogError("Boneyard Turnover is inactive: this build requires a reviewed Ostranauts 1.1.0.2 or 1.1.0.3 assembly.");
+                Logger.LogError("Boneyard Turnover is inactive: this build requires a reviewed Ostranauts 1.1.0.2, 1.1.0.3 or 1.1.0.4 assembly.");
                 return;
             }
             harmony = new Harmony(Id);

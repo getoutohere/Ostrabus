@@ -6,6 +6,14 @@ $packageBuild = Join-Path $PSScriptRoot "bin\$Configuration\netstandard2.1"
 foreach ($packageFile in @('Ostrabus.dll', 'Ostrabus.pdb', 'PdaSettings\Assets\mod_info.json', 'QoL\PdaHacking\Assets\mod_info.json', 'NavConsole\Rotation\Assets\mod_info.json', 'MiscBugFixes\ScrubberAudio\Assets\mod_info.json')) {
     if (-not (Test-Path -LiteralPath (Join-Path $packageBuild $packageFile) -PathType Leaf)) { throw "Build $Configuration before packaging: missing $packageFile" }
 }
+$packageVersion = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $packageBuild 'Ostrabus.dll'))
+if ($packageVersion.FileVersion -ne '0.7.2.0') { throw "Rebuild $Configuration before packaging Ostrabus 0.7.2; found $($packageVersion.FileVersion)." }
+foreach ($assetRoot in @('PdaSettings', 'QoL\PdaHacking', 'NavConsole\Rotation', 'MiscBugFixes\ScrubberAudio')) {
+    $metadata = @(Get-Content -LiteralPath (Join-Path $packageBuild ($assetRoot + '\Assets\mod_info.json')) -Raw | ConvertFrom-Json)
+    if ($metadata.Count -ne 1 -or $metadata[0].strModVersion -ne '0.7.2' -or $metadata[0].strGameVersion -ne '1.1.0.4') {
+        throw "Rebuild $Configuration before packaging: stale native-mod metadata in $assetRoot."
+    }
+}
 # Use a fresh directory for every package; never recursively delete a computed path.
 $packageRoot = Join-Path $PSScriptRoot ('dist\Ostrabus-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
 New-Item -ItemType Directory -Path (Join-Path $packageRoot 'Plugin\PdaSettings') -Force | Out-Null
@@ -14,6 +22,9 @@ New-Item -ItemType Directory -Path (Join-Path $packageRoot 'Build') -Force | Out
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Build\Find-Game.ps1') -Destination (Join-Path $packageRoot 'Build')
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Build\Install-NativeMod.ps1') -Destination (Join-Path $packageRoot 'Build')
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Build\Update-ApartmentRefuelStock.ps1') -Destination (Join-Path $packageRoot 'Build')
+foreach ($packageDoc in @('RELEASE-0.7.2.md', 'COMPATIBILITY-1.1.0.4.md')) {
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('Build\' + $packageDoc)) -Destination (Join-Path $packageRoot 'Build')
+}
 foreach ($packageFile in @('Ostrabus.dll', 'Ostrabus.pdb')) { Copy-Item -LiteralPath (Join-Path $packageBuild $packageFile) -Destination (Join-Path $packageRoot 'Plugin') }
 Copy-Item -LiteralPath (Join-Path $packageBuild 'PdaSettings\Assets') -Destination (Join-Path $packageRoot 'Plugin\PdaSettings') -Recurse
 New-Item -ItemType Directory -Path (Join-Path $packageRoot 'Plugin\QoL\PdaHacking') -Force | Out-Null
@@ -29,12 +40,12 @@ foreach ($packageDoc in @('README.md', 'DESIGN.md', 'IMPLEMENTATION.md')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('PdaSettings\' + $packageDoc)) -Destination (Join-Path $packageRoot 'PdaSettings')
 }
 @'
-Ostrabus 0.7.1 experimental release
-Target: Ostranauts 1.1.0.3 (public_test). Other game versions are not supported by
+Ostrabus 0.7.2
+Target: Ostranauts 1.1.0.4 (public_test). Other game versions are not supported by
 this build. Requires an existing BepInEx 5 installation; BepInEx is not bundled.
 Partially playtested: offline/native regressions and documented live observations
-support this release; the latest autopilot, avoidance, attachment and freight
-repairs retain offline-only acceptance. See Build/RELEASE-0.7.1.md in source.
+support this build. Scene acceptance remains incomplete for some changes.
+See Build/RELEASE-0.7.2.md and Build/COMPATIBILITY-1.1.0.4.md in source.
 Source, feature inventory and module documentation:
 https://github.com/getoutohere/Ostrabus
 
@@ -49,9 +60,12 @@ StandaloneMods/ApartmentRefuel. Run its own Install.cmd if wanted; the main
 Deploy-Mod.cmd does not activate this companion. See its README for pricing,
 apartment restrictions and saved-item definition retention on removal.
 
-Station Kiosk Migration 0.1.3 is a separate optional download for protecting
+Station Kiosk Migration 0.1.4 is a separate optional download for protecting
 existing station interiors during native 1.1 kiosk upgrades. It is not activated
 or bundled by this installer. See StandaloneMods/StationMigration in source.
+
+Boneyard Turnover 0.1.5 and Bottle Refiller 0.1.7 are also separately installed
+downloads. This installer neither activates nor replaces their plugins.
 
 Saved controls persist to BepInEx config. Session controls reset on game restart.
 The existing com.ostranauts.template.cfg filename is retained for compatibility.

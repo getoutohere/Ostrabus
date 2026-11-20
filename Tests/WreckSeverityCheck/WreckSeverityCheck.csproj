@@ -10,5 +10,6 @@
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)/UnityEngine.CoreModule.dll</HintPath></Reference>
     <Reference Include="BepInEx"><HintPath>$(Game)/BepInEx/core/BepInEx.dll</HintPath></Reference>
     <Reference Include="0Harmony"><HintPath>$(Game)/BepInEx/core/0Harmony.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(Managed)/Newtonsoft.Json.dll</HintPath></Reference>
   </ItemGroup>
 </Project>

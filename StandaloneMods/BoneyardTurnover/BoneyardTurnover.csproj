@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Ostrabus.BoneyardTurnover</AssemblyName>
     <RootNamespace>Ostrabus.BoneyardTurnover</RootNamespace>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <LangVersion>latest</LangVersion>
     <PathMap>$(MSBuildProjectDirectory)=/_/BoneyardTurnover</PathMap>
   </PropertyGroup>

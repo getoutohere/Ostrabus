@@ -1,11 +1,17 @@
-# Boneyard Turnover 0.1.4 validation
+# Boneyard Turnover 0.1.5 validation
 
 Reviewed against Ostranauts **1.1.0.2**, native assembly SHA-256
 `133a9cc94ad4f4d5db951b65249b6cdf78f53063419d836b8871b92960ec3c37`.
 Version 0.1.2 also supports the reviewed 1.1.0.3 assembly
 `e9e7b8796423701c157ea5718cb407e6517ac0435ef947062c9a27464f4bc82f`.
 Native turnover entrypoints and all shipped JSON are unchanged in that update;
-runtime and installer retain exact guards for these two reviewed assemblies.
+Version 0.1.5 also admits the reviewed 1.1.0.4 assembly
+`904c72870f55124bbe3f9ee924a4a650279c362541b5795174d0cf940b97c474`.
+The runtime and installer retain exact guards for these reviewed assemblies.
+The native turnover entrypoints are unchanged. The separate `Ship.BreakIn`
+hole-count cap is retained during native replacement generation; turnover policy,
+saved state and the field-centre reader are unchanged. The 10,457-check production
+suite also passes on 1.1.0.4; this increment has not been live playtested.
 
 The later [field-model review](FIELD-MODEL-REVIEW.md) tests the real saved
 populations against the complete body hierarchy. It distinguishes definition

@@ -1,0 +1,211 @@
+[
+    {
+        "strName":  "ItmOstrabusBottleRefiller",
+        "strImg":  "ItmOstrabusBottleRefiller",
+        "strImgNorm":  "ItmOstrabusBottleRefillern",
+        "strImgDamaged":  "blank",
+        "strDmgColor":  "DamageTintNone",
+        "fDmgComplexity":  500,
+        "bLerp":  false,
+        "fZScale":  0.75,
+        "nCols":  1,
+        "aSocketAdds":  [
+                            "TILWallDecoAdds",
+                            "TILFixtureAdds",
+                            "TILWallDecoAdds"
+                        ],
+        "aSocketForbids":  [
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "TILFixture",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank"
+                           ],
+        "aSocketReqs":  [
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "TILWall",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank"
+                        ],
+        "aLights":  [
+                        "OstrabusBottleRefillerFilling",
+                        "OstrabusBottleRefillerStandby"
+                    ]
+    },
+    {
+        "strName":  "ItmOstrabusBottleRefillerLoose",
+        "strImg":  "ItmOstrabusBottleRefillerLoose",
+        "strImgNorm":  "ItmOstrabusBottleRefillern",
+        "strImgDamaged":  "blank",
+        "strDmgColor":  "DamageTintNone",
+        "fDmgComplexity":  500,
+        "bLerp":  false,
+        "fZScale":  0.5,
+        "nCols":  1,
+        "aSocketAdds":  [
+                            "TILItemAdds",
+                            "TILItemAdds",
+                            "TILItemAdds"
+                        ],
+        "aSocketForbids":  [
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank"
+                           ],
+        "aSocketReqs":  [
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank"
+                        ],
+        "aLights":  [
+
+                    ]
+    },
+    {
+        "strName":  "ItmOstrabusBottleRefillerDmg",
+        "strImg":  "ItmOstrabusBottleRefillerDmg",
+        "strImgNorm":  "ItmOstrabusBottleRefillern",
+        "strImgDamaged":  "blank",
+        "strDmgColor":  "DamageTintRust",
+        "fZScale":  0.75,
+        "nCols":  1,
+        "aSocketAdds":  [
+                            "TILWallDecoAdds",
+                            "TILFixtureAdds",
+                            "TILWallDecoAdds"
+                        ],
+        "aSocketForbids":  [
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "TILFixture",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank"
+                           ],
+        "aSocketReqs":  [
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "TILWall",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank"
+                        ],
+        "aLights":  [
+
+                    ]
+    },
+    {
+        "strName":  "ItmOstrabusBottleRefillerDmgLoose",
+        "strImg":  "ItmOstrabusBottleRefillerDmgLoose",
+        "strImgNorm":  "ItmOstrabusBottleRefillern",
+        "strImgDamaged":  "blank",
+        "strDmgColor":  "DamageTintRust",
+        "fZScale":  0.5,
+        "nCols":  1,
+        "aSocketAdds":  [
+                            "TILItemAdds",
+                            "TILItemAdds",
+                            "TILItemAdds"
+                        ],
+        "aSocketForbids":  [
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "TILItemForbids",
+                               "Blank",
+                               "Blank",
+                               "Blank",
+                               "Blank"
+                           ],
+        "aSocketReqs":  [
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank",
+                            "Blank"
+                        ],
+        "aLights":  [
+
+                    ]
+    }
+]

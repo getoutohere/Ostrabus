@@ -1,0 +1,17 @@
+[
+    {
+        "strName":  "OstrabusBottleRefiller",
+        "aInputPts":  [
+                          "PowerA"
+                      ],
+        "fAmount":  7.6E-05,
+        "strIntPowerOn":  "OstrabusBottleRefillerPowerChanged",
+        "strIntPowerOff":  "OstrabusBottleRefillerPowerChanged",
+        "strShutDownCT":  "TNever",
+        "strUsePowerCT":  "TOstrabusBottleRefillerUsePower",
+        "strRechargeCT":  null,
+        "bAllowExtPower":  true,
+        "strOverrideCond":  null,
+        "fOverrideAmount":  0
+    }
+]

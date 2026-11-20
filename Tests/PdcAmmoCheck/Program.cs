@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using HarmonyLib;
 using Newtonsoft.Json.Linq;
-using Ostrabus.MiscBugFixes;
+using Ostrabus.Tests;
 using UnityEngine;
 
 static class Program {
@@ -60,7 +60,50 @@ static class Program {
         DataHandler.GetCondOwner(name, null, null, loot, null, save, oldId);
     static void Prefix(Harmony h, Type type, string method, string prefix, Type[] args = null) => h.Patch(AccessTools.Method(type, method, args), prefix: new HarmonyMethod(typeof(Program), prefix));
     static JArray Assets(string relative) => JArray.Parse(File.ReadAllText(Ostrabus.Development.InstallationPaths.Data + relative));
-    static void Main() {
+    static void NativeRecipes(string root, bool repaired) {
+        DataHandler.dictInteractions=JArray.Parse(File.ReadAllText(Path.Combine(root,"interactions/interactions.json")))
+            .ToObject<JsonInteraction[]>().GroupBy(j=>j.strName).ToDictionary(g=>g.Key,g=>g.Last());
+        DataHandler.dictInstallables2=new Dictionary<string,JsonInstallable>();
+        foreach(var file in new[]{"loot/loot_self_reference.json","loot/loot_components.json"})
+            foreach(var row in JArray.Parse(File.ReadAllText(Path.Combine(root,file))).ToObject<Loot[]>())
+                DataHandler.dictLoot[row.strName]=row;
+        int recipes=0;
+        foreach(var file in new[]{"installables/installables.json","installables/installables_repair.json"})
+        foreach(var job in JArray.Parse(File.ReadAllText(Path.Combine(root,file))).ToObject<JsonInstallable[]>()
+            .Where(j=>j.strName.StartsWith("ShipWeaponPDC",StringComparison.Ordinal))) {
+            Installables.Create(job);
+            string finish=DataHandler.dictInteractions["MS"+job.strName].objLootModeSwitch;
+            var output=DataHandler.GetLoot(finish);
+            Check(output!=null && output.bSuppress==repaired,"Native recipe suppression differs: "+job.strName);
+            var old=Create("ItmShipWeaponPDC01Loose",loot:false);
+            var retained=Create("ItmAmmo20mm"); contents[old].Add(retained);
+            int before=ammoCreated;
+            // The native ApplyEffects call uses exactly !objLootModeSwitch.bSuppress.
+            // Its scene-heavy ModeSwitch/content placement remains outside this fixture.
+            var converted=Create(output.GetLootNames().Single(),old.strID,loot:!output.bSuppress);
+            Check(ammoCreated-before==(repaired?0:75),"Native recipe/factory did not reproduce expected magazine roll: "+job.strName);
+            Check(contents[old].Single()==retained,"Recipe generation changed original ammunition");
+            Check(contents[converted].Count==(repaired?0:75),"Replacement inventory differs from native recipe policy");
+            recipes++;
+        }
+        Check(recipes==21,"PDC install/uninstall/repair recipe coverage changed");
+        foreach(var definition in DataHandler.dictCOs.Values.Where(d=>d.strName.StartsWith("ItmShipWeaponPDC",StringComparison.Ordinal))) {
+            Check(definition.strName.IndexOf("Open",StringComparison.Ordinal)<0 && definition.strName.IndexOf("Closed",StringComparison.Ordinal)<0,
+                "CrewSim direct Open/Closed replacement can now select a PDC");
+            Check(DataHandler.GetLoot(definition.strName).bSuppress,"Direct PDC mode recipe enables new starting loot");
+        }
+        foreach(var row in JArray.Parse(File.ReadAllText(Path.Combine(root,"interactions/interactions_modeswitch.json")))) {
+            string name=(string)row["objLootModeSwitch"];
+            if(name!=null && name.StartsWith("ItmShipWeaponPDC",StringComparison.Ordinal)) {
+                var mode=DataHandler.GetLoot(name);
+                if(mode.GetLootNames().Any(id=>DataHandler.dictCOs.TryGetValue(id,out var co) &&
+                    co.strName.StartsWith("ItmShipWeaponPDC",StringComparison.Ordinal)))
+                    Check(mode.bSuppress,"PDC damage/power mode enables a new magazine: "+name);
+            }
+        }
+        Console.WriteLine("Native installables/factory without the historical hook: "+recipes+" PDC recipes; fresh rounds per conversion="+(repaired?0:75)+".");
+    }
+    static void Main(string[] args) {
         var fixture = new Harmony("offline.pdc.ammo.fixture"); var production = new Harmony("offline.pdc.ammo.production");
         try {
             Prefix(fixture, typeof(Shader), "PropertyToID", nameof(Shader), new[] { typeof(string) });
@@ -90,7 +133,7 @@ static class Program {
             var broken = Create("ItmShipWeaponPDC01Off", original.strID);
             Check(contents[broken].Count == 75 && ammoCreated - before == 75, "Native conversion failed to reproduce free ammunition before transfer");
             Console.WriteLine("Native replacement of an empty PDC created " + (ammoCreated - before) + " fresh 20 mm rounds before contents transfer.");
-            production.CreateClassProcessor(typeof(PdcConversionAmmoPatch)).Patch();
+            production.CreateClassProcessor(typeof(HistoricalPdcConversionAmmoPatch)).Patch();
             foreach (var definition in variants) {
                 var old = Create("ItmShipWeaponPDC01Loose", loot: false);
                 Check(old.HasCond("IsShipWeaponPDC"), "Source marker missing");
@@ -120,8 +163,9 @@ static class Program {
             var own = Create("ItmShipWeaponPDC03Loose", loot: false);
             var custom = DataHandler.dictCOs["ItmShipWeaponPDC03Off"]; string recipe = custom.strLoot; custom.strLoot = null;
             Create(custom.strName, own.strID); Check(lastLoot, "Overrode modified/non-native loot definition"); custom.strLoot = recipe;
-            var installs = Assets("installables/installables.json").Where(j => ((string)j["strName"])?.StartsWith("ShipWeaponPDC", StringComparison.Ordinal) == true).ToArray();
-            Check(installs.Length > 0 && installs.All(j => ((JArray)j["aLootCOs"]).All(name => DataHandler.dictCOs.ContainsKey((string)name))), "Install/uninstall output mapping changed");
+            production.UnpatchSelf();
+            NativeRecipes(Ostrabus.Development.InstallationPaths.Data,true);
+            if(args.Length==2 && args[0]=="--old-data") NativeRecipes(args[1],false);
             Console.WriteLine(checks + " native factory/loot, PDC variant, identity and scope checks passed.");
         } finally { production.UnpatchSelf(); fixture.UnpatchSelf(); }
     }

@@ -30,8 +30,9 @@ internal static class WreckSeverityPatch {
     internal static void Prefix(Ship __instance, bool ___bPrefill, out WreckDamageLog.Capture __state) {
         float original = __instance?.fBreakInMultiplier ?? 0;
         WreckSeverity.ApplyInitial(__instance, ___bPrefill);
-        __state = WreckDamageLog.Enabled && WreckSeverity.Eligible(__instance, ___bPrefill)
-            ? WreckDamageLog.Begin(__instance, original) : null;
+        bool damage = WreckSeverity.Eligible(__instance, ___bPrefill);
+        __state = WreckDamageLog.Enabled && (damage || WreckBonusLog.Pending(CrewSim.coPlayer))
+            ? WreckDamageLog.Begin(__instance, original, damage) : null;
     }
 
     // Always release the short-lived diagnostic scope, including native failures;
@@ -82,4 +83,57 @@ internal static class WreckRayRollPatch {
     static bool Prepare() => WreckDamageLog.Enabled;
     static void Postfix(JsonAttackMode __instance, CondOwner co, double __result) =>
         WreckDamageLog.ObserveRoll(__instance, co, __result);
+}
+
+// These two observers exist only with the existing startup diagnostic enabled.
+[HarmonyPatch(typeof(BeatManager), nameof(BeatManager.GenerateRelease))]
+internal static class WreckBonusReleasePatch {
+    static bool Prepare() => WreckDamageLog.Enabled;
+    static void Prefix(out WreckBonusLog.ReleaseState __state) {
+        __state = WreckBonusLog.Release; WreckBonusLog.Release = new WreckBonusLog.ReleaseState { Active = true };
+    }
+    static Exception Finalizer(Exception __exception, WreckBonusLog.ReleaseState __state) {
+        WreckBonusLog.Release = __state; return __exception;
+    }
+    internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+        if (!WreckDamageLog.Enabled) return instructions;
+        var original = new List<CodeInstruction>(instructions);
+        var code = original.ConvertAll(instruction => new CodeInstruction(instruction));
+        foreach (var names in new[] { new[] { "Plot", nameof(WreckBonusLog.Plot) },
+            new[] { "SpawnVideotape", nameof(WreckBonusLog.Videotape) }, new[] { "BonusDerelict", nameof(WreckBonusLog.Bonus) } }) {
+            var method = AccessTools.Method(typeof(BeatManager), names[0]); int count = 0;
+            foreach (var instruction in code) if (instruction.Calls(method)) {
+                instruction.operand = AccessTools.Method(typeof(WreckBonusLog), names[1]); count++;
+            }
+            if (count != 1) {
+                WreckBonusLog.Write("[WreckBonus] release observer unavailable: native call sequence changed; original behavior retained.");
+                return original;
+            }
+        }
+        return code;
+    }
+}
+
+[HarmonyPatch(typeof(Interaction), "ApplyLootCT")]
+internal static class WreckBonusInteractionPatch {
+    static bool Prepare() => WreckDamageLog.Enabled;
+    internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+        if (!WreckDamageLog.Enabled) return instructions;
+        var code = new List<CodeInstruction>(instructions);
+        var apply = AccessTools.Method(typeof(CondTrigger), nameof(CondTrigger.ApplyChanceID)); int count = 0;
+        var result = new List<CodeInstruction>();
+        foreach (var source in code) {
+            var instruction = new CodeInstruction(source);
+            if (!instruction.Calls(apply)) { result.Add(instruction); continue; }
+            var loot = new CodeInstruction(OpCodes.Ldarg_1);
+            instruction.MoveLabelsTo(loot); instruction.MoveBlocksTo(loot);
+            result.Add(loot); result.Add(new CodeInstruction(OpCodes.Ldarg_0));
+            result.Add(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(WreckBonusLog), nameof(WreckBonusLog.ApplyTrigger)))); count++;
+        }
+        if (count != 1) {
+            WreckBonusLog.Write("[WreckBonus] interaction observer unavailable: native call sequence changed; original behavior retained.");
+            return code;
+        }
+        return result;
+    }
 }

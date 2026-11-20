@@ -1,6 +1,7 @@
 # Offline Navy executive prototype
 
-Status: first-stage reference prototype, 2026-11-14. **Not production-ready or installed.**
+Status: **abandoned study; historical first-stage reference prototype**, originally
+recorded 2026-11-14. See the [postmortem](POSTMORTEM.md). Never installed.
 Its recorded baseline passes 108 assertions across 16 scenarios under the game's bundled
 Mono runtime. See [the recorded results](prototype-results.json) and
 [reproduction instructions](../../Tools/ShipExecutiveStudy/README.md).

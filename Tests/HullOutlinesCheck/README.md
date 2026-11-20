@@ -33,6 +33,40 @@ plugin's actual AI/evasion/hull composition in both patch installation orders.
 Production sources are linked directly into both harnesses. No game assets or
 save files are written, and the running game is not contacted.
 
+The exterior-approach audit adds 2,210 assertions across both AI/hull patch
+installation orders. These include 1,000 repeated warmed queries per order,
+not 2,210 distinct gameplay scenarios. Native `IsOnCollisionCourse` and
+`GUIDockSys.CanDock` exercise clear approaches, available clamps, retained
+clearance failures, genuine rear-end/crossing threats, rotating hulls, native
+planned rotation, whole-course admission, attached members and missing-geometry
+fallback, including native float-PI turn direction and unresolved-route failure.
+Accelerated controls use an independent densely sampled rectangle
+oracle. Unity services for station lookup, RCS capacity, selected crew and port
+availability are fixture boundaries; this does not execute the full forced-dock
+dialogue or a resisting captain's complete flight lifecycle.
+
+Optional `astern-avoidance <captureDirectory> <saveArchive>` arguments load the
+actual Heavy Dragon / Stellar Magnificence exteriors and same-epoch live motion
+captures. The padded prediction warns; production exterior confirmation accepts
+the clear coasting pass. This deliberately zeros captured acceleration because
+the recorded target was already evading; it is not an exact first-dodge replay.
+The archive SHA is checked unchanged. The private capture directory is
+`obj/DockingTarget-20261119-V-HZ0GD`; these inputs are not bundled fixtures.
+See the [evidence and conservative limits](../../Navigation/PLANETARY-AVOIDANCE-AUDIT.md).
+
+`pursuit-replay <captureDirectory> <saveArchive>` diagnoses the subsequent live
+failure using the last unsteered sample and first evasion announcement. It uses
+the atomic relative position/velocity, saved exteriors and captured orientations:
+the physical sweep is clear at the sample, but predicts contact after coasting
+forward 2.37339 seconds to the announcement. This is a measured-input coasting
+control, not a complete replay of the resisting pilot or its route changes.
+Its private input directory is
+`obj/ForcedDockAvoidance-20261119/pursuit-20261119-185321`. The previous clamp
+fixture starts with zero relative velocity and did not validate this moving
+approach. After the live test, the player chose to retain genuine evasive
+resistance and the deployed geometry correction, without a manual-clearance
+exemption. See the audit for that decision and the earlier validation overclaim.
+
 The range/proximity audit adds 45 checks for the
 [asteroid-moored selected-range and late-alarm defects](../../Navigation/Collisions/MOORED-TARGET-RANGE.md).
 Native target-data, mooring-slider/tether and collision-scan bodies execute;
@@ -119,9 +153,12 @@ padding while symbols, fallback markers and unrelated lines retain their scale.
 Weak line tags are cleared on scene/save reset.
 
 The shared [physical collision model](../../Navigation/Collisions/README.md)
-adds 12,465 numeric cover/intersection/separation/sweep checks on Mono, with one
+adds 13,473 numeric cover/intersection/separation/sweep checks on Mono, with one
 additional warmed-allocation check on CoreCLR. Random filled-exterior covers and
-1,000 rotated rectangle pairs use independent oracles. Native CheckCollisions
+1,000 rotated rectangle pairs use independent oracles, including the new
+future any-hit path. Curve-error padding, exhausted budgets, missing geometry
+and subsequent physical queries verify that prediction state cannot leak into
+impact response. Native CheckCollisions
 runs with the real physical branch hook; clear hulls retain proximity warnings,
 real and swept hits reach the response hook, and toggles, coincident centers,
 station-docked exemption, class/SFF/PASS/teleport exclusions and reference release are

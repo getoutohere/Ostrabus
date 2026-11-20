@@ -27,7 +27,7 @@ internal static class HullAvoidance {
         State candidate=default;
         if (HullDocking.Applies(ship,obstacle)) {
             // Native doubles the moving ship/group's prediction circle. Keep
-            // that existing clearance policy, using a bound of the real hulls.
+            // that broad screening bound; the full predictor confirms it below.
             if (first == null) {first=new ShipSitu(false);second=new ShipSitu(false);}
             var anchor=ship.DockGroup?.Anchor??ship.objSS;
             Copy(us,first,2*HullDocking.Bound(ship,anchor));
@@ -36,6 +36,16 @@ internal static class HullAvoidance {
             us=first;them=second;
         }
         bool hit=futureOnly ? AvoidancePrediction.Collision(us,them,seconds,ourRoute,theirRoute,ship.objSS,obstacle.objSS) : CollisionManager.WillCollide(us,them,seconds);
+        if (hit && futureOnly && candidate.Us != null) {
+            var confirmation = HullApproach.Rent();
+            try {
+                // Keep the original forecast/window and its cheap padded
+                // screening. A full sidestep requires a physical hull threat.
+                if (confirmation.Prepare(ship, obstacle, ourRoute, theirRoute))
+                    hit = AvoidancePrediction.Collision(us, them, seconds, ourRoute, theirRoute,
+                        ship.objSS, obstacle.objSS, confirmation);
+            } finally { HullApproach.Release(confirmation); }
+        }
         current=hit?candidate:default;
         return hit;
     }
@@ -44,6 +54,7 @@ internal static class HullAvoidance {
         target.vVelX=source.vVelX;target.vVelY=source.vVelY;
         target.vAccRCS=source.vAccRCS;target.vAccIn=source.vAccIn;
         target.vAccEx=source.vAccEx;target.vAccLift=source.vAccLift;target.vAccDrag=source.vAccDrag;
+        target.fRot=source.fRot;target.fW=source.fW;
         target.Size=(int)Math.Min(int.MaxValue,Math.Max(source.Size,Math.Ceiling(radius)));
     }
 }

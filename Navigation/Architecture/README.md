@@ -1,7 +1,8 @@
 # Ship mission executive: feasibility and decision
 
-Status: researched design and working offline prototype, requalified against
-game 1.1.0.0. See the [1.1 rework](Replacement/UPGRADE-1.1.0.0.md).
+Status: **abandoned on 2026-11-19**. Read the [postmortem](POSTMORTEM.md).
+The material below preserves the study's historical design and results; it is
+not an active implementation or adoption plan.
 **No production executive, patch changes, asset changes, deployment or live
 intervention is included.** The prototype runs under bundled Mono with explicit
 world fixtures; its results do not satisfy every production acceptance gate.
@@ -43,10 +44,10 @@ contracts are normative and separate from the descriptive behavior graph.
 The original tree-scheduling prototype remains a reference and negative control.
 Neither implementation is installed in the game.
 The latest [Navy lifecycle qualification](Replacement/NAVY-LIFECYCLE.md) covers
-combat/reactions, selected authored inputs and actual native world entrypoints;
-475 assertions pass across 90 combined scenarios. The
+combat/reactions, selected authored inputs and actual native world entrypoints.
+The final 1.1 receipt records 529 assertions across 101 combined scenarios. The
 [retained world-service pass](Replacement/WORLD-SERVICES.md) integrates existing
-scopes offline and reproduces a remaining shared playback-completion blocker.
+scopes offline and includes the subsequently implemented playback-completion repair.
 The [native save/arrival pass](Replacement/SAVE-ARRIVAL.md) runs the real collector,
 worker and wire parser under data/scene providers. Full Unity load/arrival remains
 an adoption gate.

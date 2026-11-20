@@ -1,5 +1,8 @@
 # Command receipt, fuel transfer and dialogue qualification
 
+Study disposition: **abandoned on 2026-11-19**. See the [postmortem](../POSTMORTEM.md).
+This document preserves historical qualification, not an active adoption plan.
+
 This is an offline replacement-executive milestone, requalified for game 1.1.0.0. It changes
 the research adapter and its fixtures, not installed patches or game assets.
 The descriptive behavior graph is separate. These results do not authorize

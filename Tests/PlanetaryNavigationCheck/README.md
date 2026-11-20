@@ -1,5 +1,23 @@
 # Planetary navigation checks
 
+## Astern-approach diagnosis
+
+`astern-replay <private-capture-directory>` reads the same-epoch Heavy Dragon /
+Stellar Magnificence capture and saved header extracts retained under ignored
+`obj/DockingTarget-20261119-V-HZ0GD`. It runs the native circle query and the
+production predictor with native padded, corrected padded and unpadded exterior
+enclosing radii. The exterior radii were independently reconstructed from the
+pre-encounter save using `Tests/HullOutlinesCheck`.
+
+This diagnostic intentionally tests a coasting counterfactual using captured
+positions/velocities. It establishes excessive clearance in a provably clear
+pass, not the exact historical trigger of an uncaptured dodge. Four assertions
+verify equal capture epochs, the A/B result, enclosing-circle separation and
+continued detection of an actual rear-end collision. It does not exempt all
+astern approaches or change production behavior.
+
+## Departure-avoidance regressions
+
 Run the departure-avoidance regressions with:
 
 ```powershell

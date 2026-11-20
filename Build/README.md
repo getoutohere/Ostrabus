@@ -2,12 +2,15 @@
 
 Run these commands from the repository root.
 
-The current build also passes the [1.1.0.3 review](COMPATIBILITY-1.1.0.3.md).
-Its main DLL requires no runtime adaptation; the separately packaged station
-migration and boneyard turnover plugins have updated exact-assembly guards.
+The current source targets the [1.1.0.4 review](COMPATIBILITY-1.1.0.4.md).
+It retires the PDC conversion hook now fixed by native recipes. The separately
+packaged station migration and boneyard turnover plugins have updated
+exact-assembly guards. The preceding [1.1.0.3 review](COMPATIBILITY-1.1.0.3.md)
+documents the committed 0.7.1 checkpoint.
 
-The [0.7.1 release](RELEASE-0.7.1.md) targets **Ostranauts 1.1.0.3**, Windows
+The [0.7.2 release](RELEASE-0.7.2.md) targets **Ostranauts 1.1.0.4**, Windows
 and BepInEx 5, with partial in-game acceptance and documented offline-only repairs.
+The [0.7.1 checkpoint](RELEASE-0.7.1.md) preserves the preceding 1.1.0.3 build.
 The [0.7.0 checkpoint](RELEASE-0.7.0.md) preserves the preceding 1.1.0.2 build.
 The [0.6.0 snapshot](RELEASE-0.6.0.md) remains the historical 1.1.0.0 checkpoint. Read the
 [compatibility audit](COMPATIBILITY-1.1.0.0.md) and
@@ -58,6 +61,12 @@ is compiled and installed separately. `Package-Mod.ps1` bundles its standalone
 installer under `StandaloneMods/ApartmentRefuel/` without activating it. Full and
 custom installers preserve an installed companion and refresh its composed supply
 stock after their own native-mod selection changes. They do not replace its DLL.
+
+[Bottle Refiller](../StandaloneMods/BottleRefiller/README.md),
+[Boneyard Turnover](../StandaloneMods/BoneyardTurnover/README.md) and
+[Station Kiosk Migration](../StandaloneMods/StationMigration/README.md) have
+independent packages and installers; full and custom deployment do not activate
+or replace their plugins.
 
 The independent [1.1 migration prototype](../StandaloneMods/SaveMigration110/README.md)
 is unnecessary for an already-upgraded save and is not recommended. Its two
@@ -129,6 +138,8 @@ checked-in fixtures. Build the named project in Release, then pass its
 | `BountyPreservationCheck` | none | Bounty cleanup protections, station departure and routine crew retirement with native population controls. |
 | `ObituaryCheck` | none | Native death/removal observations, restoration/disposal exclusions, crewless teardown fast path, bounded external storage and API wire format. |
 | `WreckSeverityCheck` | none | Severity curve, native initialization/roll contracts, diagnostic scope and unchanged random draws. |
+| `DerelictIdentityCheck` | none; `--finally-control` | Native deferred-name and duplicate-registration reproductions, both production repairs, warning output and unchanged asteroid/station conversion. |
+| `BottleRefillerCheck` | none | Independent refiller gas conservation, pressure curve, native work/control integration, equipment handling and audio/indicator lifecycle; sprite and installer fixtures are documented separately. |
 | `SinglePortDockingCheck` | none | Native comms option construction/selection, forced docking, duplicate delivery, asset contracts and the saved toggle. |
 | `BoneyardTurnoverCheck` | none | Independently compiled turnover policy, protection guards, saved geometry, field centres, native persistence and loader boundaries. |
 | `PortraitCompositionCheck` | none | Native portrait cold/warm paths, pixel equivalence, raw channel layouts, fallback handling, buffer allocation and guarded transpiler binding. |
